@@ -18,10 +18,13 @@ interface FetcherArgs {
 const fetcher = async ({
 	userId,
 	gachaSrc,
-}: FetcherArgs): Promise<{ gacha: GachaData; totalCount: number } | null> => {
-	const res: ApiResponse<{ gacha: GachaData; totalCount: number }> =
+}: FetcherArgs): Promise<{ gacha: GachaData | null; totalCount: number } | null> => {
+	const res: ApiResponse<{ gacha: GachaData | null; totalCount: number }> =
 		await getGachaByGachaSrcAction({ userId, gachaSrc })
-	if (res.status === StatusCode.OK) {
+	if (
+		res.status === StatusCode.OK &&
+		typeof res.response !== 'string'
+	) {
 		return res.response
 	}
 	console.error('Failed to fetch gacha preview data:', res.response)
@@ -37,7 +40,7 @@ export const useGachaPreview = ({ session }: UseGachaPreviewProps) => {
 		error,
 		isLoading: isPopupLoading,
 	} = useSWR<
-		{ gacha: GachaData; totalCount: number } | null,
+		{ gacha: GachaData | null; totalCount: number } | null,
 		any,
 		FetcherArgs | null
 	>(

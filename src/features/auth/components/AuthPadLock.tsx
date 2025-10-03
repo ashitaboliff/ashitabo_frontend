@@ -6,10 +6,9 @@ import { useForm, SubmitHandler } from 'react-hook-form'
 import { useRouter } from 'next-nprogress-bar'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { signIn } from 'next-auth/react'
 import AuthLoadingIndicator from './AuthLoadingIndicator'
 import { padLockAction } from './actions'
-import { ErrorType } from '@/types/responseTypes'
+import { ErrorType, StatusCode } from '@/types/responseTypes'
 import { getImageUrl } from '@/lib/r2'
 
 const PasswordSchema = yup.object().shape({
@@ -73,15 +72,19 @@ const AuthPadLock = () => {
 		}
 	}
 
+	const redirectToLineSignIn = () => {
+		if (typeof window === 'undefined') return
+		const callbackUrl = '/user'
+		const url = new URL('/api/auth/signin/line', window.location.origin)
+		url.searchParams.set('callbackUrl', callbackUrl)
+		window.location.href = url.toString()
+	}
+
 	const handleSignIn = async () => {
 		setLoadingMessage('LINEログインにリダイレクトします...')
 		setIsLoading(true)
 		try {
-			await signIn('line', {
-				maxAge: 6 * 30 * 24 * 60 * 60, // 6 months
-				checks: ['state'],
-				callbackUrl: '/user',
-			})
+			redirectToLineSignIn()
 		} catch (signInError) {
 			setError({
 				status: 500,
@@ -103,12 +106,22 @@ const AuthPadLock = () => {
 		const password = `${data.digit1}${data.digit2}${data.digit3}${data.digit4}`
 		try {
 			const res = await padLockAction(password)
-			if (res.status !== 204) {
-				setError(res)
-				setIsLoading(false)
-			} else {
-				await handleSignIn()
+			if (
+				res.status === StatusCode.OK &&
+				typeof res.response !== 'string' &&
+				res.response.status === 'ok'
+			) {
+				handleSignIn()
+				return
 			}
+			setError({
+				status: res.status,
+				response:
+					typeof res.response === 'string'
+						? res.response
+						: res.response?.status ?? 'Padlock verification failed',
+			})
+			setIsLoading(false)
 		} catch (submitError: any) {
 			setError({
 				status: 500,

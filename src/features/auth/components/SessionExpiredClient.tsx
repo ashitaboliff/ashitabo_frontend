@@ -1,23 +1,21 @@
 'use client'
 
-import { signOut } from 'next-auth/react'
 import { useRouter } from 'next-nprogress-bar'
-import { useSession } from 'next-auth/react'
 import { useState } from 'react'
+import { useSession } from '@/features/auth/hooks/useSession'
+import { signOutUser } from '@/features/user/actions'
 
 const SessionExpiredClient = () => {
 	const router = useRouter()
-	const { data: session, status } = useSession()
+	const { data: session, status, update } = useSession()
 	const [isLoading, setIsLoading] = useState(false)
 
 	const handleLogout = async () => {
 		setIsLoading(true)
 		try {
-			// セッションを完全にクリアしてからホームページへリダイレクト
-			await signOut({
-				redirect: true,
-				callbackUrl: '/home',
-			})
+			await signOutUser()
+			await update()
+			router.push('/home')
 		} catch (error) {
 			console.error('ログアウト中にエラーが発生しました:', error)
 			// エラーが発生してもホームページへリダイレクト
@@ -30,11 +28,8 @@ const SessionExpiredClient = () => {
 	const handleReLogin = async () => {
 		setIsLoading(true)
 		try {
-			if (session) {
-				await signOut({
-					redirect: false,
-				})
-			}
+			await signOutUser()
+			await update()
 			router.push('/auth/padlock')
 		} catch (error) {
 			console.error('再ログイン処理中にエラーが発生しました:', error)

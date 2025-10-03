@@ -14,7 +14,7 @@ export type BanBooking = {
 	id: string
 	createdAt: Date
 	updatedAt: Date
-	startDate: string
+	startDate: Date
 	startTime: number
 	endTime: number | null
 	description: string

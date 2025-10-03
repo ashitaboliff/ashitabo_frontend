@@ -23,7 +23,8 @@ const createProxyHeaders = (request: NextRequest) => {
 	const headers = new Headers(request.headers)
 	headers.delete('host')
 	headers.delete('connection')
-	headers.set('accept-encoding', 'gzip, deflate, br')
+	headers.delete('accept-encoding')
+	headers.delete('content-length')
 
 	const apiKey = process.env.NEXT_PUBLIC_API_KEY?.trim()
 	if (apiKey) {
@@ -41,11 +42,22 @@ const buildTargetUrl = (params: string[] = [], request: NextRequest) => {
 	return target
 }
 
+type BackendParams = { backend?: string[] }
+type RouteContext = { params: Promise<BackendParams> }
+
 const proxyRequest = async (
 	request: NextRequest,
-	context: { params: { backend?: string[] } },
+	context: RouteContext,
 ) => {
-	const targetUrl = buildTargetUrl(context.params.backend, request)
+	const { backend } = await context.params
+	const targetUrl = buildTargetUrl(backend ?? [], request)
+	const outgoingHeaders = createProxyHeaders(request)
+	const cookieHeader = request.headers.get('cookie')
+	if (cookieHeader) {
+		outgoingHeaders.set('cookie', cookieHeader)
+	} else {
+		outgoingHeaders.delete('cookie')
+	}
 
 	let body: ArrayBuffer | undefined
 	if (!['GET', 'HEAD'].includes(request.method)) {
@@ -54,13 +66,16 @@ const proxyRequest = async (
 
 	const backendResponse = await fetch(targetUrl, {
 		method: request.method,
-		headers: createProxyHeaders(request),
+		headers: outgoingHeaders,
 		body,
 		redirect: 'manual',
+		credentials: 'include',
 	})
 
 	const responseHeaders = new Headers(backendResponse.headers)
 	responseHeaders.delete('transfer-encoding')
+	responseHeaders.delete('content-encoding')
+	responseHeaders.delete('content-length')
 
 	return new NextResponse(backendResponse.body, {
 		status: backendResponse.status,
@@ -79,7 +94,7 @@ const handleError = (error: unknown) => {
 
 export async function GET(
 	req: NextRequest,
-	context: { params: { backend?: string[] } },
+	context: RouteContext,
 ) {
 	try {
 		return await proxyRequest(req, context)
@@ -90,7 +105,7 @@ export async function GET(
 
 export async function POST(
 	req: NextRequest,
-	context: { params: { backend?: string[] } },
+	context: RouteContext,
 ) {
 	try {
 		return await proxyRequest(req, context)
@@ -101,7 +116,7 @@ export async function POST(
 
 export async function PUT(
 	req: NextRequest,
-	context: { params: { backend?: string[] } },
+	context: RouteContext,
 ) {
 	try {
 		return await proxyRequest(req, context)
@@ -112,7 +127,7 @@ export async function PUT(
 
 export async function PATCH(
 	req: NextRequest,
-	context: { params: { backend?: string[] } },
+	context: RouteContext,
 ) {
 	try {
 		return await proxyRequest(req, context)
@@ -123,7 +138,7 @@ export async function PATCH(
 
 export async function DELETE(
 	req: NextRequest,
-	context: { params: { backend?: string[] } },
+	context: RouteContext,
 ) {
 	try {
 		return await proxyRequest(req, context)
@@ -134,7 +149,7 @@ export async function DELETE(
 
 export async function OPTIONS(
 	req: NextRequest,
-	context: { params: { backend?: string[] } },
+	context: RouteContext,
 ) {
 	try {
 		return await proxyRequest(req, context)
@@ -145,7 +160,7 @@ export async function OPTIONS(
 
 export async function HEAD(
 	req: NextRequest,
-	context: { params: { backend?: string[] } },
+	context: RouteContext,
 ) {
 	try {
 		return await proxyRequest(req, context)

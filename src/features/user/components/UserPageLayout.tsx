@@ -2,7 +2,7 @@
 
 import { useState, ReactNode } from 'react'
 import { useRouter } from 'next-nprogress-bar'
-import { useSession } from 'next-auth/react'
+import { useSession } from '@/features/auth/hooks/useSession'
 import { signOutUser as signOutAction } from '@/features/user/actions'
 import { Tabs, Tab } from '@/components/ui/atoms/Tabs'
 import ProfileDisplay from './ProfileDisplay'

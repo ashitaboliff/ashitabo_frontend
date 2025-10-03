@@ -11,7 +11,7 @@ import {
 	AccountRoleMap,
 	AccountRole,
 } from '@/features/user/types'
-import { useSession } from 'next-auth/react'
+import { useSession } from '@/features/auth/hooks/useSession'
 import { ErrorType } from '@/types/responseTypes'
 
 interface UserDetailPopupProps {

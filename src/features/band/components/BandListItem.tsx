@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import type { BandDetails, Part } from '@/features/band/types'
+import type { BandDetails, BandMemberDetails } from '@/features/band/types'
 import { FaEdit, FaUsers, FaTrashAlt } from 'react-icons/fa'
 
 interface BandListItemProps {
@@ -64,7 +64,7 @@ export default function BandListItem({
 					</h3>
 					{band.members.length > 0 ? (
 						<div className="flex flex-wrap gap-3 items-center">
-							{displayMembers.map((member) => (
+							{displayMembers.map((member: BandMemberDetails) => (
 								<div
 									key={member.id}
 									className="flex items-center gap-2 p-2 bg-base-200 rounded-lg"

@@ -5,6 +5,9 @@ import { RoleMap } from '@/features/user/types'
 import InstIcon from '@/components/ui/atoms/InstIcon'
 
 const ProfileDisplay = ({ session }: { session: Session }) => {
+	const role = session.user.profile?.role ?? 'STUDENT'
+	const parts = session.user.profile?.part ?? []
+
 	return (
 		<div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-10 mb-4 p-6 bg-base-100 rounded-lg shadow-md">
 			<Image
@@ -19,9 +22,9 @@ const ProfileDisplay = ({ session }: { session: Session }) => {
 					{session.user.name}
 				</div>
 				<div className="text-sm md:text-base">
-					{RoleMap[session.user.dbProfile?.role || 'STUDENT']}
+					{RoleMap[role]}
 				</div>
-				<InstIcon part={session.user.dbProfile?.part || []} size={30} />
+				<InstIcon part={parts} size={30} />
 			</div>
 		</div>
 	)

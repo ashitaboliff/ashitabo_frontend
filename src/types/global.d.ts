@@ -1,8 +1,7 @@
-// types/global.d.ts
-import 'next-auth'
+import type { Session as AppSession } from '@/types/session'
 
 declare global {
-	type Session = import('next-auth').Session
+	type Session = AppSession
 }
 
 export {}

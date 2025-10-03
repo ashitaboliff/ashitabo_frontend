@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useSession } from 'next-auth/react'
+import { useSession } from '@/features/auth/hooks/useSession'
 
 import { FaRegUserCircle } from 'react-icons/fa'
 

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { useSession } from 'next-auth/react'
+import { useSession } from '@/features/auth/hooks/useSession'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next-nprogress-bar'
 import * as yup from 'yup'
@@ -168,7 +168,13 @@ const SigninSetting = () => {
 					await session.update({ triggerUpdate: Date.now() })
 					setPopupOpen(true)
 				} else {
-					setIsError(res)
+					setIsError({
+						status: res.status,
+						response:
+							typeof res.response === 'string'
+								? res.response
+								: 'プロフィール作成に失敗しました。',
+					})
 				}
 			} catch (error) {
 				setIsError({

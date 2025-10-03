@@ -31,6 +31,12 @@ const MainPage = () => {
 	const ableViewDayMax = 27 // yesterdayから27日後まで表示可能
 	const ableViewDayMin = 7 // yesterdayから7日前まで表示可能
 	const [errorPopupOpen, setErrorPopupOpen] = useState<boolean>(false)
+	const viewDate = new Date(viewDay)
+	const yesterdayDate = new Date(getCurrentJSTDateString({ yesterday: true }))
+	const endDateString = format(
+		addDays(viewDate, viewDayMax - 1),
+		'yyyy-MM-dd',
+	)
 
 	const {
 		data: bookingData,
@@ -38,7 +44,7 @@ const MainPage = () => {
 		isLoading,
 		mutate,
 	} = useSWR<BookingResponse | null>(
-		[viewDay, addDays(viewDay, viewDayMax - 1)],
+		[viewDay, endDateString],
 		fetchBookings,
 		{
 			revalidateOnFocus: false,
@@ -63,20 +69,22 @@ const MainPage = () => {
 	}, [mutate])
 
 	const prevAble =
-		subDays(viewDay, viewDayMax) <
-		subDays(getCurrentJSTDateString({ yesterday: true }), ableViewDayMin)
+		subDays(viewDate, viewDayMax) <
+		subDays(yesterdayDate, ableViewDayMin)
 
 	const nextAble =
-		addDays(viewDay, viewDayMax - 1) >=
-		addDays(getCurrentJSTDateString({ yesterday: true }), ableViewDayMax)
+		addDays(viewDate, viewDayMax - 1) >=
+		addDays(yesterdayDate, ableViewDayMax)
 
 	const prevWeek = () => {
 		if (prevAble) return
-		setViewDay(subDays(viewDay, viewDayMax).toISOString().split('T')[0])
+		const newDate = subDays(viewDate, viewDayMax)
+		setViewDay(format(newDate, 'yyyy-MM-dd'))
 	}
 	const nextWeek = () => {
 		if (nextAble) return
-		setViewDay(addDays(viewDay, viewDayMax).toISOString().split('T')[0])
+		const newDate = addDays(viewDate, viewDayMax)
+		setViewDay(format(newDate, 'yyyy-MM-dd'))
 	}
 
 	return (
@@ -91,8 +99,10 @@ const MainPage = () => {
 						{'<'}
 					</button>
 					<div className="text-md sm:text-lg font-bold w-64 sm:w-72 text-center">
-						{format(viewDay, 'M/d(E)', { locale: ja })}~
-						{format(addDays(viewDay, viewDayMax - 1), 'M/d(E)', { locale: ja })}
+					{format(viewDate, 'M/d(E)', { locale: ja })}~
+					{format(addDays(viewDate, viewDayMax - 1), 'M/d(E)', {
+						locale: ja,
+					})}
 						までのコマ表
 					</div>
 					<button

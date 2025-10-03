@@ -3,7 +3,7 @@
 import { gkktt } from '@/lib/fonts'
 import { useState, useTransition, useEffect } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
-import { useSession } from 'next-auth/react'
+import { useSession } from '@/features/auth/hooks/useSession'
 import { YoutubeDetail, YoutubeSearchQuery } from '@/features/video/types'
 import { ErrorType } from '@/types/responseTypes'
 import SelectField from '@/components/ui/atoms/SelectField'

@@ -1,4 +1,5 @@
 import type { Profile } from '@/features/user/types'
+import { notFound } from 'next/navigation'
 import ProfileEdit from '@/features/user/components/ProfileEdit'
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
 
@@ -14,8 +15,11 @@ const userPage = async () => {
 	return (
 		<AuthPage requireProfile={true}>
 			{(authResult) => {
-				const userProfile = authResult.session!.user!.dbProfile as Profile
-				return <ProfileEdit profile={userProfile} />
+				const userProfile = authResult.profile
+				if (!userProfile) {
+					return notFound()
+				}
+				return <ProfileEdit profile={userProfile as Profile} />
 			}}
 		</AuthPage>
 	)

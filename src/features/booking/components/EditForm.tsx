@@ -58,7 +58,13 @@ const EditFormPage = ({
 				setSuccessPopupOpen(true)
 				setDeletePopupOpen(false)
 			} else {
-				setError(response)
+				setError({
+					status: response.status,
+					response:
+						typeof response.response === 'string'
+							? response.response
+							: null,
+				})
 			}
 		} catch (e) {
 			setError({
@@ -282,7 +288,13 @@ const MemoBookingEditForm = memo(
 				if (response.status === 200) {
 					setSuccessPopupOpen(true)
 				} else {
-					setError(response)
+					setError({
+						status: response.status,
+						response:
+							typeof response.response === 'string'
+								? response.response
+								: null,
+					})
 				}
 			} catch (e) {
 				setError({

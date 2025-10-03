@@ -5,7 +5,6 @@ import { useRouter } from 'next-nprogress-bar'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
-import { v4 } from 'uuid'
 import { format, eachDayOfInterval } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { DateToDayISOstring } from '@/utils'
@@ -43,6 +42,12 @@ const ScheduleCreatePage = ({
 	session,
 	initialUsers,
 }: ScheduleCreatePageProps) => {
+	const generateScheduleId = () => {
+		if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+			return crypto.randomUUID()
+		}
+		return Math.random().toString(36).slice(2)
+	}
 	const router = useRouter()
 	const {
 		register,
@@ -63,7 +68,7 @@ const ScheduleCreatePage = ({
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 	const [error, setError] = useState<ErrorType>()
 
-	const [scheduleId] = useState<string>(v4())
+	const [scheduleId] = useState<string>(generateScheduleId())
 
 	// const [users, setUsers] = useState<Record<string, string>>({}) // users are now from props
 
@@ -88,7 +93,13 @@ const ScheduleCreatePage = ({
 		if (res.status === 201) {
 			setIsPopupOpen(true)
 		} else {
-			setError(res)
+			setError({
+				status: res.status,
+				response:
+					typeof res.response === 'string'
+						? res.response
+						: null,
+			})
 		}
 
 		setIsSubmitLoading(false)

@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useState, useEffect } from 'react'
-import { useSession } from 'next-auth/react'
+import { useSession } from '@/features/auth/hooks/useSession'
 import { useRouter } from 'next-nprogress-bar'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
@@ -177,7 +177,13 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 					await session.update({ triggerUpdate: Date.now() })
 					router.refresh()
 				} else {
-					setIsError(res)
+					setIsError({
+						status: res.status,
+						response:
+							typeof res.response === 'string'
+								? res.response
+								: 'プロフィール更新に失敗しました。',
+					})
 				}
 			} catch (error) {
 				setIsError({

@@ -7,7 +7,6 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useRouter } from 'next-nprogress-bar'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { v4 } from 'uuid'
 import { DateToDayISOstring, getCurrentJSTDateString } from '@/utils'
 import { createBookingAction } from './actions'
 import ShareButton from '@/components/ui/atoms/ShareButton'
@@ -21,6 +20,13 @@ import { useGachaPlayManager } from '@/features/gacha/hooks/useGachaPlayManager'
 import GachaResult from '@/features/gacha/components/GachaResult'
 
 const today = getCurrentJSTDateString({})
+
+const generateBookingId = () => {
+	if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+		return crypto.randomUUID()
+	}
+	return Math.random().toString(36).slice(2)
+}
 
 const schema = yup.object().shape({
 	bookingDate: yup.string().required('日付を入力してください'),
@@ -51,7 +57,7 @@ export default function CreatePage({
 	const bookingDate = initialDateParam ? new Date(initialDateParam) : new Date()
 	const bookingTime = initialTimeParam || '0'
 
-	const [bookingId] = useState<string>(v4())
+	const [bookingId] = useState<string>(generateBookingId())
 
 	const { onGachaPlayedSuccessfully, gachaPlayCountToday } =
 		useGachaPlayManager()

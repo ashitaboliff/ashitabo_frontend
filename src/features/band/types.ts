@@ -1,33 +1,56 @@
-import type {
-	Band as PrismaBand,
-	BandMember as PrismaBandMember,
-	User as PrismaUser,
-	Profile as PrismaProfile,
-	Part,
-} from '@prisma/client'
 import type { ApiResponse } from '@/types/responseTypes'
-import type { BandDetails, BandMemberDetails } from './repository'
+import type { Part } from '@/features/user/types'
 
 export type { Part }
 
-// Re-exporting the detailed types from the repository
-export type { BandDetails, BandMemberDetails }
-
-// This type is still useful for user-related operations, like search
-export interface UserWithProfile extends PrismaUser {
-	profile: PrismaProfile | null
+export interface BandMemberUserSummary {
+	id: string
+	name: string | null
+	image: string | null
+	user_id?: string | null
+	profile?: {
+		name?: string | null
+		part?: Part[] | null
+		studentId?: string | null
+		expected?: string | null
+		role?: string | null
+	} | null
 }
 
-// The following interfaces are now covered by BandDetails and BandMemberDetails
-// export interface BandMemberWithUser extends PrismaBandMember {
-// 	user: UserWithProfile
-// }
-//
-// export interface BandWithMembersAndUsers extends PrismaBand {
-// 	members: BandMemberWithUser[]
-// }
+export interface BandMemberDetails {
+	id: string
+	bandId: string
+	userId: string
+	part: Part
+	createdAt: Date
+	updatedAt: Date
+	user: BandMemberUserSummary
+}
 
-// Form data types
+export interface BandDetails {
+	id: string
+	name: string
+	description?: string | null
+	createdAt: Date
+	updatedAt: Date
+	isDeleted?: boolean
+	members: BandMemberDetails[]
+}
+
+export interface UserWithProfile {
+	id: string
+	name: string | null
+	image: string | null
+	user_id?: string | null
+	profile?: {
+		name?: string | null
+		part?: Part[] | null
+		studentId?: string | null
+		expected?: string | null
+		role?: string | null
+	} | null
+}
+
 export interface BandFormData {
 	name: string
 }
@@ -37,10 +60,9 @@ export interface BandMemberFormData {
 	part: Part
 }
 
-// API response types using the new inferred types
 export type CreateBandResponse = ApiResponse<BandDetails>
 export type UpdateBandResponse = ApiResponse<BandDetails>
 export type DeleteBandResponse = ApiResponse<null>
-export type AddBandMemberResponse = ApiResponse<BandMemberDetails>
-export type UpdateBandMemberResponse = ApiResponse<BandMemberDetails>
+export type AddBandMemberResponse = ApiResponse<null>
+export type UpdateBandMemberResponse = ApiResponse<null>
 export type RemoveBandMemberResponse = ApiResponse<null>

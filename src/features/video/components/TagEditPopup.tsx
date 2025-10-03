@@ -53,7 +53,13 @@ const TagEditPopup = ({
 			setIsPopupOpen(false)
 			router.refresh()
 		} else {
-			setError(res)
+			setError({
+				status: res.status,
+				response:
+					typeof res.response === 'string'
+						? res.response
+						: null,
+			})
 		}
 	}
 
