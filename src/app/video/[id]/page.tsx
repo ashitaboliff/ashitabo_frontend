@@ -9,26 +9,48 @@ import {
 import { getUnifiedAuthState } from '@/features/auth/components/actions'
 import { createMetaData } from '@/utils/metaData'
 import { Metadata, ResolvingMetadata } from 'next'
+import { cache } from 'react'
+import { StatusCode } from '@/types/responseTypes'
 
-type Props = {
-	params: Promise<{ id: string }>
-	searchParams: Promise<{ [key: string]: string | string[] | undefined }>
-}
+type PageParams = Promise<{ id: string }>
+type PageProps = { params: PageParams }
+
+const getPlaylist = cache(async (id: string) => {
+	const res = await getPlaylistByIdAction(id)
+	if (
+		res.status === StatusCode.OK &&
+		res.response &&
+		typeof res.response !== 'string'
+	) {
+		return res.response
+	}
+	return null
+})
+
+const getVideo = cache(async (id: string) => {
+	const res = await getVideoByIdAction(id)
+	if (
+		res.status === StatusCode.OK &&
+		res.response &&
+		typeof res.response !== 'string'
+	) {
+		return res.response
+	}
+	return null
+})
 
 export async function generateMetadata(
-	{ params, searchParams }: Props,
+	{ params }: { params: PageParams },
 	parent: ResolvingMetadata,
 ): Promise<Metadata> {
-	// You might want to fetch data here to include in the title or description
-	const id = (await params).id
+	const { id } = await params
 	const liveOrBand = id.startsWith('PL') && id.length > 12 ? 'live' : 'band'
 	let title = liveOrBand === 'live' ? 'ライブ動画詳細' : 'バンド動画詳細'
 	let description = `あしたぼの${liveOrBand}動画 (${id}) の詳細ページです。`
 
 	if (liveOrBand === 'live') {
-		const playlistResult = await getPlaylistByIdAction(id)
-		if (playlistResult.status === 200 && playlistResult.response) {
-			const playlistData = playlistResult.response
+		const playlistData = await getPlaylist(id)
+		if (playlistData) {
 			title = playlistData.title
 				? `${playlistData.title} | ライブ動画`
 				: `ライブ動画 ${id}`
@@ -36,9 +58,8 @@ export async function generateMetadata(
 			description = `あしたぼのライブ動画 (${playlistData.title || id}) の詳細ページです。`
 		}
 	} else {
-		const videoResult = await getVideoByIdAction(id)
-		if (videoResult.status === 200 && videoResult.response) {
-			const videoData = videoResult.response
+		const videoData = await getVideo(id)
+		if (videoData) {
 			title = videoData.title
 				? `${videoData.title} | バンド動画`
 				: `バンド動画 ${id}`
@@ -54,41 +75,42 @@ export async function generateMetadata(
 	})
 }
 
-const Page = async ({ params }: Props) => {
-	// セッション無しでもアクセス可能なため、getUnifiedAuthStateを直接使用
+const Page = async ({ params }: PageProps) => {
 	const { session } = await getUnifiedAuthState()
-	const id = (await params).id
+	const { id } = await params
 	const liveOrBand = id.startsWith('PL') && id.length > 12 ? 'live' : 'band'
+
 	if (liveOrBand === 'live') {
-		const playlist = await getPlaylistByIdAction(id)
-		if (playlist.status !== 200) {
+		const playlist = await getPlaylist(id)
+		if (!playlist) {
 			return notFound()
 		}
 		return (
 			<VideoDetailPage
-				detail={playlist.response}
+				detail={playlist}
 				liveOrBand={liveOrBand}
 				session={session}
-			/>
-		)
-	} else if (liveOrBand === 'band') {
-		const video = await getVideoByIdAction(id)
-		if (video.status !== 200) {
-			return notFound()
-		}
-		const playlist = await getPlaylistByIdAction(video.response.playlistId)
-		if (playlist.status !== 200) {
-			return notFound()
-		}
-		return (
-			<VideoDetailPage
-				detail={video.response}
-				liveOrBand={liveOrBand}
-				session={session}
-				playlist={playlist.response}
 			/>
 		)
 	}
+
+	const video = await getVideo(id)
+	if (!video) {
+		return notFound()
+	}
+	const playlist = await getPlaylist(video.playlistId)
+	if (!playlist) {
+		return notFound()
+	}
+
+	return (
+		<VideoDetailPage
+			detail={video}
+			liveOrBand={liveOrBand}
+			session={session}
+			playlist={playlist}
+		/>
+	)
 }
 
 export default Page

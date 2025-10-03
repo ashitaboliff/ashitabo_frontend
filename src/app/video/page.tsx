@@ -7,9 +7,7 @@ import { searchYoutubeDetailsAction } from '@/features/video/components/actions'
 import { YoutubeDetail, YoutubeSearchQuery } from '@/features/video/types'
 import { ErrorType } from '@/types/responseTypes'
 
-const parseVideoPageSearchParams = async (
-	params: URLSearchParams,
-): Promise<YoutubeSearchQuery> => {
+const parseVideoPageSearchParams = (params: URLSearchParams): YoutubeSearchQuery => {
 	const defaultQuery: YoutubeSearchQuery = {
 		liveOrBand: 'band',
 		bandName: '',
@@ -36,28 +34,25 @@ const parseVideoPageSearchParams = async (
 	}
 }
 
-interface VideoPageProps {
+type VideoPageProps = {
 	searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
-const Page = async ({ searchParams }: VideoPageProps) => {
+const Page = async ({ searchParams: params }: VideoPageProps) => {
 	const queryParams = new URLSearchParams()
-	if (await searchParams) {
-		for (const [key, value] of Object.entries(await searchParams)) {
+	for (const [key, value] of Object.entries(await params)) {
 			if (typeof value === 'string') {
 				queryParams.set(key, value)
 			} else if (Array.isArray(value)) {
 				value.forEach((v) => queryParams.append(key, v))
 			}
-		}
 	}
 
-	const currentQuery = await parseVideoPageSearchParams(queryParams)
+	const currentQuery = parseVideoPageSearchParams(queryParams)
 	const searchParamsString = queryParams.toString() // keyとして使用する文字列
 
 	let initialYoutubeDetails: YoutubeDetail[] = []
 	let initialPageMax = 1
-	let initialIsLoading = false // Data fetching happens on server, so client initially is not loading
 	let initialError: ErrorType | undefined = undefined
 
 	const res = await searchYoutubeDetailsAction(currentQuery)
@@ -80,7 +75,6 @@ const Page = async ({ searchParams }: VideoPageProps) => {
 				key={searchParamsString}
 				initialYoutubeDetails={initialYoutubeDetails}
 				initialPageMax={initialPageMax}
-				initialIsLoading={initialIsLoading}
 				initialError={initialError}
 			/>
 		</Suspense>

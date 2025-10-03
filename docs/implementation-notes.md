@@ -38,3 +38,17 @@ The refactor must introduce new thin `/api` fetch utilities and SWR hooks to rep
 - `SWRConfig` fallback in `layout.tsx` enables server-prefetched data for initial render without blocking.
 - `fetch` requests can be tagged for selective revalidation (`next: { tags: [...] }`) aligning with backend invalidation.
 - Using dynamic APIs like `cookies()` opts route into dynamic rendering; wrap dynamic sections in `<Suspense>` or isolate as needed.
+
+## 2025-10-03 Frontend refactors & proxy hardening
+
+- Replaced deprecated server actions with REST clients in `src/lib/api/client.ts` and feature `components/actions.ts` to point at the Hono backend via the `/api/[[...backend]]` proxy.
+- Introduced typed session helpers (`src/types/session.ts`, `src/features/auth/hooks/useSession.ts`) so client components stay independent of `next-auth/react`.
+- Hardened the API proxy to await async route params, strip conflicting `accept-encoding` / `content-length` headers, and forward cookies correctly to avoid `ERR_CONTENT_DECODING_FAILED` responses.
+- Standardised booking/schedule/gacha/video/admin action responses so UI layers always receive typed `ApiResponse<T>` payloads.
+- Normalised booking calendar inputs to ISO strings to prevent invalid date query strings (e.g. `Wed Oct ...`).
+
+## 2025-10-03 Rendering/performance tuning
+
+- `src/features/video/components/VideoListPage.tsx` now derives its state directly from server-provided props, uses `startTransition` + `router.replace` for filter updates, and drops redundant `router.refresh()` calls that previously caused double renders.
+- Booking top page constructs fetch keys using plain strings so `/api/booking` only receives canonical `start/end` params, avoiding backend cache misses.
+- Updated `/api` proxy response headers to remove duplicated transfer encoding so long polling requests no longer trip the browser decoder.

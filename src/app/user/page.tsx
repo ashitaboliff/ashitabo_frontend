@@ -25,42 +25,42 @@ const UserPageServer = async () => {
 				// セッション情報が確保されているので、authResult.sessionを使用
 				const session = authResult.session!
 
-				const packImageSignedUrls: Record<string, string> = {}
-				for (const version in gachaConfigs) {
-					const config = gachaConfigs[version]
-					if (config.packKey) {
+				const packImagesEntries = await Promise.all(
+					Object.entries(gachaConfigs).map(async ([version, config]) => {
+						if (!config.packKey) {
+							return null
+						}
 						try {
 							const res = await getSignedUrlForGachaImageAction({
 								userId: session.user.id,
 								r2Key: config.packKey,
 							})
-							if (res.status === 200 && typeof res.response === 'string') {
-								packImageSignedUrls[config.packKey] = res.response
-							} else {
-								console.error(
-									`Failed to get signed URL for packKey ${config.packKey} in UserPageContent:`,
-									res.response,
-								)
-								packImageSignedUrls[config.packKey] = ''
+							return {
+								version,
+								r2Key: config.packKey,
+								signedPackImageUrl:
+									res.status === 200 && typeof res.response === 'string'
+										? res.response
+										: '',
 							}
 						} catch (error) {
 							console.error(
 								`Failed to get signed URL for packKey ${config.packKey} in UserPageContent:`,
 								error,
 							)
-							packImageSignedUrls[config.packKey] = ''
+							return {
+								version,
+								r2Key: config.packKey,
+								signedPackImageUrl: '',
+							}
 						}
-					}
-				}
+					}),
+				)
 
 				const gachaCarouselDataForContext: CarouselPackDataItem[] =
-					Object.entries(gachaConfigs)
-						.filter(([, config]) => config.packKey)
-						.map(([version, config]) => ({
-							version,
-							r2Key: config.packKey!,
-							signedPackImageUrl: packImageSignedUrls[config.packKey!] || '',
-						}))
+					packImagesEntries
+						.filter((entry): entry is CarouselPackDataItem => entry !== null)
+						.sort((a, b) => a.version.localeCompare(b.version))
 
 				return (
 					<GachaDataProvider gachaCarouselData={gachaCarouselDataForContext}>

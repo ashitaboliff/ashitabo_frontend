@@ -14,24 +14,40 @@ import { DateToDayISOstring } from '@/utils'
 import { addDays, subDays, parseISO } from 'date-fns'
 import { createMetaData } from '@/utils/metaData'
 import { Metadata, ResolvingMetadata } from 'next'
+import { cache } from 'react'
+import { StatusCode } from '@/types/responseTypes'
 
-type Props = {
-	params: Promise<{ id: string }>
-	searchParams: Promise<{ viewStartDate?: string }>
+type PageParams = Promise<{ id: string }>
+type PageSearchParams = { viewStartDate?: string }
+type PageProps = {
+	params: PageParams
+	searchParams: PageSearchParams
 }
 
+const getBookingDetail = cache(async (id: string) => {
+	const result = await getBookingByIdAction(id)
+	if (
+		result.status === StatusCode.OK &&
+		result.response &&
+		typeof result.response !== 'string'
+	) {
+		return result.response as BookingDetailProps
+	}
+	return null
+})
+
 export async function generateMetadata(
-	{ params, searchParams }: Props,
+	{ params }: { params: PageParams },
 	parent: ResolvingMetadata,
 ): Promise<Metadata> {
-	const id = (await params).id
-	const bookingDetail = await getBookingByIdAction(id)
+	const { id } = await params
+	const bookingDetail = await getBookingDetail(id)
 
 	let title = `予約編集 ${id} | あしたぼホームページ`
 	let description = `コマ表の予約編集 (${id}) です。`
 
-	if (bookingDetail.status === 200 && bookingDetail.response) {
-		const bookingData = bookingDetail.response as BookingDetailProps
+	if (bookingDetail) {
+		const bookingData = bookingDetail
 		title = bookingData.registName
 			? `${bookingData.registName}の予約 | あしたぼホームページ`
 			: `予約編集 ${id} | あしたぼホームページ`
@@ -45,28 +61,19 @@ export async function generateMetadata(
 	})
 }
 
-const Page = async ({ params, searchParams }: Props) => {
+const Page = async ({ params, searchParams }: PageProps) => {
 	return (
 		<AuthPage requireProfile={true}>
 			{async (authResult) => {
 				const session = authResult.session!
-				const { id } = await params
-
-				let bookingDetailProps: BookingDetailProps
-				const bookingDetailResult = await getBookingByIdAction(id)
-
-				if (bookingDetailResult.status === 200) {
-					bookingDetailProps = bookingDetailResult.response
-				} else {
-					return <DetailNotFoundPage />
-				}
-				if (!bookingDetailProps) {
+				const bookingDetail = await getBookingDetail((await params).id)
+				if (!bookingDetail) {
 					return <DetailNotFoundPage />
 				}
 
 				// Fetch calendar data based on viewStartDate
 				const viewDayMax = 7
-				const { viewStartDate } = await searchParams
+				const { viewStartDate } = searchParams
 				const initialViewDayDate = viewStartDate
 					? parseISO(viewStartDate)
 					: subDays(new Date(), 1)
@@ -91,7 +98,7 @@ const Page = async ({ params, searchParams }: Props) => {
 
 				return (
 					<EditPage
-						bookingDetail={bookingDetailProps}
+						bookingDetail={bookingDetail}
 						session={session}
 						initialBookingResponse={initialBookingResponse}
 						initialViewDay={initialViewDayDate}

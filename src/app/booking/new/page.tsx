@@ -9,7 +9,7 @@ export async function metadata() {
 	})
 }
 
-interface PageProps {
+type PageProps = {
 	searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
@@ -20,8 +20,8 @@ const Page = async ({ searchParams }: PageProps) => {
 				const session = authResult.session!
 				const { date, time } = await searchParams
 
-				const dateParam = date as string | undefined
-				const timeParam = time as string | undefined
+				const dateParam = typeof date === 'string' ? date : undefined
+				const timeParam = typeof time === 'string' ? time : undefined
 
 				return (
 					<CreatePage

@@ -6,24 +6,36 @@ import { getBookingByIdAction } from '@/features/booking/components/actions'
 import { BookingDetailProps, BookingTime } from '@/features/booking/types'
 import { createMetaData } from '@/utils/metaData'
 import { Metadata, ResolvingMetadata } from 'next'
+import { StatusCode } from '@/types/responseTypes'
+import { cache } from 'react'
 
-type Props = {
-	params: Promise<{ id: string }>
-	searchParams: Promise<{ [key: string]: string | string[] | undefined }>
-}
+type PageParams = Promise<{ id: string }>
+type PageProps = { params: PageParams }
+
+const getBookingDetail = cache(async (id: string) => {
+	const result = await getBookingByIdAction(id)
+	if (
+		result.status === StatusCode.OK &&
+		result.response &&
+		typeof result.response !== 'string'
+	) {
+		return result.response as BookingDetailProps
+	}
+	return null
+})
 
 export async function generateMetadata(
-	{ params, searchParams }: Props,
+	{ params }: { params: PageParams },
 	parent: ResolvingMetadata,
 ): Promise<Metadata> {
 	const { id } = await params
-	const bookingDetail = await getBookingByIdAction(id)
+	const bookingDetail = await getBookingDetail(id)
 
 	let title = `予約詳細 ${id} | あしたぼホームページ`
 	let description = `コマ表の予約詳細 (${id}) です。`
 
-	if (bookingDetail.status === 200 && bookingDetail.response) {
-		const bookingData = bookingDetail.response as BookingDetailProps
+	if (bookingDetail) {
+		const bookingData = bookingDetail
 		title = bookingData.registName
 			? `${bookingData.registName}の予約 | あしたぼホームページ`
 			: `予約詳細 ${id} | あしたぼホームページ`
@@ -37,20 +49,12 @@ export async function generateMetadata(
 	})
 }
 
-const Page = async ({ params }: Props) => {
-	let bookingDetailProps: BookingDetailProps
-
-	const id = (await params).id
-	const bookingDetail = await getBookingByIdAction(id)
-	if (bookingDetail.status === 200) {
-		bookingDetailProps = bookingDetail.response
-	} else {
+const Page = async ({ params }: PageProps) => {
+	const bookingDetail = await getBookingDetail((await params).id)
+	if (!bookingDetail) {
 		return <DetailNotFoundPage />
 	}
-	if (!bookingDetailProps) {
-		return <DetailNotFoundPage />
-	}
-	return <DetailPage bookingDetail={bookingDetailProps} />
+	return <DetailPage bookingDetail={bookingDetail} />
 }
 
 export default Page
