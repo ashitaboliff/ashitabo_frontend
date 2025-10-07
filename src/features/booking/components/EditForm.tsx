@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect, useRef, memo } from 'react'
+import { useState, memo } from 'react'
 import { useForm } from 'react-hook-form'
-import { useRouter as useNProgressRouter } from 'next-nprogress-bar' // Alias for clarity
+import { useRouter } from 'next-nprogress-bar' // Alias for clarity
 import { usePathname, useSearchParams } from 'next/navigation' // Import for path and search params
-import * as yup from 'yup'
-import { yupResolver } from '@hookform/resolvers/yup'
+import * as zod from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { addDays, subDays } from 'date-fns'
 import { updateBookingAction, deleteBookingAction } from './actions'
 import {
@@ -13,7 +13,7 @@ import {
 	BookingResponse,
 	BookingTime,
 } from '@/features/booking/types'
-import { ApiError, StatusCode } from '@/types/responseTypes'
+import { ApiError } from '@/types/responseTypes'
 import TextInputField from '@/components/ui/atoms/TextInputField'
 import BookingDetailBox from '@/components/ui/molecules/BookingDetailBox'
 import Popup from '@/components/ui/molecules/Popup'
@@ -23,11 +23,11 @@ import { DateToDayISOstring } from '@/utils'
 import { MdOutlineEditCalendar } from 'react-icons/md'
 import type { Session } from '@/types/session'
 
-const schema = yup.object().shape({
-	bookingDate: yup.string().required('予約日を入力してください'),
-	bookingTime: yup.string().required('予約時間を入力してください'),
-	registName: yup.string().required('バンド名を入力してください'),
-	name: yup.string().required('責任者名を入力してください'),
+const schema = zod.object({
+	bookingDate: zod.string().min(1, '予約日を入力してください'),
+	bookingTime: zod.string().min(1, '予約時間を入力してください'),
+	registName: zod.string().min(1, 'バンド名を入力してください'),
+	name: zod.string().min(1, '責任者名を入力してください'),
 })
 
 interface EditFormPageProps {
@@ -43,7 +43,7 @@ const EditFormPage = ({
 	initialBookingResponse,
 	initialViewDay,
 }: EditFormPageProps) => {
-	const router = useNProgressRouter()
+	const router = useRouter()
 	const [editState, setEditState] = useState<'edit' | 'select'>('select')
 	const [deletePopupOpen, setDeletePopupOpen] = useState(false)
 	const [successPopupOpen, setSuccessPopupOpen] = useState(false)
@@ -197,7 +197,7 @@ const MemoBookingEditForm = memo(
 		initialBookingResponse: BookingResponse | null
 		initialViewDay: Date
 	}) => {
-		const router = useNProgressRouter() // Use aliased router for navigation
+		const router = useRouter() // Use aliased router for navigation
 		const pathname = usePathname() // Get current pathname
 		const searchParams = useSearchParams() // Get current search params
 
@@ -256,7 +256,7 @@ const MemoBookingEditForm = memo(
 			setValue,
 		} = useForm({
 			mode: 'onBlur',
-			resolver: yupResolver(schema),
+			resolver: zodResolver(schema),
 			defaultValues: {
 				bookingDate: bookingDate,
 				bookingTime: BookingTime[bookingTime],

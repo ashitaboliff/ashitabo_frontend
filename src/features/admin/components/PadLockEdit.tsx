@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-import * as yup from 'yup'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as zod from 'zod'
 import { useRouter } from 'next-nprogress-bar'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
@@ -18,9 +18,12 @@ import Popup from '@/components/ui/molecules/Popup'
 import { TiDeleteOutline } from 'react-icons/ti'
 import type { Session } from '@/types/session'
 
-const PadLockSchema = yup.object().shape({
-	name: yup.string().required('鍵管理のための名前を入力してください'),
-	password: yup.number().required('パスワードを入力してください'),
+const PadLockSchema = zod.object({
+	name: zod
+		.string()
+		.min(2, '鍵管理のための名前を入力してください')
+		.max(100, '鍵管理のための名前は100文字以内で入力してください'),
+	password: zod.number().min(0, 'パスワードを入力してください').max(9999),
 })
 
 const PadLockEdit = ({
@@ -57,7 +60,7 @@ const PadLockEdit = ({
 		reset,
 	} = useForm({
 		mode: 'onBlur',
-		resolver: yupResolver(PadLockSchema),
+		resolver: zodResolver(PadLockSchema),
 	})
 
 	const onSubmit = async (data: any) => {

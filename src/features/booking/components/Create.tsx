@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import * as yup from 'yup'
-import { yupResolver } from '@hookform/resolvers/yup'
+import * as zod from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next-nprogress-bar'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
@@ -32,12 +32,12 @@ const generateBookingId = () => {
 	return Math.random().toString(36).slice(2)
 }
 
-const schema = yup.object().shape({
-	bookingDate: yup.string().required('日付を入力してください'),
-	bookingTime: yup.string().required('時間を入力してください'),
-	registName: yup.string().required('バンド名を入力してください'),
-	name: yup.string().required('責任者名を入力してください'),
-	password: yup.string().required('パスワードを入力してください'),
+const schema = zod.object({
+	bookingDate: zod.string().min(1, '日付を入力してください'),
+	bookingTime: zod.string().min(1, '時間を入力してください'),
+	registName: zod.string().min(1, 'バンド名を入力してください'),
+	name: zod.string().min(1, '責任者名を入力してください'),
+	password: zod.string().min(1, 'パスワードを入力してください'),
 })
 
 interface CreatePageProps {
@@ -73,7 +73,7 @@ export default function CreatePage({
 		formState: { errors },
 	} = useForm({
 		mode: 'onBlur',
-		resolver: yupResolver(schema),
+		resolver: zodResolver(schema),
 		defaultValues: {
 			bookingDate: bookingDate.toISOString().split('T')[0],
 			bookingTime: BookingTime[Number(bookingTime)],

@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 import { useSession } from '@/features/auth/hooks/useSession'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next-nprogress-bar'
-import * as yup from 'yup'
-import { yupResolver } from '@hookform/resolvers/yup'
+import * as zod from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { RoleMap, Role, PartOptions, Part } from '@/features/user/types'
 import { ApiError, StatusCode } from '@/types/responseTypes'
 import { generateFiscalYearObject, generateAcademicYear } from '@/utils'
@@ -30,38 +30,61 @@ const yearRegex = `(${validYears.join('|')})`
 
 const expectedYear = generateFiscalYearObject()
 
-const schema = yup.object().shape({
-	name: yup.string().required('名前を入力してください'),
-	studentId: yup.string().when('role', {
-		is: (role: Role) => role === 'STUDENT',
-		then: (schema) =>
-			schema
-				.matches(
-					new RegExp(`^${yearRegex}[A-Za-z](\\d{1}\\d{3}[A-Za-z]|\\d{3})$`),
-					'学籍番号のフォーマットが正しくありません',
-				)
-				.required('学籍番号を入力してください'),
-		otherwise: (schema) => schema.notRequired(),
-	}),
-	expected: yup.mixed().when('role', {
-		is: (role: Role) => role === 'STUDENT',
-		then: (schema) =>
-			schema.required('卒業予定年度を選択してください').oneOf(
-				Object.values(expectedYear).map((year) => year),
-				'卒業予定年度を選択してください',
-			),
-		otherwise: (schema) => schema.notRequired(),
-	}),
-	role: yup
-		.mixed()
-		.oneOf(Object.keys(RoleMap).map((role) => role))
-		.required('どちらかを選択してください'),
-	part: yup
-		.array()
-		.of(yup.string().oneOf(Object.values(PartOptions).map((part) => part)))
-		.required('使用楽器を選択してください')
-		.min(1, '使用楽器を選択してください'),
-})
+const expectedYearValues = Object.values(expectedYear).map((v) => String(v))
+const roleKeys = Object.keys(RoleMap)
+
+const schema = zod
+	.object({
+		name: zod.string().min(1, '名前を入力してください'),
+		role: zod.string().refine((v) => roleKeys.includes(v), {
+			message: 'どちらかを選択してください',
+		}),
+		studentId: zod
+			.string()
+			.regex(
+				new RegExp(`^${yearRegex}[A-Za-z](\\d{1}\\d{3}[A-Za-z]|\\d{3})$`),
+				'学籍番号のフォーマットが正しくありません',
+			)
+			.optional(),
+		expected: zod.string().optional(),
+		part: zod
+			.array(
+				zod
+					.string()
+					.refine(
+						(v) =>
+							Object.values(PartOptions).includes(
+								v as (typeof PartOptions)[keyof typeof PartOptions],
+							),
+						{ message: '使用楽器を選択してください' },
+					),
+			)
+			.min(1, '使用楽器を選択してください'),
+	})
+	.superRefine((data, ctx) => {
+		if (data.role === 'STUDENT') {
+			if (!data.studentId) {
+				ctx.addIssue({
+					code: zod.ZodIssueCode.custom,
+					message: '学籍番号を入力してください',
+					path: ['studentId'],
+				})
+			}
+			if (!data.expected) {
+				ctx.addIssue({
+					code: zod.ZodIssueCode.custom,
+					message: '卒業予定年度を選択してください',
+					path: ['expected'],
+				})
+			} else if (!expectedYearValues.includes(data.expected)) {
+				ctx.addIssue({
+					code: zod.ZodIssueCode.custom,
+					message: '卒業予定年度を選択してください',
+					path: ['expected'],
+				})
+			}
+		}
+	})
 
 const SigninSetting = () => {
 	const router = useRouter()
@@ -79,7 +102,7 @@ const SigninSetting = () => {
 		formState: { errors },
 	} = useForm({
 		mode: 'onBlur',
-		resolver: yupResolver(schema),
+		resolver: zodResolver(schema),
 		defaultValues: {
 			role: 'STUDENT',
 		},

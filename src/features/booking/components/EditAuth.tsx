@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import * as yup from 'yup'
-import { yupResolver } from '@hookform/resolvers/yup'
+import * as zod from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next-nprogress-bar'
 import { Booking } from '@/features/booking/types'
 import { authBookingAction } from './actions'
@@ -13,8 +13,8 @@ import PasswordInputField from '@/components/ui/molecules/PasswordInputField'
 import DetailNotFoundPage from '@/features/booking/components/DetailNotFound'
 import type { Session } from '@/types/session'
 
-const passschema = yup.object({
-	password: yup.string().required('パスワードを入力してください'),
+const passschema = zod.object({
+	password: zod.string().min(1, 'パスワードを入力してください'),
 })
 
 const EditAuthPage = ({
@@ -36,7 +36,7 @@ const EditAuthPage = ({
 		formState: { errors },
 	} = useForm({
 		mode: 'onBlur',
-		resolver: yupResolver(passschema),
+		resolver: zodResolver(passschema),
 	})
 	const handleClickShowPassword = () => setShowPassword((show) => !show)
 	const handleMouseDownPassword = (

@@ -1,15 +1,15 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next-nprogress-bar'
 import { useForm, Controller } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-import * as yup from 'yup'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as zod from 'zod'
 import { eachDayOfInterval, getDay } from 'date-fns'
 import { BookingTime } from '@/features/booking/types'
 import { DateToDayISOstring } from '@/utils'
 import { createBookingBanDateAction } from './action'
-import { ApiError, StatusCode } from '@/types/responseTypes'
+import { ApiError } from '@/types/responseTypes'
 import CustomDatePicker from '@/components/ui/atoms/DatePicker'
 import TextInputField from '@/components/ui/atoms/TextInputField'
 import SelectField from '@/components/ui/atoms/SelectField'
@@ -35,33 +35,47 @@ const dayOfWeek = [
 	{ value: '6', label: '土' },
 ]
 
-const BanBookingSchema = yup.object().shape({
-	type: yup
-		.mixed()
-		.oneOf(BanType.map((type) => type.value))
-		.required('禁止タイプを選択してください'),
-	startDate: yup.date().required('日付を入力してください'),
-	endDate: yup.date().when('type', {
-		is: (type: BanTypeValue) => type === 'regular',
-		then: (schema) => schema.required('日付を入力してください'),
-		otherwise: (schema) => schema.notRequired(),
-	}),
-	startTime: yup.string().required('開始時間を入力してください'),
-	endTime: yup.string().when('type', {
-		is: (type: BanTypeValue) => type !== 'single',
-		then: (schema) => schema.required('終了時間を入力してください'),
-		otherwise: (schema) => schema.notRequired(),
-	}),
-	dayOfWeek: yup.mixed().when('type', {
-		is: (type: BanTypeValue) => type === 'regular',
-		then: (schema) =>
-			schema
-				.oneOf(dayOfWeek.map((day) => day.value))
-				.required('曜日を選択してください'),
-		otherwise: (schema) => schema.notRequired(),
-	}),
-	description: yup.string().required('説明を入力してください'),
-})
+const BanBookingSchema = zod
+	.object({
+		type: zod.enum(['single', 'period', 'regular'], {
+			message: '禁止タイプを選択してください',
+		}),
+		startDate: zod.date().min(new Date(), '過去の日付は選択できません'),
+		endDate: zod.date().optional(),
+		startTime: zod.string().min(1, '開始時間を入力してください'),
+		endTime: zod.string().optional(),
+		dayOfWeek: zod.preprocess(
+			(v) => (v === '' ? undefined : v),
+			zod.enum(['0', '1', '2', '3', '4', '5', '6']).optional(),
+		),
+		description: zod.string().min(1, '説明を入力してください'),
+	})
+	.superRefine((data, ctx) => {
+		if (data.type === 'regular' && !data.endDate) {
+			ctx.addIssue({
+				code: zod.ZodIssueCode.custom,
+				path: ['endDate'],
+				message: '日付を入力してください',
+			})
+		}
+		if (
+			data.type !== 'single' &&
+			(!data.endTime || data.endTime.length === 0)
+		) {
+			ctx.addIssue({
+				code: zod.ZodIssueCode.custom,
+				path: ['endTime'],
+				message: '終了時間を入力してください',
+			})
+		}
+		if (data.type === 'regular' && !data.dayOfWeek) {
+			ctx.addIssue({
+				code: zod.ZodIssueCode.custom,
+				path: ['dayOfWeek'],
+				message: '曜日を選択してください',
+			})
+		}
+	})
 
 const BanBookingCreate = () => {
 	const router = useRouter()
@@ -77,7 +91,7 @@ const BanBookingCreate = () => {
 		watch,
 	} = useForm({
 		mode: 'onBlur',
-		resolver: yupResolver(BanBookingSchema),
+		resolver: zodResolver(BanBookingSchema),
 		defaultValues: {
 			type: 'single',
 		},

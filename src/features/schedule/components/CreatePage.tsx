@@ -3,8 +3,8 @@
 import { useState, useRef } from 'react'
 import { useRouter } from 'next-nprogress-bar'
 import { useForm, Controller } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-import * as yup from 'yup'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as zod from 'zod'
 import { format, eachDayOfInterval } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { DateToDayISOstring } from '@/utils'
@@ -18,21 +18,48 @@ import Popup from '@/components/ui/molecules/Popup'
 import { getUserIdWithNames, createScheduleAction } from './actions'
 import type { Session } from '@/types/session'
 
-const ScheduleCreateSchema = yup.object().shape({
-	startDate: yup.date().required('日付を入力してください'),
-	endDate: yup.date().required('日付を入力してください'),
-	isTimeExtended: yup.boolean(),
-	deadline: yup.date().required('日付を入力してください'),
-	isMentionChecked: yup.boolean(),
-	mention: yup.array().when('isMentionChecked', {
-		is: (isMentionChecked: boolean) => isMentionChecked,
-		then: (schema) =>
-			schema.required('日程調整に参加する部員を選択してください'),
-		otherwise: (schema) => schema.notRequired(),
-	}),
-	title: yup.string().required('タイトルを入力してください'),
-	description: yup.string(),
-})
+const ScheduleCreateSchema = zod
+	.object({
+		startDate: zod.date().min(new Date(), '未来の日付を選択してください'),
+		endDate: zod.date().min(new Date(), '未来の日付を選択してください'),
+		deadline: zod.date().min(new Date(), '未来の日付を選択してください'),
+		isTimeExtended: zod.boolean().default(false),
+		isMentionChecked: zod.boolean().default(false),
+		mention: zod
+			.array(zod.string().min(1, '不正なユーザーが選択されました'))
+			.optional(),
+		title: zod.string().min(1, 'タイトルを入力してください'),
+		description: zod
+			.string()
+			.max(500, '説明は500文字以内で入力してください')
+			.optional()
+			.or(zod.literal('')),
+	})
+	.superRefine((data, ctx) => {
+		if (data.isMentionChecked) {
+			if (!data.mention || data.mention.length === 0) {
+				ctx.addIssue({
+					code: zod.ZodIssueCode.custom,
+					path: ['mention'],
+					message: '日程調整に参加する部員を選択してください',
+				})
+			}
+		}
+		if (data.endDate < data.startDate) {
+			ctx.addIssue({
+				code: zod.ZodIssueCode.custom,
+				path: ['endDate'],
+				message: '終了日は開始日以降の日付を選択してください',
+			})
+		}
+		if (data.deadline > data.startDate) {
+			ctx.addIssue({
+				code: zod.ZodIssueCode.custom,
+				path: ['deadline'],
+				message: '締め切りは開始日以前の日付を選択してください',
+			})
+		}
+	})
 
 interface ScheduleCreatePageProps {
 	session: Session
@@ -61,7 +88,7 @@ const ScheduleCreatePage = ({
 		watch,
 		formState: { errors },
 	} = useForm({
-		resolver: yupResolver(ScheduleCreateSchema),
+		resolver: zodResolver(ScheduleCreateSchema),
 	})
 	const startDate = watch('startDate')
 	const watchMention = watch('mention')

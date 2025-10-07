@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import * as yup from 'yup'
-import { yupResolver } from '@hookform/resolvers/yup'
+import * as zod from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
 import TextInputField from '@/components/ui/atoms/TextInputField'
 import TextareaInputField from '@/components/ui/atoms/TextareaInputField'
@@ -13,13 +13,19 @@ import { PartOptions, Part } from '@/features/user/types'
 
 // import { createMemberRecruitmentAction } from './actions'
 
-const schema = yup.object().shape({
-	bandName: yup.string().required('バンド名を入力してください'),
-	part: yup
-		.array()
-		.of(yup.string())
+const schema = zod.object({
+	bandName: zod.string().min(2).max(100).nonempty('バンド名を入力してください'),
+	part: zod
+		.array(
+			zod.enum(Object.values(PartOptions), {
+				message: '不正なパートが選択されました',
+			}),
+		)
 		.min(1, '少なくとも1つのパートを選択してください'),
-	description: yup.string().max(500, '説明は500文字以内で入力してください'),
+	description: zod
+		.string()
+		.max(500, '説明は500文字以内で入力してください')
+		.optional(),
 })
 
 const MemberRecruitmentForm = () => {
@@ -35,7 +41,7 @@ const MemberRecruitmentForm = () => {
 		handleSubmit,
 		formState: { errors },
 	} = useForm({
-		resolver: yupResolver(schema),
+		resolver: zodResolver(schema),
 	})
 
 	const part = watch('part')

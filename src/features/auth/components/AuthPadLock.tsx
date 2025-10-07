@@ -4,30 +4,18 @@ import Image from 'next/image'
 import { useMemo, useRef, useState } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { useRouter } from 'next-nprogress-bar'
-import * as yup from 'yup'
-import { yupResolver } from '@hookform/resolvers/yup'
+import * as zod from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
 import AuthLoadingIndicator from './AuthLoadingIndicator'
 import { padLockAction } from './actions'
 import { ApiError } from '@/types/responseTypes'
 import { getImageUrl } from '@/lib/r2'
 
-const PasswordSchema = yup.object().shape({
-	digit1: yup
-		.string()
-		.matches(/^\d$/, '0から9の数字を入力してください')
-		.required(),
-	digit2: yup
-		.string()
-		.matches(/^\d$/, '0から9の数字を入力してください')
-		.required(),
-	digit3: yup
-		.string()
-		.matches(/^\d$/, '0から9の数字を入力してください')
-		.required(),
-	digit4: yup
-		.string()
-		.matches(/^\d$/, '0から9の数字を入力してください')
-		.required(),
+const PasswordSchema = zod.object({
+	digit1: zod.string().regex(/^\d$/, '0から9の数字を入力してください'),
+	digit2: zod.string().regex(/^\d$/, '0から9の数字を入力してください'),
+	digit3: zod.string().regex(/^\d$/, '0から9の数字を入力してください'),
+	digit4: zod.string().regex(/^\d$/, '0から9の数字を入力してください'),
 })
 
 type digit = 'digit1' | 'digit2' | 'digit3' | 'digit4'
@@ -92,7 +80,7 @@ const AuthPadLock = ({ csrfToken, callbackUrl }: AuthPadLockProps) => {
 		digit4: string
 	}>({
 		mode: 'onBlur',
-		resolver: yupResolver(PasswordSchema),
+		resolver: zodResolver(PasswordSchema),
 	})
 
 	const handleChange = (
