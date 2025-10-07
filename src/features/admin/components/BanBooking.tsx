@@ -10,7 +10,7 @@ import SelectField from '@/components/ui/atoms/SelectField'
 import Popup from '@/components/ui/molecules/Popup'
 import RadioSortGroup from '@/components/ui/atoms/RadioSortGroup'
 import { BanBooking, BookingTime } from '@/features/booking/types'
-import { ErrorType } from '@/types/responseTypes'
+import { ApiError, StatusCode } from '@/types/responseTypes'
 import { BanBookingSort } from '../types'
 import BanBookingList from './BanBookingList'
 
@@ -25,7 +25,7 @@ const BanBookingPage = () => {
 	const [popupData, setPopupData] = useState<BanBooking | null>()
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 	const [isdeletePopupOpen, setIsDeletePopupOpen] = useState<boolean>(false)
-	const [error, setError] = useState<ErrorType>()
+	const [error, setError] = useState<ApiError>()
 	const [isSuccessPopupOpen, setIsSuccessPopupOpen] = useState<boolean>(false)
 
 	const pageMax = Math.ceil(totalCount / banBookingsPerPage) || 1
@@ -43,7 +43,7 @@ const BanBookingPage = () => {
 		const res = await deleteBanBookingAction({
 			id,
 		})
-		if (res.status === 200) {
+		if (res.ok) {
 			setPopupData(null)
 			setIsPopupOpen(false)
 			setIsDeletePopupOpen(false)
@@ -222,7 +222,7 @@ const BanBookingPage = () => {
 					</div>
 					{error && (
 						<p className="text-error text-center">
-							エラーコード{error.status}:{error.response}
+							エラーコード{error.status}:{error.message}
 						</p>
 					)}
 				</div>

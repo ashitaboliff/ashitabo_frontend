@@ -25,17 +25,10 @@ const fetchGachas = async ([userId, page, perPage, sort]: [
 	totalCount: number
 }> => {
 	const res = await getGachaByUserIdAction({ userId, page, perPage, sort })
-	if (
-		res.status === 200 &&
-		typeof res.response !== 'string' &&
-		res.response.gacha
-	) {
-		return res.response
+	if (res.ok) {
+		return res.data
 	}
-	const errorMessage =
-		typeof res.response === 'string'
-			? res.response
-			: 'Failed to fetch gacha logs'
+	const errorMessage = res.message || 'Failed to fetch gacha logs'
 	throw new Error(errorMessage)
 }
 

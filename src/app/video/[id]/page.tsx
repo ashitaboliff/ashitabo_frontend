@@ -10,31 +10,22 @@ import { getUnifiedAuthState } from '@/features/auth/components/actions'
 import { createMetaData } from '@/utils/metaData'
 import { Metadata, ResolvingMetadata } from 'next'
 import { cache } from 'react'
-import { StatusCode } from '@/types/responseTypes'
 
 type PageParams = Promise<{ id: string }>
 type PageProps = { params: PageParams }
 
 const getPlaylist = cache(async (id: string) => {
 	const res = await getPlaylistByIdAction(id)
-	if (
-		res.status === StatusCode.OK &&
-		res.response &&
-		typeof res.response !== 'string'
-	) {
-		return res.response
+	if (res.ok) {
+		return res.data
 	}
 	return null
 })
 
 const getVideo = cache(async (id: string) => {
 	const res = await getVideoByIdAction(id)
-	if (
-		res.status === StatusCode.OK &&
-		res.response &&
-		typeof res.response !== 'string'
-	) {
-		return res.response
+	if (res.ok) {
+		return res.data
 	}
 	return null
 })

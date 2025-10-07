@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { RoleMap } from '@/features/user/types'
 import InstIcon from '@/components/ui/atoms/InstIcon'
+import type { Session } from '@/types/session'
 
 const ProfileDisplay = ({ session }: { session: Session }) => {
 	const role = session.user.profile?.role ?? 'STUDENT'
@@ -21,9 +22,7 @@ const ProfileDisplay = ({ session }: { session: Session }) => {
 				<div className="text-2xl md:text-4xl font-bold">
 					{session.user.name}
 				</div>
-				<div className="text-sm md:text-base">
-					{RoleMap[role]}
-				</div>
+				<div className="text-sm md:text-base">{RoleMap[role]}</div>
 				<InstIcon part={parts} size={30} />
 			</div>
 		</div>

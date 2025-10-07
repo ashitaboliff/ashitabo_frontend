@@ -7,7 +7,7 @@ export interface BandMemberUserSummary {
 	id: string
 	name: string | null
 	image: string | null
-	user_id?: string | null
+	userId?: string | null
 	profile?: {
 		name?: string | null
 		part?: Part[] | null
@@ -41,7 +41,7 @@ export interface UserWithProfile {
 	id: string
 	name: string | null
 	image: string | null
-	user_id?: string | null
+	userId?: string | null
 	profile?: {
 		name?: string | null
 		part?: Part[] | null

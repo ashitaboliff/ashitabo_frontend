@@ -10,6 +10,7 @@ import Popup from '@/components/ui/molecules/Popup'
 import AddCalendarPopup from '@/components/ui/molecules/AddCalendarPopup'
 import RadioSortGroup from '@/components/ui/atoms/RadioSortGroup'
 import BookingLogList from './BookingLogList'
+import type { Session } from '@/types/session'
 
 interface UserBookingLogsProps {
 	session: Session
@@ -122,12 +123,11 @@ const UserBookingLogs = ({ session }: UserBookingLogsProps) => {
 					>
 						<div className="flex flex-col space-y-2 text-sm">
 							<div className="grid grid-cols-2 gap-2">
-								<div className="font-bold">予約ID:</div> {/* ID を大文字に */}
+								<div className="font-bold">予約ID:</div>
 								<div>{popupData.id}</div>
 								<div className="font-bold">予約日:</div>
 								<div>
 									{format(new Date(popupData.bookingDate), 'yyyy年MM月dd日', {
-										// new Date() でラップ
 										locale: ja,
 									})}
 								</div>
@@ -136,7 +136,6 @@ const UserBookingLogs = ({ session }: UserBookingLogsProps) => {
 								<div className="font-bold">バンド名:</div>
 								<div>{popupData.name}</div>
 								<div className="font-bold">登録者名:</div>{' '}
-								{/* 責任者 -> 登録者名 */}
 								<div>{popupData.registName}</div>
 								<div className="font-bold">作成日:</div>
 								<div>
@@ -144,7 +143,6 @@ const UserBookingLogs = ({ session }: UserBookingLogsProps) => {
 										new Date(popupData.createdAt),
 										'yyyy年MM月dd日 HH:mm:ss',
 										{
-											// new Date() でラップ、時間フォーマット修正
 											locale: ja,
 										},
 									)}
@@ -155,7 +153,6 @@ const UserBookingLogs = ({ session }: UserBookingLogsProps) => {
 										new Date(popupData.updatedAt),
 										'yyyy年MM月dd日 HH:mm:ss',
 										{
-											// new Date() でラップ、時間フォーマット修正
 											locale: ja,
 										},
 									)}
@@ -163,16 +160,15 @@ const UserBookingLogs = ({ session }: UserBookingLogsProps) => {
 							</div>
 							<div className="flex justify-center space-x-2 mt-4">
 								{' '}
-								{/* マージン追加 */}
 								<button
 									type="button"
-									className="btn btn-primary btn-sm" // サイズ調整
+									className="btn btn-primary btn-sm"
 									onClick={() => setIsAddCalendarPopupOpen(true)}
 								>
 									カレンダーに追加
 								</button>
 								<button
-									className="btn btn-outline btn-sm" // サイズ調整
+									className="btn btn-outline btn-sm"
 									onClick={() => {
 										setIsPopupOpen(false)
 									}}

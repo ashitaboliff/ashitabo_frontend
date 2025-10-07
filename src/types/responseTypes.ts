@@ -18,29 +18,33 @@ export enum StatusCode {
 	SERVICE_UNAVAILABLE = 503,
 }
 
-// 統一的な API レスポンス型
-export type ApiResponse<T> =
-	| { status: StatusCode.OK | StatusCode.CREATED; response: T } // 成功レスポンス
-	| { status: StatusCode.NO_CONTENT; response?: null } // データなしの成功レスポンス
-	| {
-			status:
-				| StatusCode.BAD_REQUEST
-				| StatusCode.UNAUTHORIZED
-				| StatusCode.FORBIDDEN
-				| StatusCode.NOT_FOUND
-				| StatusCode.CONFLICT
-			response: string
-	  } // クライアントエラー
-	| {
-			status:
-				| StatusCode.INTERNAL_SERVER_ERROR
-				| StatusCode.BAD_GATEWAY
-				| StatusCode.SERVICE_UNAVAILABLE
-			response: string
-			error?: string
-	  } // サーバーエラー
+export type SuccessStatus =
+	| StatusCode.OK
+	| StatusCode.CREATED
+	| StatusCode.NO_CONTENT
 
-export type ErrorType = {
-	status: number
-	response?: string | null
+export type ErrorStatus =
+	| StatusCode.BAD_REQUEST
+	| StatusCode.UNAUTHORIZED
+	| StatusCode.FORBIDDEN
+	| StatusCode.NOT_FOUND
+	| StatusCode.CONFLICT
+	| StatusCode.INTERNAL_SERVER_ERROR
+	| StatusCode.BAD_GATEWAY
+	| StatusCode.SERVICE_UNAVAILABLE
+
+export type ApiSuccess<T> = {
+	ok: true
+	status: SuccessStatus
+	data: T
 }
+
+export type ApiError = {
+	ok: false
+	status: ErrorStatus
+	message: string
+	details?: unknown
+}
+
+// 統一的な API レスポンス型
+export type ApiResponse<T> = ApiSuccess<T> | ApiError

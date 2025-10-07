@@ -14,9 +14,9 @@ export async function metadata() {
 
 const BookingLog = async () => {
 	const bookingLog = await getAllBookingAction()
-	if (bookingLog.status !== 200) return notFound()
+	if (!bookingLog.ok) return notFound()
 
-	return <LogsPage bookingLog={bookingLog.response} />
+	return <LogsPage bookingLog={bookingLog.data} />
 }
 
 export default BookingLog

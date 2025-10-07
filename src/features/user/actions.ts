@@ -1,4 +1,5 @@
 import { ApiResponse, StatusCode } from '@/types/responseTypes'
+import { failure, noContentResponse } from '@/lib/api/helper'
 
 const buildSignOutUrl = () => {
 	if (typeof window !== 'undefined') {
@@ -22,18 +23,28 @@ export const signOutUser = async (): Promise<ApiResponse<null>> => {
 		})
 
 		if (response.ok || response.status === 302) {
-			return { status: StatusCode.NO_CONTENT, response: null }
+			return noContentResponse()
 		}
 
 		const message = await response.text()
-		return {
-			status: response.status as StatusCode,
-			response: message || 'Failed to sign out',
-		} as ApiResponse<null>
+		let status: StatusCode
+		switch (response.status) {
+			case StatusCode.BAD_REQUEST:
+			case StatusCode.UNAUTHORIZED:
+			case StatusCode.FORBIDDEN:
+			case StatusCode.NOT_FOUND:
+			case StatusCode.CONFLICT:
+				status = response.status
+				break
+			default:
+				status = StatusCode.INTERNAL_SERVER_ERROR
+				break
+		}
+		return failure(status, message || 'Failed to sign out')
 	} catch (error) {
-		return {
-			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: error instanceof Error ? error.message : 'Sign out error',
-		} as ApiResponse<null>
+		return failure(
+			StatusCode.INTERNAL_SERVER_ERROR,
+			error instanceof Error ? error.message : 'Sign out error',
+		)
 	}
 }

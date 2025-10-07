@@ -23,11 +23,10 @@ const fetchBookings = async ([userId, page, perPage, sort]: [
 	'new' | 'old',
 ]) => {
 	const res = await getBookingByUserIdAction({ userId, page, perPage, sort })
-	if (res.status === 200 && typeof res.response !== 'string') {
-		return res.response
+	if (res.ok) {
+		return res.data
 	}
-	const errorMessage =
-		typeof res.response === 'string' ? res.response : 'Failed to fetch bookings'
+	const errorMessage = res.message || 'Failed to fetch bookings'
 	throw new Error(errorMessage)
 }
 

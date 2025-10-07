@@ -7,10 +7,11 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useRouter } from 'next-nprogress-bar'
 import { Booking } from '@/features/booking/types'
 import { authBookingAction } from './actions'
-import { ErrorType } from '@/types/responseTypes'
+import { ApiError } from '@/types/responseTypes'
 import BookingDetailBox from '@/components/ui/molecules/BookingDetailBox'
 import PasswordInputField from '@/components/ui/molecules/PasswordInputField'
 import DetailNotFoundPage from '@/features/booking/components/DetailNotFound'
+import type { Session } from '@/types/session'
 
 const passschema = yup.object({
 	password: yup.string().required('パスワードを入力してください'),
@@ -28,7 +29,7 @@ const EditAuthPage = ({
 	const router = useRouter()
 	const [isLoading, setIsLoading] = useState<boolean>(false) // Changed initial state to false
 	const [showPassword, setShowPassword] = useState<boolean>(false)
-	const [error, setError] = useState<ErrorType>()
+	const [error, setError] = useState<ApiError>()
 	const {
 		register,
 		handleSubmit,
@@ -47,23 +48,25 @@ const EditAuthPage = ({
 	const onSubmit = async (data: { password: string }) => {
 		setIsLoading(true) // Set loading true only during submission
 		try {
-			const response = await authBookingAction({
+			const res = await authBookingAction({
 				userId: session.user.id,
 				bookingId: bookingDetail.id,
 				password: data.password,
 			})
-			if (response.status === 200) {
+			if (res.ok) {
 				handleSetAuth(true)
 				router.push(`/booking/${bookingDetail.id}/edit`)
 			} else {
-				setError(response)
+				setError(res)
 			}
-		} catch (e) {
+		} catch (err) {
 			setError({
+				ok: false,
 				status: 500,
-				response:
-					'このエラーが出た際はわたべに問い合わせてください。' + String(e),
+				message: 'このエラーが出た際はわたべに問い合わせてください。',
+				details: err instanceof Error ? err.message : String(err),
 			})
+			console.error('Error authenticating booking:', err)
 		}
 		setIsLoading(false)
 	}
@@ -128,7 +131,7 @@ const EditAuthPage = ({
 			</form>
 			{error && (
 				<p className="text-sm text-error text-center">
-					エラーコード{error.status}:{error.response}
+					エラーコード{error.status}:{error.message}
 				</p>
 			)}
 		</div>

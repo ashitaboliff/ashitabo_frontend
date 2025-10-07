@@ -18,16 +18,16 @@ const Page = async () => {
 
 				const usersRes = await getUserIdWithNames()
 				let initialUsers: Record<string, string> = {}
-				if (usersRes.status === 200) {
-					initialUsers = usersRes.response.reduce(
+				if (usersRes.ok) {
+					initialUsers = (usersRes.data ?? []).reduce<Record<string, string>>(
 						(acc, user) => {
 							acc[user.id ?? ''] = user.name ?? ''
 							return acc
 						},
-						{} as Record<string, string>,
+						{},
 					)
 				} else {
-					console.error('Failed to fetch mention users:', usersRes.response)
+					console.error('Failed to fetch mention users:', usersRes.message)
 				}
 
 				return (

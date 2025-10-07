@@ -8,7 +8,7 @@ import * as yup from 'yup'
 import { format, eachDayOfInterval } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { DateToDayISOstring } from '@/utils'
-import { ErrorType } from '@/types/responseTypes'
+import { ApiError, StatusCode } from '@/types/responseTypes'
 import ShareButton from '@/components/ui/atoms/ShareButton'
 import CustomDatePicker from '@/components/ui/atoms/DatePicker'
 import TextInputField from '@/components/ui/atoms/TextInputField'
@@ -16,6 +16,7 @@ import TextareaInputField from '@/components/ui/atoms/TextareaInputField'
 import SelectField from '@/components/ui/atoms/SelectField'
 import Popup from '@/components/ui/molecules/Popup'
 import { getUserIdWithNames, createScheduleAction } from './actions'
+import type { Session } from '@/types/session'
 
 const ScheduleCreateSchema = yup.object().shape({
 	startDate: yup.date().required('日付を入力してください'),
@@ -43,7 +44,10 @@ const ScheduleCreatePage = ({
 	initialUsers,
 }: ScheduleCreatePageProps) => {
 	const generateScheduleId = () => {
-		if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+		if (
+			typeof crypto !== 'undefined' &&
+			typeof crypto.randomUUID === 'function'
+		) {
 			return crypto.randomUUID()
 		}
 		return Math.random().toString(36).slice(2)
@@ -66,7 +70,7 @@ const ScheduleCreatePage = ({
 	// const [isLoading, setIsLoading] = useState<boolean>(false) // isLoading for users is removed
 	const [isSubmitLoading, setIsSubmitLoading] = useState<boolean>(false)
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
-	const [error, setError] = useState<ErrorType>()
+	const [error, setError] = useState<ApiError>()
 
 	const [scheduleId] = useState<string>(generateScheduleId())
 
@@ -90,16 +94,10 @@ const ScheduleCreatePage = ({
 			timeExtended: data.isTimeExtended,
 			deadline: DateToDayISOstring(data.deadline),
 		})
-		if (res.status === 201) {
+		if (res.ok) {
 			setIsPopupOpen(true)
 		} else {
-			setError({
-				status: res.status,
-				response:
-					typeof res.response === 'string'
-						? res.response
-						: null,
-			})
+			setError(res)
 		}
 
 		setIsSubmitLoading(false)
@@ -210,7 +208,7 @@ const ScheduleCreatePage = ({
 				</button>
 				{error && (
 					<p className="text-sm text-error text-center">
-						エラーコード{error.status}:{error.response}
+						エラーコード{error.status}:{error.message}
 					</p>
 				)}
 			</form>

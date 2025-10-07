@@ -8,7 +8,7 @@ import {
 	updateUserRoleAction,
 } from './action'
 import { UserDetail, AccountRole } from '@/features/user/types'
-import { ErrorType } from '@/types/responseTypes'
+import { ApiError } from '@/types/responseTypes'
 import Pagination from '@/components/ui/atoms/Pagination'
 import SelectField from '@/components/ui/atoms/SelectField'
 import RadioSortGroup from '@/components/ui/atoms/RadioSortGroup'
@@ -26,7 +26,7 @@ const AdminUserPage = () => {
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 	const [totalCount, setTotalCount] = useState<number>(0)
 	const [isDeletePopupOpen, setIsDeletePopupOpen] = useState<boolean>(false)
-	const [actionError, setActionError] = useState<ErrorType | null>(null)
+	const [actionError, setActionError] = useState<ApiError | null>(null)
 
 	const handlePageChange = (page: number) => {
 		setCurrentPage(page)
@@ -51,7 +51,7 @@ const AdminUserPage = () => {
 		setActionLoading(true)
 		try {
 			const res = await deleteUserAction({ id })
-			if (res.status === 200) {
+			if (res.ok) {
 				setIsPopupOpen(false)
 				setIsDeletePopupOpen(false)
 				await adminRevalidateTagAction('users')
@@ -59,7 +59,13 @@ const AdminUserPage = () => {
 				setActionError(res)
 			}
 		} catch (error) {
-			console.error('Delete error:', error)
+			setActionError({
+				ok: false,
+				status: 500,
+				message: 'ユーザー削除中に予期せぬエラーが発生しました。',
+				details: error instanceof Error ? error.message : String(error),
+			})
+			console.error(error)
 		} finally {
 			setActionLoading(false)
 		}
@@ -72,14 +78,20 @@ const AdminUserPage = () => {
 				id,
 				role,
 			})
-			if (res.status === 200) {
+			if (res.ok) {
 				await adminRevalidateTagAction('users')
 				setIsPopupOpen(false)
 			} else {
 				setActionError(res)
 			}
 		} catch (error) {
-			console.error('Role change error:', error)
+			setActionError({
+				ok: false,
+				status: 500,
+				message: 'ユーザー権限変更中に予期せぬエラーが発生しました。',
+				details: error instanceof Error ? error.message : String(error),
+			})
+			console.error(error)
 		} finally {
 			setActionLoading(false)
 		}

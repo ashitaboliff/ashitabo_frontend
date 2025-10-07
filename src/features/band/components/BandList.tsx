@@ -7,24 +7,16 @@ import BandFormModal from '@/features/band/components/BandFormModal'
 import MemberManagementModal from '@/features/band/components/MemberManagementModal'
 import { getUserBandsAction, deleteBandAction } from './actions'
 import type { BandDetails } from '@/features/band/types'
-import { StatusCode } from '@/types/responseTypes'
+import { ApiError } from '@/types/responseTypes'
 import { FaPlusCircle } from 'react-icons/fa'
 
 // SWR fetcher function
 const fetchUserBands = async () => {
-	const result = await getUserBandsAction()
-	if (result.status === StatusCode.OK && Array.isArray(result.response)) {
-		return result.response
+	const res = await getUserBandsAction()
+	if (res.ok) {
+		return res.data
 	}
-	// Throw an error or return a specific error object for SWR to handle
-	const errorMessage =
-		typeof result.response === 'string'
-			? result.response
-			: 'バンド情報の取得に失敗しました。'
-	const error = new Error(errorMessage)
-	// You might want to attach a status code or more info to the error object
-	// error.info = result;
-	throw error
+	throw res
 }
 
 interface BandListProps {
@@ -37,7 +29,6 @@ interface BandListProps {
 export default function BandList({ currentUserId }: BandListProps) {
 	const {
 		data: bands,
-		error,
 		isLoading,
 		mutate,
 	} = useSWR<BandDetails[]>('userBands', fetchUserBands)
@@ -49,8 +40,7 @@ export default function BandList({ currentUserId }: BandListProps) {
 	const [bandForMemberManagement, setBandForMemberManagement] =
 		useState<BandDetails | null>(null)
 
-	// Local error state for actions, SWR error is for fetching
-	const [actionError, setActionError] = useState<string | null>(null)
+	const [error, setError] = useState<ApiError | null>(null)
 
 	// useEffect(() => { // Replaced by useSWR
 	// 	if (initialBands.length === 0) {
@@ -92,16 +82,12 @@ export default function BandList({ currentUserId }: BandListProps) {
 		) {
 			return
 		}
-		setActionError(null)
-		const result = await deleteBandAction(bandId)
-		if (result.status === StatusCode.NO_CONTENT) {
+		setError(null)
+		const res = await deleteBandAction(bandId)
+		if (res.ok) {
 			mutate() // Trigger SWR revalidation
 		} else {
-			setActionError(
-				typeof result.response === 'string'
-					? result.response
-					: 'バンドの削除に失敗しました。',
-			)
+			setError(res)
 		}
 	}
 
@@ -115,7 +101,7 @@ export default function BandList({ currentUserId }: BandListProps) {
 	}
 
 	// Display action error if any
-	if (actionError) {
+	if (error) {
 		// This could be displayed alongside the list or as a more prominent message
 		// For now, let's add it above the list.
 		// Consider using a toast notification system for better UX.
@@ -123,8 +109,10 @@ export default function BandList({ currentUserId }: BandListProps) {
 
 	return (
 		<div>
-			{actionError && (
-				<div className="alert alert-error mb-4">操作エラー: {actionError}</div>
+			{error && (
+				<div className="alert alert-error mb-4">
+					操作エラー: {error.message}
+				</div>
 			)}
 			<div className="mb-6 text-right">
 				<button

@@ -6,7 +6,7 @@ import GachaResult from './GachaResult'
 import { MAX_GACHA_PLAYS_PER_DAY } from '@/features/gacha/components/config/gachaConfig'
 import { useGachaData } from '@/features/gacha/context/GachaDataContext'
 import Popup from '@/components/ui/molecules/Popup'
-import { Session } from '@/types/session'
+import type { Session } from '@/types/session'
 
 interface GachaMainPopupProps {
 	session: Session

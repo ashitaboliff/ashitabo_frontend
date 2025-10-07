@@ -9,7 +9,7 @@ import { eachDayOfInterval, getDay } from 'date-fns'
 import { BookingTime } from '@/features/booking/types'
 import { DateToDayISOstring } from '@/utils'
 import { createBookingBanDateAction } from './action'
-import { ErrorType } from '@/types/responseTypes'
+import { ApiError, StatusCode } from '@/types/responseTypes'
 import CustomDatePicker from '@/components/ui/atoms/DatePicker'
 import TextInputField from '@/components/ui/atoms/TextInputField'
 import SelectField from '@/components/ui/atoms/SelectField'
@@ -66,7 +66,7 @@ const BanBookingSchema = yup.object().shape({
 const BanBookingCreate = () => {
 	const router = useRouter()
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
-	const [error, setError] = useState<ErrorType>()
+	const [error, setError] = useState<ApiError>()
 
 	const {
 		register,
@@ -92,7 +92,7 @@ const BanBookingCreate = () => {
 				startTime: Number(data.startTime),
 				description: data.description,
 			})
-			if (res.status === 201) {
+			if (res.ok) {
 				reset()
 				setIsPopupOpen(true)
 			} else {
@@ -105,7 +105,7 @@ const BanBookingCreate = () => {
 				endTime: Number(data.endTime),
 				description: data.description,
 			})
-			if (res.status === 201) {
+			if (res.ok) {
 				reset()
 				setIsPopupOpen(true)
 			} else {
@@ -125,7 +125,7 @@ const BanBookingCreate = () => {
 				endTime: Number(data.endTime),
 				description: data.description,
 			})
-			if (res.status === 201) {
+			if (res.ok) {
 				reset()
 				setIsPopupOpen(true)
 			} else {
@@ -270,7 +270,7 @@ const BanBookingCreate = () => {
 			</form>
 			{error && (
 				<p className="text-sm text-error text-center">
-					エラーコード{error.status}:{error.response}
+					エラーコード{error.status}:{error.message}
 				</p>
 			)}
 			<Popup

@@ -1,6 +1,13 @@
 import { apiRequest } from '@/lib/api'
 import { ApiResponse, StatusCode } from '@/types/responseTypes'
 import {
+	createdResponse,
+	mapSuccess,
+	noContentResponse,
+	okResponse,
+	withFallbackMessage,
+} from '@/lib/api/helper'
+import {
 	BandDetails,
 	BandMemberDetails,
 	BandMemberUserSummary,
@@ -13,79 +20,20 @@ import {
 } from '@/features/band/types'
 import type { Part } from '@/features/user/types'
 
-const mapMemberUser = (input: any): BandMemberUserSummary => ({
-	id: input.id,
-	name: input.name ?? null,
-	image: input.image ?? null,
-	user_id: input.user_id ?? input.id ?? null,
-	profile: input.profile
-		? {
-			name: input.profile.name ?? null,
-			part: input.profile.part ?? null,
-			studentId: input.profile.studentId ?? null,
-			expected: input.profile.expected ?? null,
-			role: input.profile.role ?? null,
-		}
-		: null,
-})
-
-const mapMember = (input: any): BandMemberDetails => ({
-	id: input.id,
-	bandId: input.bandId,
-	userId: input.userId,
-	part: input.part,
-	createdAt: new Date(input.createdAt),
-	updatedAt: new Date(input.updatedAt),
-	user: mapMemberUser(input.user ?? {}),
-})
-
-const mapBandDetails = (input: any): BandDetails => ({
-	id: input.id,
-	name: input.name,
-	description: input.description ?? null,
-	createdAt: new Date(input.createdAt),
-	updatedAt: new Date(input.updatedAt),
-	isDeleted: input.isDeleted ?? false,
-	members: Array.isArray(input.members)
-		? (input.members as any[]).map(mapMember)
-		: [],
-})
-
-const mapUserWithProfile = (input: any): UserWithProfile => ({
-	id: input.id,
-	name: input.name ?? null,
-	image: input.image ?? null,
-	user_id: input.user_id ?? input.id ?? null,
-	profile: input.profile
-		? {
-			name: input.profile.name ?? null,
-			part: input.profile.part ?? null,
-			studentId: input.profile.studentId ?? null,
-			expected: input.profile.expected ?? null,
-			role: input.profile.role ?? null,
-		}
-		: null,
-})
-
 export const getBandDetailsAction = async (
 	bandId: string,
 ): Promise<ApiResponse<BandDetails>> => {
 	const res = await apiRequest<BandDetails>(`/band/${bandId}`, {
 		method: 'GET',
 		cache: 'no-store',
+		next: { tags: ['bands', `band:${bandId}`] },
 	})
 
-	if (
-		res.status === StatusCode.OK &&
-		typeof res.response !== 'string'
-	) {
-		return {
-			status: res.status,
-			response: mapBandDetails(res.response),
-		}
+	if (!res.ok) {
+		return withFallbackMessage(res, 'バンド情報の取得に失敗しました。')
 	}
 
-	return res as ApiResponse<BandDetails>
+	return okResponse(res.data)
 }
 
 export const getUserBandsAction = async (): Promise<
@@ -94,19 +42,14 @@ export const getUserBandsAction = async (): Promise<
 	const res = await apiRequest<BandDetails[]>('/band/me', {
 		method: 'GET',
 		cache: 'no-store',
+		next: { tags: ['band-me'] },
 	})
 
-	if (
-		res.status === StatusCode.OK &&
-		Array.isArray(res.response)
-	) {
-		return {
-			status: res.status,
-			response: res.response.map(mapBandDetails),
-		}
+	if (!res.ok) {
+		return withFallbackMessage(res, '所属バンド一覧の取得に失敗しました。')
 	}
 
-	return res as ApiResponse<BandDetails[]>
+	return okResponse(res.data)
 }
 
 export const createBandAction = async (
@@ -118,32 +61,27 @@ export const createBandAction = async (
 		body: { name },
 	})
 
-	if (
-		res.status === StatusCode.CREATED &&
-		res.response &&
-		typeof res.response !== 'string'
-	) {
-		const details = await getBandDetailsAction(res.response.id)
-		if (
-			details.status === StatusCode.OK &&
-			details.response &&
-			typeof details.response !== 'string'
-		) {
-			return {
-				status: StatusCode.CREATED,
-				response: details.response,
-			}
-		}
-		return details as CreateBandResponse
+	if (!res.ok) {
+		return withFallbackMessage(res, 'バンドの作成に失敗しました。')
 	}
 
-	return {
-		status: res.status as StatusCode,
-		response:
-			typeof res.response === 'string'
-				? res.response
-				: 'バンドの作成に失敗しました。',
-	} as CreateBandResponse
+	if (!res.data?.id) {
+		return withFallbackMessage(
+			{
+				ok: false,
+				status: StatusCode.INTERNAL_SERVER_ERROR,
+				message: '',
+			},
+			'作成したバンドの取得に失敗しました。',
+		)
+	}
+
+	const details = await getBandDetailsAction(res.data.id)
+	if (!details.ok) {
+		return details
+	}
+
+	return createdResponse(details.data)
 }
 
 export const updateBandAction = async (
@@ -156,42 +94,34 @@ export const updateBandAction = async (
 		body: { name },
 	})
 
-	if (res.status === StatusCode.NO_CONTENT) {
-		const details = await getBandDetailsAction(bandId)
-		if (
-			details.status === StatusCode.OK &&
-			details.response &&
-			typeof details.response !== 'string'
-		) {
-			return {
-				status: StatusCode.OK,
-				response: details.response,
-			}
-		}
-		return details as UpdateBandResponse
+	if (!res.ok) {
+		return withFallbackMessage(res, 'バンドの更新に失敗しました。')
 	}
 
-	return {
-		status: res.status as StatusCode,
-		response:
-			typeof res.response === 'string'
-				? res.response
-				: 'バンドの更新に失敗しました。',
-	} as UpdateBandResponse
+	if (res.status === StatusCode.NO_CONTENT) {
+		return getBandDetailsAction(bandId)
+	}
+
+	const details = await getBandDetailsAction(bandId)
+	if (!details.ok) {
+		return details
+	}
+
+	return okResponse(details.data)
 }
 
 export const deleteBandAction = async (
 	bandId: string,
 ): Promise<ApiResponse<null>> => {
-	const res = await apiRequest(`/band/${bandId}`, {
+	const res = await apiRequest<null>(`/band/${bandId}`, {
 		method: 'DELETE',
 	})
 
-	if (res.status === StatusCode.NO_CONTENT) {
-		return { status: StatusCode.NO_CONTENT, response: null }
+	if (!res.ok) {
+		return withFallbackMessage(res, 'バンドの削除に失敗しました。')
 	}
 
-	return res as ApiResponse<null>
+	return noContentResponse()
 }
 
 export const addBandMemberAction = async (
@@ -199,58 +129,46 @@ export const addBandMemberAction = async (
 	userId: string,
 	part: Part,
 ): Promise<AddBandMemberResponse> => {
-	const res = await apiRequest(`/band/${bandId}/members`, {
+	const res = await apiRequest<null>(`/band/${bandId}/members`, {
 		method: 'POST',
 		body: { userId, part },
 	})
 
-	if (res.status === StatusCode.CREATED) {
-		return { status: StatusCode.CREATED, response: null }
+	if (!res.ok) {
+		return withFallbackMessage(res, 'メンバーの追加に失敗しました。')
 	}
 
-	return {
-		status: res.status as StatusCode,
-		response:
-			typeof res.response === 'string'
-				? res.response
-				: 'メンバーの追加に失敗しました。',
-	} as AddBandMemberResponse
+	return createdResponse(null)
 }
 
 export const updateBandMemberAction = async (
 	bandMemberId: string,
 	part: Part,
 ): Promise<UpdateBandMemberResponse> => {
-	const res = await apiRequest(`/band/members/${bandMemberId}`, {
+	const res = await apiRequest<null>(`/band/members/${bandMemberId}`, {
 		method: 'PUT',
 		body: { part },
 	})
 
-	if (res.status === StatusCode.NO_CONTENT) {
-		return { status: StatusCode.OK, response: null }
+	if (!res.ok) {
+		return withFallbackMessage(res, 'メンバーの更新に失敗しました。')
 	}
 
-	return {
-		status: res.status as StatusCode,
-		response:
-			typeof res.response === 'string'
-				? res.response
-				: 'メンバーの更新に失敗しました。',
-	} as UpdateBandMemberResponse
+	return okResponse(null)
 }
 
 export const removeBandMemberAction = async (
 	bandMemberId: string,
 ): Promise<RemoveBandMemberResponse> => {
-	const res = await apiRequest(`/band/members/${bandMemberId}`, {
+	const res = await apiRequest<null>(`/band/members/${bandMemberId}`, {
 		method: 'DELETE',
 	})
 
-	if (res.status === StatusCode.NO_CONTENT) {
-		return { status: StatusCode.NO_CONTENT, response: null }
+	if (!res.ok) {
+		return withFallbackMessage(res, 'メンバーの削除に失敗しました。')
 	}
 
-	return res as RemoveBandMemberResponse
+	return noContentResponse()
 }
 
 export const getAvailablePartsAction = async (): Promise<
@@ -258,19 +176,15 @@ export const getAvailablePartsAction = async (): Promise<
 > => {
 	const res = await apiRequest<Part[]>('/band/parts', {
 		method: 'GET',
+		cache: 'force-cache',
+		next: { revalidate: 86400, tags: ['band-parts'] },
 	})
 
-	if (
-		res.status === StatusCode.OK &&
-		Array.isArray(res.response)
-	) {
-		return {
-			status: res.status,
-			response: res.response,
-		}
-	}
-
-	return res as ApiResponse<Part[]>
+	return mapSuccess(
+		res,
+		(payload) => payload ?? [],
+		'パート一覧の取得に失敗しました。',
+	)
 }
 
 export const searchUsersForBandAction = async (
@@ -279,22 +193,13 @@ export const searchUsersForBandAction = async (
 ): Promise<ApiResponse<UserWithProfile[]>> => {
 	const res = await apiRequest<UserWithProfile[]>('/band/search-users', {
 		method: 'GET',
-		searchParams: {
-			query,
-			part,
-		},
+		searchParams: { query, part },
 		cache: 'no-store',
 	})
 
-	if (
-		res.status === StatusCode.OK &&
-		Array.isArray(res.response)
-	) {
-		return {
-			status: res.status,
-			response: res.response.map(mapUserWithProfile),
-		}
+	if (!res.ok) {
+		return withFallbackMessage(res, 'ユーザーの検索に失敗しました。')
 	}
 
-	return res as ApiResponse<UserWithProfile[]>
+	return okResponse(res.data)
 }

@@ -5,9 +5,11 @@ import VideoListPage from '@/features/video/components/VideoListPage'
 import { Suspense } from 'react'
 import { searchYoutubeDetailsAction } from '@/features/video/components/actions'
 import { YoutubeDetail, YoutubeSearchQuery } from '@/features/video/types'
-import { ErrorType } from '@/types/responseTypes'
+import { ApiError } from '@/types/responseTypes'
 
-const parseVideoPageSearchParams = (params: URLSearchParams): YoutubeSearchQuery => {
+const parseVideoPageSearchParams = (
+	params: URLSearchParams,
+): YoutubeSearchQuery => {
 	const defaultQuery: YoutubeSearchQuery = {
 		liveOrBand: 'band',
 		bandName: '',
@@ -41,11 +43,11 @@ type VideoPageProps = {
 const Page = async ({ searchParams: params }: VideoPageProps) => {
 	const queryParams = new URLSearchParams()
 	for (const [key, value] of Object.entries(await params)) {
-			if (typeof value === 'string') {
-				queryParams.set(key, value)
-			} else if (Array.isArray(value)) {
-				value.forEach((v) => queryParams.append(key, v))
-			}
+		if (typeof value === 'string') {
+			queryParams.set(key, value)
+		} else if (Array.isArray(value)) {
+			value.forEach((v) => queryParams.append(key, v))
+		}
 	}
 
 	const currentQuery = parseVideoPageSearchParams(queryParams)
@@ -53,20 +55,17 @@ const Page = async ({ searchParams: params }: VideoPageProps) => {
 
 	let initialYoutubeDetails: YoutubeDetail[] = []
 	let initialPageMax = 1
-	let initialError: ErrorType | undefined = undefined
+	let initialError: ApiError | undefined = undefined
 
 	const res = await searchYoutubeDetailsAction(currentQuery)
 
-	if (res.status === 200) {
-		initialYoutubeDetails = res.response.results
+	if (res.ok) {
+		initialYoutubeDetails = res.data.results
 		initialPageMax =
-			Math.ceil(res.response.totalCount / currentQuery.videoPerPage) || 1
+			Math.ceil(res.data.totalCount / currentQuery.videoPerPage) || 1
 	} else {
-		initialError = {
-			status: res.status,
-			response: String(res.response),
-		}
-		console.error('Failed to fetch youtube details:', res.response)
+		initialError = res
+		console.error('Failed to fetch youtube details:', res.message)
 	}
 
 	return (

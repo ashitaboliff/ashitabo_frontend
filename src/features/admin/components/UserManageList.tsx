@@ -19,12 +19,10 @@ const fetchUsers = async ([page, perPage, sort]: [
 	'new' | 'old',
 ]) => {
 	const res = await getAllUserDetailsAction({ page, perPage, sort })
-	if (res.status === 200 && typeof res.response !== 'string') {
-		return res.response
+	if (res.ok) {
+		return res.data
 	}
-	const errorMessage =
-		typeof res.response === 'string' ? res.response : 'Failed to fetch users'
-	throw new Error(errorMessage)
+	throw res
 }
 const UserManageList = ({
 	currentPage,

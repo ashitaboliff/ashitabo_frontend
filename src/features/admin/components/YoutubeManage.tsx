@@ -10,7 +10,7 @@ import {
 	revalidateYoutubeTag,
 } from '@/features/video/components/actions'
 import { Playlist } from '@/features/video/types'
-import { ErrorType } from '@/types/responseTypes'
+import { ApiError, StatusCode } from '@/types/responseTypes'
 import Pagination from '@/components/ui/atoms/Pagination'
 import SelectField from '@/components/ui/atoms/SelectField'
 import Tags from '@/components/ui/atoms/Tags'
@@ -24,7 +24,7 @@ const YoutubeManagement = ({
 	isAccessToken: boolean
 }) => {
 	const router = useRouter()
-	const [error, setError] = useState<ErrorType>()
+	const [error, setError] = useState<ApiError>()
 	const [isSuccessPopupOpen, setIsSuccessPopupOpen] = useState<boolean>(false)
 
 	const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -46,8 +46,8 @@ const YoutubeManagement = ({
 
 	const onAuth = async () => {
 		const url = await getAuthUrl()
-		if (url.status === 200) {
-			window.location.href = url.response
+		if (url.ok) {
+			window.location.href = url.data
 		} else {
 			setError(url)
 		}
@@ -56,7 +56,7 @@ const YoutubeManagement = ({
 	const onPlaylist = async () => {
 		setIsLoading(true)
 		const res = await createPlaylistAction()
-		if (res.status === 200) {
+		if (res.ok) {
 			setIsSuccessPopupOpen(true)
 		} else {
 			setError(res)
@@ -102,7 +102,7 @@ const YoutubeManagement = ({
 			</div>
 			{error && (
 				<p className="text-error text-center">
-					エラーコード{error.status}:{error.response}
+					エラーコード{error.status}:{error.message}
 				</p>
 			)}
 

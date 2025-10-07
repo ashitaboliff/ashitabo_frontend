@@ -7,6 +7,7 @@ import { ja } from 'date-fns/locale'
 import { YoutubeDetail, liveOrBand } from '@/features/video/types'
 import Tags from '@/components/ui/atoms/Tags'
 import TagEditPopup from '@/features/video/components/TagEditPopup'
+import type { Session } from '@/types/session'
 
 const VideoItem = ({
 	session,

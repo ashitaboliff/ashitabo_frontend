@@ -3,14 +3,16 @@
 import useSWR from 'swr'
 import { getUnifiedAuthState } from '@/features/auth/components/actions'
 import { UnifiedAuthResult } from '@/features/auth/types'
-import { Session } from '@/types/session'
+import type { Session } from '@/types/session'
 
 export interface UseSessionResult {
 	data: Session | null
 	status: 'loading' | 'authenticated' | 'unauthenticated'
 	error?: Error
 	update: (arg?: unknown) => Promise<Session | null>
-	mutate: (data?: UnifiedAuthResult | Promise<UnifiedAuthResult>) => Promise<UnifiedAuthResult | undefined>
+	mutate: (
+		data?: UnifiedAuthResult | Promise<UnifiedAuthResult>,
+	) => Promise<UnifiedAuthResult | undefined>
 	unified?: UnifiedAuthResult
 }
 
@@ -31,8 +33,8 @@ export const useSession = (): UseSessionResult => {
 	const status: UseSessionResult['status'] = isLoading
 		? 'loading'
 		: session
-		  ? 'authenticated'
-		  : 'unauthenticated'
+			? 'authenticated'
+			: 'unauthenticated'
 
 	const update: UseSessionResult['update'] = async () => {
 		const updated = await mutate(fetchUnified(), { revalidate: true })

@@ -7,7 +7,7 @@ import { useRouter } from 'next-nprogress-bar'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { RoleMap, Role, PartOptions, Part } from '@/features/user/types'
-import { ErrorType } from '@/types/responseTypes'
+import { ApiError, StatusCode } from '@/types/responseTypes'
 import { generateFiscalYearObject, generateAcademicYear } from '@/utils'
 import AuthLoadingIndicator from './AuthLoadingIndicator'
 import TextInputField from '@/components/ui/atoms/TextInputField'
@@ -32,7 +32,7 @@ const expectedYear = generateFiscalYearObject()
 
 const schema = yup.object().shape({
 	name: yup.string().required('名前を入力してください'),
-	student_id: yup.string().when('role', {
+	studentId: yup.string().when('role', {
 		is: (role: Role) => role === 'STUDENT',
 		then: (schema) =>
 			schema
@@ -68,7 +68,7 @@ const SigninSetting = () => {
 	const session = useSession()
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [loadingMessage, setLoadingMessage] = useState<string>('処理中です...')
-	const [error, setIsError] = useState<ErrorType>()
+	const [error, setIsError] = useState<ApiError>()
 	const [popupOpen, setPopupOpen] = useState<boolean>(false)
 
 	const {
@@ -87,7 +87,7 @@ const SigninSetting = () => {
 
 	const watchPart = watch('part', [])
 	const watchRole = watch('role')
-	const watchStudentId = watch('student_id')
+	const watchStudentId = watch('studentId')
 
 	useEffect(() => {
 		if (watchStudentId && watchRole === 'STUDENT') {
@@ -137,14 +137,16 @@ const SigninSetting = () => {
 
 		if (sessionStatus === 'no-session') {
 			setIsError({
-				status: 401,
-				response: 'ログイン情報がありません。再度ログインしてください。',
+				ok: false,
+				status: StatusCode.UNAUTHORIZED,
+				message: 'ログイン情報がありません。再度ログインしてください。',
 			})
 			// router.push('/auth/signin'); // 必要に応じてサインインページへリダイレクト
 		} else if (sessionStatus === 'profile') {
 			setIsError({
-				status: 403,
-				response:
+				ok: false,
+				status: StatusCode.FORBIDDEN,
+				message:
 					'プロフィールは既に作成されています。編集ページをご利用ください。',
 			})
 			router.push('/user/edit')
@@ -153,8 +155,9 @@ const SigninSetting = () => {
 			const userId = session.data?.user.id || ''
 			if (!userId) {
 				setIsError({
-					status: 401,
-					response: 'ユーザーIDが取得できませんでした。',
+					ok: false,
+					status: StatusCode.UNAUTHORIZED,
+					message: 'ユーザーIDが取得できませんでした。',
 				})
 				setIsLoading(false)
 				return
@@ -164,24 +167,21 @@ const SigninSetting = () => {
 					userId,
 					body: data,
 				})
-				if (res.status === 201) {
+				if (res.ok) {
 					await session.update({ triggerUpdate: Date.now() })
 					setPopupOpen(true)
 				} else {
-					setIsError({
-						status: res.status,
-						response:
-							typeof res.response === 'string'
-								? res.response
-								: 'プロフィール作成に失敗しました。',
-					})
+					setIsError(res)
 				}
 			} catch (error) {
 				setIsError({
+					ok: false,
 					status: 500,
-					response:
+					message:
 						'エラーが発生しました、このエラーが何度も発生する場合はわたべにお問い合わせください',
+					details: error instanceof Error ? error.message : String(error),
 				})
+				console.error('Error during profile creation:', error)
 			}
 		}
 		setIsLoading(false)
@@ -254,14 +254,14 @@ const SigninSetting = () => {
 					<>
 						<TextInputField
 							type="text"
-							register={register('student_id')}
+							register={register('studentId')}
 							label="学籍番号"
 							infoDropdown={
 								<>
 									信州大学および長野県立大学の学籍番号のフォーマットに対応しています。
 								</>
 							}
-							errorMessage={errors.student_id?.message}
+							errorMessage={errors.studentId?.message}
 						/>
 
 						<SelectField
@@ -295,7 +295,7 @@ const SigninSetting = () => {
 			</form>
 			{error && (
 				<p className="text-sm text-error text-center">
-					エラーコード{error.status}:{error.response}
+					エラーコード{error.status}:{error.message}
 				</p>
 			)}
 			<Popup

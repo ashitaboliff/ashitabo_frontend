@@ -31,11 +31,11 @@ const UserSelectPopup = ({
 	useEffect(() => {
 		const fetchUsers = async () => {
 			const response = await getAllUsersForSelectAction()
-			if (response.status === 200) {
-				setUsers(response.response)
-				setAllUsers(response.response)
+			if (response.ok) {
+				setUsers(response.data ?? [])
+				setAllUsers(response.data ?? [])
 			} else {
-				console.error('ユーザーの取得に失敗しました')
+				console.error('ユーザーの取得に失敗しました', response.message)
 			}
 		}
 		fetchUsers()

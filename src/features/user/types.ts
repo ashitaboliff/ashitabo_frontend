@@ -55,20 +55,20 @@ export const AccountRoleMap: Record<AccountRole, string> = {
 
 export interface Profile {
 	id: string
-	user_id: string
+	userId: string
 	name?: string | null
-	student_id?: string | null
+	studentId?: string | null
 	expected?: string | null
-	created_at?: Date
-	updated_at?: Date
+	createdAt?: Date
+	updatedAt?: Date
 	role: Role
 	part: Part[]
-	is_deleted?: boolean
+	isDeleted?: boolean
 }
 
 export interface User {
 	id: string
-	user_id: string | null
+	userId: string | null
 	name: string | null
 	role: AccountRole | null
 	password: string | null

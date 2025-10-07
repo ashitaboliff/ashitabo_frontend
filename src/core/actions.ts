@@ -1,5 +1,6 @@
 import { apiRequest } from '@/lib/api'
-import { ApiResponse, StatusCode } from '@/types/responseTypes'
+import { ApiResponse } from '@/types/responseTypes'
+import { mapSuccess, withFallbackMessage } from '@/lib/api/helper'
 import { Part } from '@/features/user/types'
 
 export interface UserForSelectProfile {
@@ -25,8 +26,8 @@ export const getBookingIdAction = async (): Promise<string[]> => {
 		cache: 'no-store',
 	})
 
-	if (res.status === StatusCode.OK && Array.isArray(res.response)) {
-		return res.response
+	if (res.ok && Array.isArray(res.data)) {
+		return res.data
 	}
 	return []
 }
@@ -36,8 +37,8 @@ export const getYoutubeIdAction = async (): Promise<string[]> => {
 		method: 'GET',
 		cache: 'no-store',
 	})
-	if (res.status === StatusCode.OK && Array.isArray(res.response)) {
-		return res.response
+	if (res.ok && Array.isArray(res.data)) {
+		return res.data
 	}
 	return []
 }
@@ -48,9 +49,9 @@ const mapUserForSelect = (input: any): UserForSelect => ({
 	image: input.image ?? null,
 	profile: input.profile
 		? {
-			name: input.profile.name ?? null,
-			part: input.profile.part ?? null,
-		}
+				name: input.profile.name ?? null,
+				part: input.profile.part ?? null,
+			}
 		: null,
 })
 
@@ -62,15 +63,9 @@ export const getAllUsersForSelectAction = async (): Promise<
 		cache: 'no-store',
 	})
 
-	if (
-		res.status === StatusCode.OK &&
-		Array.isArray(res.response)
-	) {
-		return {
-			status: res.status,
-			response: res.response.map(mapUserForSelect),
-		}
-	}
-
-	return res
+	return mapSuccess(
+		res,
+		(payload) => (payload ?? []).map(mapUserForSelect),
+		'ユーザー情報の取得に失敗しました。',
+	)
 }

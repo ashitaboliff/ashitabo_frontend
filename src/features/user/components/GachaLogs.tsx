@@ -8,6 +8,7 @@ import GachaPreviewPopup from '@/features/gacha/components/GachaPreviewPopup'
 import { useGachaPreview } from '@/features/gacha/hooks/useGachaPreview'
 import RadioSortGroup from '@/components/ui/atoms/RadioSortGroup'
 import GachaLogList from './GachaLogList'
+import type { Session } from '@/types/session'
 
 interface UserGachaLogsProps {
 	session: Session

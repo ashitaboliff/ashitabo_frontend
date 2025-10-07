@@ -10,10 +10,7 @@ const resolveBackendBaseUrl = () => {
 	return DEFAULT_BACKEND_BASE_URL
 }
 
-const appendSearchParams = (
-	url: URL,
-	req: NextRequest,
-) => {
+const appendSearchParams = (url: URL, req: NextRequest) => {
 	req.nextUrl.searchParams.forEach((value, key) => {
 		url.searchParams.append(key, value)
 	})
@@ -45,10 +42,7 @@ const buildTargetUrl = (params: string[] = [], request: NextRequest) => {
 type BackendParams = { backend?: string[] }
 type RouteContext = { params: Promise<BackendParams> }
 
-const proxyRequest = async (
-	request: NextRequest,
-	context: RouteContext,
-) => {
+const proxyRequest = async (request: NextRequest, context: RouteContext) => {
 	const { backend } = await context.params
 	const targetUrl = buildTargetUrl(backend ?? [], request)
 	const outgoingHeaders = createProxyHeaders(request)
@@ -86,16 +80,10 @@ const proxyRequest = async (
 const handleError = (error: unknown) => {
 	const message =
 		error instanceof Error ? error.message : 'Unexpected proxy error'
-	return NextResponse.json(
-		{ error: 'ProxyError', message },
-		{ status: 502 },
-	)
+	return NextResponse.json({ error: 'ProxyError', message }, { status: 502 })
 }
 
-export async function GET(
-	req: NextRequest,
-	context: RouteContext,
-) {
+export async function GET(req: NextRequest, context: RouteContext) {
 	try {
 		return await proxyRequest(req, context)
 	} catch (error) {
@@ -103,10 +91,7 @@ export async function GET(
 	}
 }
 
-export async function POST(
-	req: NextRequest,
-	context: RouteContext,
-) {
+export async function POST(req: NextRequest, context: RouteContext) {
 	try {
 		return await proxyRequest(req, context)
 	} catch (error) {
@@ -114,10 +99,7 @@ export async function POST(
 	}
 }
 
-export async function PUT(
-	req: NextRequest,
-	context: RouteContext,
-) {
+export async function PUT(req: NextRequest, context: RouteContext) {
 	try {
 		return await proxyRequest(req, context)
 	} catch (error) {
@@ -125,10 +107,7 @@ export async function PUT(
 	}
 }
 
-export async function PATCH(
-	req: NextRequest,
-	context: RouteContext,
-) {
+export async function PATCH(req: NextRequest, context: RouteContext) {
 	try {
 		return await proxyRequest(req, context)
 	} catch (error) {
@@ -136,10 +115,7 @@ export async function PATCH(
 	}
 }
 
-export async function DELETE(
-	req: NextRequest,
-	context: RouteContext,
-) {
+export async function DELETE(req: NextRequest, context: RouteContext) {
 	try {
 		return await proxyRequest(req, context)
 	} catch (error) {
@@ -147,10 +123,7 @@ export async function DELETE(
 	}
 }
 
-export async function OPTIONS(
-	req: NextRequest,
-	context: RouteContext,
-) {
+export async function OPTIONS(req: NextRequest, context: RouteContext) {
 	try {
 		return await proxyRequest(req, context)
 	} catch (error) {
@@ -158,10 +131,7 @@ export async function OPTIONS(
 	}
 }
 
-export async function HEAD(
-	req: NextRequest,
-	context: RouteContext,
-) {
+export async function HEAD(req: NextRequest, context: RouteContext) {
 	try {
 		return await proxyRequest(req, context)
 	} catch (error) {

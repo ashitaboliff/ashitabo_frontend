@@ -1,5 +1,12 @@
 import { apiRequest } from '@/lib/api'
 import { ApiResponse, StatusCode } from '@/types/responseTypes'
+import {
+	createdResponse,
+	mapSuccess,
+	noContentResponse,
+	okResponse,
+	withFallbackMessage,
+} from '@/lib/api/helper'
 import { Booking, BookingLog, BookingResponse } from '@/features/booking/types'
 
 type BookingPayload = {
@@ -10,7 +17,21 @@ type BookingPayload = {
 	isDeleted?: boolean
 }
 
-const mapBooking = (input: any): Booking => ({
+interface RawBookingData {
+	id: string
+	userId: string
+	createdAt: string
+	updatedAt: string
+	bookingDate: string
+	bookingTime: number
+	registName: string
+	name: string
+	isDeleted?: boolean
+}
+
+type RawBookingResponse = Record<string, Record<string, RawBookingData | null>>
+
+const mapBooking = (input: RawBookingData): Booking => ({
 	id: input.id,
 	userId: input.userId,
 	createdAt: new Date(input.createdAt),
@@ -22,16 +43,20 @@ const mapBooking = (input: any): Booking => ({
 	isDeleted: input.isDeleted ?? false,
 })
 
-const mapBookingResponse = (input: any): BookingResponse => {
+const mapBookingResponse = (
+	input: RawBookingResponse | null,
+): BookingResponse => {
+	if (!input) {
+		return {}
+	}
+
 	const result: BookingResponse = {}
-	Object.entries(input ?? {}).forEach(([date, timeMap]) => {
+	Object.entries(input).forEach(([date, timeMap]) => {
 		result[date] = {}
-		Object.entries(timeMap as Record<string, any>).forEach(
-			([timeKey, booking]) => {
-				const timeIndex = Number(timeKey)
-				result[date][timeIndex] = booking ? mapBooking(booking) : null
-			},
-		)
+		Object.entries(timeMap ?? {}).forEach(([timeKey, booking]) => {
+			const timeIndex = Number(timeKey)
+			result[date][timeIndex] = booking ? mapBooking(booking) : null
+		})
 	})
 	return result
 }
@@ -43,71 +68,61 @@ export const getBookingByDateAction = async ({
 	startDate: string
 	endDate: string
 }): Promise<ApiResponse<BookingResponse>> => {
-	const res = await apiRequest<Record<string, Record<string, any>>>(
-		'/booking',
-		{
-			method: 'GET',
-			searchParams: {
-				start: startDate,
-				end: endDate,
-			},
-			cache: 'no-store',
+	const res = await apiRequest<RawBookingResponse>('/booking', {
+		method: 'GET',
+		searchParams: {
+			start: startDate,
+			end: endDate,
 		},
+		cache: 'no-store',
+	})
+
+	return mapSuccess(
+		res,
+		(payload) => mapBookingResponse(payload ?? {}),
+		'予約情報の取得に失敗しました。',
 	)
-
-	if (
-		res.status === StatusCode.OK &&
-		typeof res.response !== 'string'
-	) {
-		return {
-			status: res.status,
-			response: mapBookingResponse(res.response),
-		}
-	}
-
-	return res
 }
 
 export const getAllBookingAction = async (): Promise<
 	ApiResponse<BookingLog[]>
 > => {
-	const res = await apiRequest<BookingLog[]>('/booking/logs', {
+	const res = await apiRequest<RawBookingData[]>('/booking/logs', {
 		method: 'GET',
 		cache: 'no-store',
 	})
 
-	if (
-		res.status === StatusCode.OK &&
-		Array.isArray(res.response)
-	) {
-		return {
-			status: res.status,
-			response: res.response.map((log) => mapBooking(log)) as BookingLog[],
-		}
-	}
-
-	return res
+	return mapSuccess(
+		res,
+		(rawLogs) => (rawLogs ?? []).map((log) => mapBooking(log)) as BookingLog[],
+		'予約ログの取得に失敗しました。',
+	)
 }
 
 export const getBookingByIdAction = async (
 	bookingId: string,
 ): Promise<ApiResponse<Booking>> => {
-	const res = await apiRequest<Booking>(`/booking/${bookingId}`, {
+	const res = await apiRequest<RawBookingData>(`/booking/${bookingId}`, {
 		method: 'GET',
 		cache: 'no-store',
 	})
 
-	if (
-		res.status === StatusCode.OK &&
-		typeof res.response !== 'string'
-	) {
-		return {
-			status: res.status,
-			response: mapBooking(res.response),
-		}
+	if (!res.ok) {
+		return withFallbackMessage(res, '予約詳細の取得に失敗しました。')
 	}
 
-	return res
+	if (!res.data) {
+		return withFallbackMessage(
+			{
+				ok: false,
+				status: StatusCode.INTERNAL_SERVER_ERROR,
+				message: '',
+			},
+			'予約詳細の取得に失敗しました。',
+		)
+	}
+
+	return okResponse(mapBooking(res.data))
 }
 
 export const getBookingByUserIdAction = async ({
@@ -122,7 +137,7 @@ export const getBookingByUserIdAction = async ({
 	sort: 'new' | 'old'
 }): Promise<ApiResponse<{ bookings: Booking[]; totalCount: number }>> => {
 	const res = await apiRequest<{
-		bookings: Booking[]
+		bookings: RawBookingData[]
 		totalCount: number
 	}>(`/booking/user/${userId}`, {
 		method: 'GET',
@@ -134,20 +149,16 @@ export const getBookingByUserIdAction = async ({
 		cache: 'no-store',
 	})
 
-	if (
-		res.status === StatusCode.OK &&
-		typeof res.response !== 'string'
-	) {
-		return {
-			status: res.status,
-			response: {
-				bookings: res.response.bookings.map((booking) => mapBooking(booking)),
-				totalCount: res.response.totalCount,
-			},
-		}
-	}
-
-	return res
+	return mapSuccess(
+		res,
+		(payload) => ({
+			bookings: ((payload?.bookings ?? []) as RawBookingData[]).map((booking) =>
+				mapBooking(booking),
+			),
+			totalCount: payload?.totalCount ?? 0,
+		}),
+		'ユーザー予約の取得に失敗しました。',
+	)
 }
 
 export const createBookingAction = async ({
@@ -163,7 +174,7 @@ export const createBookingAction = async ({
 	password: string
 	toDay: string
 }): Promise<ApiResponse<string>> => {
-	const res = await apiRequest(`/booking`, {
+	const res = await apiRequest<unknown>('/booking', {
 		method: 'POST',
 		body: {
 			id: bookingId,
@@ -177,17 +188,11 @@ export const createBookingAction = async ({
 		},
 	})
 
-	if (res.status === StatusCode.CREATED) {
-		return { status: StatusCode.CREATED, response: 'created' }
+	if (!res.ok) {
+		return withFallbackMessage(res, '予約の作成に失敗しました。')
 	}
 
-	return {
-		status: res.status as StatusCode,
-		response:
-			typeof res.response === 'string'
-				? res.response
-				: '予約の作成に失敗しました。',
-	} as ApiResponse<string>
+	return createdResponse('created')
 }
 
 export const updateBookingAction = async ({
@@ -199,7 +204,7 @@ export const updateBookingAction = async ({
 	userId: string
 	booking: BookingPayload
 }): Promise<ApiResponse<Booking>> => {
-	const res = await apiRequest(`/booking/${bookingId}`, {
+	const res = await apiRequest<RawBookingData>(`/booking/${bookingId}`, {
 		method: 'PUT',
 		body: {
 			userId,
@@ -211,38 +216,15 @@ export const updateBookingAction = async ({
 		},
 	})
 
+	if (!res.ok) {
+		return withFallbackMessage(res, '予約の更新に失敗しました。')
+	}
+
 	if (res.status === StatusCode.NO_CONTENT) {
-		const detail = await getBookingByIdAction(bookingId)
-		if (
-			detail.status === StatusCode.OK &&
-			detail.response &&
-			typeof detail.response !== 'string'
-		) {
-			return {
-				status: StatusCode.OK,
-				response: detail.response,
-			}
-		}
-		return detail
+		return getBookingByIdAction(bookingId)
 	}
 
-	if (
-		res.status === StatusCode.OK &&
-		typeof res.response !== 'string'
-	) {
-		return {
-			status: StatusCode.OK,
-			response: mapBooking(res.response),
-		}
-	}
-
-	return {
-		status: res.status as StatusCode,
-		response:
-			typeof res.response === 'string'
-				? res.response
-				: '予約の更新に失敗しました。',
-	} as ApiResponse<Booking>
+	return okResponse(mapBooking(res.data))
 }
 
 export const deleteBookingAction = async ({
@@ -252,16 +234,16 @@ export const deleteBookingAction = async ({
 	bookingId: string
 	userId: string
 }): Promise<ApiResponse<null>> => {
-	const res = await apiRequest(`/booking/${bookingId}`, {
+	const res = await apiRequest<null>(`/booking/${bookingId}`, {
 		method: 'DELETE',
 		searchParams: { userId },
 	})
 
-	if (res.status === StatusCode.NO_CONTENT) {
-		return { status: StatusCode.OK, response: null }
+	if (!res.ok) {
+		return withFallbackMessage(res, '予約の削除に失敗しました。')
 	}
 
-	return res as ApiResponse<null>
+	return noContentResponse()
 }
 
 export const authBookingAction = async ({
@@ -273,22 +255,16 @@ export const authBookingAction = async ({
 	userId: string
 	password: string
 }): Promise<ApiResponse<string>> => {
-	const res = await apiRequest(`/booking/${bookingId}/verify`, {
+	const res = await apiRequest<unknown>(`/booking/${bookingId}/verify`, {
 		method: 'POST',
 		body: { userId, password },
 	})
 
-	if (res.status === StatusCode.OK) {
-		return { status: StatusCode.OK, response: 'verified' }
+	if (!res.ok) {
+		return withFallbackMessage(res, '予約の認証に失敗しました。')
 	}
 
-	return {
-		status: res.status as StatusCode,
-		response:
-			typeof res.response === 'string'
-				? res.response
-				: '予約の認証に失敗しました。',
-	} as ApiResponse<string>
+	return okResponse('verified')
 }
 
 export const bookingRevalidateTagAction = async ({
@@ -297,12 +273,12 @@ export const bookingRevalidateTagAction = async ({
 	tag: string
 }): Promise<ApiResponse<null>> => {
 	console.info(`booking revalidate tag placeholder for ${tag}`)
-	return { status: StatusCode.OK, response: null }
+	return okResponse(null)
 }
 
 export const revalidateBookingDataAction = async (): Promise<
 	ApiResponse<null>
 > => {
 	console.info('booking data revalidation placeholder')
-	return { status: StatusCode.OK, response: null }
+	return okResponse(null)
 }

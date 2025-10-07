@@ -8,15 +8,12 @@ const Page = async () => {
 		<AuthPage requireProfile={true} requireRole="ADMIN">
 			{async (authResult) => {
 				const padLocks = await getAllPadLocksAction()
-				if (padLocks.status !== 200) {
+				if (!padLocks.ok) {
 					return notFound()
 				}
 
 				return (
-					<PadLockEdit
-						padLocks={padLocks.response}
-						session={authResult.session!}
-					/>
+					<PadLockEdit padLocks={padLocks.data} session={authResult.session!} />
 				)
 			}}
 		</AuthPage>

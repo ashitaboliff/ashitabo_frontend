@@ -6,6 +6,7 @@ import { compileMDX } from 'next-mdx-remote/rsc'
 import rehypeRaw from 'rehype-raw'
 import fs from 'fs/promises'
 import path from 'path'
+import type { Session } from '@/types/session'
 
 const UsagePage = async ({ session }: { session: Session }) => {
 	const filePath = path.join(

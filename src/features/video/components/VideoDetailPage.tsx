@@ -10,6 +10,7 @@ import Tags from '@/components/ui/atoms/Tags'
 import TagEditPopup from './TagEditPopup'
 
 import { HiOutlineExternalLink } from 'react-icons/hi'
+import type { Session } from '@/types/session'
 
 type Props = {
 	session: Session | null

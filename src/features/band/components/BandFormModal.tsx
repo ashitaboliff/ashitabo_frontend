@@ -9,7 +9,7 @@ import type {
 	CreateBandResponse,
 	UpdateBandResponse,
 } from '@/features/band/types'
-import { StatusCode } from '@/types/responseTypes'
+import { ApiError } from '@/types/responseTypes'
 
 interface BandFormModalProps {
 	isOpen: boolean
@@ -51,6 +51,7 @@ export default function BandFormModal({
 	// However, `useFormState` is designed for a single action.
 	// Let's use a more traditional form handling for conditional actions.
 	const [formMessage, setFormMessage] = useState<string | null>(null)
+	const [error, setError] = useState<ApiError | null>(null)
 	const [isSubmitting, setIsSubmitting] = useState(false)
 
 	useEffect(() => {
@@ -72,34 +73,23 @@ export default function BandFormModal({
 	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
 		setIsSubmitting(true)
-		setFormMessage(null)
+		setError(null)
 
 		const formData = new FormData(event.currentTarget)
-		let result: CreateBandResponse | UpdateBandResponse
+		let res: CreateBandResponse | UpdateBandResponse
 
 		if (isEditing && bandToEdit) {
-			result = await updateBandAction(bandToEdit.id, formData)
+			res = await updateBandAction(bandToEdit.id, formData)
 		} else {
-			result = await createBandAction(formData)
+			res = await createBandAction(formData)
 		}
 		setIsSubmitting(false)
 
-		if (
-			result.status === StatusCode.CREATED ||
-			result.status === StatusCode.OK
-		) {
-			if (result.response && typeof result.response !== 'string') {
-				onFormSubmitSuccess(result.response as BandDetails)
-			}
+		if (res.ok) {
+			onFormSubmitSuccess(res.data as BandDetails)
 			onClose()
 		} else {
-			if (typeof result.response === 'string') {
-				setFormMessage(result.response)
-			} else if ('error' in result && typeof result.error === 'string') {
-				setFormMessage(result.error)
-			} else {
-				setFormMessage('エラーが発生しました。')
-			}
+			setError(res)
 		}
 	}
 
@@ -113,7 +103,7 @@ export default function BandFormModal({
 					<TextInputField
 						label="バンド名"
 						type="text"
-						name="name" // FormDataで取得するためにname属性は重要
+						name="name"
 						// id="bandName" // TextInputFieldPropsにidがないため削除
 						value={bandName}
 						onChange={(e) => setBandName(e.target.value)}
@@ -121,9 +111,8 @@ export default function BandFormModal({
 						required
 						maxLength={100}
 						disabled={isSubmitting}
-						errorMessage={formMessage || undefined} // Pass formMessage to TextInputField
+						errorMessage={error?.message || undefined}
 					/>
-					{/* {formMessage && <p className="text-error text-sm mt-1">{formMessage}</p>} Redundant if TextInputField handles errorMessage */}
 					<div className="modal-action">
 						<button
 							type="button"

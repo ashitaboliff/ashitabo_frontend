@@ -23,7 +23,6 @@ import type {
 	UpdateBandMemberResponse,
 	RemoveBandMemberResponse,
 } from '@/features/band/types'
-import { StatusCode } from '@/types/responseTypes'
 import { FaTrash, FaEdit, FaPlus } from 'react-icons/fa'
 
 interface MemberManagementModalProps {
@@ -35,34 +34,21 @@ interface MemberManagementModalProps {
 
 // SWR Fetcher for available parts
 const fetcherAvailableParts = async () => {
-	const result = await getAvailablePartsAction()
-	if (result.status === StatusCode.OK && Array.isArray(result.response)) {
-		return result.response
+	const res = await getAvailablePartsAction()
+	if (res.ok) {
+		return res.data
 	}
-	throw new Error(
-		typeof result.response === 'string'
-			? result.response
-			: 'パート一覧の取得に失敗しました。',
-	)
+	throw res
 }
 
 // SWR Fetcher for band details
 const fetcherBandDetails = async (bandId: string | null) => {
 	if (!bandId) return null // Do not fetch if bandId is null
-	const result = await getBandDetailsAction(bandId)
-	if (
-		result.status === StatusCode.OK &&
-		result.response &&
-		typeof result.response !== 'string'
-	) {
-		return result.response
+	const res = await getBandDetailsAction(bandId)
+	if (res.ok) {
+		return res.data
 	}
-	if (result.status === StatusCode.NOT_FOUND) return null // Handle not found specifically
-	throw new Error(
-		typeof result.response === 'string'
-			? result.response
-			: 'バンド情報の取得に失敗しました。',
-	)
+	throw res
 }
 
 export default function MemberManagementModal({
@@ -179,16 +165,13 @@ export default function MemberManagementModal({
 			selectedSearchPart || undefined,
 		)
 		setIsSearching(false)
-		if (result.status === StatusCode.OK && Array.isArray(result.response)) {
-			setSearchResults(result.response)
+		if (result.ok) {
+			setSearchResults(result.data)
 		} else {
 			setSearchResults([])
 			setMessage({
 				type: 'error',
-				text:
-					typeof result.response === 'string'
-						? result.response
-						: 'ユーザー検索に失敗しました。',
+				text: result.message,
 			})
 		}
 	}
@@ -203,7 +186,7 @@ export default function MemberManagementModal({
 			partForNewMember,
 		)
 		setIsLoadingAction(false)
-		if (result.status === StatusCode.CREATED) {
+		if (result.ok) {
 			setMessage({
 				type: 'success',
 				text: `${selectedUserForAdd.name || 'ユーザー'}をメンバーに追加しました。`,
@@ -217,21 +200,14 @@ export default function MemberManagementModal({
 				const updatedBandResult = await getBandDetailsAction(
 					currentBandDetails.id,
 				)
-				if (
-					updatedBandResult.status === StatusCode.OK &&
-					updatedBandResult.response &&
-					typeof updatedBandResult.response !== 'string'
-				) {
-					onBandUpdated(updatedBandResult.response)
+				if (updatedBandResult.ok) {
+					onBandUpdated(updatedBandResult.data)
 				}
 			}
 		} else {
 			setMessage({
 				type: 'error',
-				text:
-					typeof result.response === 'string'
-						? result.response
-						: 'メンバーの追加に失敗しました。',
+				text: result.message,
 			})
 		}
 	}
@@ -242,7 +218,7 @@ export default function MemberManagementModal({
 		setMessage(null)
 		const result = await updateBandMemberAction(memberId, partForEditingMember)
 		setIsLoadingAction(false)
-		if (result.status === StatusCode.OK) {
+		if (result.ok) {
 			setMessage({ type: 'success', text: 'メンバーのパートを更新しました。' })
 			setEditingMember(null)
 			setPartForEditingMember('')
@@ -251,21 +227,14 @@ export default function MemberManagementModal({
 				const updatedBandResult = await getBandDetailsAction(
 					currentBandDetails.id,
 				)
-				if (
-					updatedBandResult.status === StatusCode.OK &&
-					updatedBandResult.response &&
-					typeof updatedBandResult.response !== 'string'
-				) {
-					onBandUpdated(updatedBandResult.response)
+				if (updatedBandResult.ok) {
+					onBandUpdated(updatedBandResult.data)
 				}
 			}
 		} else {
 			setMessage({
 				type: 'error',
-				text:
-					typeof result.response === 'string'
-						? result.response
-						: 'パートの更新に失敗しました。',
+				text: result.message,
 			})
 		}
 	}
@@ -281,7 +250,7 @@ export default function MemberManagementModal({
 		setMessage(null)
 		const result = await removeBandMemberAction(memberId)
 		setIsLoadingAction(false)
-		if (result.status === StatusCode.NO_CONTENT) {
+		if (result.ok) {
 			setMessage({
 				type: 'success',
 				text: `${memberName || 'メンバー'}を削除しました。`,
@@ -293,27 +262,14 @@ export default function MemberManagementModal({
 				const updatedBandResult = await getBandDetailsAction(
 					currentBandDetails.id,
 				)
-				if (
-					updatedBandResult.status === StatusCode.OK &&
-					updatedBandResult.response &&
-					typeof updatedBandResult.response !== 'string'
-				) {
-					onBandUpdated(updatedBandResult.response)
-				} else if (
-					!updatedBandResult.response &&
-					updatedBandResult.status === StatusCode.NOT_FOUND
-				) {
-					// If band is deleted as a side effect (though unlikely here), handle it
-					// onBandUpdated(null); // Or some other signal
+				if (updatedBandResult.ok) {
+					onBandUpdated(updatedBandResult.data)
 				}
 			}
 		} else {
 			setMessage({
 				type: 'error',
-				text:
-					typeof result.response === 'string'
-						? result.response
-						: 'メンバーの削除に失敗しました。',
+				text: result.message,
 			})
 		}
 	}
@@ -403,7 +359,7 @@ export default function MemberManagementModal({
 										onClick={() => {
 											setSelectedUserForAdd(user)
 											setSearchResults([])
-											setSearchQuery(user.name || user.user_id || '')
+											setSearchQuery(user.name || user.userId || '')
 										}}
 									>
 										<a>
@@ -415,7 +371,7 @@ export default function MemberManagementModal({
 													height={32}
 													className="rounded-full"
 												/>
-												<span>{user.name || user.user_id}</span>
+												<span>{user.name || user.userId}</span>
 												{user.profile?.part?.length ? (
 													<span className="text-xs opacity-70">
 														({user.profile.part.join(', ')})
@@ -437,7 +393,7 @@ export default function MemberManagementModal({
 								<label className="label">
 									<span className="label-text">
 										選択中:{' '}
-										{selectedUserForAdd.name || selectedUserForAdd.user_id}
+										{selectedUserForAdd.name || selectedUserForAdd.userId}
 									</span>
 								</label>
 								<SelectField
@@ -499,7 +455,7 @@ export default function MemberManagementModal({
 										/>
 										<div>
 											<span className="font-medium">
-												{member.user.name || member.user.user_id}
+												{member.user.name || member.user.userId}
 											</span>
 											{editingMember?.id === member.id ? (
 												<SelectField
@@ -566,7 +522,7 @@ export default function MemberManagementModal({
 											onClick={() =>
 												handleRemoveMember(
 													member.id,
-													member.user.name || member.user.user_id,
+													member.user.name || member.user.userId,
 												)
 											}
 											className="btn btn-sm btn-outline btn-error"

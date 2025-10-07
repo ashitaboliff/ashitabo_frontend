@@ -1,4 +1,5 @@
 import { Profile } from '@/features/user/types'
+import type { Session } from '@/types/session'
 
 export type AuthState = 'no-session' | 'invalid-session' | 'session' | 'profile'
 

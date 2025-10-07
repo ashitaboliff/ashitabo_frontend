@@ -1,5 +1,12 @@
 import { apiRequest } from '@/lib/api'
 import { ApiResponse, StatusCode } from '@/types/responseTypes'
+import {
+	createdResponse,
+	mapSuccess,
+	noContentResponse,
+	okResponse,
+	withFallbackMessage,
+} from '@/lib/api/helper'
 import { UserDetail, AccountRole } from '@/features/user/types'
 import { BanBooking } from '@/features/booking/types'
 import { PadLock } from '@/features/admin/types'
@@ -45,17 +52,11 @@ export const getAllPadLocksAction = async (): Promise<
 		cache: 'no-store',
 	})
 
-	if (
-		res.status === StatusCode.OK &&
-		Array.isArray(res.response)
-	) {
-		return {
-			status: res.status,
-			response: res.response.map(mapPadLock),
-		}
-	}
-
-	return res as ApiResponse<PadLock[]>
+	return mapSuccess(
+		res,
+		(payload) => (payload ?? []).map(mapPadLock),
+		'パドロック一覧の取得に失敗しました。',
+	)
 }
 
 export const getAllUserDetailsAction = async ({
@@ -80,20 +81,14 @@ export const getAllUserDetailsAction = async ({
 		cache: 'no-store',
 	})
 
-	if (
-		res.status === StatusCode.OK &&
-		typeof res.response !== 'string'
-	) {
-		return {
-			status: res.status,
-			response: {
-				users: res.response.users.map(mapUserDetail),
-				totalCount: res.response.totalCount,
-			},
-		}
-	}
-
-	return res
+	return mapSuccess(
+		res,
+		(payload) => ({
+			users: (payload?.users ?? []).map(mapUserDetail),
+			totalCount: payload?.totalCount ?? 0,
+		}),
+		'ユーザー情報の取得に失敗しました。',
+	)
 }
 
 export const deleteUserAction = async ({
@@ -101,21 +96,15 @@ export const deleteUserAction = async ({
 }: {
 	id: string
 }): Promise<ApiResponse<null>> => {
-	const res = await apiRequest(`/admin/users/${id}`, {
+	const res = await apiRequest<null>(`/admin/users/${id}`, {
 		method: 'DELETE',
 	})
 
-	if (res.status === StatusCode.NO_CONTENT) {
-		return { status: StatusCode.OK, response: null }
+	if (!res.ok) {
+		return withFallbackMessage(res, 'ユーザー削除に失敗しました')
 	}
 
-	return {
-		status: res.status as StatusCode,
-		response:
-			typeof res.response === 'string'
-				? res.response
-				: 'ユーザー削除に失敗しました',
-	} as ApiResponse<null>
+	return okResponse(null)
 }
 
 export const updateUserRoleAction = async ({
@@ -125,29 +114,27 @@ export const updateUserRoleAction = async ({
 	id: string
 	role: AccountRole
 }): Promise<ApiResponse<null>> => {
-	const res = await apiRequest(`/admin/users/${id}/role`, {
+	const res = await apiRequest<null>(`/admin/users/${id}/role`, {
 		method: 'PUT',
 		body: { role },
 	})
 
-	if (res.status === StatusCode.NO_CONTENT) {
-		return { status: StatusCode.OK, response: null }
+	if (!res.ok) {
+		return withFallbackMessage(res, 'ユーザー権限の更新に失敗しました')
 	}
 
-	return {
-		status: res.status as StatusCode,
-		response:
-			typeof res.response === 'string'
-				? res.response
-				: 'ユーザー権限の更新に失敗しました',
-	} as ApiResponse<null>
+	if (res.status === StatusCode.NO_CONTENT) {
+		return noContentResponse()
+	}
+
+	return okResponse(null)
 }
 
 export const adminRevalidateTagAction = async (
 	tag: string,
 ): Promise<ApiResponse<null>> => {
 	console.info(`Revalidate tag placeholder invoked for ${tag}`)
-	return { status: StatusCode.OK, response: null }
+	return okResponse(null)
 }
 
 export const createBookingBanDateAction = async ({
@@ -161,7 +148,7 @@ export const createBookingBanDateAction = async ({
 	endTime?: number
 	description: string
 }): Promise<ApiResponse<string>> => {
-	const res = await apiRequest('/admin/booking-bans', {
+	const res = await apiRequest<unknown>('/admin/booking-bans', {
 		method: 'POST',
 		body: {
 			startDate,
@@ -171,17 +158,11 @@ export const createBookingBanDateAction = async ({
 		},
 	})
 
-	if (res.status === StatusCode.CREATED) {
-		return { status: StatusCode.CREATED, response: 'created' }
+	if (!res.ok) {
+		return withFallbackMessage(res, '予約禁止日の作成に失敗しました')
 	}
 
-	return {
-		status: res.status as StatusCode,
-		response:
-			typeof res.response === 'string'
-				? res.response
-				: '予約禁止日の作成に失敗しました',
-	} as ApiResponse<string>
+	return createdResponse('created')
 }
 
 export const getBanBookingAction = async ({
@@ -209,20 +190,14 @@ export const getBanBookingAction = async ({
 		cache: 'no-store',
 	})
 
-	if (
-		res.status === StatusCode.OK &&
-		typeof res.response !== 'string'
-	) {
-		return {
-			status: res.status,
-			response: {
-				data: res.response.data.map(mapBanBooking),
-				totalCount: res.response.totalCount,
-			},
-		}
-	}
-
-	return res
+	return mapSuccess(
+		res,
+		(payload) => ({
+			data: (payload?.data ?? []).map(mapBanBooking),
+			totalCount: payload?.totalCount ?? 0,
+		}),
+		'予約禁止日の取得に失敗しました。',
+	)
 }
 
 export const deleteBanBookingAction = async ({
@@ -230,21 +205,15 @@ export const deleteBanBookingAction = async ({
 }: {
 	id: string
 }): Promise<ApiResponse<null>> => {
-	const res = await apiRequest(`/admin/booking-bans/${id}`, {
+	const res = await apiRequest<null>(`/admin/booking-bans/${id}`, {
 		method: 'DELETE',
 	})
 
-	if (res.status === StatusCode.NO_CONTENT) {
-		return { status: StatusCode.OK, response: null }
+	if (!res.ok) {
+		return withFallbackMessage(res, '予約禁止日の削除に失敗しました')
 	}
 
-	return {
-		status: res.status as StatusCode,
-		response:
-			typeof res.response === 'string'
-				? res.response
-				: '予約禁止日の削除に失敗しました',
-	} as ApiResponse<null>
+	return noContentResponse()
 }
 
 export const createPadLockAction = async ({
@@ -254,22 +223,16 @@ export const createPadLockAction = async ({
 	name: string
 	password: string
 }): Promise<ApiResponse<string>> => {
-	const res = await apiRequest('/admin/padlocks', {
+	const res = await apiRequest<unknown>('/admin/padlocks', {
 		method: 'POST',
 		body: { name, password },
 	})
 
-	if (res.status === StatusCode.CREATED) {
-		return { status: StatusCode.CREATED, response: 'created' }
+	if (!res.ok) {
+		return withFallbackMessage(res, 'パドロックの作成に失敗しました')
 	}
 
-	return {
-		status: res.status as StatusCode,
-		response:
-			typeof res.response === 'string'
-				? res.response
-				: 'パドロックの作成に失敗しました',
-	} as ApiResponse<string>
+	return createdResponse('created')
 }
 
 export const deletePadLockAction = async ({
@@ -277,19 +240,13 @@ export const deletePadLockAction = async ({
 }: {
 	id: string
 }): Promise<ApiResponse<null>> => {
-	const res = await apiRequest(`/admin/padlocks/${id}`, {
+	const res = await apiRequest<null>(`/admin/padlocks/${id}`, {
 		method: 'DELETE',
 	})
 
-	if (res.status === StatusCode.NO_CONTENT) {
-		return { status: StatusCode.OK, response: null }
+	if (!res.ok) {
+		return withFallbackMessage(res, 'パドロックの削除に失敗しました')
 	}
 
-	return {
-		status: res.status as StatusCode,
-		response:
-			typeof res.response === 'string'
-				? res.response
-				: 'パドロックの削除に失敗しました',
-	} as ApiResponse<null>
+	return noContentResponse()
 }

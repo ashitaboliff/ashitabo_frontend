@@ -2,7 +2,7 @@
 
 import Popup from '@/components/ui/molecules/Popup'
 import { UserDetail } from '@/features/user/types'
-import { ErrorType } from '@/types/responseTypes'
+import { ApiError } from '@/types/responseTypes'
 
 interface UserDeleteConfirmPopupProps {
 	open: boolean
@@ -10,8 +10,8 @@ interface UserDeleteConfirmPopupProps {
 	selectedUser: UserDetail | null
 	actionLoading: boolean
 	onDelete: (id: string) => void
-	actionError: ErrorType | null
-	setActionError: (error: ErrorType | null) => void
+	actionError: ApiError | null
+	setActionError: (error: ApiError | null) => void
 }
 
 const UserDeleteConfirmPopup = ({
@@ -54,7 +54,7 @@ const UserDeleteConfirmPopup = ({
 				</div>
 				{actionError && (
 					<p className="text-error text-center">
-						エラーコード{actionError.status}:{actionError.response}
+						エラーコード{actionError.status}:{actionError.message}
 					</p>
 				)}
 			</div>

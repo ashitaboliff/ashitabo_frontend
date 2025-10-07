@@ -8,7 +8,7 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import AuthLoadingIndicator from './AuthLoadingIndicator'
 import { padLockAction } from './actions'
-import { ErrorType, StatusCode } from '@/types/responseTypes'
+import { ApiError } from '@/types/responseTypes'
 import { getImageUrl } from '@/lib/r2'
 
 const PasswordSchema = yup.object().shape({
@@ -39,15 +39,12 @@ type AuthPadLockProps = {
 
 const DEFAULT_CALLBACK_URL = '/user'
 
-const AuthPadLock = ({
-	csrfToken,
-	callbackUrl,
-}: AuthPadLockProps) => {
+const AuthPadLock = ({ csrfToken, callbackUrl }: AuthPadLockProps) => {
 	const router = useRouter()
-	const [error, setError] = useState<ErrorType>()
+	const [error, setError] = useState<ApiError>()
 	const [isLoading, setIsLoading] = useState<boolean>(false) // loading -> isLoading に変更
 	const [loadingMessage, setLoadingMessage] = useState<string>('処理中です...')
-	const formRef = useRef<HTMLFormElement | null>(null)
+	const formRef = useRef<HTMLFormElement>(null)
 	const [activeCsrfToken, setActiveCsrfToken] = useState<string | null>(
 		csrfToken ?? null,
 	)
@@ -125,8 +122,9 @@ const AuthPadLock = ({
 		}
 		if (!token) {
 			setError({
+				ok: false,
 				status: 500,
-				response:
+				message:
 					'CSRFトークンが取得できませんでした。ページを再読み込みしてからもう一度お試しください。',
 			})
 			setIsLoading(false)
@@ -135,13 +133,16 @@ const AuthPadLock = ({
 		const form = formRef.current
 		if (!form) {
 			setError({
+				ok: false,
 				status: 500,
-				response: 'サインイン用フォームを初期化できませんでした。',
+				message: 'サインイン用フォームを初期化できませんでした。',
 			})
 			setIsLoading(false)
 			return
 		}
-		const csrfInput = form.querySelector<HTMLInputElement>('input[name="csrfToken"]')
+		const csrfInput = form.querySelector<HTMLInputElement>(
+			'input[name="csrfToken"]',
+		)
 		if (csrfInput) {
 			csrfInput.value = token
 		}
@@ -160,27 +161,20 @@ const AuthPadLock = ({
 		const password = `${data.digit1}${data.digit2}${data.digit3}${data.digit4}`
 		try {
 			const res = await padLockAction(password)
-			if (
-				res.status === StatusCode.OK &&
-				typeof res.response !== 'string' &&
-				res.response.status === 'ok'
-			) {
+			if (res.ok) {
 				await handleSignIn()
 				return
 			}
-			setError({
-				status: res.status,
-				response:
-					typeof res.response === 'string'
-						? res.response
-						: res.response?.status ?? 'Padlock verification failed',
-			})
+			setError(res)
 			setIsLoading(false)
-		} catch (submitError: any) {
+		} catch (error) {
 			setError({
+				ok: false,
 				status: 500,
-				response: String(submitError),
+				message: 'パスワードの確認中にエラーが発生しました。',
+				details: error instanceof Error ? error.message : String(error),
 			})
+			console.error('Error during padlock authentication:', error)
 			setIsLoading(false)
 		}
 	}
@@ -265,10 +259,9 @@ const AuthPadLock = ({
 					</form>
 				</div>
 			</div>
-			{/* {loading && <Loading />} 古いローディングを削除 */}
 			{error && (
 				<p className="text-sm text-error text-center">
-					エラーコード{error.status}:{error.response}
+					エラーコード{error.status}:{error.message}
 				</p>
 			)}
 			{errors.digit1 && (

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
@@ -9,13 +9,14 @@ import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { createPadLockAction, deletePadLockAction } from './action'
 import { PadLock } from '@/features/admin/types'
-import { ErrorType } from '@/types/responseTypes'
+import { ApiError } from '@/types/responseTypes'
 import Pagination from '@/components/ui/atoms/Pagination'
 import TextInputField from '@/components/ui/atoms/TextInputField'
 import SelectField from '@/components/ui/atoms/SelectField'
 import Popup from '@/components/ui/molecules/Popup'
 
 import { TiDeleteOutline } from 'react-icons/ti'
+import type { Session } from '@/types/session'
 
 const PadLockSchema = yup.object().shape({
 	name: yup.string().required('鍵管理のための名前を入力してください'),
@@ -39,7 +40,7 @@ const PadLockEdit = ({
 	const [isCreatePopupOpen, setIsCreatePopupOpen] = useState<boolean>(false)
 	const [isDeletePopupOpen, setIsDeletePopupOpen] = useState<boolean>(false)
 
-	const [error, setError] = useState<ErrorType>()
+	const [error, setError] = useState<ApiError>()
 
 	const totalPadLocks = padLocks?.length ?? 0
 	const pageMax = Math.ceil(totalPadLocks / padLocksPerPage)
@@ -66,7 +67,7 @@ const PadLockEdit = ({
 			name,
 			password: password.toString(),
 		})
-		if (res.status === 201) {
+		if (res.ok) {
 			setIsCreatePopupOpen(false)
 			reset()
 		} else {
@@ -78,7 +79,7 @@ const PadLockEdit = ({
 		const res = await deletePadLockAction({
 			id,
 		})
-		if (res.status === 200) {
+		if (res.ok) {
 			setIsDeletePopupOpen(false)
 			setIsPopupOpen(false)
 		} else {
@@ -219,7 +220,7 @@ const PadLockEdit = ({
 				</div>
 				{error && (
 					<p className="text-sm text-error text-center">
-						エラーコード{error.status}:{error.response}
+						エラーコード{error.status}:{error.message}
 					</p>
 				)}
 			</Popup>
@@ -258,7 +259,7 @@ const PadLockEdit = ({
 					</div>
 					{error && (
 						<p className="text-sm text-error text-center">
-							エラーコード{error.status}:{error.response}
+							エラーコード{error.status}:{error.message}
 						</p>
 					)}
 				</form>

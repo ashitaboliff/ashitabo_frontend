@@ -26,12 +26,8 @@ type PageProps = {
 
 const getBookingDetail = cache(async (id: string) => {
 	const result = await getBookingByIdAction(id)
-	if (
-		result.status === StatusCode.OK &&
-		result.response &&
-		typeof result.response !== 'string'
-	) {
-		return result.response as BookingDetailProps
+	if (result.ok) {
+		return result.data as BookingDetailProps
 	}
 	return null
 })
@@ -90,8 +86,8 @@ const Page = async ({ params, searchParams }: PageProps) => {
 					endDate: calendarEndDate,
 				})
 
-				if (calendarBookingRes.status === 200) {
-					initialBookingResponse = calendarBookingRes.response
+				if (calendarBookingRes.ok) {
+					initialBookingResponse = calendarBookingRes.data
 				} else {
 					console.error('Failed to get calendar booking data for edit page')
 				}

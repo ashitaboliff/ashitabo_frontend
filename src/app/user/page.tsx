@@ -39,9 +39,7 @@ const UserPageServer = async () => {
 								version,
 								r2Key: config.packKey,
 								signedPackImageUrl:
-									res.status === 200 && typeof res.response === 'string'
-										? res.response
-										: '',
+									res.ok && typeof res.data === 'string' ? res.data : '',
 							}
 						} catch (error) {
 							console.error(

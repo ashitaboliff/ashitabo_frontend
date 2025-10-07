@@ -5,6 +5,7 @@ import useSWR from 'swr'
 import { GachaData } from '@/features/gacha/types'
 import { getGachaByGachaSrcAction } from '@/features/gacha/components/actions'
 import { ApiResponse, StatusCode } from '@/types/responseTypes'
+import type { Session } from '@/types/session'
 
 interface UseGachaPreviewProps {
 	session: Session
@@ -18,16 +19,16 @@ interface FetcherArgs {
 const fetcher = async ({
 	userId,
 	gachaSrc,
-}: FetcherArgs): Promise<{ gacha: GachaData | null; totalCount: number } | null> => {
+}: FetcherArgs): Promise<{
+	gacha: GachaData | null
+	totalCount: number
+} | null> => {
 	const res: ApiResponse<{ gacha: GachaData | null; totalCount: number }> =
 		await getGachaByGachaSrcAction({ userId, gachaSrc })
-	if (
-		res.status === StatusCode.OK &&
-		typeof res.response !== 'string'
-	) {
-		return res.response
+	if (res.ok) {
+		return res.data
 	}
-	console.error('Failed to fetch gacha preview data:', res.response)
+	console.error('Failed to fetch gacha preview data:', res.details)
 	return null
 }
 

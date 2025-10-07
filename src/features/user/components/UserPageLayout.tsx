@@ -13,7 +13,7 @@ import { useGachaPlayManager } from '@/features/gacha/hooks/useGachaPlayManager'
 import { GiCardRandom, GiGuitarHead } from 'react-icons/gi' // GiGuitarHead を追加
 import { MdOutlineEditCalendar } from 'react-icons/md'
 import RatioPopup from '@/features/gacha/components/RatioPopup'
-import BandList from '@/features/band/components/BandList'
+import type { Session } from '@/types/session'
 
 interface UserPageLayoutProps {
 	session: Session

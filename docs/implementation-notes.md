@@ -13,7 +13,6 @@
   - Domain-specific: `/gacha/users/{userId}`, schedules (`/schedule`, `/schedule/{scheduleId}`), band management, and video search/playlists endpoints.
 - Many mutating endpoints require authenticated session via cookie; ensure frontend fetch wrappers forward cookies and handle 401.
 
-
 ## 2025-10-03 FRONTEND PROJECT_OVERVIEW highlights
 
 - Next.js 15.3.2 App Router with TypeScript, Tailwind/daisyUI, NextAuth LINE auth, Prisma (legacy) with PostgreSQL.
@@ -22,13 +21,15 @@
 - New goal: replace these with thin `/api` BFF handlers backed by backend service, using SWR on client pages/components.
 - Authentication: NextAuth.js session cookies; some admin/booking flows require padlock password gating.
 - Integrations: Cloudflare R2 signed URLs, YouTube Data API, LIFF, analytics. Some endpoints not yet implemented in backend; placeholder routes required on frontend.
+
 ## 2025-10-03 TypeScript baseline
 
 `npm run ts` currently fails with numerous missing module errors due to removal of legacy server actions:
+
 - Pages under `src/app` still import `@/lib/r2`, `@/core/actions`, feature `components/actions` modules, `next-auth/react` client helpers, etc.
 - Several files now violate `noImplicitAny` because former helper types were removed (`src/app/schedule/new/page.tsx`, `src/app/sitemap.ts`, `src/components/interactive/UserSelectPopup.tsx`).
 - Admin components rely on `./action` modules that no longer exist.
-The refactor must introduce new thin `/api` fetch utilities and SWR hooks to replace these imports.
+  The refactor must introduce new thin `/api` fetch utilities and SWR hooks to replace these imports.
 
 ## 2025-10-03 Next.js v15 research (Context7)
 

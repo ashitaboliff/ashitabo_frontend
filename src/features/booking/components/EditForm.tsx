@@ -13,7 +13,7 @@ import {
 	BookingResponse,
 	BookingTime,
 } from '@/features/booking/types'
-import { ErrorType } from '@/types/responseTypes'
+import { ApiError, StatusCode } from '@/types/responseTypes'
 import TextInputField from '@/components/ui/atoms/TextInputField'
 import BookingDetailBox from '@/components/ui/molecules/BookingDetailBox'
 import Popup from '@/components/ui/molecules/Popup'
@@ -21,6 +21,7 @@ import DetailNotFoundPage from '@/features/booking/components/DetailNotFound'
 import EditCalendar from '@/features/booking/components/EditCalendar'
 import { DateToDayISOstring } from '@/utils'
 import { MdOutlineEditCalendar } from 'react-icons/md'
+import type { Session } from '@/types/session'
 
 const schema = yup.object().shape({
 	bookingDate: yup.string().required('予約日を入力してください'),
@@ -46,32 +47,28 @@ const EditFormPage = ({
 	const [editState, setEditState] = useState<'edit' | 'select'>('select')
 	const [deletePopupOpen, setDeletePopupOpen] = useState(false)
 	const [successPopupOpen, setSuccessPopupOpen] = useState(false)
-	const [error, setError] = useState<ErrorType>()
+	const [error, setError] = useState<ApiError>()
 
 	const onDeleteSubmit = async () => {
 		try {
-			const response = await deleteBookingAction({
+			const res = await deleteBookingAction({
 				bookingId: bookingDetail.id,
 				userId: session.user.id,
 			})
-			if (response.status === 200) {
+			if (res.ok) {
 				setSuccessPopupOpen(true)
 				setDeletePopupOpen(false)
 			} else {
-				setError({
-					status: response.status,
-					response:
-						typeof response.response === 'string'
-							? response.response
-							: null,
-				})
+				setError(res)
 			}
 		} catch (e) {
 			setError({
+				ok: false,
 				status: 500,
-				response:
-					'このエラーが出た際はわたべに問い合わせてください。' + String(e),
+				message: 'このエラーが出た際はわたべに問い合わせてください。',
+				details: e instanceof Error ? e.message : String(e),
 			})
+			console.error('Error deleting booking:', e)
 		}
 	}
 
@@ -152,7 +149,7 @@ const EditFormPage = ({
 					</div>
 					{error && (
 						<p className="text-sm text-error text-center">
-							エラーコード{error.status}:{error.response}
+							エラーコード{error.status}:{error.message}
 						</p>
 					)}
 				</div>
@@ -212,7 +209,7 @@ const MemoBookingEditForm = memo(
 		)
 		const [calendarOpen, setCalendarOpen] = useState<boolean>(false)
 		const [successPopupOpen, setSuccessPopupOpen] = useState(false)
-		const [error, setError] = useState<ErrorType>()
+		const [error, setError] = useState<ApiError>()
 
 		const yesterDate = subDays(new Date(), 1)
 		const [viewDay, setViewDay] = useState<Date>(initialViewDay)
@@ -273,7 +270,7 @@ const MemoBookingEditForm = memo(
 			setLoading(true)
 
 			try {
-				const response = await updateBookingAction({
+				const res = await updateBookingAction({
 					bookingId: bookingDetail.id,
 					userId: session.user.id,
 					booking: {
@@ -285,23 +282,19 @@ const MemoBookingEditForm = memo(
 					},
 				})
 
-				if (response.status === 200) {
+				if (res.ok) {
 					setSuccessPopupOpen(true)
 				} else {
-					setError({
-						status: response.status,
-						response:
-							typeof response.response === 'string'
-								? response.response
-								: null,
-					})
+					setError(res)
 				}
-			} catch (e) {
+			} catch (err) {
 				setError({
+					ok: false,
 					status: 500,
-					response:
-						'このエラーが出た際はわたべに問い合わせてください。' + String(e),
+					message: 'このエラーが出た際はわたべに問い合わせてください。',
+					details: err instanceof Error ? err.message : String(err),
 				})
+				console.error('Error updating booking:', err)
 			}
 			setLoading(false)
 		}
@@ -371,7 +364,7 @@ const MemoBookingEditForm = memo(
 					</form>
 					{error && (
 						<p className="text-sm text-error text-center">
-							エラーコード{error.status}:{error.response}
+							エラーコード{error.status}:{error.message}
 						</p>
 					)}
 				</div>

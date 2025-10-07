@@ -14,15 +14,19 @@ import TextInputField from '@/components/ui/atoms/TextInputField'
 import Popup from '@/components/ui/molecules/Popup'
 import AddCalendarPopup from '@/components/ui/molecules/AddCalendarPopup'
 import PasswordInputField from '@/components/ui/molecules/PasswordInputField'
-import { ErrorType } from '@/types/responseTypes'
+import { ApiError } from '@/types/responseTypes'
 import { BookingTime } from '@/features/booking/types'
 import { useGachaPlayManager } from '@/features/gacha/hooks/useGachaPlayManager'
 import GachaResult from '@/features/gacha/components/GachaResult'
+import type { Session } from '@/types/session'
 
 const today = getCurrentJSTDateString({})
 
 const generateBookingId = () => {
-	if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+	if (
+		typeof crypto !== 'undefined' &&
+		typeof crypto.randomUUID === 'function'
+	) {
 		return crypto.randomUUID()
 	}
 	return Math.random().toString(36).slice(2)
@@ -48,10 +52,10 @@ export default function CreatePage({
 	initialTimeParam,
 }: CreatePageProps) {
 	const router = useRouter()
-	const [loading, setLoading] = useState(false)
+	const [loading, setLoading] = useState<boolean>(false)
 	const [noticePopupOpen, setNoticePopupOpen] = useState(false)
 	const [addCalendarPopupOpen, setAddCalendarPopupOpen] = useState(false)
-	const [error, setError] = useState<ErrorType>()
+	const [error, setError] = useState<ApiError | null>(null)
 	const [showPassword, setShowPassword] = useState(false)
 
 	const bookingDate = initialDateParam ? new Date(initialDateParam) : new Date()
@@ -88,24 +92,26 @@ export default function CreatePage({
 			isDeleted: false,
 		}
 		try {
-			const response = await createBookingAction({
+			const res = await createBookingAction({
 				bookingId: bookingId,
 				userId: session.user.id,
 				booking: reservationData,
 				password: data.password,
 				toDay: today,
 			})
-			if (response.status === 201) {
+			if (res.ok) {
 				setNoticePopupOpen(true)
 			} else {
-				setError({ status: response.status, response: response.response })
+				setError(res)
 			}
-		} catch (e) {
+		} catch (err) {
 			setError({
+				ok: false,
 				status: 500,
-				response:
-					'このエラーが出た際はわたべに問い合わせてください。' + String(e),
+				message: 'このエラーが出た際はわたべに問い合わせてください。',
+				details: err instanceof Error ? err.message : String(err),
 			})
+			console.error('Error creating booking:', err)
 		}
 		setLoading(false)
 	}
@@ -171,7 +177,7 @@ export default function CreatePage({
 					</div>
 					{error && (
 						<p className="text-sm text-error text-center">
-							エラーコード{error.status}:{error.response}
+							エラーコード{error.status}:{error.message}
 						</p>
 					)}
 				</form>

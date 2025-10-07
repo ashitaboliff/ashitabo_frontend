@@ -15,7 +15,6 @@ export interface SessionUser {
 	email?: string | null
 	image?: string | null
 	role: AccountRole
-	accountRole?: AccountRole | null
 	profile?: SessionProfile | null
 }
 

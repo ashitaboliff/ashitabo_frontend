@@ -14,12 +14,8 @@ type PageProps = { params: PageParams }
 
 const getScheduleDetail = cache(async (id: string) => {
 	const result = await getScheduleByIdAction(id)
-	if (
-		result.status === StatusCode.OK &&
-		result.response &&
-		typeof result.response !== 'string'
-	) {
-		return result.response
+	if (result.ok) {
+		return result.data
 	}
 	return null
 })

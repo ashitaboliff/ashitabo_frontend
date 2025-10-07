@@ -1,5 +1,11 @@
 import { apiRequest } from '@/lib/api'
 import { ApiResponse, StatusCode } from '@/types/responseTypes'
+import {
+	createdResponse,
+	mapSuccess,
+	okResponse,
+	withFallbackMessage,
+} from '@/lib/api/helper'
 import { GachaData, GachaSort, RarityType } from '@/features/gacha/types'
 import { getImageUrl } from '@/lib/r2'
 
@@ -39,20 +45,14 @@ export const getGachaByUserIdAction = async ({
 		cache: 'no-store',
 	})
 
-	if (
-		res.status === StatusCode.OK &&
-		typeof res.response !== 'string'
-	) {
-		return {
-			status: res.status,
-			response: {
-				gacha: res.response.gacha.map(mapGacha),
-				totalCount: res.response.totalCount,
-			},
-		}
-	}
-
-	return res
+	return mapSuccess(
+		res,
+		(payload) => ({
+			gacha: ((payload?.gacha ?? []) as any[]).map(mapGacha),
+			totalCount: payload?.totalCount ?? 0,
+		}),
+		'ガチャ履歴の取得に失敗しました。',
+	)
 }
 
 export const getGachaByGachaSrcAction = async ({
@@ -73,20 +73,14 @@ export const getGachaByGachaSrcAction = async ({
 		cache: 'no-store',
 	})
 
-	if (
-		res.status === StatusCode.OK &&
-		typeof res.response !== 'string'
-	) {
-		return {
-			status: res.status,
-			response: {
-				gacha: res.response.gacha ? mapGacha(res.response.gacha) : null,
-				totalCount: res.response.totalCount,
-			},
-		}
-	}
-
-	return res
+	return mapSuccess(
+		res,
+		(payload) => ({
+			gacha: payload?.gacha ? mapGacha(payload.gacha) : null,
+			totalCount: payload?.totalCount ?? 0,
+		}),
+		'ガチャ詳細の取得に失敗しました。',
+	)
 }
 
 export const createUserGachaResultAction = async ({
@@ -104,7 +98,7 @@ export const createUserGachaResultAction = async ({
 	ignorePlayCountLimit?: boolean
 	currentPlayCount?: number
 }): Promise<ApiResponse<string>> => {
-	const res = await apiRequest(`/gacha/users/${userId}`, {
+	const res = await apiRequest<unknown>(`/gacha/users/${userId}`, {
 		method: 'POST',
 		body: {
 			userId,
@@ -116,22 +110,11 @@ export const createUserGachaResultAction = async ({
 		},
 	})
 
-	if (res.status === StatusCode.CREATED) {
-		return {
-			status: StatusCode.CREATED,
-			response: 'created',
-		}
+	if (!res.ok) {
+		return withFallbackMessage(res, 'ガチャ記録の保存に失敗しました。')
 	}
 
-	const message =
-		typeof res.response === 'string'
-			? res.response
-			: 'ガチャ記録の保存に失敗しました'
-
-	return {
-		status: res.status as StatusCode,
-		response: message,
-	} as ApiResponse<string>
+	return createdResponse('created')
 }
 
 export const getSignedUrlForGachaImageAction = async ({
@@ -140,8 +123,5 @@ export const getSignedUrlForGachaImageAction = async ({
 	userId: string
 	r2Key: string
 }): Promise<ApiResponse<string>> => {
-	return {
-		status: StatusCode.OK,
-		response: getImageUrl(r2Key),
-	}
+	return okResponse(getImageUrl(r2Key))
 }

@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { ReactNode } from 'react'
 import { AccountRole } from '@/features/user/types'
 import { getUnifiedAuthState } from '@/features/auth/components/actions'
-import { UnifiedAuthResult } from '@/features/auth/types'
+import type { UnifiedAuthResult } from '@/features/auth/types'
 
 interface AuthPageProps {
 	children: (authResult: UnifiedAuthResult) => ReactNode

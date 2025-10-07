@@ -1,20 +1,12 @@
 import { apiRequest } from '@/lib/api'
 import { ApiResponse, StatusCode } from '@/types/responseTypes'
+import {
+	createdResponse,
+	mapSuccess,
+	okResponse,
+	withFallbackMessage,
+} from '@/lib/api/helper'
 import { Schedule, UserWithName } from '@/features/schedule/types'
-
-const mapSchedule = (input: any): Schedule => ({
-	id: input.id,
-	userId: input.userId,
-	title: input.title,
-	description: input.description ?? null,
-	startDate: input.startDate,
-	endDate: input.endDate,
-	mention: (input.mention as string[]) ?? [],
-	timeExtended: input.timeExtended ?? false,
-	deadline: input.deadline,
-	createdAt: input.createdAt ? new Date(input.createdAt) : undefined,
-	updatedAt: input.updatedAt ? new Date(input.updatedAt) : undefined,
-})
 
 export const getScheduleByIdAction = async (
 	scheduleId: string,
@@ -22,19 +14,14 @@ export const getScheduleByIdAction = async (
 	const res = await apiRequest<Schedule>(`/schedule/${scheduleId}`, {
 		method: 'GET',
 		cache: 'no-store',
+		next: { tags: ['schedules', `schedule:${scheduleId}`] },
 	})
 
-	if (
-		res.status === StatusCode.OK &&
-		typeof res.response !== 'string'
-	) {
-		return {
-			status: res.status,
-			response: mapSchedule(res.response),
-		}
+	if (!res.ok) {
+		return withFallbackMessage(res, '日程の取得に失敗しました。')
 	}
 
-	return res
+	return okResponse(res.data)
 }
 
 export const getUserIdWithNames = async (): Promise<
@@ -42,24 +29,20 @@ export const getUserIdWithNames = async (): Promise<
 > => {
 	const res = await apiRequest<UserWithName[]>('/schedule/users', {
 		method: 'GET',
-		cache: 'default',
+		cache: 'force-cache',
+		next: { revalidate: 300, tags: ['schedule-users'] },
 	})
 
-	if (
-		res.status === StatusCode.OK &&
-		Array.isArray(res.response)
-	) {
-		return {
-			status: res.status,
-			response: res.response.map((user) => ({
+	return mapSuccess(
+		res,
+		(users) =>
+			(users ?? []).map((user) => ({
 				id: user.id,
 				name: user.name,
 				image: (user as any).image ?? null,
 			})),
-		}
-	}
-
-	return res
+		'ユーザー一覧の取得に失敗しました。',
+	)
 }
 
 export const createScheduleAction = async ({
@@ -95,30 +78,21 @@ export const createScheduleAction = async ({
 		},
 	})
 
-	if (res.status === StatusCode.CREATED) {
-		const scheduleId =
-			typeof res.response === 'object' && res.response
-				? (res.response as any).id ?? id
+	if (!res.ok) {
+		return withFallbackMessage(res, '日程調整の作成に失敗しました。')
+	}
+
+	const createdId =
+		res.status === StatusCode.CREATED
+			? typeof res.data === 'object' && res.data
+				? (res.data as any).id ?? id
 				: id
-		const detail = await getScheduleByIdAction(scheduleId)
-		if (
-			detail.status === StatusCode.OK &&
-			detail.response &&
-			typeof detail.response !== 'string'
-		) {
-			return {
-				status: StatusCode.CREATED,
-				response: detail.response,
-			}
-		}
+			: id
+
+	const detail = await getScheduleByIdAction(createdId)
+	if (!detail.ok) {
 		return detail
 	}
 
-	return {
-		status: res.status as StatusCode,
-		response:
-			typeof res.response === 'string'
-				? res.response
-				: '日程調整の作成に失敗しました。',
-	} as ApiResponse<Schedule>
+	return createdResponse(detail.data)
 }

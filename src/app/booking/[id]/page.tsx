@@ -14,12 +14,8 @@ type PageProps = { params: PageParams }
 
 const getBookingDetail = cache(async (id: string) => {
 	const result = await getBookingByIdAction(id)
-	if (
-		result.status === StatusCode.OK &&
-		result.response &&
-		typeof result.response !== 'string'
-	) {
-		return result.response as BookingDetailProps
+	if (result.ok) {
+		return result.data as BookingDetailProps
 	}
 	return null
 })

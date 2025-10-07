@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { BookingDetailProps, BookingResponse } from '@/features/booking/types' // Added BookingResponse
 import EditAuthPage from '@/features/booking/components/EditAuth'
 import EditFormPage from '@/features/booking/components/EditForm'
+import type { Session } from '@/types/session'
 
 interface EditPageProps {
 	bookingDetail: BookingDetailProps

@@ -9,6 +9,7 @@ import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { BanBookingSort } from '../types'
 import { getCurrentJSTDateString } from '@/utils'
+import { StatusCode } from '@/types/responseTypes'
 
 interface BanBookingListProps {
 	currentPage: number
@@ -25,12 +26,10 @@ const fetchBanBookings = async ([page, perPage, sort, today]: [
 	string,
 ]) => {
 	const res = await getBanBookingAction({ page, perPage, sort, today })
-	if (res.status === 200 && typeof res.response !== 'string') {
-		return res.response
+	if (res.ok) {
+		return res.data
 	}
-	const errorMessage =
-		typeof res.response === 'string' ? res.response : 'Failed to fetch users'
-	throw new Error(errorMessage)
+	throw res
 }
 const BanBookingList = ({
 	currentPage,

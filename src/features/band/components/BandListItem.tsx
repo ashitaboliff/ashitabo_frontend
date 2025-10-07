@@ -24,7 +24,7 @@ export default function BandListItem({
 	const remainingMembersCount = band.members.length - displayMembers.length
 
 	// A simple way to check if the current user is a member, for potential UI differences
-	// const isCurrentUserMember = currentUserId && band.members.some(member => member.user_id === currentUserId);
+	// const isCurrentUserMember = currentUserId && band.members.some(member => member.userId === currentUserId);
 
 	return (
 		<div className="card bg-base-100 shadow-xl mb-4">

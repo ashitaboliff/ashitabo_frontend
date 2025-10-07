@@ -41,6 +41,19 @@ const mapPlaylist = (input: any): Playlist => ({
 	tags: input.tags ?? [],
 })
 
+const withFallbackMessage = <T>(
+	res: ApiResponse<T>,
+	message: string,
+): ApiResponse<T> => {
+	if (res.ok) {
+		return res
+	}
+	return {
+		...res,
+		message: res.message || message,
+	}
+}
+
 export const searchYoutubeDetailsAction = async (
 	query: YoutubeSearchQuery,
 ): Promise<ApiResponse<{ results: YoutubeDetail[]; totalCount: number }>> => {
@@ -62,112 +75,111 @@ export const searchYoutubeDetailsAction = async (
 		cache: 'no-store',
 	})
 
-	if (
-		res.status === StatusCode.OK &&
-		typeof res.response !== 'string'
-	) {
-		return {
-			status: res.status,
-			response: {
-				results: res.response.results.map(mapVideoDetail),
-				totalCount: res.response.totalCount,
-			},
-		}
+	if (!res.ok) {
+		return withFallbackMessage(res, '動画検索に失敗しました。')
 	}
 
-	return res
+	const payload = res.data ?? { results: [], totalCount: 0 }
+	return {
+		ok: true,
+		status: res.status,
+		data: {
+			results: (payload.results ?? []).map(mapVideoDetail),
+			totalCount: payload.totalCount ?? 0,
+		},
+	}
 }
 
 export const getVideoByIdAction = async (
 	videoId: string,
 ): Promise<ApiResponse<Video>> => {
-	const res = await apiRequest<Video>(`/video/videos/${videoId}`, {
+	const res = await apiRequest<any>(`/video/videos/${videoId}`, {
 		method: 'GET',
-		cache: 'no-store',
+		cache: 'force-cache',
+		next: { revalidate: 300, tags: ['videos', `video:${videoId}`] },
 	})
 
-	if (
-		res.status === StatusCode.OK &&
-		typeof res.response !== 'string'
-	) {
-		return {
-			status: res.status,
-			response: mapVideo(res.response),
-		}
+	if (!res.ok) {
+		return withFallbackMessage(res, '動画の取得に失敗しました。')
 	}
 
-	return res
+	return {
+		ok: true,
+		status: res.status,
+		data: mapVideo(res.data),
+	}
 }
 
 export const getPlaylistByIdAction = async (
 	playlistId: string,
 ): Promise<ApiResponse<Playlist>> => {
-	const res = await apiRequest<Playlist>(`/video/playlists/${playlistId}`, {
+	const res = await apiRequest<any>(`/video/playlists/${playlistId}`, {
 		method: 'GET',
-		cache: 'no-store',
+		cache: 'force-cache',
+		next: {
+			revalidate: 600,
+			tags: ['video-playlists', `playlist:${playlistId}`],
+		},
 	})
 
-	if (
-		res.status === StatusCode.OK &&
-		typeof res.response !== 'string'
-	) {
-		return {
-			status: res.status,
-			response: mapPlaylist(res.response),
-		}
+	if (!res.ok) {
+		return withFallbackMessage(res, 'プレイリストの取得に失敗しました。')
 	}
 
-	return res
-}
-
-export const getPlaylistAction = async (): Promise<
-	ApiResponse<Playlist[]>
-> => {
-	const res = await apiRequest<Playlist[]>('/video/playlists', {
-		method: 'GET',
-		cache: 'no-store',
-	})
-
-	if (
-		res.status === StatusCode.OK &&
-		Array.isArray(res.response)
-	) {
-		return {
-			status: res.status,
-			response: res.response.map(mapPlaylist),
-		}
-	}
-
-	return res as ApiResponse<Playlist[]>
-}
-
-export const getAccessTokenAction = async (): Promise<
-	ApiResponse<null>
-> => {
 	return {
+		ok: true,
+		status: res.status,
+		data: mapPlaylist(res.data),
+	}
+}
+
+export const getPlaylistAction = async (): Promise<ApiResponse<Playlist[]>> => {
+	const res = await apiRequest<any[]>('/video/playlists', {
+		method: 'GET',
+		cache: 'force-cache',
+		next: { revalidate: 600, tags: ['video-playlists'] },
+	})
+
+	if (!res.ok) {
+		return withFallbackMessage(res, 'プレイリスト一覧の取得に失敗しました。')
+	}
+
+	return {
+		ok: true,
+		status: res.status,
+		data: (res.data ?? []).map(mapPlaylist),
+	}
+}
+
+export const getAccessTokenAction = async (): Promise<ApiResponse<null>> => {
+	return {
+		ok: false,
 		status: StatusCode.NOT_FOUND,
-		response: 'Access token not configured',
+		message: 'Access token not configured',
 	}
 }
 
 export const getAuthUrl = async (): Promise<ApiResponse<string>> => {
 	return {
+		ok: true,
 		status: StatusCode.OK,
-		response: '/api/video/oauth',
+		data: '/api/video/oauth',
 	}
 }
 
 export const createPlaylistAction = async (): Promise<ApiResponse<string>> => {
 	return {
+		ok: true,
 		status: StatusCode.OK,
-		response: 'Playlist sync placeholder executed.',
+		data: 'Playlist sync placeholder executed.',
 	}
 }
 
 export const revalidateYoutubeTag = async (): Promise<ApiResponse<null>> => {
 	return {
+		ok: true,
 		status: StatusCode.NO_CONTENT,
-		response: null,
+		data: null,
 	}
 }
 
@@ -182,7 +194,7 @@ export const updateTagsAction = async ({
 	tags: string[]
 	liveOrBand: 'live' | 'band'
 }): Promise<ApiResponse<string>> => {
-	const res = await apiRequest('/video/tags', {
+	const res = await apiRequest<null>('/video/tags', {
 		method: 'POST',
 		body: {
 			id,
@@ -192,15 +204,13 @@ export const updateTagsAction = async ({
 		},
 	})
 
-	if (res.status === StatusCode.NO_CONTENT) {
-		return { status: StatusCode.OK, response: 'updated' }
+	if (!res.ok) {
+		return withFallbackMessage(res, 'タグの更新に失敗しました。')
 	}
 
 	return {
-		status: res.status as StatusCode,
-		response:
-			typeof res.response === 'string'
-				? res.response
-				: 'タグの更新に失敗しました。',
-	} as ApiResponse<string>
+		ok: true,
+		status: StatusCode.OK,
+		data: 'updated',
+	}
 }

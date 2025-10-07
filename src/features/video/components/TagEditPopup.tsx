@@ -4,11 +4,12 @@ import { useRef, useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next-nprogress-bar'
 import { liveOrBand } from '@/features/video/types'
-import { ErrorType } from '@/types/responseTypes'
+import { ApiError } from '@/types/responseTypes'
 import TagInputField from '@/components/ui/molecules/TagsInputField'
 import Popup from '@/components/ui/molecules/Popup'
 import { updateTagsAction } from './actions'
 import { TbEdit } from 'react-icons/tb'
+import type { Session } from '@/types/session'
 
 type Props = {
 	session: Session | null
@@ -28,7 +29,7 @@ const TagEditPopup = ({
 	const router = useRouter()
 	const [isPopupOpen, setIsPopupOpen] = useState(false)
 	const [isSessionPopupOpen, setIsSessionPopupOpen] = useState(false)
-	const [error, setError] = useState<ErrorType>()
+	const [error, setError] = useState<ApiError>()
 
 	const { handleSubmit, control, reset, setValue } = useForm<{
 		tags: string[]
@@ -49,17 +50,11 @@ const TagEditPopup = ({
 			tags: data.tags,
 			liveOrBand,
 		})
-		if (res.status === 200) {
+		if (res.ok) {
 			setIsPopupOpen(false)
 			router.refresh()
 		} else {
-			setError({
-				status: res.status,
-				response:
-					typeof res.response === 'string'
-						? res.response
-						: null,
-			})
+			setError(res)
 		}
 	}
 
@@ -114,7 +109,7 @@ const TagEditPopup = ({
 					</div>
 					{error && (
 						<div className="text-error text-sm text-center mt-2">
-							{error.response}
+							{error.message}
 						</div>
 					)}
 				</form>

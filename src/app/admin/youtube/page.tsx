@@ -7,17 +7,19 @@ import {
 	getAccessTokenAction,
 	getPlaylistAction,
 } from '@/features/video/components/actions'
+import { StatusCode } from '@/types/responseTypes'
+import type { Session } from '@/types/session'
 
 const YoutubePage = async ({ session }: { session: Session }) => {
 	const accessToken = await getAccessTokenAction()
 	const playlist = await getPlaylistAction()
-	if (playlist.status !== 200) {
+	if (!playlist.ok) {
 		return notFound()
 	}
 	return (
 		<YoutubeManagement
-			playlists={playlist.response}
-			isAccessToken={accessToken.status === 200}
+			playlists={playlist.data}
+			isAccessToken={accessToken.status === StatusCode.OK}
 		/>
 	)
 }

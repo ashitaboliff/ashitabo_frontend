@@ -1,6 +1,5 @@
 'use client'
 
-import { useRef } from 'react'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import Popup from '@/components/ui/molecules/Popup'
@@ -12,7 +11,7 @@ import {
 	AccountRole,
 } from '@/features/user/types'
 import { useSession } from '@/features/auth/hooks/useSession'
-import { ErrorType } from '@/types/responseTypes'
+import { ApiError } from '@/types/responseTypes'
 
 interface UserDetailPopupProps {
 	open: boolean
@@ -21,8 +20,8 @@ interface UserDetailPopupProps {
 	actionLoading: boolean
 	onRoleChange: (id: string, role: AccountRole) => void
 	setIsDeletePopupOpen: (isOpen: boolean) => void
-	actionError: ErrorType | null
-	setActionError: (error: ErrorType | null) => void
+	actionError: ApiError | null
+	setActionError: (error: ApiError | null) => void
 }
 
 const UserDetailPopup = ({
@@ -121,7 +120,7 @@ const UserDetailPopup = ({
 					</div>
 					{actionError && (
 						<p className="text-error text-center">
-							エラーコード{actionError.status}:{actionError.response}
+							エラーコード{actionError.status}:{actionError.message}
 						</p>
 					)}
 				</div>

@@ -13,7 +13,7 @@ import {
 	Profile,
 	Part,
 } from '@/features/user/types'
-import { ErrorType } from '@/types/responseTypes'
+import { ApiError, StatusCode } from '@/types/responseTypes'
 import { generateFiscalYearObject, generateAcademicYear } from '@/utils'
 import Loading from '@/components/ui/atoms/Loading'
 import TextInputField from '@/components/ui/atoms/TextInputField'
@@ -37,7 +37,7 @@ const expectedYear = generateFiscalYearObject()
 
 const schema = yup.object().shape({
 	name: yup.string().required('名前を入力してください'),
-	student_id: yup.string().when('role', {
+	studentId: yup.string().when('role', {
 		is: (role: Role) => role === 'STUDENT',
 		then: (schema) =>
 			schema
@@ -72,7 +72,7 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 	const session = useSession()
 	const router = useRouter()
 	const [isLoading, setIsLoading] = useState<boolean>(false)
-	const [error, setIsError] = useState<ErrorType>()
+	const [error, setIsError] = useState<ApiError>()
 	const [popupOpen, setPopupOpen] = useState<boolean>(false)
 
 	// // なんかPartだけ読み込まれないのでここでrefresh
@@ -91,7 +91,7 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 		mode: 'onBlur',
 		resolver: yupResolver(schema),
 		defaultValues: {
-			student_id: profile.student_id as string,
+			studentId: profile.studentId as string,
 			expected: profile.expected as string,
 			role: profile.role as Role,
 			part: profile.part as Part[], // Ensure profile.part is Part[]
@@ -101,9 +101,9 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 
 	const watchPart = watch('part', profile.part || []) // Use profile.part or empty array as default for watch
 	const watchRole = watch('role')
-	const watchStudentId = watch('student_id')
+	const watchStudentId = watch('studentId')
 
-	// student_idが変更されたときにexpectedのdefaultValueを設定
+	// studentIdが変更されたときにexpectedのdefaultValueを設定
 	useEffect(() => {
 		if (watchStudentId && watchRole === 'STUDENT') {
 			const yearPrefix = watchStudentId.substring(0, 2) // 最初の2桁を取得
@@ -152,8 +152,9 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 
 		if (sessionStatus === 'no-session') {
 			setIsError({
-				status: 401,
-				response: 'ログイン情報がありません。再度ログインしてください。',
+				ok: false,
+				status: StatusCode.UNAUTHORIZED,
+				message: 'ログイン情報がありません。再度ログインしてください。',
 			})
 			// router.push('/auth/signin'); // 必要に応じてサインインページへリダイレクト
 		} else {
@@ -161,8 +162,9 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 			const userId = session.data?.user.id || ''
 			if (!userId) {
 				setIsError({
-					status: 401,
-					response: 'ユーザーIDが取得できませんでした。',
+					ok: false,
+					status: StatusCode.UNAUTHORIZED,
+					message: 'ユーザーIDが取得できませんでした。',
 				})
 				setIsLoading(false)
 				return
@@ -172,26 +174,21 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 					userId,
 					body: data,
 				})
-				if (res.status === 200) {
+				if (res.ok) {
 					setPopupOpen(true)
 					await session.update({ triggerUpdate: Date.now() })
 					router.refresh()
 				} else {
-					setIsError({
-						status: res.status,
-						response:
-							typeof res.response === 'string'
-								? res.response
-								: 'プロフィール更新に失敗しました。',
-					})
+					setIsError(res)
 				}
 			} catch (error) {
 				setIsError({
-					status: 500,
-					response:
-						'このエラーが出た際はわたべに問い合わせてください。' +
-						String(error),
+					ok: false,
+					status: StatusCode.INTERNAL_SERVER_ERROR,
+					message: 'このエラーが出た際はわたべに問い合わせてください。',
+					details: error instanceof Error ? error.message : String(error),
 				})
+				console.error('Error updating profile:', error)
 			}
 		}
 		setIsLoading(false)
@@ -265,14 +262,14 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 					<>
 						<TextInputField
 							type="text"
-							register={register('student_id')}
+							register={register('studentId')}
 							label="学籍番号"
 							infoDropdown={
 								<>
 									信州大学および長野県立大学の学籍番号のフォーマットに対応しています。
 								</>
 							}
-							errorMessage={errors.student_id?.message}
+							errorMessage={errors.studentId?.message}
 						/>
 
 						<SelectField
@@ -307,7 +304,7 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 			</form>
 			{error && (
 				<p className="text-sm text-error text-center">
-					エラーコード{error.status}:{error.response}
+					エラーコード{error.status}:{error.message}
 				</p>
 			)}
 			<Popup

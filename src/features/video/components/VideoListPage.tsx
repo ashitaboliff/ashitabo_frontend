@@ -5,7 +5,7 @@ import { useState, useTransition, useMemo } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import { useSession } from '@/features/auth/hooks/useSession'
 import { YoutubeDetail, YoutubeSearchQuery } from '@/features/video/types'
-import { ErrorType } from '@/types/responseTypes'
+import { ApiError } from '@/types/responseTypes'
 import SelectField from '@/components/ui/atoms/SelectField'
 import Pagination from '@/components/ui/atoms/Pagination'
 import VideoItem from '@/features/video/components/VideoItem'
@@ -44,7 +44,7 @@ const parseSearchParams = (params: URLSearchParams): YoutubeSearchQuery => {
 interface VideoListPageProps {
 	initialYoutubeDetails: YoutubeDetail[]
 	initialPageMax: number
-	initialError?: ErrorType
+	initialError?: ApiError
 }
 
 const VideoListPage = ({
@@ -103,7 +103,9 @@ const VideoListPage = ({
 		})
 		startTransition(() => {
 			const nextQueryString = newParams.toString()
-			const target = nextQueryString ? `${pathname}?${nextQueryString}` : pathname
+			const target = nextQueryString
+				? `${pathname}?${nextQueryString}`
+				: pathname
 			router.replace(target)
 		})
 	}
@@ -176,7 +178,7 @@ const VideoListPage = ({
 
 				{error && (
 					<p className="text-sm text-error text-center">
-						エラーコード{error.status}:{error.response}
+						エラーコード{error.status}:{error.message}
 					</p>
 				)}
 

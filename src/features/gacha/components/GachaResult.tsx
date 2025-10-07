@@ -8,7 +8,7 @@ import {
 	createUserGachaResultAction,
 	getSignedUrlForGachaImageAction,
 } from '@/features/gacha/components/actions'
-import { ApiResponse, StatusCode } from '@/types/responseTypes'
+import { ApiResponse } from '@/types/responseTypes'
 import CardAnimation from '@/features/gacha/components/animations/CardAnimation'
 
 interface GachaResultProps {
@@ -47,14 +47,10 @@ export const GachaResult = ({
 				userId: userId,
 				r2Key: gachaData.data.src,
 			})
-			if (res.status === StatusCode.OK && typeof res.response === 'string') {
-				return res.response
+			if (res.ok) {
+				return res.data
 			}
-			throw new Error(
-				typeof res.response === 'string'
-					? res.response
-					: 'Failed to fetch signed URL for gacha card',
-			)
+			throw res
 		},
 		{
 			revalidateOnFocus: false,
@@ -76,7 +72,7 @@ export const GachaResult = ({
 				ignorePlayCountLimit: ignorePlayCountLimit,
 			})
 			setCreateUserRes(result)
-			if (result.status === StatusCode.CREATED && onGachaSuccess) {
+			if (result.ok && onGachaSuccess) {
 				onGachaSuccess()
 			}
 		})()
@@ -102,13 +98,12 @@ export const GachaResult = ({
 		)
 	}
 
-	if (createUserRes.status !== StatusCode.CREATED) {
+	if (!createUserRes.ok) {
 		return (
 			<div className="flex flex-col items-center h-[25rem] justify-center">
 				<div className="text-lg text-error my-auto">
 					ガチャの保存に失敗しました。
-					{typeof createUserRes.response === 'string' &&
-						`(${createUserRes.response})`}
+					{createUserRes.message}
 				</div>
 			</div>
 		)
