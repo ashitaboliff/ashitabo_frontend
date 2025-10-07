@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { useRouter } from 'next-nprogress-bar'
 import * as yup from 'yup'
@@ -32,11 +32,55 @@ const PasswordSchema = yup.object().shape({
 
 type digit = 'digit1' | 'digit2' | 'digit3' | 'digit4'
 
-const AuthPadLock = () => {
+type AuthPadLockProps = {
+	csrfToken?: string | null
+	callbackUrl?: string | null
+}
+
+const DEFAULT_CALLBACK_URL = '/user'
+
+const AuthPadLock = ({
+	csrfToken,
+	callbackUrl,
+}: AuthPadLockProps) => {
 	const router = useRouter()
 	const [error, setError] = useState<ErrorType>()
 	const [isLoading, setIsLoading] = useState<boolean>(false) // loading -> isLoading に変更
 	const [loadingMessage, setLoadingMessage] = useState<string>('処理中です...')
+	const formRef = useRef<HTMLFormElement | null>(null)
+	const [activeCsrfToken, setActiveCsrfToken] = useState<string | null>(
+		csrfToken ?? null,
+	)
+
+	const effectiveCallbackUrl = useMemo(() => {
+		if (callbackUrl && callbackUrl !== 'undefined') {
+			return callbackUrl
+		}
+		return DEFAULT_CALLBACK_URL
+	}, [callbackUrl])
+
+	const fetchCsrfToken = async (): Promise<string | null> => {
+		try {
+			const response = await fetch('/api/auth/csrf', {
+				method: 'GET',
+				credentials: 'include',
+				cache: 'no-store',
+			})
+			if (!response.ok) return null
+			const data = (await response.json()) as { csrfToken?: string | null }
+			const token =
+				typeof data?.csrfToken === 'string' && data.csrfToken.length > 0
+					? data.csrfToken
+					: null
+			if (token) {
+				setActiveCsrfToken(token)
+			}
+			return token
+		} catch (error) {
+			console.error('Failed to fetch CSRF token', error)
+			return null
+		}
+	}
 
 	const {
 		register,
@@ -72,26 +116,36 @@ const AuthPadLock = () => {
 		}
 	}
 
-	const redirectToLineSignIn = () => {
-		if (typeof window === 'undefined') return
-		const callbackUrl = '/user'
-		const url = new URL('/api/auth/signin/line', window.location.origin)
-		url.searchParams.set('callbackUrl', callbackUrl)
-		window.location.href = url.toString()
-	}
-
 	const handleSignIn = async () => {
 		setLoadingMessage('LINEログインにリダイレクトします...')
 		setIsLoading(true)
-		try {
-			redirectToLineSignIn()
-		} catch (signInError) {
+		let token = activeCsrfToken
+		if (!token) {
+			token = await fetchCsrfToken()
+		}
+		if (!token) {
 			setError({
 				status: 500,
-				response: `LINEログインに失敗しました: ${String(signInError)}`,
+				response:
+					'CSRFトークンが取得できませんでした。ページを再読み込みしてからもう一度お試しください。',
 			})
 			setIsLoading(false)
+			return
 		}
+		const form = formRef.current
+		if (!form) {
+			setError({
+				status: 500,
+				response: 'サインイン用フォームを初期化できませんでした。',
+			})
+			setIsLoading(false)
+			return
+		}
+		const csrfInput = form.querySelector<HTMLInputElement>('input[name="csrfToken"]')
+		if (csrfInput) {
+			csrfInput.value = token
+		}
+		form.requestSubmit()
 	}
 
 	const onSubmit: SubmitHandler<{
@@ -111,7 +165,7 @@ const AuthPadLock = () => {
 				typeof res.response !== 'string' &&
 				res.response.status === 'ok'
 			) {
-				handleSignIn()
+				await handleSignIn()
 				return
 			}
 			setError({
@@ -134,6 +188,15 @@ const AuthPadLock = () => {
 	return (
 		<div className="flex flex-col items-center justify-center space-y-2 h-full">
 			{isLoading && <AuthLoadingIndicator message={loadingMessage} />}
+			<form
+				ref={formRef}
+				action="/api/auth/signin/line"
+				method="POST"
+				className="hidden"
+			>
+				<input type="hidden" name="csrfToken" value={activeCsrfToken ?? ''} />
+				<input type="hidden" name="callbackUrl" value={effectiveCallbackUrl} />
+			</form>
 			<div className="card bg-white shadow-lg w-96 h-[30rem] my-6">
 				<figure>
 					<Image

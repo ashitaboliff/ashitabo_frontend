@@ -9,7 +9,7 @@ const errorMap = {
 	AccessDenied: 'アクセスが拒否されました。権限をご確認ください。',
 	Verification: 'メール認証に失敗しました。再度お試しください。',
 	Default: '認証中にエラーが発生しました。再度お試しください。',
-}
+} as const
 
 interface AuthErrorClientProps {
 	initialError?: string | null
@@ -20,9 +20,12 @@ export default function AuthErrorClient({
 }: AuthErrorClientProps) {
 	const searchParams = useSearchParams()
 	const error = searchParams.get('error') || initialError
+	const messageFromQuery = searchParams.get('message')
+	const reasonFromQuery = searchParams.get('reason')
 
-	const errorMessage =
+	const fallbackMessage =
 		errorMap[error as keyof typeof errorMap] || errorMap.Default
+	const errorMessage = messageFromQuery ?? fallbackMessage
 
 	return (
 		<div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -33,7 +36,10 @@ export default function AuthErrorClient({
 					</h2>
 					<p className="mt-2 text-sm text-gray-600">{errorMessage}</p>
 					{error && (
-						<p className="mt-2 text-xs text-gray-500">エラーコード: {error}</p>
+						<p className="mt-2 text-xs text-gray-500">
+							エラーコード: {error}
+							{reasonFromQuery ? ` (${reasonFromQuery})` : null}
+						</p>
 					)}
 				</div>
 				<div className="mt-8 space-y-4">

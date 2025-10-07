@@ -6,8 +6,6 @@ import './globals.css'
 import ProgressBarProvider from '@/components/ui/atoms/ProgressBarProvider'
 import Header from '@/components/home/Header'
 import Footer from '@/components/home/Footer'
-import { Analytics } from '@vercel/analytics/next'
-import { SpeedInsights } from '@vercel/speed-insights/next'
 import { createMetaData } from '@/utils/metaData'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -43,8 +41,6 @@ export default function RootLayout({
 						✨7月24日 - 画像が見れない件について✨
 					</Link>
 					{children}
-					<Analytics />
-					<SpeedInsights />
 					<Footer />
 				</ProgressBarProvider>
 				<Script

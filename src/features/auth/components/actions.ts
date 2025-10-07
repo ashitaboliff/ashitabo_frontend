@@ -1,3 +1,5 @@
+'use server'
+
 import { apiRequest } from '@/lib/api'
 import { getClientAuthState } from '@/lib/auth/unifiedAuth'
 import { Profile } from '@/features/user/types'
