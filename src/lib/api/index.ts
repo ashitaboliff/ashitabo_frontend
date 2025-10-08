@@ -4,9 +4,7 @@ import {
 	StatusCode,
 	SuccessStatus,
 } from '@/types/responseTypes'
-
-const DEFAULT_FRONTEND_ORIGIN =
-	process.env.NEXT_PUBLIC_APP_BASE_URL ?? 'http://localhost:3000'
+import { getFrontendOrigin } from '@/lib/env'
 
 export type QueryValue =
 	| string
@@ -27,7 +25,7 @@ const buildUrl = (path: string, searchParams?: Record<string, QueryValue>) => {
 		return url.toString()
 	}
 
-	const url = new URL(normalizedPath, DEFAULT_FRONTEND_ORIGIN)
+	const url = new URL(normalizedPath, getFrontendOrigin())
 	appendSearchParams(url, searchParams)
 	return url.toString()
 }
@@ -46,9 +44,12 @@ const appendSearchParams = (url: URL, params?: Record<string, QueryValue>) => {
 	})
 }
 
-export interface ApiClientOptions extends Omit<RequestInit, 'body'> {
+export interface ApiClientOptions
+	extends Omit<RequestInit, 'body' | 'cache' | 'next'> {
 	searchParams?: Record<string, QueryValue>
 	body?: unknown
+	cache?: RequestCache
+	next?: RequestInit['next']
 }
 
 const resolveBody = (body: unknown): BodyInit | undefined => {
@@ -114,7 +115,7 @@ export const apiRequest = async <T>(
 	path: string,
 	options?: ApiClientOptions,
 ): Promise<ApiResponse<T>> => {
-	const { searchParams, headers, body, ...rest } = options ?? {}
+	const { searchParams, headers, body, cache, next, ...rest } = options ?? {}
 
 	const url = buildUrl(path, searchParams)
 
@@ -122,6 +123,8 @@ export const apiRequest = async <T>(
 
 	const requestInit: RequestInit = {
 		...rest,
+		cache,
+		next,
 		credentials: 'include',
 		headers: normalizeHeaders(headers, shouldSkipContentType),
 		body:

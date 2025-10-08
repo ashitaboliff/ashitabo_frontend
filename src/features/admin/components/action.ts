@@ -1,4 +1,4 @@
-import { apiRequest } from '@/lib/api'
+import { apiGet, apiPost, apiPut, apiDelete } from '@/lib/api/crud'
 import { ApiResponse, StatusCode } from '@/types/responseTypes'
 import {
 	createdResponse,
@@ -13,9 +13,10 @@ import { PadLock } from '@/features/admin/types'
 export const getAllPadLocksAction = async (): Promise<
 	ApiResponse<PadLock[]>
 > => {
-	const res = await apiRequest<PadLock[]>('/admin/padlocks', {
-		method: 'GET',
-		cache: 'no-store',
+	const res = await apiGet<PadLock[]>('/admin/padlocks', {
+		...(typeof window === 'undefined'
+			? { next: { revalidate: 120, tags: ['admin-padlocks'] } }
+			: {}),
 	})
 
 	if (!res.ok) {
@@ -34,17 +35,23 @@ export const getAllUserDetailsAction = async ({
 	perPage: number
 	sort: 'new' | 'old'
 }): Promise<ApiResponse<{ users: UserDetail[]; totalCount: number }>> => {
-	const res = await apiRequest<{
+	const res = await apiGet<{
 		users: UserDetail[]
 		totalCount: number
 	}>('/admin/users', {
-		method: 'GET',
 		searchParams: {
 			page,
 			perPage,
 			sort,
 		},
-		cache: 'no-store',
+		...(typeof window === 'undefined'
+			? {
+					next: {
+						revalidate: 30,
+						tags: ['admin-users'],
+					},
+				}
+			: {}),
 	})
 
 	if (!res.ok) {
@@ -62,9 +69,7 @@ export const deleteUserAction = async ({
 }: {
 	id: string
 }): Promise<ApiResponse<null>> => {
-	const res = await apiRequest<null>(`/admin/users/${id}`, {
-		method: 'DELETE',
-	})
+	const res = await apiDelete<null>(`/admin/users/${id}`)
 
 	if (!res.ok) {
 		return withFallbackMessage(res, 'ユーザー削除に失敗しました')
@@ -80,8 +85,7 @@ export const updateUserRoleAction = async ({
 	id: string
 	role: AccountRole
 }): Promise<ApiResponse<null>> => {
-	const res = await apiRequest<null>(`/admin/users/${id}/role`, {
-		method: 'PUT',
+	const res = await apiPut<null>(`/admin/users/${id}/role`, {
 		body: { role },
 	})
 
@@ -114,8 +118,7 @@ export const createBookingBanDateAction = async ({
 	endTime?: number
 	description: string
 }): Promise<ApiResponse<string>> => {
-	const res = await apiRequest<unknown>('/admin/booking-bans', {
-		method: 'POST',
+	const res = await apiPost<unknown>('/admin/booking-bans', {
 		body: {
 			startDate,
 			startTime,
@@ -142,18 +145,24 @@ export const getBanBookingAction = async ({
 	sort: 'new' | 'old' | 'relativeCurrent'
 	today: string
 }): Promise<ApiResponse<{ data: BanBooking[]; totalCount: number }>> => {
-	const res = await apiRequest<{
-		data: any[]
+	const res = await apiGet<{
+		data: BanBooking[]
 		totalCount: number
 	}>('/admin/booking-bans', {
-		method: 'GET',
 		searchParams: {
 			page,
 			perPage,
 			sort,
 			today,
 		},
-		cache: 'no-store',
+		...(typeof window === 'undefined'
+			? {
+					next: {
+						revalidate: 60,
+						tags: ['admin-booking-bans'],
+					},
+				}
+			: {}),
 	})
 
 	if (!res.ok) {
@@ -171,9 +180,7 @@ export const deleteBanBookingAction = async ({
 }: {
 	id: string
 }): Promise<ApiResponse<null>> => {
-	const res = await apiRequest<null>(`/admin/booking-bans/${id}`, {
-		method: 'DELETE',
-	})
+	const res = await apiDelete<null>(`/admin/booking-bans/${id}`)
 
 	if (!res.ok) {
 		return withFallbackMessage(res, '予約禁止日の削除に失敗しました')
@@ -189,8 +196,7 @@ export const createPadLockAction = async ({
 	name: string
 	password: string
 }): Promise<ApiResponse<string>> => {
-	const res = await apiRequest<unknown>('/admin/padlocks', {
-		method: 'POST',
+	const res = await apiPost<unknown>('/admin/padlocks', {
 		body: { name, password },
 	})
 
@@ -206,9 +212,7 @@ export const deletePadLockAction = async ({
 }: {
 	id: string
 }): Promise<ApiResponse<null>> => {
-	const res = await apiRequest<null>(`/admin/padlocks/${id}`, {
-		method: 'DELETE',
-	})
+	const res = await apiDelete<null>(`/admin/padlocks/${id}`)
 
 	if (!res.ok) {
 		return withFallbackMessage(res, '部室パスワードの削除に失敗しました')

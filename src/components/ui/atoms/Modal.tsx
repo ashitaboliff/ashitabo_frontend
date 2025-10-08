@@ -1,4 +1,16 @@
-import { ReactNode } from 'react'
+'use client'
+
+import { ReactNode, useState } from 'react'
+import Popup from '@/components/ui/molecules/Popup'
+
+interface ModalProps {
+	id: string
+	children: ReactNode
+	btnText?: string
+	btnClass?: string
+	modalClass?: string
+	title?: string
+}
 
 const Modal = ({
 	id,
@@ -6,32 +18,41 @@ const Modal = ({
 	children,
 	btnClass = 'btn-primary',
 	modalClass = '',
-	isBackdrop = true,
-}: {
-	id: string
-	btnText?: string
-	children: ReactNode
-	btnClass?: string
-	modalClass?: string
-	isBackdrop?: boolean
-}) => {
+	title,
+}: ModalProps) => {
+	const [open, setOpen] = useState(false)
+	const dialogTitle =
+		title && title.trim().length > 0 ? title : btnText ?? '情報'
+
 	return (
 		<>
-			<label htmlFor={id} className={`btn ${btnClass}`}>
+			<button
+				type="button"
+				className={`btn ${btnClass}`}
+				onClick={() => setOpen(true)}
+			>
 				{btnText || '開く'}
-			</label>
-			<input type="checkbox" id={id} className="modal-toggle" />
-			<div className={`modal ${modalClass}`}>
-				<div className="modal-box">
+			</button>
+			<Popup
+				id={id}
+				title={dialogTitle}
+				open={open}
+				onClose={() => setOpen(false)}
+				className={modalClass}
+			>
+				<div className="flex flex-col gap-4">
 					{children}
-					<div className="modal-action">
-						<label htmlFor={id} className="btn btn-outline">
+					<div className="flex justify-center">
+						<button
+							type="button"
+							className="btn btn-outline"
+							onClick={() => setOpen(false)}
+						>
 							閉じる
-						</label>
+						</button>
 					</div>
-					{isBackdrop && <label htmlFor={id} className="modal-backdrop" />}
 				</div>
-			</div>
+			</Popup>
 		</>
 	)
 }

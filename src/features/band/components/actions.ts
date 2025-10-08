@@ -1,4 +1,4 @@
-import { apiRequest } from '@/lib/api'
+import { apiGet, apiPost, apiPut, apiDelete } from '@/lib/api/crud'
 import { ApiResponse, StatusCode } from '@/types/responseTypes'
 import {
 	createdResponse,
@@ -23,10 +23,12 @@ import type { Part } from '@/features/user/types'
 export const getBandDetailsAction = async (
 	bandId: string,
 ): Promise<ApiResponse<BandDetails>> => {
-	const res = await apiRequest<BandDetails>(`/band/${bandId}`, {
-		method: 'GET',
-		cache: 'no-store',
-		next: { tags: ['bands', `band:${bandId}`] },
+	const res = await apiGet<BandDetails>(`/band/${bandId}`, {
+		...(typeof window === 'undefined'
+			? {
+					next: { revalidate: 60, tags: ['bands', `band:${bandId}`] },
+				}
+			: {}),
 	})
 
 	if (!res.ok) {
@@ -39,10 +41,10 @@ export const getBandDetailsAction = async (
 export const getUserBandsAction = async (): Promise<
 	ApiResponse<BandDetails[]>
 > => {
-	const res = await apiRequest<BandDetails[]>('/band/me', {
-		method: 'GET',
-		cache: 'no-store',
-		next: { tags: ['band-me'] },
+	const res = await apiGet<BandDetails[]>('/band/me', {
+		...(typeof window === 'undefined'
+			? { next: { revalidate: 30, tags: ['band-me'] } }
+			: {}),
 	})
 
 	if (!res.ok) {
@@ -56,8 +58,7 @@ export const createBandAction = async (
 	formData: FormData,
 ): Promise<CreateBandResponse> => {
 	const name = String(formData.get('name') ?? '').trim()
-	const res = await apiRequest<{ id: string }>('/band', {
-		method: 'POST',
+	const res = await apiPost<{ id: string }>('/band', {
 		body: { name },
 	})
 
@@ -89,8 +90,7 @@ export const updateBandAction = async (
 	formData: FormData,
 ): Promise<UpdateBandResponse> => {
 	const name = String(formData.get('name') ?? '').trim()
-	const res = await apiRequest(`/band/${bandId}`, {
-		method: 'PUT',
+	const res = await apiPut<UpdateBandResponse>(`/band/${bandId}`, {
 		body: { name },
 	})
 
@@ -113,9 +113,7 @@ export const updateBandAction = async (
 export const deleteBandAction = async (
 	bandId: string,
 ): Promise<ApiResponse<null>> => {
-	const res = await apiRequest<null>(`/band/${bandId}`, {
-		method: 'DELETE',
-	})
+	const res = await apiDelete<null>(`/band/${bandId}`)
 
 	if (!res.ok) {
 		return withFallbackMessage(res, 'バンドの削除に失敗しました。')
@@ -129,8 +127,7 @@ export const addBandMemberAction = async (
 	userId: string,
 	part: Part,
 ): Promise<AddBandMemberResponse> => {
-	const res = await apiRequest<null>(`/band/${bandId}/members`, {
-		method: 'POST',
+	const res = await apiPost<null>(`/band/${bandId}/members`, {
 		body: { userId, part },
 	})
 
@@ -145,8 +142,7 @@ export const updateBandMemberAction = async (
 	bandMemberId: string,
 	part: Part,
 ): Promise<UpdateBandMemberResponse> => {
-	const res = await apiRequest<null>(`/band/members/${bandMemberId}`, {
-		method: 'PUT',
+	const res = await apiPut<null>(`/band/members/${bandMemberId}`, {
 		body: { part },
 	})
 
@@ -160,9 +156,7 @@ export const updateBandMemberAction = async (
 export const removeBandMemberAction = async (
 	bandMemberId: string,
 ): Promise<RemoveBandMemberResponse> => {
-	const res = await apiRequest<null>(`/band/members/${bandMemberId}`, {
-		method: 'DELETE',
-	})
+	const res = await apiDelete<null>(`/band/members/${bandMemberId}`)
 
 	if (!res.ok) {
 		return withFallbackMessage(res, 'メンバーの削除に失敗しました。')
@@ -174,8 +168,7 @@ export const removeBandMemberAction = async (
 export const getAvailablePartsAction = async (): Promise<
 	ApiResponse<Part[]>
 > => {
-	const res = await apiRequest<Part[]>('/band/parts', {
-		method: 'GET',
+	const res = await apiGet<Part[]>('/band/parts', {
 		cache: 'force-cache',
 		next: { revalidate: 86400, tags: ['band-parts'] },
 	})
@@ -191,10 +184,11 @@ export const searchUsersForBandAction = async (
 	query?: string,
 	part?: Part,
 ): Promise<ApiResponse<UserWithProfile[]>> => {
-	const res = await apiRequest<UserWithProfile[]>('/band/search-users', {
-		method: 'GET',
+	const res = await apiGet<UserWithProfile[]>('/band/search-users', {
 		searchParams: { query, part },
-		cache: 'no-store',
+		...(typeof window === 'undefined'
+			? { next: { revalidate: 30, tags: ['band-search-users'] } }
+			: {}),
 	})
 
 	if (!res.ok) {

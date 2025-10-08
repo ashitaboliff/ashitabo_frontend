@@ -1,5 +1,6 @@
 'use server'
 
+import Link from 'next/link'
 import { Inter } from 'next/font/google'
 import Image from 'next/image'
 import { createMetaData } from '@/utils/metaData'
@@ -93,9 +94,9 @@ const Page = async () => {
 					年間のざっくりとした予定は以下の通りです
 					<br />
 					ここに掲載していないライブもたくさんあるので詳細は
-					<a href="/home/live" className="text-accent link link-hover">
+					<Link href="/home/live" className="text-accent link link-hover">
 						こちら
-					</a>
+					</Link>
 					をご確認ください
 					<br />
 					<br />
@@ -138,7 +139,7 @@ const Page = async () => {
 					<br />
 					<br />
 					<div className="flex flex-row items-center justify-center gap-x-1">
-						<a
+						<Link
 							href="https://twitter.com/ashitabo_dongri"
 							target="_blank"
 							rel="noopener noreferrer"
@@ -146,8 +147,8 @@ const Page = async () => {
 						>
 							<FaXTwitter size={15} />
 							Twitter
-						</a>
-						<a
+						</Link>
+						<Link
 							href="https://www.instagram.com/ashitabo2023/"
 							target="_blank"
 							rel="noopener noreferrer"
@@ -155,15 +156,15 @@ const Page = async () => {
 						>
 							<FaInstagram size={15} />
 							Instagram
-						</a>
-						<a
+						</Link>
+						<Link
 							href="/video"
 							rel="noopener noreferrer"
 							className="btn btn-secondary text-sm"
 						>
 							<FaYoutube size={15} />
 							YouTube
-						</a>
+						</Link>
 					</div>
 				</div>
 				<div className="relative w-full h-64">
@@ -204,13 +205,13 @@ const Page = async () => {
 					/>
 				</div>
 				<div className="flex flex-row justify-center">
-					<a
+					<Link
 						className="btn btn-outline w-44 mt-4"
 						href="/home"
 						rel="noopener noreferrer"
 					>
 						ホームに戻る
-					</a>
+					</Link>
 				</div>
 			</div>
 		</div>

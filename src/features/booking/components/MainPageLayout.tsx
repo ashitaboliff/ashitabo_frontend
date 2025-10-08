@@ -1,5 +1,3 @@
-'use server'
-
 import { ReactNode } from 'react'
 import fs from 'fs/promises'
 import path from 'path'
@@ -26,6 +24,7 @@ const MainPageLayout = async ({ children }: { children: ReactNode }) => {
 					id="booking-rule-modal"
 					btnText="使い方の表示"
 					btnClass="btn btn-outline btn-md"
+					title="使い方の表示"
 					modalClass="prose prose-h3:text-center max-w-none text-base-content"
 				>
 					<MDXRemote source={markdownContent} />

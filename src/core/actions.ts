@@ -23,7 +23,9 @@ export const redirectFrom = async (target: string, _fallback: string) => {
 export const getBookingIdAction = async (): Promise<string[]> => {
 	const res = await apiRequest<string[]>('/booking/ids', {
 		method: 'GET',
-		cache: 'no-store',
+		...(typeof window === 'undefined'
+			? { next: { revalidate: 60, tags: ['booking-ids'] } }
+			: {}),
 	})
 
 	if (res.ok && Array.isArray(res.data)) {
@@ -35,7 +37,9 @@ export const getBookingIdAction = async (): Promise<string[]> => {
 export const getYoutubeIdAction = async (): Promise<string[]> => {
 	const res = await apiRequest<string[]>('/video/ids', {
 		method: 'GET',
-		cache: 'no-store',
+		...(typeof window === 'undefined'
+			? { next: { revalidate: 120, tags: ['youtube-ids'] } }
+			: {}),
 	})
 	if (res.ok && Array.isArray(res.data)) {
 		return res.data
@@ -60,7 +64,9 @@ export const getAllUsersForSelectAction = async (): Promise<
 > => {
 	const res = await apiRequest<UserForSelect[]>('/users/select', {
 		method: 'GET',
-		cache: 'no-store',
+		...(typeof window === 'undefined'
+			? { next: { revalidate: 120, tags: ['users-select'] } }
+			: {}),
 	})
 
 	return mapSuccess(

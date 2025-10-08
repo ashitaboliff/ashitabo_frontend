@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { addDays, subDays, format } from 'date-fns'
 import { ja } from 'date-fns/locale'
@@ -10,11 +10,16 @@ import Popup from '@/components/ui/molecules/Popup'
 import BookingCalendar from '@/features/booking/components/BookingCalendar'
 import { getCurrentJSTDateString } from '@/utils'
 import { StatusCode, ApiError } from '@/types/responseTypes'
+import { BOOKING_CALENDAR_SWR_KEY } from '@/features/booking/constants'
 
-const fetchBookings = async ([startDate, endDate]: [
+const fetchBookings = async ([cacheKey, startDate, endDate]: [
+	string,
 	string,
 	string,
 ]): Promise<BookingResponse | null> => {
+	if (cacheKey !== BOOKING_CALENDAR_SWR_KEY) {
+		throw new Error('Invalid cache key for booking calendar fetcher')
+	}
 	const res = await getBookingByDateAction({ startDate, endDate })
 	if (res.ok) {
 		return res.data
@@ -26,54 +31,50 @@ const MainPage = () => {
 	const [viewDay, setViewDay] = useState<string>(
 		getCurrentJSTDateString({ yesterday: true }),
 	)
-	const [viewDayMax, setViewDayMax] = useState<number>(7) // カレンダーの表示日数
-	const ableViewDayMax = 27 // yesterdayから27日後まで表示可能
-	const ableViewDayMin = 7 // yesterdayから7日前まで表示可能
+	const VIEW_WINDOW_DAYS = 7
+	const VIEW_DAY_MAX_OFFSET = 27
+	const VIEW_DAY_MIN_OFFSET = 7
 	const [errorPopupOpen, setErrorPopupOpen] = useState<boolean>(false)
 	const [fetchError, setFetchError] = useState<ApiError | null>(null)
 	const viewDate = new Date(viewDay)
 	const yesterdayDate = new Date(getCurrentJSTDateString({ yesterday: true }))
-	const endDateString = format(addDays(viewDate, viewDayMax - 1), 'yyyy-MM-dd')
+	const endDateString = format(
+		addDays(viewDate, VIEW_WINDOW_DAYS - 1),
+		'yyyy-MM-dd',
+	)
 
 	const {
 		data: bookingData,
 		isLoading,
 		mutate,
-	} = useSWR<BookingResponse | null>([viewDay, endDateString], fetchBookings, {
-		revalidateOnFocus: false,
-		onError: (err) => {
-			setFetchError(err as ApiError)
-			setErrorPopupOpen(true)
+	} = useSWR<BookingResponse | null>(
+		[BOOKING_CALENDAR_SWR_KEY, viewDay, endDateString],
+		fetchBookings,
+		{
+			revalidateOnFocus: false,
+			onError: (err) => {
+				setFetchError(err as ApiError)
+				setErrorPopupOpen(true)
+			},
 		},
-	})
-
-	useEffect(() => {
-		const handleRefresh = () => {
-			mutate()
-		}
-
-		window.addEventListener('refresh-booking-data', handleRefresh)
-
-		return () => {
-			window.removeEventListener('refresh-booking-data', handleRefresh)
-		}
-		// mutate is stable across renders per SWR, keeping it in deps for clarity.
-	}, [mutate])
+	)
 
 	const prevAble =
-		subDays(viewDate, viewDayMax) < subDays(yesterdayDate, ableViewDayMin)
+		subDays(viewDate, VIEW_WINDOW_DAYS) <
+		subDays(yesterdayDate, VIEW_DAY_MIN_OFFSET)
 
 	const nextAble =
-		addDays(viewDate, viewDayMax - 1) >= addDays(yesterdayDate, ableViewDayMax)
+		addDays(viewDate, VIEW_WINDOW_DAYS - 1) >=
+		addDays(yesterdayDate, VIEW_DAY_MAX_OFFSET)
 
 	const prevWeek = () => {
 		if (prevAble) return
-		const newDate = subDays(viewDate, viewDayMax)
+		const newDate = subDays(viewDate, VIEW_WINDOW_DAYS)
 		setViewDay(format(newDate, 'yyyy-MM-dd'))
 	}
 	const nextWeek = () => {
 		if (nextAble) return
-		const newDate = addDays(viewDate, viewDayMax)
+		const newDate = addDays(viewDate, VIEW_WINDOW_DAYS)
 		setViewDay(format(newDate, 'yyyy-MM-dd'))
 	}
 
@@ -110,7 +111,7 @@ const MainPage = () => {
 					</button>
 					<div className="text-md sm:text-lg font-bold w-64 sm:w-72 text-center">
 						{format(viewDate, 'M/d(E)', { locale: ja })}~
-						{format(addDays(viewDate, viewDayMax - 1), 'M/d(E)', {
+						{format(addDays(viewDate, VIEW_WINDOW_DAYS - 1), 'M/d(E)', {
 							locale: ja,
 						})}
 						までのコマ表

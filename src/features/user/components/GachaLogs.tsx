@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { GachaSort, GachaData } from '@/features/gacha/types'
+import type { ChangeEvent } from 'react'
+import { GachaSort } from '@/features/gacha/types'
 import Pagination from '@/components/ui/atoms/Pagination'
 import SelectField from '@/components/ui/atoms/SelectField'
 import GachaPreviewPopup from '@/features/gacha/components/GachaPreviewPopup'
@@ -9,16 +9,24 @@ import { useGachaPreview } from '@/features/gacha/hooks/useGachaPreview'
 import RadioSortGroup from '@/components/ui/atoms/RadioSortGroup'
 import GachaLogList from './GachaLogList'
 import type { Session } from '@/types/session'
+import { usePagedResource } from '@/hooks/usePagedResource'
 
 interface UserGachaLogsProps {
 	session: Session
 }
 
 const UserGachaLogs = ({ session }: UserGachaLogsProps) => {
-	const [currentPage, setCurrentPage] = useState<number>(1)
-	const [logsPerPage, setLogsPerPage] = useState(15)
-	const [sort, setSort] = useState<GachaSort>('new')
-	const [totalCount, setTotalCount] = useState<number>(0)
+	const {
+		state: { page, perPage, sort, totalCount },
+		pageCount,
+		setPage,
+		setPerPage,
+		setSort,
+		setTotalCount,
+	} = usePagedResource<GachaSort>({
+		initialPerPage: 15,
+		initialSort: 'new',
+	})
 
 	const {
 		isPopupOpen,
@@ -31,13 +39,13 @@ const UserGachaLogs = ({ session }: UserGachaLogsProps) => {
 
 	const userId = session.user.id
 
-	const handlePageChange = (page: number) => {
-		setCurrentPage(page)
+	const handlePageChange = (nextPage: number) => {
+		setPage(nextPage)
 	}
 
 	const handleLogsPerPageChange = (
 		event:
-			| React.ChangeEvent<HTMLSelectElement>
+			| ChangeEvent<HTMLSelectElement>
 			| { target: { name: string; value: number | number[] } },
 	) => {
 		const newLogsPerPage =
@@ -46,20 +54,16 @@ const UserGachaLogs = ({ session }: UserGachaLogsProps) => {
 				: Array.isArray(event.target.value)
 					? event.target.value[0]
 					: event.target.value
-		setLogsPerPage(newLogsPerPage)
-		setCurrentPage(1)
+		setPerPage(newLogsPerPage)
 	}
 
 	const handleSortChange = (newSort: GachaSort) => {
 		setSort(newSort)
-		setCurrentPage(1)
 	}
 
 	const handleDataLoaded = (count: number) => {
 		setTotalCount(count)
 	}
-
-	const pageMax = Math.ceil(totalCount / logsPerPage) || 1
 
 	return (
 		<div className="flex flex-col justify-center mt-4">
@@ -69,7 +73,7 @@ const UserGachaLogs = ({ session }: UserGachaLogsProps) => {
 					<SelectField
 						name="gachaLogsPerPage"
 						options={{ '15件': 15, '25件': 25, '35件': 35 }}
-						value={logsPerPage}
+						value={perPage}
 						onChange={handleLogsPerPageChange}
 					/>
 				</div>
@@ -89,17 +93,17 @@ const UserGachaLogs = ({ session }: UserGachaLogsProps) => {
 				</div>
 				<GachaLogList
 					userId={userId}
-					currentPage={currentPage}
-					logsPerPage={logsPerPage}
+					currentPage={page}
+					logsPerPage={perPage}
 					sort={sort}
 					onGachaItemClick={openGachaPreview}
 					onDataLoaded={handleDataLoaded}
 				/>
-				{pageMax > 1 && totalCount > 0 && (
+				{pageCount > 1 && totalCount > 0 && (
 					<div className="mt-4 mx-auto">
 						<Pagination
-							currentPage={currentPage}
-							totalPages={pageMax}
+							currentPage={page}
+							totalPages={pageCount}
 							onPageChange={handlePageChange}
 						/>
 					</div>

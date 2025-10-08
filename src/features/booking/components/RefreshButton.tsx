@@ -1,15 +1,20 @@
 'use client'
 
 import { useTransition } from 'react'
-import { revalidateBookingDataAction } from './actions'
+import { useSWRConfig } from 'swr'
+import { BOOKING_CALENDAR_SWR_KEY } from '@/features/booking/constants'
 
 const RefreshButton = () => {
 	const [isPending, startTransition] = useTransition()
+	const { mutate } = useSWRConfig()
 
 	const handleClick = () => {
 		startTransition(async () => {
-			await revalidateBookingDataAction()
-			window.dispatchEvent(new CustomEvent('refresh-booking-data'))
+			await mutate(
+				(key) => Array.isArray(key) && key[0] === BOOKING_CALENDAR_SWR_KEY,
+				undefined,
+				{ revalidate: true },
+			)
 		})
 	}
 

@@ -1,4 +1,4 @@
-import { apiRequest } from '@/lib/api'
+import { apiDelete, apiGet, apiPost, apiPut } from '@/lib/api/crud'
 import { ApiResponse, StatusCode } from '@/types/responseTypes'
 import {
 	createdResponse,
@@ -68,13 +68,14 @@ export const getBookingByDateAction = async ({
 	startDate: string
 	endDate: string
 }): Promise<ApiResponse<BookingResponse>> => {
-	const res = await apiRequest<RawBookingResponse>('/booking', {
-		method: 'GET',
+	const res = await apiGet<RawBookingResponse>('/booking', {
 		searchParams: {
 			start: startDate,
 			end: endDate,
 		},
-		cache: 'no-store',
+		...(typeof window === 'undefined'
+			? { next: { revalidate: 10, tags: ['booking-calendar'] } }
+			: {}),
 	})
 
 	return mapSuccess(
@@ -87,9 +88,10 @@ export const getBookingByDateAction = async ({
 export const getAllBookingAction = async (): Promise<
 	ApiResponse<BookingLog[]>
 > => {
-	const res = await apiRequest<RawBookingData[]>('/booking/logs', {
-		method: 'GET',
-		cache: 'no-store',
+	const res = await apiGet<RawBookingData[]>('/booking/logs', {
+		...(typeof window === 'undefined'
+			? { next: { revalidate: 60, tags: ['booking-logs'] } }
+			: {}),
 	})
 
 	return mapSuccess(
@@ -102,9 +104,10 @@ export const getAllBookingAction = async (): Promise<
 export const getBookingByIdAction = async (
 	bookingId: string,
 ): Promise<ApiResponse<Booking>> => {
-	const res = await apiRequest<RawBookingData>(`/booking/${bookingId}`, {
-		method: 'GET',
-		cache: 'no-store',
+	const res = await apiGet<RawBookingData>(`/booking/${bookingId}`, {
+		...(typeof window === 'undefined'
+			? { next: { revalidate: 30, tags: ['booking-detail', bookingId] } }
+			: {}),
 	})
 
 	if (!res.ok) {
@@ -136,17 +139,18 @@ export const getBookingByUserIdAction = async ({
 	perPage: number
 	sort: 'new' | 'old'
 }): Promise<ApiResponse<{ bookings: Booking[]; totalCount: number }>> => {
-	const res = await apiRequest<{
+	const res = await apiGet<{
 		bookings: RawBookingData[]
 		totalCount: number
 	}>(`/booking/user/${userId}`, {
-		method: 'GET',
 		searchParams: {
 			page,
 			perPage,
 			sort,
 		},
-		cache: 'no-store',
+		...(typeof window === 'undefined'
+			? { next: { revalidate: 15, tags: ['booking-user', userId] } }
+			: {}),
 	})
 
 	return mapSuccess(
@@ -174,8 +178,7 @@ export const createBookingAction = async ({
 	password: string
 	toDay: string
 }): Promise<ApiResponse<string>> => {
-	const res = await apiRequest<unknown>('/booking', {
-		method: 'POST',
+	const res = await apiPost<unknown>('/booking', {
 		body: {
 			id: bookingId,
 			userId,
@@ -204,8 +207,7 @@ export const updateBookingAction = async ({
 	userId: string
 	booking: BookingPayload
 }): Promise<ApiResponse<Booking>> => {
-	const res = await apiRequest<RawBookingData>(`/booking/${bookingId}`, {
-		method: 'PUT',
+	const res = await apiPut<RawBookingData>(`/booking/${bookingId}`, {
 		body: {
 			userId,
 			bookingDate: booking.bookingDate,
@@ -234,8 +236,7 @@ export const deleteBookingAction = async ({
 	bookingId: string
 	userId: string
 }): Promise<ApiResponse<null>> => {
-	const res = await apiRequest<null>(`/booking/${bookingId}`, {
-		method: 'DELETE',
+	const res = await apiDelete<null>(`/booking/${bookingId}`, {
 		searchParams: { userId },
 	})
 
@@ -255,8 +256,7 @@ export const authBookingAction = async ({
 	userId: string
 	password: string
 }): Promise<ApiResponse<string>> => {
-	const res = await apiRequest<unknown>(`/booking/${bookingId}/verify`, {
-		method: 'POST',
+	const res = await apiPost<unknown>(`/booking/${bookingId}/verify`, {
 		body: { userId, password },
 	})
 
@@ -265,20 +265,4 @@ export const authBookingAction = async ({
 	}
 
 	return okResponse('verified')
-}
-
-export const bookingRevalidateTagAction = async ({
-	tag,
-}: {
-	tag: string
-}): Promise<ApiResponse<null>> => {
-	console.info(`booking revalidate tag placeholder for ${tag}`)
-	return okResponse(null)
-}
-
-export const revalidateBookingDataAction = async (): Promise<
-	ApiResponse<null>
-> => {
-	console.info('booking data revalidation placeholder')
-	return okResponse(null)
 }

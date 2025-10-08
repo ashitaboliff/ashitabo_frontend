@@ -1,4 +1,4 @@
-import { apiRequest } from '@/lib/api'
+import { apiGet, apiPost, apiPut } from '@/lib/api/crud'
 import { ApiResponse } from '@/types/responseTypes'
 import {
 	createdResponse,
@@ -19,17 +19,18 @@ export const getGachaByUserIdAction = async ({
 	perPage: number
 	sort: GachaSort
 }): Promise<ApiResponse<{ gacha: GachaData[]; totalCount: number }>> => {
-	const res = await apiRequest<{
+	const res = await apiGet<{
 		gacha: GachaData[]
 		totalCount: number
 	}>(`/gacha/users/${userId}`, {
-		method: 'GET',
 		searchParams: {
 			page,
 			perPage,
 			sort,
 		},
-		cache: 'no-store',
+		...(typeof window === 'undefined'
+			? { next: { revalidate: 30, tags: ['gacha-user', userId] } }
+			: {}),
 	})
 
 	if (!res.ok) {
@@ -49,15 +50,16 @@ export const getGachaByGachaSrcAction = async ({
 	userId: string
 	gachaSrc: string
 }): Promise<ApiResponse<{ gacha: GachaData | null; totalCount: number }>> => {
-	const res = await apiRequest<{
+	const res = await apiGet<{
 		gacha: GachaData | null
 		totalCount: number
 	}>(`/gacha/users/${userId}/by-src`, {
-		method: 'GET',
 		searchParams: {
 			gachaSrc,
 		},
-		cache: 'no-store',
+		...(typeof window === 'undefined'
+			? { next: { revalidate: 60, tags: ['gacha-user', userId, gachaSrc] } }
+			: {}),
 	})
 
 	if (!res.ok) {
@@ -85,8 +87,7 @@ export const createUserGachaResultAction = async ({
 	ignorePlayCountLimit?: boolean
 	currentPlayCount?: number
 }): Promise<ApiResponse<string>> => {
-	const res = await apiRequest<unknown>(`/gacha/users/${userId}`, {
-		method: 'POST',
+	const res = await apiPost<unknown>(`/gacha/users/${userId}`, {
 		body: {
 			userId,
 			gachaVersion,

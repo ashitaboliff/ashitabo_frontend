@@ -11,16 +11,24 @@ import AddCalendarPopup from '@/components/ui/molecules/AddCalendarPopup'
 import RadioSortGroup from '@/components/ui/atoms/RadioSortGroup'
 import BookingLogList from './BookingLogList'
 import type { Session } from '@/types/session'
+import { usePagedResource } from '@/hooks/usePagedResource'
 
 interface UserBookingLogsProps {
 	session: Session
 }
 
 const UserBookingLogs = ({ session }: UserBookingLogsProps) => {
-	const [currentPage, setCurrentPage] = useState<number>(1)
-	const [logsPerPage, setLogsPerPage] = useState(10)
-	const [sort, setSort] = useState<'new' | 'old'>('new')
-	const [totalCount, setTotalCount] = useState<number>(0)
+	const {
+		state: { page, perPage, sort, totalCount },
+		pageCount,
+		setPage,
+		setPerPage,
+		setSort,
+		setTotalCount,
+	} = usePagedResource<'new' | 'old'>({
+		initialPerPage: 10,
+		initialSort: 'new',
+	})
 	const [popupData, setPopupData] = useState<Booking>()
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 	const [isAddCalendarPopupOpen, setIsAddCalendarPopupOpen] =
@@ -28,13 +36,12 @@ const UserBookingLogs = ({ session }: UserBookingLogsProps) => {
 
 	const userId = session.user.id
 
-	const handlePageChange = (page: number) => {
-		setCurrentPage(page)
+	const handlePageChange = (nextPage: number) => {
+		setPage(nextPage)
 	}
 
 	const handleSortChange = (newSort: 'new' | 'old') => {
 		setSort(newSort)
-		setCurrentPage(1)
 	}
 
 	const handleDataLoaded = (count: number) => {
@@ -45,8 +52,6 @@ const UserBookingLogs = ({ session }: UserBookingLogsProps) => {
 		setPopupData(booking)
 		setIsPopupOpen(true)
 	}
-
-	const pageMax = Math.ceil(totalCount / logsPerPage) || 1
 
 	return (
 		<div className="flex flex-col justify-center mt-4">
@@ -60,10 +65,9 @@ const UserBookingLogs = ({ session }: UserBookingLogsProps) => {
 					<SelectField
 						name="logsPerPage"
 						options={{ '10件': 10, '20件': 20, '30件': 30 }}
-						value={logsPerPage}
+						value={perPage}
 						onChange={(e) => {
-							setLogsPerPage(Number(e.target.value))
-							setCurrentPage(1)
+							setPerPage(Number(e.target.value))
 						}}
 					/>
 				</div>
@@ -94,8 +98,8 @@ const UserBookingLogs = ({ session }: UserBookingLogsProps) => {
 						<tbody>
 							<BookingLogList
 								userId={userId}
-								currentPage={currentPage}
-								logsPerPage={logsPerPage}
+								currentPage={page}
+								logsPerPage={perPage}
 								sort={sort}
 								onBookingItemClick={handleBookingItemClick}
 								onDataLoaded={handleDataLoaded}
@@ -103,11 +107,11 @@ const UserBookingLogs = ({ session }: UserBookingLogsProps) => {
 						</tbody>
 					</table>
 				</div>
-				{pageMax > 1 && totalCount > 0 && (
+				{pageCount > 1 && totalCount > 0 && (
 					<div className="mt-4 mx-auto">
 						<Pagination
-							currentPage={currentPage}
-							totalPages={pageMax}
+							currentPage={page}
+							totalPages={pageCount}
 							onPageChange={handlePageChange}
 						/>
 					</div>

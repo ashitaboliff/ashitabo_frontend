@@ -1,5 +1,6 @@
 import type { Session } from '@/types/session'
 import { NextRequest, NextResponse } from 'next/server'
+import { API_BASE_URL, API_KEY } from '@/lib/env'
 
 export const config = {
 	matcher: [
@@ -42,6 +43,14 @@ const PUBLIC_ROUTES = [
 const AUTH_FLOW_ROUTES = ['/auth/padlock', '/auth/signin']
 
 class MiddlewareApp {
+	private static readonly SESSION_CACHE_TTL = Number(
+		process.env.MIDDLEWARE_SESSION_CACHE_MS ?? 5000,
+	)
+	private static sessionCache = new Map<
+		string,
+		{ value: Session | null; expires: number }
+	>()
+
 	private request: NextRequest
 	private isMaintenanceMode: boolean = process.env.MAINTENANCE_MODE === 'true'
 	private session: Session | null
@@ -56,6 +65,24 @@ class MiddlewareApp {
 	constructor(request: NextRequest) {
 		this.request = request
 		this.session = ((request as any)?.auth as Session | null) ?? null
+	}
+
+	private static readCachedSession(token: string) {
+		const cached = this.sessionCache.get(token)
+		if (!cached) return undefined
+		if (cached.expires < Date.now()) {
+			this.sessionCache.delete(token)
+			return undefined
+		}
+		return cached.value
+	}
+
+	private static writeCachedSession(token: string, session: Session | null) {
+		const ttl = Math.max(0, this.SESSION_CACHE_TTL)
+		this.sessionCache.set(token, {
+			value: session,
+			expires: Date.now() + ttl,
+		})
 	}
 
 	private matchesRoute(path: string, routePatterns: string[]): boolean {
@@ -101,24 +128,30 @@ class MiddlewareApp {
 					return null
 				}
 
+				const cachedSession = MiddlewareApp.readCachedSession(sessionToken)
+				if (cachedSession !== undefined) {
+					this.session = cachedSession
+					return cachedSession
+				}
+
 				const cookieName = authCookie?.name ?? 'authjs.session-token'
-				const baseUrl =
-					process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8787'
-				const response = await fetch(`${baseUrl}/auth/session`, {
+				const response = await fetch(`${API_BASE_URL}/auth/session`, {
 					headers: {
 						Cookie: `${cookieName}=${sessionToken}`,
-						'X-API-Key': process.env.NEXT_PUBLIC_API_KEY || '',
+						'X-API-Key': API_KEY,
 					},
 					cache: 'no-store',
 				})
 
 				if (!response.ok) {
 					this.session = null
+					MiddlewareApp.writeCachedSession(sessionToken, null)
 					return null
 				}
 
 				const session = (await response.json()) as Session
 				this.session = session
+				MiddlewareApp.writeCachedSession(sessionToken, session)
 				return session
 			} catch (error) {
 				console.error('Failed to get session state:', error)

@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { bookingRevalidateTagAction } from './actions'
 import { BookingLog, BookingTime } from '@/features/booking/types'
 import Popup from '@/components/ui/molecules/Popup'
 import Pagination from '@/components/ui/atoms/Pagination'
@@ -48,14 +47,6 @@ const LogsPage = ({
 							className="select select-bordered select-sm w-full xs:w-auto"
 						/>
 					</div>
-					<button
-						className="btn btn-primary btn-sm w-full xs:w-auto"
-						onClick={async () =>
-							await bookingRevalidateTagAction({ tag: 'booking' })
-						}
-					>
-						予約情報を更新
-					</button>
 				</div>
 			</div>
 

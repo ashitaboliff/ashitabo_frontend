@@ -64,7 +64,6 @@ export const useGachaPlayManager = (options?: UseGachaPlayManagerOptions) => {
 			localStorage.setItem('gachaPlayCountToday', '0')
 			localStorage.setItem('gachaLastPlayedDate', today)
 		}
-		// Update state based on potentially updated localStorage
 		setGachaPlayCountToday(currentCount)
 		setLastGachaDateString(today)
 
@@ -77,20 +76,22 @@ export const useGachaPlayManager = (options?: UseGachaPlayManagerOptions) => {
 			)
 			setIsGachaSelectPopupOpen(false) // Ensure popup is closed if limit reached
 		}
-	}, [gachaPlayCountToday, lastGachaDateString])
+	}, [])
 
 	const onGachaPlayedSuccessfully = useCallback(() => {
 		const today = getCurrentJSTDateString({})
-		const newCount = gachaPlayCountToday + 1
-		localStorage.setItem('gachaPlayCountToday', newCount.toString())
-		localStorage.setItem('gachaLastPlayedDate', today)
-		setGachaPlayCountToday(newCount)
+		setGachaPlayCountToday((prev) => {
+			const next = prev + 1
+			localStorage.setItem('gachaPlayCountToday', next.toString())
+			localStorage.setItem('gachaLastPlayedDate', today)
+			return next
+		})
 		setLastGachaDateString(today)
 		if (options?.onGachaPlayed) {
 			options.onGachaPlayed()
 		}
 		router.refresh() // Refresh data, e.g., gacha logs
-	}, [gachaPlayCountToday, router, options])
+	}, [options, router])
 
 	const closeGachaSelectPopup = () => {
 		setIsGachaSelectPopupOpen(false)

@@ -1,17 +1,13 @@
 import { ApiResponse, StatusCode } from '@/types/responseTypes'
 import { failure, noContentResponse } from '@/lib/api/helper'
 
+import { getFrontendOrigin } from '@/lib/env'
+
 const buildSignOutUrl = () => {
 	if (typeof window !== 'undefined') {
 		return '/api/auth/signout'
 	}
-	const origin =
-		process.env.NEXT_PUBLIC_FRONTEND_ORIGIN ??
-		process.env.NEXT_PUBLIC_APP_BASE_URL ??
-		process.env.NEXTAUTH_URL ??
-		process.env.AUTH_URL ??
-		'http://localhost:3000'
-	return `${origin}/api/auth/signout`
+	return `${getFrontendOrigin()}/api/auth/signout`
 }
 
 export const signOutUser = async (): Promise<ApiResponse<null>> => {

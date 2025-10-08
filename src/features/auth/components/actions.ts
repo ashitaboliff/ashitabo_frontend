@@ -1,6 +1,6 @@
 'use server'
 
-import { apiRequest } from '@/lib/api'
+import { apiGet, apiPost, apiPut } from '@/lib/api/crud'
 import { getClientAuthState } from '@/lib/auth/unifiedAuth'
 import type { Profile } from '@/features/user/types'
 import { ApiResponse, StatusCode } from '@/types/responseTypes'
@@ -10,8 +10,7 @@ import type { UnifiedAuthResult } from '@/features/auth/types'
 export const getUnifiedAuthState = async (
 	noStore?: boolean,
 ): Promise<UnifiedAuthResult> => {
-	const sessionRes = await apiRequest<Session | null>('/auth/session', {
-		method: 'GET',
+	const sessionRes = await apiGet<Session | null>('/auth/session', {
 		cache: noStore ? 'no-store' : 'default',
 	})
 
@@ -51,11 +50,17 @@ export const getUnifiedAuthState = async (
 		return unified
 	}
 
-	const profileRes = await apiRequest<Profile>(
+	const profileRes = await apiGet<Profile>(
 		`/users/${session.user.id}/profile`,
 		{
-			method: 'GET',
-			cache: 'no-store',
+			...(typeof window === 'undefined'
+				? {
+						next: {
+							revalidate: 60,
+							tags: ['user-profile', session.user.id],
+						},
+					}
+				: {}),
 		},
 	)
 
@@ -84,8 +89,7 @@ export const createProfileAction = async ({
 	userId: string
 	body: Record<string, unknown>
 }): Promise<ApiResponse<Profile>> => {
-	return apiRequest<Profile>(`/users/${userId}/profile`, {
-		method: 'POST',
+	return apiPost<Profile>(`/users/${userId}/profile`, {
 		body,
 	})
 }
@@ -97,8 +101,7 @@ export const putProfileAction = async ({
 	userId: string
 	body: Record<string, unknown>
 }): Promise<ApiResponse<Profile>> => {
-	return apiRequest<Profile>(`/users/${userId}/profile`, {
-		method: 'PUT',
+	return apiPut<Profile>(`/users/${userId}/profile`, {
 		body,
 	})
 }
@@ -112,8 +115,7 @@ export type PadlockResponse = {
 export const padLockAction = async (
 	password: string,
 ): Promise<ApiResponse<PadlockResponse>> => {
-	return apiRequest<PadlockResponse>('/auth/padlock', {
-		method: 'POST',
+	return apiPost<PadlockResponse>('/auth/padlock', {
 		body: { password },
 	})
 }

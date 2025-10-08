@@ -1,5 +1,3 @@
-'use server'
-
 import Carousel from '@/components/home/HomeCarousel'
 import HomeButton from '@/components/home/HomeButton'
 

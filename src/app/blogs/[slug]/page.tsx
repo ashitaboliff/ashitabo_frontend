@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { compileMDX } from 'next-mdx-remote/rsc'
 import fs from 'fs'
 import path from 'path'
@@ -90,9 +91,9 @@ const BlogPostPage = async ({
 				<div className="container mx-auto bg-white p-4 pb-8 rounded-lg text-center">
 					<h1 className="text-3xl font-bold mt-8">記事が見つかりません</h1>
 					<p className="mt-4">指定されたブログ記事は見つかりませんでした。</p>
-					<a className="btn btn-outline mt-8" href="/blogs">
+					<Link className="btn btn-outline mt-8" href="/blogs">
 						ブログ一覧に戻る
-					</a>
+					</Link>
 				</div>
 			</>
 		)
@@ -125,9 +126,9 @@ const BlogPostPage = async ({
 					<div className="mt-8">{post.content}</div>
 				</article>
 				<div className="flex flex-row justify-center mt-8 gap-5">
-					<a className="btn btn-outline" href="/blogs">
+					<Link className="btn btn-outline" href="/blogs">
 						ブログ一覧に戻る
-					</a>
+					</Link>
 				</div>
 			</div>
 		</>

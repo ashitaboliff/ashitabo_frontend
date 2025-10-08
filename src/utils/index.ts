@@ -5,16 +5,17 @@ export const getCurrentJSTDateString = ({
 	yesterday?: boolean
 	anyDate?: Date
 }): string => {
-	const now = new Date(anyDate || Date.now())
-	if (yesterday) {
-		now.setDate(now.getDate() - 1) // 昨日の日付を取得
-	}
-	const jstTime = new Date(
-		now.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }),
-	)
-	const year = jstTime.getFullYear()
-	const month = (jstTime.getMonth() + 1).toString().padStart(2, '0')
-	const day = jstTime.getDate().toString().padStart(2, '0')
+	const baseTimestamp = anyDate instanceof Date ? anyDate.getTime() : Date.now()
+	const adjustedTimestamp = yesterday
+		? baseTimestamp - 24 * 60 * 60 * 1000
+		: baseTimestamp
+	const adjustedDate = new Date(adjustedTimestamp)
+	const timezoneOffsetMs = adjustedDate.getTimezoneOffset() * 60 * 1000
+	const jstTimestamp = adjustedTimestamp - timezoneOffsetMs + 9 * 60 * 60 * 1000
+	const jstDate = new Date(jstTimestamp)
+	const year = jstDate.getUTCFullYear()
+	const month = (jstDate.getUTCMonth() + 1).toString().padStart(2, '0')
+	const day = jstDate.getUTCDate().toString().padStart(2, '0')
 	return `${year}-${month}-${day}`
 }
 

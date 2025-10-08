@@ -50,7 +50,6 @@ const AuthPadLock = ({ csrfToken, callbackUrl }: AuthPadLockProps) => {
 			const response = await fetch('/api/auth/csrf', {
 				method: 'GET',
 				credentials: 'include',
-				cache: 'no-store',
 			})
 			if (!response.ok) return null
 			const data = (await response.json()) as { csrfToken?: string | null }

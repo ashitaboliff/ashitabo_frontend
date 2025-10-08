@@ -1,4 +1,4 @@
-import { apiRequest } from '@/lib/api'
+import { apiGet, apiPost, apiPut } from '@/lib/api/crud'
 import { ApiResponse, StatusCode } from '@/types/responseTypes'
 import {
 	createdResponse,
@@ -11,10 +11,15 @@ import { Schedule, UserWithName } from '@/features/schedule/types'
 export const getScheduleByIdAction = async (
 	scheduleId: string,
 ): Promise<ApiResponse<Schedule>> => {
-	const res = await apiRequest<Schedule>(`/schedule/${scheduleId}`, {
-		method: 'GET',
-		cache: 'no-store',
-		next: { tags: ['schedules', `schedule:${scheduleId}`] },
+	const res = await apiGet<Schedule>(`/schedule/${scheduleId}`, {
+		...(typeof window === 'undefined'
+			? {
+					next: {
+						revalidate: 60,
+						tags: ['schedules', `schedule:${scheduleId}`],
+					},
+				}
+			: {}),
 	})
 
 	if (!res.ok) {
@@ -27,8 +32,7 @@ export const getScheduleByIdAction = async (
 export const getUserIdWithNames = async (): Promise<
 	ApiResponse<UserWithName[]>
 > => {
-	const res = await apiRequest<UserWithName[]>('/schedule/users', {
-		method: 'GET',
+	const res = await apiGet<UserWithName[]>('/schedule/users', {
 		cache: 'force-cache',
 		next: { revalidate: 300, tags: ['schedule-users'] },
 	})
@@ -64,8 +68,7 @@ export const createScheduleAction = async ({
 	timeExtended: boolean
 	deadline: string
 }): Promise<ApiResponse<Schedule>> => {
-	const res = await apiRequest<{ id: string } | Schedule>('/schedule', {
-		method: 'POST',
+	const res = await apiPost<{ id: string } | Schedule>('/schedule', {
 		body: {
 			id,
 			userId,
