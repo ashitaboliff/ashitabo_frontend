@@ -1,20 +1,19 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next-nprogress-bar'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { deleteBanBookingAction, adminRevalidateTagAction } from './action'
 import Pagination from '@/components/ui/atoms/Pagination'
 import SelectField from '@/components/ui/atoms/SelectField'
+import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import Popup from '@/components/ui/molecules/Popup'
 import RadioSortGroup from '@/components/ui/atoms/RadioSortGroup'
 import { BanBooking, BookingTime } from '@/features/booking/types'
-import { ApiError, StatusCode } from '@/types/responseTypes'
+import { ApiError } from '@/types/responseTypes'
 import { BanBookingSort } from '../types'
 import BanBookingList from './BanBookingList'
-
-import { TiDeleteOutline } from 'react-icons/ti'
 
 const BanBookingPage = () => {
 	const router = useRouter()
@@ -220,11 +219,7 @@ const BanBookingPage = () => {
 							閉じる
 						</button>
 					</div>
-					{error && (
-						<p className="text-error text-center">
-							エラーコード{error.status}:{error.message}
-						</p>
-					)}
+					<ErrorMessage error={error} />
 				</div>
 			</Popup>
 			<Popup

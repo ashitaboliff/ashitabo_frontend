@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useSession } from '@/features/auth/hooks/useSession'
 import { useRouter } from 'next-nprogress-bar'
 import { useForm } from 'react-hook-form'
@@ -15,6 +15,7 @@ import {
 } from '@/features/user/types'
 import { ApiError, StatusCode } from '@/types/responseTypes'
 import { generateFiscalYearObject, generateAcademicYear } from '@/utils'
+import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import Loading from '@/components/ui/atoms/Loading'
 import TextInputField from '@/components/ui/atoms/TextInputField'
 import SelectField from '@/components/ui/atoms/SelectField'
@@ -97,12 +98,6 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [error, setIsError] = useState<ApiError>()
 	const [popupOpen, setPopupOpen] = useState<boolean>(false)
-
-	// // なんかPartだけ読み込まれないのでここでrefresh
-	// useEffect(() => {
-	// 	router.refresh()
-	// 	// eslint-disable-next-line react-hooks/rules-of-hooks
-	// }, [router])
 
 	const {
 		register,
@@ -325,11 +320,7 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 					</button>
 				</div>
 			</form>
-			{error && (
-				<p className="text-sm text-error text-center">
-					エラーコード{error.status}:{error.message}
-				</p>
-			)}
+			<ErrorMessage error={error} />
 			<Popup
 				id={`profile-edit-popup-${profile.id}`}
 				open={popupOpen}

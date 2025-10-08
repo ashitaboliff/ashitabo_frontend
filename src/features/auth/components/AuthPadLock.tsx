@@ -8,6 +8,7 @@ import * as zod from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import AuthLoadingIndicator from './AuthLoadingIndicator'
 import { padLockAction } from './actions'
+import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import { ApiError } from '@/types/responseTypes'
 import { getImageUrl } from '@/lib/r2'
 
@@ -247,11 +248,7 @@ const AuthPadLock = ({ csrfToken, callbackUrl }: AuthPadLockProps) => {
 					</form>
 				</div>
 			</div>
-			{error && (
-				<p className="text-sm text-error text-center">
-					エラーコード{error.status}:{error.message}
-				</p>
-			)}
+			<ErrorMessage error={error} />
 			{errors.digit1 && (
 				<p className="text-sm text-error text-center">
 					{errors.digit1?.message ||

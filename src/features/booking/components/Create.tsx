@@ -14,6 +14,7 @@ import TextInputField from '@/components/ui/atoms/TextInputField'
 import Popup from '@/components/ui/molecules/Popup'
 import AddCalendarPopup from '@/components/ui/molecules/AddCalendarPopup'
 import PasswordInputField from '@/components/ui/molecules/PasswordInputField'
+import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import { ApiError } from '@/types/responseTypes'
 import { BookingTime } from '@/features/booking/types'
 import { useGachaPlayManager } from '@/features/gacha/hooks/useGachaPlayManager'
@@ -175,11 +176,7 @@ export default function CreatePage({
 							カレンダーに戻る
 						</button>
 					</div>
-					{error && (
-						<p className="text-sm text-error text-center">
-							エラーコード{error.status}:{error.message}
-						</p>
-					)}
+					<ErrorMessage error={error} />
 				</form>
 			</div>
 			{noticePopupOpen && (

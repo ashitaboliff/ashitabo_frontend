@@ -4,82 +4,81 @@ interface PaginationProps {
 	onPageChange: (page: number) => void // ページ変更時のコールバック
 }
 
+type PaginationItem = number | 'ellipsis-left' | 'ellipsis-right'
+
+const createPaginationItems = (
+	currentPage: number,
+	totalPages: number,
+	maxMiddleItems = 3,
+): PaginationItem[] => {
+	if (totalPages <= maxMiddleItems + 4) {
+		return Array.from({ length: totalPages }, (_, index) => index + 1)
+	}
+
+	const items: PaginationItem[] = [1]
+	const halfRange = Math.floor(maxMiddleItems / 2)
+	let start = Math.max(2, currentPage - halfRange)
+	let end = Math.min(totalPages - 1, currentPage + halfRange)
+
+	if (end - start < maxMiddleItems - 1) {
+		if (start === 2) {
+			end = Math.min(totalPages - 1, start + maxMiddleItems - 1)
+		} else if (end === totalPages - 1) {
+			start = Math.max(2, end - (maxMiddleItems - 1))
+		}
+	}
+
+	if (start > 2) {
+		items.push('ellipsis-left')
+	}
+
+	for (let page = start; page <= end; page += 1) {
+		items.push(page)
+	}
+
+	if (end < totalPages - 1) {
+		items.push('ellipsis-right')
+	}
+
+	items.push(totalPages)
+	return items
+}
+
 const Pagination = ({
 	currentPage,
 	totalPages,
 	onPageChange,
 }: PaginationProps) => {
+	const items = createPaginationItems(currentPage, totalPages)
+
 	return (
 		<div className="join justify-center">
-			{totalPages <= 7 ? (
-				// ページ数が7以下の場合、すべてのページを表示
-				Array.from({ length: totalPages }, (_, i) => (
-					<button
-						key={i}
-						className={`join-item btn ${
-							currentPage === i + 1 ? 'btn-primary' : 'btn-outline'
-						}`}
-						onClick={() => onPageChange(i + 1)}
-					>
-						{i + 1}
-					</button>
-				))
-			) : (
-				// ページ数が8以上の場合、動的にページネーションを表示
-				<>
-					{/* 最初のページ */}
-					<button
-						className={`join-item btn ${
-							currentPage === 1 ? 'btn-primary' : 'btn-outline'
-						}`}
-						onClick={() => onPageChange(1)}
-					>
-						1
-					</button>
-
-					{/* 現在のページが4以上の場合、左側に「...」を表示 */}
-					{currentPage > 4 && (
-						<button className="join-item btn btn-disabled" disabled>
-							...
+			{items.map((item, index) => {
+				if (typeof item === 'number') {
+					return (
+						<button
+							key={item}
+							className={`join-item btn ${
+								currentPage === item ? 'btn-primary' : 'btn-outline'
+							}`}
+							onClick={() => onPageChange(item)}
+						>
+							{item}
 						</button>
-					)}
+					)
+				}
 
-					{/* 現在のページに応じて中央のページを表示 */}
-					{Array.from({ length: Math.min(3, totalPages) }, (_, i) => {
-						const page =
-							Math.max(2, Math.min(currentPage - 1, totalPages - 3)) + i
-						if (page < 2 || page >= totalPages) return null // 1と最後のページは除外
-						return (
-							<button
-								key={page}
-								className={`join-item btn ${
-									currentPage === page ? 'btn-primary' : 'btn-outline'
-								}`}
-								onClick={() => onPageChange(page)}
-							>
-								{page}
-							</button>
-						)
-					})}
-
-					{/* 現在のページが最後の3ページ以内でない場合、右側に「...」を表示 */}
-					{currentPage < totalPages - 3 && (
-						<button className="join-item btn btn-disabled" disabled>
-							...
-						</button>
-					)}
-
-					{/* 最後のページ */}
+				return (
 					<button
-						className={`join-item btn ${
-							currentPage === totalPages ? 'btn-primary' : 'btn-outline'
-						}`}
-						onClick={() => onPageChange(totalPages)}
+						key={`${item}-${index}`}
+						className="join-item btn btn-disabled"
+						disabled
+						aria-hidden="true"
 					>
-						{totalPages}
+						…
 					</button>
-				</>
-			)}
+				)
+			})}
 		</div>
 	)
 }

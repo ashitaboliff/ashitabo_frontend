@@ -57,6 +57,7 @@ const MainPage = () => {
 		return () => {
 			window.removeEventListener('refresh-booking-data', handleRefresh)
 		}
+		// mutate is stable across renders per SWR, keeping it in deps for clarity.
 	}, [mutate])
 
 	const prevAble =

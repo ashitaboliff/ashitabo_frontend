@@ -45,6 +45,7 @@ class MiddlewareApp {
 	private request: NextRequest
 	private isMaintenanceMode: boolean = process.env.MAINTENANCE_MODE === 'true'
 	private session: Session | null
+	private sessionPromise: Promise<Session | null> | null = null
 	private sessionState:
 		| 'profile'
 		| 'session'
@@ -84,38 +85,51 @@ class MiddlewareApp {
 			return this.session
 		}
 
-		try {
-			const authCookie =
-				this.request.cookies.get('authjs.session-token') ??
-				this.request.cookies.get('__Secure-authjs.session-token')
-			const sessionToken = authCookie?.value
-
-			if (!sessionToken) {
-				return null
-			}
-
-			const cookieName = authCookie?.name ?? 'authjs.session-token'
-			const baseUrl =
-				process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8787'
-			const response = await fetch(`${baseUrl}/auth/session`, {
-				headers: {
-					Cookie: `${cookieName}=${sessionToken}`,
-					'X-API-Key': process.env.NEXT_PUBLIC_API_KEY || '',
-				},
-				cache: 'no-store',
-			})
-
-			if (!response.ok) {
-				return null
-			}
-
-			const session = (await response.json()) as Session
-			this.session = session
-			return session
-		} catch (error) {
-			console.error('Failed to get session state:', error)
-			return null
+		if (this.sessionPromise) {
+			return this.sessionPromise
 		}
+
+		this.sessionPromise = (async () => {
+			try {
+				const authCookie =
+					this.request.cookies.get('authjs.session-token') ??
+					this.request.cookies.get('__Secure-authjs.session-token')
+				const sessionToken = authCookie?.value
+
+				if (!sessionToken) {
+					this.session = null
+					return null
+				}
+
+				const cookieName = authCookie?.name ?? 'authjs.session-token'
+				const baseUrl =
+					process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8787'
+				const response = await fetch(`${baseUrl}/auth/session`, {
+					headers: {
+						Cookie: `${cookieName}=${sessionToken}`,
+						'X-API-Key': process.env.NEXT_PUBLIC_API_KEY || '',
+					},
+					cache: 'no-store',
+				})
+
+				if (!response.ok) {
+					this.session = null
+					return null
+				}
+
+				const session = (await response.json()) as Session
+				this.session = session
+				return session
+			} catch (error) {
+				console.error('Failed to get session state:', error)
+				this.session = null
+				return null
+			} finally {
+				this.sessionPromise = null
+			}
+		})()
+
+		return this.sessionPromise
 	}
 
 	private async getSessionState(): Promise<
@@ -125,25 +139,31 @@ class MiddlewareApp {
 			return this.sessionState
 		}
 
-		const session = await this.fetchSession()
+		try {
+			const session = await this.fetchSession()
 
-		if (!session) {
+			if (!session) {
+				this.sessionState = 'no-session'
+				return this.sessionState
+			}
+
+			if (session.error) {
+				this.sessionState = 'invalid-session'
+				return this.sessionState
+			}
+
+			if (session.user?.profile) {
+				this.sessionState = 'profile'
+				return this.sessionState
+			}
+
+			this.sessionState = 'session'
+			return this.sessionState
+		} catch (error) {
+			console.error('Failed to determine session state:', error)
 			this.sessionState = 'no-session'
 			return this.sessionState
 		}
-
-		if (session.error) {
-			this.sessionState = 'invalid-session'
-			return this.sessionState
-		}
-
-		if (session.user?.profile) {
-			this.sessionState = 'profile'
-			return this.sessionState
-		}
-
-		this.sessionState = 'session'
-		return this.sessionState
 	}
 
 	public async run() {

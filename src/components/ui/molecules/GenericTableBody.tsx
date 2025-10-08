@@ -16,6 +16,7 @@ interface GenericTableBodyProps<T extends object> {
 	rowClassName?: string
 	clickableRowClassName?: string
 	noDataCustomMessage?: React.ReactNode // Allows for custom message/component when no data
+	renderLoadingSkeleton?: (colSpan: number) => React.ReactNode
 }
 
 const GenericTableBody = <T extends object>({
@@ -32,8 +33,13 @@ const GenericTableBody = <T extends object>({
 	rowClassName = '',
 	clickableRowClassName = 'cursor-pointer hover:bg-base-200',
 	noDataCustomMessage,
+	renderLoadingSkeleton,
 }: GenericTableBodyProps<T>) => {
 	if (isLoading) {
+		const skeleton = renderLoadingSkeleton?.(colSpan)
+		if (skeleton) {
+			return <>{skeleton}</>
+		}
 		return (
 			<tr>
 				<td colSpan={colSpan} className="text-center py-10">

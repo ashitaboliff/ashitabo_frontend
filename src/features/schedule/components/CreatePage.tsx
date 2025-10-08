@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next-nprogress-bar'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -8,14 +8,15 @@ import * as zod from 'zod'
 import { format, eachDayOfInterval } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { DateToDayISOstring } from '@/utils'
-import { ApiError, StatusCode } from '@/types/responseTypes'
+import { ApiError } from '@/types/responseTypes'
+import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import ShareButton from '@/components/ui/atoms/ShareButton'
 import CustomDatePicker from '@/components/ui/atoms/DatePicker'
 import TextInputField from '@/components/ui/atoms/TextInputField'
 import TextareaInputField from '@/components/ui/atoms/TextareaInputField'
 import SelectField from '@/components/ui/atoms/SelectField'
 import Popup from '@/components/ui/molecules/Popup'
-import { getUserIdWithNames, createScheduleAction } from './actions'
+import { createScheduleAction } from './actions'
 import type { Session } from '@/types/session'
 
 const ScheduleCreateSchema = zod
@@ -233,11 +234,7 @@ const ScheduleCreatePage = ({
 				>
 					戻る
 				</button>
-				{error && (
-					<p className="text-sm text-error text-center">
-						エラーコード{error.status}:{error.message}
-					</p>
-				)}
+				<ErrorMessage error={error} />
 			</form>
 			<Popup
 				id={`schedule-create-popup-${scheduleId}`}

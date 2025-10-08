@@ -1,5 +1,6 @@
 'use client'
 
+import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import Popup from '@/components/ui/molecules/Popup'
 import { UserDetail } from '@/features/user/types'
 import { ApiError } from '@/types/responseTypes'
@@ -52,11 +53,7 @@ const UserDeleteConfirmPopup = ({
 						いいえ
 					</button>
 				</div>
-				{actionError && (
-					<p className="text-error text-center">
-						エラーコード{actionError.status}:{actionError.message}
-					</p>
-				)}
+				<ErrorMessage error={actionError} />
 			</div>
 		</Popup>
 	)

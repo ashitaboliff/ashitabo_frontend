@@ -4,7 +4,7 @@ import { ReactNode } from 'react'
 type Message = {
 	messageType: 'info' | 'success' | 'error' | 'warning'
 	message: string | ReactNode
-	IconColor: string
+	IconColor?: string
 }
 
 /**
@@ -14,6 +14,7 @@ type Message = {
  * @param IconColor アイコンの色
  */
 const InfoMessage = ({ messageType, message, IconColor }: Message) => {
+	const iconColor = IconColor ?? messageType
 	let className = ''
 	switch (
 		messageType // 冗長だけどこうしなきゃ色が反映されない
@@ -43,7 +44,7 @@ const InfoMessage = ({ messageType, message, IconColor }: Message) => {
 			<div className="flex-shrink-0 mr-3">
 				{' '}
 				{/* Added margin to the icon container */}
-				{IconFactory.getIcon({ color: IconColor, type: messageType })}
+				{IconFactory.getIcon({ color: iconColor, type: messageType })}
 			</div>
 			<span className="text-sm text-base-content flex-grow">{message}</span>{' '}
 			{/* Added flex-grow to message span */}

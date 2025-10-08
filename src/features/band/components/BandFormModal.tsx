@@ -50,7 +50,6 @@ export default function BandFormModal({
 	// For simplicity here, we'll create a wrapper action or handle it inside.
 	// However, `useFormState` is designed for a single action.
 	// Let's use a more traditional form handling for conditional actions.
-	const [formMessage, setFormMessage] = useState<string | null>(null)
 	const [error, setError] = useState<ApiError | null>(null)
 	const [isSubmitting, setIsSubmitting] = useState(false)
 

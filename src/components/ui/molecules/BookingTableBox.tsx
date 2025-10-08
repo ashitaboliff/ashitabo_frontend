@@ -50,12 +50,11 @@ export const BookingTableBox = ({
 						bookingDate < bookingAbleMinDate ||
 						bookingDate > bookingAbleMaxDate
 					) {
-						return null
-					} else {
-						router.push(
-							`/booking/new?date=${bookingDate.split('T')[0]}&time=${bookingTime}`,
-						)
+						return
 					}
+					router.push(
+						`/booking/new?date=${bookingDate.split('T')[0]}&time=${bookingTime}`,
+					)
 				}}
 			>
 				<div className="w-11 h-13 sm:w-16 sm:h-16 flex flex-col justify-center items-center text-center break-words py-1">
@@ -86,10 +85,9 @@ export const BookingTableBox = ({
 				className={tdClassName}
 				onClick={() => {
 					if (bookingDate < bookingAbleMinDate) {
-						return null
-					} else {
-						router.push(`/booking/${id}`)
+						return
 					}
+					router.push(`/booking/${id}`)
 				}}
 			>
 				<div className="w-11 h-13 sm:w-16 sm:h-16 flex flex-col justify-center items-center text-center break-words py-1">

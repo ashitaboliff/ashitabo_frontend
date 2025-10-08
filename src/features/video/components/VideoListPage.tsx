@@ -1,8 +1,6 @@
 'use client'
 
 import { gkktt } from '@/lib/fonts'
-import { useState, useTransition, useMemo } from 'react'
-import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import { useSession } from '@/features/auth/hooks/useSession'
 import { YoutubeDetail, YoutubeSearchQuery } from '@/features/video/types'
 import { ApiError } from '@/types/responseTypes'
@@ -10,6 +8,8 @@ import SelectField from '@/components/ui/atoms/SelectField'
 import Pagination from '@/components/ui/atoms/Pagination'
 import VideoItem from '@/features/video/components/VideoItem'
 import VideoSearchForm from '@/features/video/components/VideoSearchForm'
+import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
+import { useYoutubeSearchQuery } from '@/features/video/hooks/useYoutubeSearchQuery'
 
 const defaultSearchQuery: YoutubeSearchQuery = {
 	liveOrBand: 'band',
@@ -20,25 +20,6 @@ const defaultSearchQuery: YoutubeSearchQuery = {
 	sort: 'new',
 	page: 1,
 	videoPerPage: 15,
-}
-
-// URLSearchParamsをYoutubeSearchQueryに変換するヘルパー関数
-const parseSearchParams = (params: URLSearchParams): YoutubeSearchQuery => {
-	return {
-		liveOrBand:
-			(params.get('liveOrBand') as 'live' | 'band') ??
-			defaultSearchQuery.liveOrBand,
-		bandName: params.get('bandName') ?? defaultSearchQuery.bandName,
-		liveName: params.get('liveName') ?? defaultSearchQuery.liveName,
-		tag: (params.getAll('tag') as string[]) ?? defaultSearchQuery.tag,
-		tagSearchMode:
-			(params.get('tagSearchMode') as 'and' | 'or') ??
-			defaultSearchQuery.tagSearchMode,
-		sort: (params.get('sort') as 'new' | 'old') ?? defaultSearchQuery.sort,
-		page: Number(params.get('page')) || defaultSearchQuery.page,
-		videoPerPage:
-			Number(params.get('videoPerPage')) || defaultSearchQuery.videoPerPage,
-	}
 }
 
 interface VideoListPageProps {
@@ -52,66 +33,17 @@ const VideoListPage = ({
 	initialPageMax,
 	initialError,
 }: VideoListPageProps) => {
-	const pathname = usePathname()
-	const searchParams = useSearchParams()
-	const router = useRouter()
 	const { data: session } = useSession() // session を取得
-	const [isPending, startTransition] = useTransition()
-	const [selectedVideoForTagEdit, setSelectedVideoForTagEdit] =
-		useState<YoutubeDetail | null>(null)
 
-	const currentQuery = useMemo(
-		() => parseSearchParams(searchParams),
-		[searchParams],
-	)
-	const isSearching = searchParams.toString() !== ''
-
-	const updateQueryAndNavigate = (
-		newQueryParts: Partial<YoutubeSearchQuery>,
-	) => {
-		const newParams = new URLSearchParams(searchParams.toString())
-
-		Object.entries(newQueryParts).forEach(([key, value]) => {
-			if (key === 'tag' && Array.isArray(value)) {
-				newParams.delete(key) // 既存のtagを削除
-				if (value.length > 0) {
-					value.forEach((t) => newParams.append(key, t))
-				}
-			} else if (value !== undefined && value !== null && value !== '') {
-				newParams.set(key, String(value))
-			} else {
-				newParams.delete(key) // 値が空の場合はパラメータを削除
-			}
-		})
-
-		// デフォルト値と同じ場合はパラメータを削除する
-		Object.entries(defaultSearchQuery).forEach(([key, defaultValue]) => {
-			if (newParams.has(key)) {
-				if (key === 'tag') {
-					const tags = newParams.getAll(key)
-					if (
-						tags.length === 0 ||
-						(tags.length === 1 && tags[0] === '') ||
-						JSON.stringify(tags) === JSON.stringify(defaultValue)
-					) {
-						newParams.delete(key)
-					}
-				} else if (String(newParams.get(key)) === String(defaultValue)) {
-					newParams.delete(key)
-				}
-			}
-		})
-		startTransition(() => {
-			const nextQueryString = newParams.toString()
-			const target = nextQueryString
-				? `${pathname}?${nextQueryString}`
-				: pathname
-			router.replace(target)
-		})
-	}
+	const {
+		query: currentQuery,
+		isSearching,
+		updateQuery,
+		isPending,
+	} = useYoutubeSearchQuery(defaultSearchQuery)
 
 	const handleSearch = (searchQuery: Partial<YoutubeSearchQuery>) => {
-		updateQueryAndNavigate({ ...searchQuery, page: 1 })
+		updateQuery({ ...searchQuery, page: 1 })
 	}
 
 	const pageMax = initialPageMax
@@ -140,7 +72,7 @@ const VideoListPage = ({
 						<SelectField
 							value={currentQuery.videoPerPage}
 							onChange={(e) =>
-								updateQueryAndNavigate({
+								updateQuery({
 									videoPerPage: Number(e.target.value),
 									page: 1,
 								})
@@ -161,7 +93,7 @@ const VideoListPage = ({
 								checked={currentQuery.sort === 'new'}
 								className="btn btn-tetiary btn-xs sm:btn-sm"
 								aria-label="新しい順"
-								onChange={() => updateQueryAndNavigate({ sort: 'new' })}
+								onChange={() => updateQuery({ sort: 'new' })}
 							/>
 							<input
 								type="radio"
@@ -170,17 +102,13 @@ const VideoListPage = ({
 								checked={currentQuery.sort === 'old'}
 								className="btn btn-tetiary btn-xs sm:btn-sm"
 								aria-label="古い順"
-								onChange={() => updateQueryAndNavigate({ sort: 'old' })}
+								onChange={() => updateQuery({ sort: 'old' })}
 							/>
 						</div>
 					</div>
 				</div>
 
-				{error && (
-					<p className="text-sm text-error text-center">
-						エラーコード{error.status}:{error.message}
-					</p>
-				)}
+				<ErrorMessage error={error} />
 
 				{isLoading ? (
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
@@ -216,7 +144,7 @@ const VideoListPage = ({
 					<Pagination
 						currentPage={currentQuery.page}
 						totalPages={pageMax}
-						onPageChange={(page) => updateQueryAndNavigate({ page })}
+						onPageChange={(page) => updateQuery({ page })}
 					/>
 				)}
 			</div>

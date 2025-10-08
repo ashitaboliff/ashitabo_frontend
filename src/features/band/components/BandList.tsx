@@ -1,12 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react' // useEffect will be removed or changed
+import { useState } from 'react'
 import useSWR from 'swr'
 import BandListItem from '@/features/band/components/BandListItem'
 import BandFormModal from '@/features/band/components/BandFormModal'
 import MemberManagementModal from '@/features/band/components/MemberManagementModal'
 import { getUserBandsAction, deleteBandAction } from './actions'
 import type { BandDetails } from '@/features/band/types'
+import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import { ApiError } from '@/types/responseTypes'
 import { FaPlusCircle } from 'react-icons/fa'
 
@@ -41,13 +42,6 @@ export default function BandList({ currentUserId }: BandListProps) {
 		useState<BandDetails | null>(null)
 
 	const [error, setError] = useState<ApiError | null>(null)
-
-	// useEffect(() => { // Replaced by useSWR
-	// 	if (initialBands.length === 0) {
-	// 		fetchBands()
-	// 	}
-	// }, [initialBands])
-
 	const handleOpenCreateBandModal = () => {
 		setBandToEdit(null)
 		setIsBandFormModalOpen(true)
@@ -109,11 +103,7 @@ export default function BandList({ currentUserId }: BandListProps) {
 
 	return (
 		<div>
-			{error && (
-				<div className="alert alert-error mb-4">
-					操作エラー: {error.message}
-				</div>
-			)}
+			<ErrorMessage error={error} />
 			<div className="mb-6 text-right">
 				<button
 					onClick={handleOpenCreateBandModal}

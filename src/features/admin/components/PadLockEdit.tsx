@@ -13,6 +13,7 @@ import { ApiError } from '@/types/responseTypes'
 import Pagination from '@/components/ui/atoms/Pagination'
 import TextInputField from '@/components/ui/atoms/TextInputField'
 import SelectField from '@/components/ui/atoms/SelectField'
+import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import Popup from '@/components/ui/molecules/Popup'
 
 import { TiDeleteOutline } from 'react-icons/ti'
@@ -221,11 +222,7 @@ const PadLockEdit = ({
 						削除
 					</button>
 				</div>
-				{error && (
-					<p className="text-sm text-error text-center">
-						エラーコード{error.status}:{error.message}
-					</p>
-				)}
+				<ErrorMessage error={error} />
 			</Popup>
 			<Popup
 				id="padlock-create-popup"
@@ -260,11 +257,7 @@ const PadLockEdit = ({
 							閉じる
 						</button>
 					</div>
-					{error && (
-						<p className="text-sm text-error text-center">
-							エラーコード{error.status}:{error.message}
-						</p>
-					)}
+					<ErrorMessage error={error} />
 				</form>
 			</Popup>
 			<Pagination

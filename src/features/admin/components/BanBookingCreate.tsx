@@ -13,6 +13,7 @@ import { ApiError } from '@/types/responseTypes'
 import CustomDatePicker from '@/components/ui/atoms/DatePicker'
 import TextInputField from '@/components/ui/atoms/TextInputField'
 import SelectField from '@/components/ui/atoms/SelectField'
+import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import Popup from '@/components/ui/molecules/Popup'
 
 type BanTypeValue = 'single' | 'period' | 'regular'
@@ -282,11 +283,7 @@ const BanBookingCreate = () => {
 					</button>
 				</div>
 			</form>
-			{error && (
-				<p className="text-sm text-error text-center">
-					エラーコード{error.status}:{error.message}
-				</p>
-			)}
+			<ErrorMessage error={error} />
 			<Popup
 				id="forbidden-booking-create-popup"
 				title="予約禁止日追加"

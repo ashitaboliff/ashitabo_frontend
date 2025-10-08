@@ -6,10 +6,11 @@ import { useForm } from 'react-hook-form'
 import { useRouter } from 'next-nprogress-bar'
 import * as zod from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { RoleMap, Role, PartOptions, Part } from '@/features/user/types'
+import { RoleMap, PartOptions, Part } from '@/features/user/types'
 import { ApiError, StatusCode } from '@/types/responseTypes'
 import { generateFiscalYearObject, generateAcademicYear } from '@/utils'
 import AuthLoadingIndicator from './AuthLoadingIndicator'
+import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import TextInputField from '@/components/ui/atoms/TextInputField'
 import SelectField from '@/components/ui/atoms/SelectField'
 import Popup from '@/components/ui/molecules/Popup'
@@ -316,11 +317,7 @@ const SigninSetting = () => {
 					</button>
 				</div>
 			</form>
-			{error && (
-				<p className="text-sm text-error text-center">
-					エラーコード{error.status}:{error.message}
-				</p>
-			)}
+			<ErrorMessage error={error} />
 			<Popup
 				id="signin-setting-popup"
 				open={popupOpen}

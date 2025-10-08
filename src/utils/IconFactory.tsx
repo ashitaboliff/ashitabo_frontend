@@ -1,7 +1,22 @@
 type IconProps = {
-	color: string
+	color?: string
 	type: 'info' | 'success' | 'warning' | 'error'
 	size?: number
+}
+
+const COLOR_CLASS_MAP: Record<string, string> = {
+	info: 'text-info',
+	success: 'text-success',
+	warning: 'text-warning',
+	error: 'text-error',
+	primary: 'text-primary',
+	secondary: 'text-secondary',
+	accent: 'text-accent',
+	neutral: 'text-neutral',
+	white: 'text-white',
+	'bg-white': 'text-white',
+	black: 'text-black',
+	inherit: 'text-inherit',
 }
 
 /**
@@ -19,13 +34,41 @@ class IconFactory {
 			'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z',
 	}
 
-	public static getIcon({ color, type }: IconProps) {
+	private static resolveColorClass(color?: string) {
+		if (!color) return COLOR_CLASS_MAP.primary
+		if (color in COLOR_CLASS_MAP) {
+			return COLOR_CLASS_MAP[color]
+		}
+		if (color.startsWith('text-')) {
+			return color
+		}
+		return ''
+	}
+
+	private static resolveInlineColor(color?: string) {
+		if (!color) return undefined
+		if (color in COLOR_CLASS_MAP) {
+			return undefined
+		}
+		if (color.startsWith('text-')) {
+			return undefined
+		}
+		return color
+	}
+
+	public static getIcon({ color, type, size = 24 }: IconProps) {
+		const colorClass = this.resolveColorClass(color)
+		const inlineColor = this.resolveInlineColor(color)
+
 		return (
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				fill="none"
 				viewBox="0 0 24 24"
-				className={`h-6 w-6 shrink-0 stroke-current text-${color}`}
+				height={size}
+				width={size}
+				className={`shrink-0 stroke-current ${colorClass}`.trim()}
+				style={inlineColor ? { color: inlineColor } : undefined}
 			>
 				<path
 					strokeLinecap="round"

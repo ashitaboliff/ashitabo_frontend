@@ -2,6 +2,7 @@
 
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
+import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import Popup from '@/components/ui/molecules/Popup'
 import {
 	UserDetail,
@@ -118,11 +119,7 @@ const UserDetailPopup = ({
 							閉じる
 						</button>
 					</div>
-					{actionError && (
-						<p className="text-error text-center">
-							エラーコード{actionError.status}:{actionError.message}
-						</p>
-					)}
+					<ErrorMessage error={actionError} />
 				</div>
 			)}
 		</Popup>

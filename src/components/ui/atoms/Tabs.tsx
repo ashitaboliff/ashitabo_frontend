@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react'
+import React, { ReactNode, useEffect, useMemo, useState } from 'react'
 
 interface TabProps {
 	label: ReactNode
@@ -10,37 +10,54 @@ interface TabsProps {
 }
 
 export const Tabs = ({ children }: TabsProps) => {
+	const tabChildren = useMemo(
+		() =>
+			React.Children.toArray(children).filter(
+				(child): child is React.ReactElement<TabProps> =>
+					React.isValidElement<TabProps>(child),
+			),
+		[children],
+	)
+
 	const [activeIndex, setActiveIndex] = useState(0)
+
+	useEffect(() => {
+		if (activeIndex >= tabChildren.length) {
+			setActiveIndex(tabChildren.length > 0 ? tabChildren.length - 1 : 0)
+		}
+	}, [activeIndex, tabChildren.length])
+
+	if (tabChildren.length === 0) {
+		return null
+	}
 
 	const handleTabClick = (index: number) => {
 		setActiveIndex(index)
 	}
 
+	const activeChild = tabChildren[activeIndex] ?? null
+
 	return (
 		<div className="mt-2">
 			<div className="flex justify-center space-x-4 border-b border-neutral-200">
-				{Array.isArray(children) &&
-					children.map((child, index) => {
-						if (!React.isValidElement<TabProps>(child)) return null
-						const isActive = index === activeIndex
-						return (
-							<button
-								key={index}
-								className={`py-2 px-4 text-lg ${
-									isActive
-										? 'border-b-2 text-accent'
-										: 'text-base-content hover:text-accent'
-								}`}
-								onClick={() => handleTabClick(index)}
-							>
-								{child.props.label}
-							</button>
-						)
-					})}
+				{tabChildren.map((child, index) => {
+					const isActive = index === activeIndex
+					return (
+						<button
+							key={child.key ?? index}
+							className={`py-2 px-4 text-lg ${
+								isActive
+									? 'border-b-2 text-accent'
+									: 'text-base-content hover:text-accent'
+							}`}
+							onClick={() => handleTabClick(index)}
+						>
+							{child.props.label}
+						</button>
+					)
+				})}
 			</div>
-			<div className="p-4">
-				{Array.isArray(children) && children[activeIndex]}
-			</div>
+			<div className="p-4">{activeChild}</div>
 		</div>
 	)
 }

@@ -8,6 +8,7 @@ import { useRouter } from 'next-nprogress-bar'
 import { Booking } from '@/features/booking/types'
 import { authBookingAction } from './actions'
 import { ApiError } from '@/types/responseTypes'
+import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import BookingDetailBox from '@/components/ui/molecules/BookingDetailBox'
 import PasswordInputField from '@/components/ui/molecules/PasswordInputField'
 import DetailNotFoundPage from '@/features/booking/components/DetailNotFound'
@@ -129,11 +130,7 @@ const EditAuthPage = ({
 					</button>
 				</div>
 			</form>
-			{error && (
-				<p className="text-sm text-error text-center">
-					エラーコード{error.status}:{error.message}
-				</p>
-			)}
+			<ErrorMessage error={error} />
 		</div>
 	)
 }

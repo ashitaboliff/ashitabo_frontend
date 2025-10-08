@@ -1,10 +1,11 @@
 'use client'
 
-import { useRef, useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next-nprogress-bar'
 import { liveOrBand } from '@/features/video/types'
 import { ApiError } from '@/types/responseTypes'
+import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import TagInputField from '@/components/ui/molecules/TagsInputField'
 import Popup from '@/components/ui/molecules/Popup'
 import { updateTagsAction } from './actions'
@@ -107,11 +108,7 @@ const TagEditPopup = ({
 							キャンセル
 						</button>
 					</div>
-					{error && (
-						<div className="text-error text-sm text-center mt-2">
-							{error.message}
-						</div>
-					)}
+					<ErrorMessage error={error} />
 				</form>
 			</Popup>
 			<Popup

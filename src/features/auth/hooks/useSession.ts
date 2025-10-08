@@ -23,9 +23,9 @@ export const useSession = (): UseSessionResult => {
 		['unified-auth'],
 		fetchUnified,
 		{
-			revalidateOnFocus: true,
-			revalidateIfStale: true,
-			revalidateOnReconnect: true,
+			revalidateOnFocus: false,
+			revalidateOnReconnect: false,
+			revalidateIfStale: false,
 		},
 	)
 

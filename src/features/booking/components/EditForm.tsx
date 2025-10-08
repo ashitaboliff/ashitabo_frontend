@@ -15,6 +15,7 @@ import {
 } from '@/features/booking/types'
 import { ApiError } from '@/types/responseTypes'
 import TextInputField from '@/components/ui/atoms/TextInputField'
+import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import BookingDetailBox from '@/components/ui/molecules/BookingDetailBox'
 import Popup from '@/components/ui/molecules/Popup'
 import DetailNotFoundPage from '@/features/booking/components/DetailNotFound'
@@ -147,11 +148,7 @@ const EditFormPage = ({
 							キャンセル
 						</button>
 					</div>
-					{error && (
-						<p className="text-sm text-error text-center">
-							エラーコード{error.status}:{error.message}
-						</p>
-					)}
+					<ErrorMessage error={error} />
 				</div>
 			</Popup>
 
@@ -362,11 +359,7 @@ const MemoBookingEditForm = memo(
 							</button>
 						</div>
 					</form>
-					{error && (
-						<p className="text-sm text-error text-center">
-							エラーコード{error.status}:{error.message}
-						</p>
-					)}
+					<ErrorMessage error={error} />
 				</div>
 
 				<Popup
