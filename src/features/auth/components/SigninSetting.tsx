@@ -15,7 +15,7 @@ import TextInputField from '@/components/ui/atoms/TextInputField'
 import SelectField from '@/components/ui/atoms/SelectField'
 import Popup from '@/components/ui/molecules/Popup'
 import { createProfileAction } from './actions'
-import { getClientAuthState } from '@/lib/auth/unifiedAuth'
+import { makeAuthDetails } from '@/features/auth/utils/sessionInfo'
 import { signOutUser } from '@/features/user/actions'
 
 const academicYearLastTwoDigits = generateAcademicYear() % 100
@@ -155,18 +155,19 @@ const SigninSetting = () => {
 		setLoadingMessage('プロフィールを保存しています...')
 		setIsLoading(true)
 		setIsError(undefined)
-		const sessionStatus = session.data
-			? getClientAuthState(session.data)
-			: 'no-session'
+		const authInfo = makeAuthDetails(session.data ?? null)
 
-		if (sessionStatus === 'no-session') {
+		if (authInfo.status === 'guest' || authInfo.status === 'invalid') {
 			setIsError({
 				ok: false,
 				status: StatusCode.UNAUTHORIZED,
 				message: 'ログイン情報がありません。再度ログインしてください。',
 			})
-			// router.push('/auth/signin'); // 必要に応じてサインインページへリダイレクト
-		} else if (sessionStatus === 'profile') {
+			setIsLoading(false)
+			return
+		}
+
+		if (authInfo.status === 'signed-in') {
 			setIsError({
 				ok: false,
 				status: StatusCode.FORBIDDEN,
@@ -174,9 +175,12 @@ const SigninSetting = () => {
 					'プロフィールは既に作成されています。編集ページをご利用ください。',
 			})
 			router.push('/user/edit')
-		} else if (sessionStatus === 'session') {
-			// 'session' はプロファイル未作成の有効なセッション
-			const userId = session.data?.user.id || ''
+			setIsLoading(false)
+			return
+		}
+
+		if (authInfo.status === 'needs-profile') {
+			const userId = authInfo.userId ?? ''
 			if (!userId) {
 				setIsError({
 					ok: false,

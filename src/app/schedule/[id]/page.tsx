@@ -6,8 +6,7 @@ import { getScheduleByIdAction } from '@/features/schedule/components/actions'
 import { createMetaData } from '@/hooks/useMetaData'
 import { Metadata, ResolvingMetadata } from 'next'
 import { cache } from 'react'
-import { StatusCode } from '@/types/responseTypes'
-import { redirect, notFound } from 'next/navigation'
+import { notFound } from 'next/navigation'
 
 type PageParams = Promise<{ id: string }>
 type PageProps = { params: PageParams }
@@ -50,19 +49,18 @@ const Page = async ({ params }: PageProps) => {
 	return (
 		<AuthPage>
 			{async (authResult) => {
-				const session = authResult.session
-				if (!session?.user?.id || authResult.authState !== 'profile') {
-					const redirectPath = `/auth/signin?from=${encodeURIComponent(`/schedule/${(await params).id}`)}`
-					redirect(redirectPath)
+				if (!authResult.session) {
+					notFound()
 				}
 
+				const userId = authResult.session.user.id
 				const mentionList = Array.isArray(scheduleDetail.mention)
 					? (scheduleDetail.mention as string[])
 					: []
 				const isMentioned =
 					mentionList.length === 0 ||
-					mentionList.includes(session.user.id) ||
-					scheduleDetail.userId === session.user.id
+					mentionList.includes(userId) ||
+					scheduleDetail.userId === userId
 
 				if (!isMentioned) {
 					notFound()

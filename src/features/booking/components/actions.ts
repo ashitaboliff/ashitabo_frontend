@@ -182,7 +182,7 @@ export const createBookingAction = async ({
 		body: {
 			id: bookingId,
 			userId,
-			bookingDate: booking.bookingDate,
+			bookingDate: booking.bookingDate.split('T')[0],
 			bookingTime: booking.bookingTime,
 			registName: booking.registName,
 			name: booking.name,

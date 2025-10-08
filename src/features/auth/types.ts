@@ -1,15 +1,16 @@
-import { Profile } from '@/features/user/types'
 import type { Session } from '@/types/session'
+import type { AccountRole } from '@/features/user/types'
 
-export type AuthState = 'no-session' | 'invalid-session' | 'session' | 'profile'
+export type AuthStatus = 'guest' | 'invalid' | 'needs-profile' | 'signed-in'
 
-export interface UnifiedAuthResult {
+export interface AuthDetails {
 	session: Session | null
-	authState?: AuthState
-	isAuthenticated?: boolean
-	hasProfile?: boolean
-	needsProfile?: boolean
-	isInvalid?: boolean
-	user: Session['user'] | null
-	profile: Profile | null
+	status: AuthStatus
+	isSignedIn: boolean
+	hasProfile: boolean
+	needsProfile: boolean
+	isInvalid: boolean
+	userId: string | null
+	role: AccountRole | null
+	error?: string
 }

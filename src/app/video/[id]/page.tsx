@@ -6,7 +6,7 @@ import {
 	getPlaylistByIdAction,
 	getVideoByIdAction,
 } from '@/features/video/components/actions'
-import { getUnifiedAuthState } from '@/features/auth/components/actions'
+import { getAuthDetails } from '@/features/auth/components/actions'
 import { createMetaData } from '@/hooks/useMetaData'
 import { Metadata, ResolvingMetadata } from 'next'
 import { cache } from 'react'
@@ -67,7 +67,7 @@ export async function generateMetadata(
 }
 
 const Page = async ({ params }: PageProps) => {
-	const { session } = await getUnifiedAuthState()
+	const { session } = await getAuthDetails()
 	const { id } = await params
 	const liveOrBand = id.startsWith('PL') && id.length > 12 ? 'live' : 'band'
 

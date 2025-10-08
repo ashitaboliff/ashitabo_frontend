@@ -1,11 +1,11 @@
 import { redirect } from 'next/navigation'
 import { ReactNode } from 'react'
 import { AccountRole } from '@/features/user/types'
-import { getUnifiedAuthState } from '@/features/auth/components/actions'
-import type { UnifiedAuthResult } from '@/features/auth/types'
+import { getAuthDetails } from '@/features/auth/components/actions'
+import type { AuthDetails } from '@/features/auth/types'
 
 interface AuthPageProps {
-	children: (authResult: UnifiedAuthResult) => ReactNode
+	children: (authResult: AuthDetails) => ReactNode
 	requireProfile?: boolean
 	allowUnauthenticated?: boolean
 	redirectIfAuthenticated?: boolean
@@ -25,53 +25,53 @@ export async function AuthPage({
 	requireRole = 'USER',
 	fallback,
 }: AuthPageProps) {
-	const authResult = await getUnifiedAuthState(true)
-	const { authState } = authResult
+	const authResult = await getAuthDetails(true)
+	const { status } = authResult
 
 	// 認証済みユーザーをリダイレクトする場合（サインインページなど）
-	if (redirectIfAuthenticated && authResult.isAuthenticated) {
-		if (authResult.hasProfile) {
+	if (redirectIfAuthenticated) {
+		if (status === 'signed-in') {
 			redirect('/user')
-		} else if (authResult.needsProfile) {
+		} else if (status === 'needs-profile') {
 			redirect('/auth/signin/setting')
 		}
 	}
 
 	// 認証状態に基づくリダイレクト処理
-	switch (authState) {
-		case 'no-session':
+	switch (status) {
+		case 'guest':
 			if (!allowUnauthenticated) {
 				redirect('/auth/signin')
 			}
 			break
 
-		case 'invalid-session':
+		case 'invalid':
 			if (!allowUnauthenticated) {
 				redirect('/auth/session-expired')
 			}
 			break
 
-		case 'session':
+		case 'needs-profile':
 			if (requireProfile) {
 				redirect('/auth/signin/setting')
 			}
 			break
 
-		case 'profile':
+		case 'signed-in':
 			// アクセス許可
 			break
 	}
 
 	// ユーザーのロールチェック
-	if (authResult.isAuthenticated && requireRole) {
+	if (status === 'signed-in' && requireRole) {
 		switch (requireRole) {
 			case 'TOPADMIN':
-				if (authResult.session?.user?.role !== 'TOPADMIN') {
+				if (authResult.role !== 'TOPADMIN') {
 					redirect('/auth/unauthorized')
 				}
 				break
 			case 'ADMIN':
-				if (authResult.session?.user?.role === 'USER') {
+				if (authResult.role === 'USER') {
 					redirect('/auth/unauthorized')
 				}
 				break

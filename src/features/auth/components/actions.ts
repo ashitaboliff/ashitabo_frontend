@@ -1,85 +1,24 @@
 'use server'
 
 import { apiGet, apiPost, apiPut } from '@/lib/api/crud'
-import { getClientAuthState } from '@/lib/auth/unifiedAuth'
 import type { Profile } from '@/features/user/types'
 import { ApiResponse, StatusCode } from '@/types/responseTypes'
 import type { Session } from '@/types/session'
-import type { UnifiedAuthResult } from '@/features/auth/types'
+import type { AuthDetails } from '@/features/auth/types'
+import { makeAuthDetails } from '@/features/auth/utils/sessionInfo'
 
-export const getUnifiedAuthState = async (
+export const getAuthDetails = async (
 	noStore?: boolean,
-): Promise<UnifiedAuthResult> => {
+): Promise<AuthDetails> => {
 	const sessionRes = await apiGet<Session | null>('/auth/session', {
 		cache: noStore ? 'no-store' : 'default',
 	})
 
-	const session = sessionRes.ok ? sessionRes.data : null
-	const sessionError = sessionRes.ok ? null : sessionRes.message
-
-	const unified: UnifiedAuthResult = {
-		session,
-		authState: 'no-session',
-		isAuthenticated: false,
-		hasProfile: false,
-		needsProfile: false,
-		isInvalid: false,
-		user: session?.user ?? null,
-		profile: null,
+	const base = makeAuthDetails(sessionRes.ok ? sessionRes.data ?? null : null)
+	return {
+		...base,
+		error: sessionRes.ok ? base.error : sessionRes.message ?? base.error,
 	}
-
-	const authState = getClientAuthState(session)
-	unified.authState = authState
-
-	if (authState === 'no-session') {
-		return unified
-	}
-
-	if (authState === 'invalid-session') {
-		unified.isInvalid = true
-		return unified
-	}
-
-	unified.isAuthenticated = true
-
-	if (!session?.user?.id) {
-		unified.isInvalid = true
-		if (sessionError) {
-			console.warn('Failed to load session user id:', sessionError)
-		}
-		return unified
-	}
-
-	const profileRes = await apiGet<Profile>(
-		`/users/${session.user.id}/profile`,
-		{
-			...(typeof window === 'undefined'
-				? {
-						next: {
-							revalidate: 60,
-							tags: ['user-profile', session.user.id],
-						},
-					}
-				: {}),
-		},
-	)
-
-	if (profileRes.ok) {
-		const profile = profileRes.data
-		unified.profile = profile
-		unified.hasProfile = Boolean(profile?.id)
-		unified.needsProfile = !unified.hasProfile
-		if (unified.hasProfile) {
-			unified.authState = 'profile'
-		}
-	} else if (profileRes.status === StatusCode.NOT_FOUND) {
-		unified.needsProfile = true
-		unified.authState = 'session'
-	} else {
-		console.warn('Failed to load profile:', profileRes.message)
-	}
-
-	return unified
 }
 
 export const createProfileAction = async ({

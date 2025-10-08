@@ -1,21 +1,12 @@
-import { AccountRole, Part, Role } from '@/features/user/types'
-
-export interface SessionProfile {
-	id: string
-	name?: string | null
-	studentId?: string | null
-	expected?: string | null
-	part?: Part[]
-	role?: Role
-}
+import { AccountRole } from '@/features/user/types'
 
 export interface SessionUser {
 	id: string
 	name: string | null
 	email?: string | null
 	image?: string | null
-	role: AccountRole
-	profile?: SessionProfile | null
+	role: AccountRole | null
+	hasProfile: boolean
 }
 
 export interface Session {

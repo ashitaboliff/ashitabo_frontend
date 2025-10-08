@@ -9,6 +9,8 @@ import {
 	GachaDataProvider,
 	CarouselPackDataItem,
 } from '@/features/gacha/context/GachaDataContext'
+import { apiGet } from '@/lib/api/crud'
+import type { Profile } from '@/features/user/types'
 
 export async function metadata() {
 	return createMetaData({
@@ -24,6 +26,16 @@ const UserPageServer = async () => {
 			{async (authResult) => {
 				// セッション情報が確保されているので、authResult.sessionを使用
 				const session = authResult.session!
+				let profile: Profile | null = null
+				if (session.user.hasProfile) {
+					const profileRes = await apiGet<Profile>(
+						`/users/${session.user.id}/profile`,
+						{ cache: 'no-store' },
+					)
+					if (profileRes.ok && profileRes.data) {
+						profile = profileRes.data
+					}
+				}
 
 				const packImagesEntries = await Promise.all(
 					Object.entries(gachaConfigs).map(async ([version, config]) => {
@@ -62,7 +74,7 @@ const UserPageServer = async () => {
 
 				return (
 					<GachaDataProvider gachaCarouselData={gachaCarouselDataForContext}>
-						<UserPageLayout session={session}>
+						<UserPageLayout session={session} profile={profile}>
 							<BookingLogs session={session} />
 							<GachaLogs session={session} />
 						</UserPageLayout>

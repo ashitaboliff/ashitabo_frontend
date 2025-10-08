@@ -1,6 +1,11 @@
 import type { Session } from '@/types/session'
 import { NextRequest, NextResponse } from 'next/server'
 import { API_BASE_URL, API_KEY } from '@/lib/env'
+import {
+	cleanSession,
+	makeAuthDetails,
+} from '@/features/auth/utils/sessionInfo'
+import type { AuthStatus } from '@/features/auth/types'
 
 export const config = {
 	matcher: [
@@ -55,12 +60,7 @@ class MiddlewareApp {
 	private isMaintenanceMode: boolean = process.env.MAINTENANCE_MODE === 'true'
 	private session: Session | null
 	private sessionPromise: Promise<Session | null> | null = null
-	private sessionState:
-		| 'profile'
-		| 'session'
-		| 'no-session'
-		| 'invalid-session'
-		| null = null
+	private sessionState: AuthStatus | null = null
 
 	constructor(request: NextRequest) {
 		this.request = request
@@ -149,10 +149,11 @@ class MiddlewareApp {
 					return null
 				}
 
-				const session = (await response.json()) as Session
-				this.session = session
-				MiddlewareApp.writeCachedSession(sessionToken, session)
-				return session
+				const rawSession = (await response.json()) as Session
+				const normalizedSession = cleanSession(rawSession)
+				this.session = normalizedSession
+				MiddlewareApp.writeCachedSession(sessionToken, normalizedSession)
+				return normalizedSession
 			} catch (error) {
 				console.error('Failed to get session state:', error)
 				this.session = null
@@ -165,36 +166,19 @@ class MiddlewareApp {
 		return this.sessionPromise
 	}
 
-	private async getSessionState(): Promise<
-		'profile' | 'session' | 'no-session' | 'invalid-session'
-	> {
+	private async getSessionState(): Promise<AuthStatus> {
 		if (this.sessionState) {
 			return this.sessionState
 		}
 
 		try {
 			const session = await this.fetchSession()
-
-			if (!session) {
-				this.sessionState = 'no-session'
-				return this.sessionState
-			}
-
-			if (session.error) {
-				this.sessionState = 'invalid-session'
-				return this.sessionState
-			}
-
-			if (session.user?.profile) {
-				this.sessionState = 'profile'
-				return this.sessionState
-			}
-
-			this.sessionState = 'session'
+			const details = makeAuthDetails(session)
+			this.sessionState = details.status
 			return this.sessionState
 		} catch (error) {
 			console.error('Failed to determine session state:', error)
-			this.sessionState = 'no-session'
+			this.sessionState = 'guest'
 			return this.sessionState
 		}
 	}
@@ -230,11 +214,11 @@ class MiddlewareApp {
 		// 認証フローのルートの処理
 		if (this.matchesRoute(pathname, AUTH_FLOW_ROUTES)) {
 			const sessionState = await this.getSessionState()
-			if (sessionState === 'profile') {
+			if (sessionState === 'signed-in') {
 				// プロフィール設定済みの場合は /user にリダイレクト
 				return this.redirect('/user')
 			}
-			if (sessionState === 'session') {
+			if (sessionState === 'needs-profile') {
 				// セッションあり、プロフィール未設定の場合は /auth/signin/setting にリダイレクト
 				return this.redirect('/auth/signin/setting')
 			}
@@ -245,10 +229,10 @@ class MiddlewareApp {
 		// プロフィール設定ページの処理
 		if (pathname === '/auth/signin/setting') {
 			const sessionState = await this.getSessionState()
-			if (sessionState === 'no-session' || sessionState === 'invalid-session') {
+			if (sessionState === 'guest' || sessionState === 'invalid') {
 				return this.redirect('/auth/signin')
 			}
-			if (sessionState === 'profile') {
+			if (sessionState === 'signed-in') {
 				// 既にプロフィール設定済みの場合は /user にリダイレクト
 				return this.redirect('/user')
 			}
@@ -259,10 +243,10 @@ class MiddlewareApp {
 		// プロフィール必須ルートの処理
 		if (this.matchesRoute(pathname, PROFILE_REQUIRED_ROUTES)) {
 			const sessionState = await this.getSessionState()
-			if (sessionState === 'no-session') {
+			if (sessionState === 'guest') {
 				return this.redirect('/auth/signin')
 			}
-			if (sessionState === 'invalid-session') {
+			if (sessionState === 'invalid') {
 				// ログを出力してからリダイレクト
 				console.warn('Redirecting to session-expired from middleware:', {
 					pathname,
@@ -272,7 +256,7 @@ class MiddlewareApp {
 				})
 				return this.redirect('/auth/session-expired')
 			}
-			if (sessionState === 'session') {
+			if (sessionState === 'needs-profile') {
 				// プロフィール未設定の場合は設定ページにリダイレクト
 				return this.redirect('/auth/signin/setting')
 			}
@@ -283,10 +267,10 @@ class MiddlewareApp {
 		// セッション必須ルートの処理
 		if (this.matchesRoute(pathname, SESSION_REQUIRED_ROUTES)) {
 			const sessionState = await this.getSessionState()
-			if (sessionState === 'no-session') {
+			if (sessionState === 'guest') {
 				return this.redirect('/auth/signin')
 			}
-			if (sessionState === 'invalid-session') {
+			if (sessionState === 'invalid') {
 				return this.redirect('/auth/session-expired')
 			}
 			// session または profile 状態の場合はアクセス許可

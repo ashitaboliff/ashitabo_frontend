@@ -18,7 +18,7 @@ import { cache } from 'react'
 import { StatusCode } from '@/types/responseTypes'
 
 type PageParams = Promise<{ id: string }>
-type PageSearchParams = { viewStartDate?: string }
+type PageSearchParams = Promise<{ viewStartDate?: string }>
 type PageProps = {
 	params: PageParams
 	searchParams: PageSearchParams
@@ -69,7 +69,7 @@ const Page = async ({ params, searchParams }: PageProps) => {
 
 				// Fetch calendar data based on viewStartDate
 				const viewDayMax = 7
-				const { viewStartDate } = searchParams
+				const { viewStartDate } = await searchParams
 				const initialViewDayDate = viewStartDate
 					? parseISO(viewStartDate)
 					: subDays(new Date(), 1)

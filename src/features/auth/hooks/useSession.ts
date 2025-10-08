@@ -1,9 +1,10 @@
 'use client'
 
 import useSWR from 'swr'
-import { getUnifiedAuthState } from '@/features/auth/components/actions'
-import { UnifiedAuthResult } from '@/features/auth/types'
+import { getAuthDetails } from '@/features/auth/components/actions'
+import type { AuthDetails } from '@/features/auth/types'
 import type { Session } from '@/types/session'
+import { useSessionContext } from '@/features/auth/context/SessionContext'
 
 export interface UseSessionResult {
 	data: Session | null
@@ -11,25 +12,28 @@ export interface UseSessionResult {
 	error?: Error
 	update: (arg?: unknown) => Promise<Session | null>
 	mutate: (
-		data?: UnifiedAuthResult | Promise<UnifiedAuthResult>,
-	) => Promise<UnifiedAuthResult | undefined>
-	unified?: UnifiedAuthResult
+		data?: AuthDetails | Promise<AuthDetails>,
+	) => Promise<AuthDetails | undefined>
+	details?: AuthDetails
 }
 
-const fetchUnified = () => getUnifiedAuthState(true)
+const fetchDetails = () => getAuthDetails(true)
 
 export const useSession = (): UseSessionResult => {
-	const { data, error, isLoading, mutate } = useSWR<UnifiedAuthResult>(
-		['unified-auth'],
-		fetchUnified,
+	const initialDetails = useSessionContext()
+	const { data, error, isLoading, mutate } = useSWR<AuthDetails>(
+		['auth-details'],
+		fetchDetails,
 		{
 			revalidateOnFocus: false,
 			revalidateOnReconnect: false,
 			revalidateIfStale: false,
+			fallbackData: initialDetails ?? undefined,
+			revalidateOnMount: !initialDetails,
 		},
 	)
 
-	const session = data?.session ?? null
+	const session = data?.session ?? initialDetails?.session ?? null
 	const status: UseSessionResult['status'] = isLoading
 		? 'loading'
 		: session
@@ -37,7 +41,7 @@ export const useSession = (): UseSessionResult => {
 			: 'unauthenticated'
 
 	const update: UseSessionResult['update'] = async () => {
-		const updated = await mutate(fetchUnified(), { revalidate: true })
+		const updated = await mutate(fetchDetails(), { revalidate: true })
 		return updated?.session ?? null
 	}
 
@@ -47,6 +51,6 @@ export const useSession = (): UseSessionResult => {
 		error,
 		update,
 		mutate,
-		unified: data,
+		details: data ?? initialDetails ?? undefined,
 	}
 }

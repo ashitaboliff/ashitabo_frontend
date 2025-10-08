@@ -1,3 +1,6 @@
+'use server'
+
+import { cookies } from 'next/headers'
 import {
 	ApiResponse,
 	ErrorStatus,
@@ -121,16 +124,36 @@ export const apiRequest = async <T>(
 
 	const shouldSkipContentType = body instanceof FormData
 
+	let cookieHeader: string | undefined
+	if (typeof window === 'undefined') {
+		try {
+			const cookieStore = await cookies()
+			const sessionToken =
+				cookieStore.get('authjs.session-token')?.value ??
+				cookieStore.get('__Secure-authjs.session-token')?.value
+			if (sessionToken) {
+				const cookieName = cookieStore.get('authjs.session-token')
+					? 'authjs.session-token'
+					: '__Secure-authjs.session-token'
+				cookieHeader = `${cookieName}=${sessionToken}`
+			}
+		} catch (e) {
+			// cookies() が利用できない場合はスキップ
+		}
+	}
+
+	const requestHeaders = normalizeHeaders(headers, shouldSkipContentType)
+	if (cookieHeader) {
+		requestHeaders.set('Cookie', cookieHeader)
+	}
+
 	const requestInit: RequestInit = {
 		...rest,
 		cache,
 		next,
 		credentials: 'include',
-		headers: normalizeHeaders(headers, shouldSkipContentType),
-		body:
-			rest.method && rest.method !== 'GET' && rest.method !== 'HEAD'
-				? resolveBody(body)
-				: undefined,
+		headers: requestHeaders,
+		body: resolveBody(body),
 	}
 
 	const response = await fetch(url, requestInit)

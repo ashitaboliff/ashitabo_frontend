@@ -14,13 +14,19 @@ import { GiCardRandom, GiGuitarHead } from 'react-icons/gi' // GiGuitarHead を�
 import { MdOutlineEditCalendar } from 'react-icons/md'
 import RatioPopup from '@/features/gacha/components/RatioPopup'
 import type { Session } from '@/types/session'
+import type { Profile } from '@/features/user/types'
 
 interface UserPageLayoutProps {
 	session: Session
+	profile: Profile | null
 	children: ReactNode
 }
 
-const UserPageLayout = ({ session, children }: UserPageLayoutProps) => {
+const UserPageLayout = ({
+	session,
+	profile,
+	children,
+}: UserPageLayoutProps) => {
 	const session2 = useSession()
 	const router = useRouter()
 	const [isGachaPopupOpen, setIsGachaPopupOpen] = useState(false)
@@ -49,22 +55,22 @@ const UserPageLayout = ({ session, children }: UserPageLayoutProps) => {
 
 	// children は bookingLogs と gachaLogs のタプルを期待している可能性がある
 	// children の構造に合わせて調整が必要。ここでは bookingLogs, gachaLogs のみと仮定
-	const [bookingLogs, gachaLogs, ...otherChildren] = Array.isArray(children)
+	const [bookingLogs, gachaLogs] = Array.isArray(children)
 		? children
-		: [null, null]
+		: [children, null]
 	// もし children が固定で2つの要素しか持たないなら、上記は不要で元のままで良い。
 	// BandList は children とは独立して配置する。
 
 	return (
 		<div className="container mx-auto p-4 flex flex-col items-center">
-			<ProfileDisplay session={session} />
+			<ProfileDisplay session={session} profile={profile} />
 			<button
 				className="btn btn-outline btn-primary w-full md:w-1/2 lg:w-1/3 mb-4"
 				onClick={() => router.push('/user/edit')}
 			>
 				プロフィールを編集
 			</button>
-			{session.user.role === 'ADMIN' && (
+			{(session.user.role ?? 'USER') === 'ADMIN' && (
 				<button
 					className="btn btn-secondary btn-outline w-full md:w-1/2 lg:w-1/3 mb-4"
 					onClick={() => router.push('/admin')}
@@ -72,7 +78,7 @@ const UserPageLayout = ({ session, children }: UserPageLayoutProps) => {
 					管理者ページへ
 				</button>
 			)}
-			{session.user.role === 'TOPADMIN' && (
+			{(session.user.role ?? 'USER') === 'TOPADMIN' && (
 				<div className="flex flex-col md:flex-row justify-center gap-2 mb-4 w-full md:w-2/3 lg:w-1/2">
 					<button
 						className="btn btn-accent btn-outline w-full md:w-1/2"

@@ -21,7 +21,7 @@ import TextInputField from '@/components/ui/atoms/TextInputField'
 import SelectField from '@/components/ui/atoms/SelectField'
 import Popup from '@/components/ui/molecules/Popup'
 import { putProfileAction } from '@/features/auth/components/actions'
-import { getClientAuthState } from '@/lib/auth/unifiedAuth'
+import { makeAuthDetails } from '@/features/auth/utils/sessionInfo'
 
 const academicYearLastTwoDigits = generateAcademicYear() % 100
 
@@ -162,13 +162,9 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 
 	const onSubmit = async (data: any) => {
 		setIsLoading(true)
-		// クライアントサイドのセッション情報をgetClientAuthStateに渡す
-		// session.data が null の可能性も考慮
-		const sessionStatus = session.data
-			? getClientAuthState(session.data)
-			: 'no-session'
+		const authInfo = makeAuthDetails(session.data ?? null)
 
-		if (sessionStatus === 'no-session') {
+		if (authInfo.status === 'guest') {
 			setIsError({
 				ok: false,
 				status: StatusCode.UNAUTHORIZED,
@@ -177,7 +173,7 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 			// router.push('/auth/signin'); // 必要に応じてサインインページへリダイレクト
 		} else {
 			// 'session' または 'profile' の場合、プロファイル更新処理を実行
-			const userId = session.data?.user.id || ''
+			const userId = authInfo.userId ?? ''
 			if (!userId) {
 				setIsError({
 					ok: false,

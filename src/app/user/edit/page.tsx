@@ -2,6 +2,7 @@ import type { Profile } from '@/features/user/types'
 import { notFound } from 'next/navigation'
 import ProfileEdit from '@/features/user/components/ProfileEdit'
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
+import { apiGet } from '@/lib/api/crud'
 
 export async function metadata() {
 	return {
@@ -14,12 +15,19 @@ export async function metadata() {
 const userPage = async () => {
 	return (
 		<AuthPage requireProfile={true}>
-			{(authResult) => {
-				const userProfile = authResult.profile
-				if (!userProfile) {
+			{async (authResult) => {
+				const session = authResult.session
+				if (!session || !session.user.hasProfile) {
 					return notFound()
 				}
-				return <ProfileEdit profile={userProfile as Profile} />
+				const profileRes = await apiGet<Profile>(
+					`/users/${session.user.id}/profile`,
+					{ cache: 'no-store' },
+				)
+				if (!profileRes.ok || !profileRes.data) {
+					return notFound()
+				}
+				return <ProfileEdit profile={profileRes.data} />
 			}}
 		</AuthPage>
 	)
