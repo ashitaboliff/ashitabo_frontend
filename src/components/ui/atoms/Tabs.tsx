@@ -1,4 +1,12 @@
-import React, { ReactNode, useEffect, useMemo, useState } from 'react'
+import React, {
+	useEffect,
+	useMemo,
+	useState,
+	isValidElement,
+	Children,
+	type ReactNode,
+	type ReactElement,
+} from 'react'
 
 interface TabProps {
 	label: ReactNode
@@ -12,9 +20,9 @@ interface TabsProps {
 export const Tabs = ({ children }: TabsProps) => {
 	const tabChildren = useMemo(
 		() =>
-			React.Children.toArray(children).filter(
-				(child): child is React.ReactElement<TabProps> =>
-					React.isValidElement<TabProps>(child),
+			Children.toArray(children).filter(
+				(child): child is ReactElement<TabProps> =>
+					isValidElement<TabProps>(child),
 			),
 		[children],
 	)

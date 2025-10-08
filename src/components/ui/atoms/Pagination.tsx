@@ -1,7 +1,7 @@
 interface PaginationProps {
-	currentPage: number // 現在のページ
-	totalPages: number // 総ページ数
-	onPageChange: (page: number) => void // ページ変更時のコールバック
+	currentPage: number
+	totalPages: number
+	onPageChange: (page: number) => void
 }
 
 type PaginationItem = number | 'ellipsis-left' | 'ellipsis-right'

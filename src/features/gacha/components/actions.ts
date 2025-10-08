@@ -1,25 +1,12 @@
 import { apiRequest } from '@/lib/api'
-import { ApiResponse, StatusCode } from '@/types/responseTypes'
+import { ApiResponse } from '@/types/responseTypes'
 import {
 	createdResponse,
-	mapSuccess,
 	okResponse,
 	withFallbackMessage,
 } from '@/lib/api/helper'
 import { GachaData, GachaSort, RarityType } from '@/features/gacha/types'
 import { getImageUrl } from '@/lib/r2'
-
-const mapGacha = (input: any): GachaData => ({
-	userId: input.userId,
-	id: input.id,
-	gachaVersion: input.gachaVersion,
-	gachaRarity: input.gachaRarity as RarityType,
-	gachaSrc: input.gachaSrc,
-	signedGachaSrc: input.signedGachaSrc ?? getImageUrl(input.gachaSrc),
-	createdAt: new Date(input.createdAt),
-	updatedAt: new Date(input.updatedAt),
-	isDeleted: input.isDeleted ?? false,
-})
 
 export const getGachaByUserIdAction = async ({
 	userId,
@@ -33,7 +20,7 @@ export const getGachaByUserIdAction = async ({
 	sort: GachaSort
 }): Promise<ApiResponse<{ gacha: GachaData[]; totalCount: number }>> => {
 	const res = await apiRequest<{
-		gacha: any[]
+		gacha: GachaData[]
 		totalCount: number
 	}>(`/gacha/users/${userId}`, {
 		method: 'GET',
@@ -45,14 +32,14 @@ export const getGachaByUserIdAction = async ({
 		cache: 'no-store',
 	})
 
-	return mapSuccess(
-		res,
-		(payload) => ({
-			gacha: ((payload?.gacha ?? []) as any[]).map(mapGacha),
-			totalCount: payload?.totalCount ?? 0,
-		}),
-		'ガチャ履歴の取得に失敗しました。',
-	)
+	if (!res.ok) {
+		return withFallbackMessage(res, 'ガチャ一覧の取得に失敗しました。')
+	}
+
+	return okResponse({
+		gacha: res.data?.gacha,
+		totalCount: res.data?.totalCount ?? 0,
+	})
 }
 
 export const getGachaByGachaSrcAction = async ({
@@ -63,7 +50,7 @@ export const getGachaByGachaSrcAction = async ({
 	gachaSrc: string
 }): Promise<ApiResponse<{ gacha: GachaData | null; totalCount: number }>> => {
 	const res = await apiRequest<{
-		gacha: any | null
+		gacha: GachaData | null
 		totalCount: number
 	}>(`/gacha/users/${userId}/by-src`, {
 		method: 'GET',
@@ -73,14 +60,14 @@ export const getGachaByGachaSrcAction = async ({
 		cache: 'no-store',
 	})
 
-	return mapSuccess(
-		res,
-		(payload) => ({
-			gacha: payload?.gacha ? mapGacha(payload.gacha) : null,
-			totalCount: payload?.totalCount ?? 0,
-		}),
-		'ガチャ詳細の取得に失敗しました。',
-	)
+	if (!res.ok) {
+		return withFallbackMessage(res, 'ガチャ情報の取得に失敗しました。')
+	}
+
+	return okResponse({
+		gacha: res.data?.gacha,
+		totalCount: res.data?.totalCount ?? 0,
+	})
 }
 
 export const createUserGachaResultAction = async ({

@@ -8,7 +8,7 @@ import { ja } from 'date-fns/locale/ja'
 import { BookingDetailProps, BookingTime } from '@/features/booking/types'
 import ShareButton from '@/components/ui/atoms/ShareButton'
 import AddCalendarPopup from '@/components/ui/molecules/AddCalendarPopup'
-import BookingDetailBox from '@/components/ui/molecules/BookingDetailBox'
+import BookingDetailBox from '@/features/booking/components/BookingDetailBox'
 import DetailNotFoundPage from '@/features/booking/components/DetailNotFound'
 
 const DetailPage = ({

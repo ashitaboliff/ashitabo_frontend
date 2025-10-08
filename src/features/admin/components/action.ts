@@ -2,7 +2,6 @@ import { apiRequest } from '@/lib/api'
 import { ApiResponse, StatusCode } from '@/types/responseTypes'
 import {
 	createdResponse,
-	mapSuccess,
 	noContentResponse,
 	okResponse,
 	withFallbackMessage,
@@ -10,39 +9,6 @@ import {
 import { UserDetail, AccountRole } from '@/features/user/types'
 import { BanBooking } from '@/features/booking/types'
 import { PadLock } from '@/features/admin/types'
-
-const mapUserDetail = (input: any): UserDetail => ({
-	id: input.id,
-	name: input.name ?? null,
-	fullName: input.fullName ?? undefined,
-	studentId: input.studentId ?? undefined,
-	expected: input.expected ?? undefined,
-	image: input.image ?? null,
-	createAt: input.createdAt ? new Date(input.createdAt) : new Date(),
-	updateAt: input.updatedAt ? new Date(input.updatedAt) : new Date(),
-	AccountRole: input.accountRole ?? null,
-	role: input.role ?? undefined,
-	part: input.part ?? undefined,
-})
-
-const mapBanBooking = (input: any): BanBooking => ({
-	id: input.id,
-	startDate: new Date(input.startDate),
-	startTime: input.startTime,
-	endTime: input.endTime ?? null,
-	description: input.description,
-	createdAt: new Date(input.createdAt),
-	updatedAt: new Date(input.updatedAt),
-	isDeleted: input.isDeleted ?? false,
-})
-
-const mapPadLock = (input: any): PadLock => ({
-	id: input.id,
-	name: input.name,
-	createdAt: new Date(input.createdAt),
-	updatedAt: new Date(input.updatedAt),
-	isDeleted: input.isDeleted ?? false,
-})
 
 export const getAllPadLocksAction = async (): Promise<
 	ApiResponse<PadLock[]>
@@ -52,11 +18,11 @@ export const getAllPadLocksAction = async (): Promise<
 		cache: 'no-store',
 	})
 
-	return mapSuccess(
-		res,
-		(payload) => (payload ?? []).map(mapPadLock),
-		'パドロック一覧の取得に失敗しました。',
-	)
+	if (!res.ok) {
+		return withFallbackMessage(res, '部室パスワード一覧の取得に失敗しました')
+	}
+
+	return okResponse(res.data)
 }
 
 export const getAllUserDetailsAction = async ({
@@ -69,7 +35,7 @@ export const getAllUserDetailsAction = async ({
 	sort: 'new' | 'old'
 }): Promise<ApiResponse<{ users: UserDetail[]; totalCount: number }>> => {
 	const res = await apiRequest<{
-		users: any[]
+		users: UserDetail[]
 		totalCount: number
 	}>('/admin/users', {
 		method: 'GET',
@@ -81,14 +47,14 @@ export const getAllUserDetailsAction = async ({
 		cache: 'no-store',
 	})
 
-	return mapSuccess(
-		res,
-		(payload) => ({
-			users: (payload?.users ?? []).map(mapUserDetail),
-			totalCount: payload?.totalCount ?? 0,
-		}),
-		'ユーザー情報の取得に失敗しました。',
-	)
+	if (!res.ok) {
+		return withFallbackMessage(res, 'ユーザー一覧の取得に失敗しました')
+	}
+
+	return okResponse({
+		users: res.data?.users ?? [],
+		totalCount: res.data?.totalCount ?? 0,
+	})
 }
 
 export const deleteUserAction = async ({
@@ -190,14 +156,14 @@ export const getBanBookingAction = async ({
 		cache: 'no-store',
 	})
 
-	return mapSuccess(
-		res,
-		(payload) => ({
-			data: (payload?.data ?? []).map(mapBanBooking),
-			totalCount: payload?.totalCount ?? 0,
-		}),
-		'予約禁止日の取得に失敗しました。',
-	)
+	if (!res.ok) {
+		return withFallbackMessage(res, '予約禁止日の取得に失敗しました')
+	}
+
+	return okResponse({
+		data: res.data?.data ?? [],
+		totalCount: res.data?.totalCount ?? 0,
+	})
 }
 
 export const deleteBanBookingAction = async ({
@@ -229,7 +195,7 @@ export const createPadLockAction = async ({
 	})
 
 	if (!res.ok) {
-		return withFallbackMessage(res, 'パドロックの作成に失敗しました')
+		return withFallbackMessage(res, '部室パスワードの作成に失敗しました')
 	}
 
 	return createdResponse('created')
@@ -245,7 +211,7 @@ export const deletePadLockAction = async ({
 	})
 
 	if (!res.ok) {
-		return withFallbackMessage(res, 'パドロックの削除に失敗しました')
+		return withFallbackMessage(res, '部室パスワードの削除に失敗しました')
 	}
 
 	return noContentResponse()

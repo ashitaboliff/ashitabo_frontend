@@ -1,22 +1,22 @@
 'use client'
 
-import React from 'react'
+import { type ReactNode } from 'react'
 
 interface GenericTableBodyProps<T extends object> {
 	isLoading: boolean
 	error?: Error | null
 	data?: T[]
-	renderCells: (item: T) => React.ReactNode // Should return React.ReactNode for <td> elements
+	renderCells: (item: T) => ReactNode
 	onItemClick?: (item: T) => void
 	colSpan: number
 	loadingMessage?: string
 	errorMessagePrefix?: string
 	emptyDataMessage?: string
-	itemKeyExtractor: (item: T) => string | number // Function to extract a unique key
+	itemKeyExtractor: (item: T) => string | number
 	rowClassName?: string
 	clickableRowClassName?: string
-	noDataCustomMessage?: React.ReactNode // Allows for custom message/component when no data
-	renderLoadingSkeleton?: (colSpan: number) => React.ReactNode
+	noDataCustomMessage?: ReactNode
+	renderLoadingSkeleton?: (colSpan: number) => ReactNode
 }
 
 const GenericTableBody = <T extends object>({
@@ -61,11 +61,6 @@ const GenericTableBody = <T extends object>({
 
 	if (!data || data.length === 0) {
 		if (noDataCustomMessage) {
-			// If a custom message/component is provided for no data, render it.
-			// It's assumed this custom message will be wrapped in <tr><td> appropriately by the caller or is self-contained.
-			// For direct insertion into tbody, it should be a <tr> element.
-			// Let's ensure it's wrapped if it's not already a <tr>.
-			// A simple way is to expect noDataCustomMessage to be the content of a <td>.
 			return (
 				<tr>
 					<td colSpan={colSpan} className="text-center py-10">

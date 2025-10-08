@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next-nprogress-bar'
-import { addWeeks, addDays } from 'date-fns'
+import { addDays } from 'date-fns'
 import { DateToDayISOstring } from '@/utils'
 import { ABLE_BOOKING_DAYS } from '@/features/booking/config'
 
