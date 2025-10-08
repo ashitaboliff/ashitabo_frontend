@@ -6,7 +6,7 @@ import './globals.css'
 import ProgressBarProvider from '@/components/ui/atoms/ProgressBarProvider'
 import Header from '@/components/home/Header'
 import Footer from '@/components/home/Footer'
-import { createMetaData } from '@/utils/metaData'
+import { createMetaData } from '@/hooks/useMetaData'
 
 const inter = Inter({ subsets: ['latin'] })
 

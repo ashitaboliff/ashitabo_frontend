@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { createMetaData } from '@/utils/metaData'
+import { createMetaData } from '@/hooks/useMetaData'
 
 export async function metadata() {
 	return createMetaData({

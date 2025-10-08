@@ -7,7 +7,7 @@ import {
 	getVideoByIdAction,
 } from '@/features/video/components/actions'
 import { getUnifiedAuthState } from '@/features/auth/components/actions'
-import { createMetaData } from '@/utils/metaData'
+import { createMetaData } from '@/hooks/useMetaData'
 import { Metadata, ResolvingMetadata } from 'next'
 import { cache } from 'react'
 

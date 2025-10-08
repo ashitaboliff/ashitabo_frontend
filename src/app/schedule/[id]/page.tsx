@@ -3,7 +3,7 @@
 import IdPage from '@/features/schedule/components/IdPage'
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
 import { getScheduleByIdAction } from '@/features/schedule/components/actions'
-import { createMetaData } from '@/utils/metaData'
+import { createMetaData } from '@/hooks/useMetaData'
 import { Metadata, ResolvingMetadata } from 'next'
 import { cache } from 'react'
 import { StatusCode } from '@/types/responseTypes'

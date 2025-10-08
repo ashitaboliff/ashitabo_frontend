@@ -1,6 +1,6 @@
 import CreatePage from '@/features/booking/components/Create'
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
-import { createMetaData } from '@/utils/metaData'
+import { createMetaData } from '@/hooks/useMetaData'
 
 export async function metadata() {
 	return createMetaData({

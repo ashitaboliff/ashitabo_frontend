@@ -3,7 +3,7 @@ import { compileMDX } from 'next-mdx-remote/rsc'
 import fs from 'fs'
 import path from 'path'
 import { LuCalendarSync, LuCalendar } from 'react-icons/lu'
-import { createMetaData } from '@/utils/metaData'
+import { createMetaData } from '@/hooks/useMetaData'
 import HomePageHeader from '@/components/shared/HomePageHeader' // Assuming this is a shared header
 
 // Define the expected shape of the frontmatter

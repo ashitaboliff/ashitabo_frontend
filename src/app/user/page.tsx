@@ -2,7 +2,7 @@ import { AuthPage } from '@/features/auth/components/UnifiedAuth'
 import UserPageLayout from '@/features/user/components/UserPageLayout'
 import BookingLogs from '@/features/user/components/BookingLogs'
 import GachaLogs from '@/features/user/components/GachaLogs'
-import { createMetaData } from '@/utils/metaData'
+import { createMetaData } from '@/hooks/useMetaData'
 import { gachaConfigs } from '@/features/gacha/components/config/gachaConfig'
 import { getSignedUrlForGachaImageAction } from '@/features/gacha/components/actions'
 import {

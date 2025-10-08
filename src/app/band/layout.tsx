@@ -1,4 +1,4 @@
-import { createMetaData } from '@/utils/metaData'
+import { createMetaData } from '@/hooks/useMetaData'
 import HomePageHeader from '@/components/shared/HomePageHeader'
 
 export async function metadata() {

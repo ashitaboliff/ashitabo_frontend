@@ -1,7 +1,7 @@
 'use server'
 
 import { LuCalendarSync, LuCalendar } from 'react-icons/lu'
-import { createMetaData } from '@/utils/metaData'
+import { createMetaData } from '@/hooks/useMetaData'
 import { compileMDX } from 'next-mdx-remote/rsc'
 import rehypeRaw from 'rehype-raw'
 import fs from 'fs/promises'

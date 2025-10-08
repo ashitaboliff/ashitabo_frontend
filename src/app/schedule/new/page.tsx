@@ -1,6 +1,6 @@
 import { getUserIdWithNames } from '@/features/schedule/components/actions'
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
-import { createMetaData } from '@/utils/metaData'
+import { createMetaData } from '@/hooks/useMetaData'
 import ScheduleCreatePage from '@/features/schedule/components/CreatePage'
 
 export async function metadata() {

@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers'
 import AuthPadLock from '@/features/auth/components/AuthPadLock'
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
-import { createMetaData } from '@/utils/metaData'
+import { createMetaData } from '@/hooks/useMetaData'
 
 const CSRF_COOKIE_KEYS = [
 	'authjs.csrf-token',

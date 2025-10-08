@@ -1,4 +1,4 @@
-import { createMetaData } from '@/utils/metaData'
+import { createMetaData } from '@/hooks/useMetaData'
 import SessionExpiredClient from '@/features/auth/components/SessionExpiredClient'
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
 import { redirect } from 'next/navigation'

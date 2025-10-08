@@ -1,6 +1,6 @@
 import SigninSetting from '@/features/auth/components/SigninSetting'
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
-import { createMetaData } from '@/utils/metaData'
+import { createMetaData } from '@/hooks/useMetaData'
 
 export async function metadata() {
 	return createMetaData({

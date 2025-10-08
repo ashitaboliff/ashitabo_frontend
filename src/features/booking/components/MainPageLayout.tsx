@@ -2,7 +2,7 @@ import { ReactNode } from 'react'
 import fs from 'fs/promises'
 import path from 'path'
 import { MDXRemote } from 'next-mdx-remote/rsc'
-import Modal from '@/components/ui/atoms/Modal'
+import Modal from '@/components/ui/molecules/Modal'
 import RefreshButton from './RefreshButton'
 
 const MainPageLayout = async ({ children }: { children: ReactNode }) => {
