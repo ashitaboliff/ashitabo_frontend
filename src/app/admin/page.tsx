@@ -4,9 +4,7 @@ import { AuthPage } from '@/features/auth/components/UnifiedAuth'
 const Page = async () => {
 	return (
 		<AuthPage requireProfile={true} requireRole="ADMIN">
-			{(authResult) => {
-				return <AdminMain />
-			}}
+			{() => <AdminMain />}
 		</AuthPage>
 	)
 }

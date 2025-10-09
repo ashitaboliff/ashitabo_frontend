@@ -13,11 +13,7 @@ export async function metadata() {
 const Signin = async () => {
 	return (
 		<AuthPage requireProfile={false} allowUnauthenticated={false}>
-			{(authResult) => {
-				// プロファイル設定済みの場合は自動でリダイレクトされる
-				// ここに到達する時点で、認証済み&プロファイル未設定が保証される
-				return <SigninSetting />
-			}}
+			{() => <SigninSetting />}
 		</AuthPage>
 	)
 }

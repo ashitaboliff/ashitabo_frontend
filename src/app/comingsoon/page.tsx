@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 
-// Simple Gear Icon SVG as a React Component
 const GearIcon = ({ className }: { className?: string }) => (
 	<svg
 		xmlns="http://www.w3.org/2000/svg"

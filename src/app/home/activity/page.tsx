@@ -1,5 +1,3 @@
-'use server'
-
 import Link from 'next/link'
 import { Inter } from 'next/font/google'
 import Image from 'next/image'

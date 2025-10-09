@@ -1,6 +1,7 @@
 import { ReactNode } from 'react'
 import { UseFormRegisterReturn } from 'react-hook-form'
 import LabelInputField from '@/components/ui/atoms/LabelInputField'
+import InputFieldError from '@/components/ui/atoms/InputFieldError'
 
 /**
  * テキスト入力フィールド
@@ -66,11 +67,7 @@ const TextareaInputField = ({
 				{...props}
 			/>
 
-			{errorMessage && (
-				<div className="label">
-					<span className="text-error label-text-alt">{errorMessage}</span>
-				</div>
-			)}
+			<InputFieldError errorMessage={errorMessage} />
 		</div>
 	)
 }

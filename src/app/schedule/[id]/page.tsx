@@ -1,5 +1,3 @@
-'use server'
-
 import IdPage from '@/features/schedule/components/IdPage'
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
 import { getScheduleByIdAction } from '@/features/schedule/components/actions'

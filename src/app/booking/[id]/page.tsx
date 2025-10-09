@@ -1,5 +1,3 @@
-'use server'
-
 import DetailPage from '@/features/booking/components/Detail'
 import DetailNotFoundPage from '@/features/booking/components/DetailNotFound'
 import { getBookingByIdAction } from '@/features/booking/components/actions'

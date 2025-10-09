@@ -1,5 +1,3 @@
-'use server'
-
 import MainPage from '@/features/booking/components/MainPage'
 import MainPageLayout from '@/features/booking/components/MainPageLayout'
 

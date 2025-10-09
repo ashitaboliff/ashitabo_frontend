@@ -1,5 +1,3 @@
-'use server'
-
 import LinkWithArrow from '@/components/ui/atoms/LinkWithArrow'
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
 import { gkktt } from '@/lib/fonts'

@@ -22,12 +22,6 @@ const buildUrl = (path: string, searchParams?: Record<string, QueryValue>) => {
 		? path
 		: `/api${path.startsWith('/') ? path : `/${path}`}`
 
-	if (typeof window !== 'undefined') {
-		const url = new URL(normalizedPath, window.location.origin)
-		appendSearchParams(url, searchParams)
-		return url.toString()
-	}
-
 	const url = new URL(normalizedPath, getFrontendOrigin())
 	appendSearchParams(url, searchParams)
 	return url.toString()
@@ -125,21 +119,15 @@ export const apiRequest = async <T>(
 	const shouldSkipContentType = body instanceof FormData
 
 	let cookieHeader: string | undefined
-	if (typeof window === 'undefined') {
-		try {
-			const cookieStore = await cookies()
-			const sessionToken =
-				cookieStore.get('authjs.session-token')?.value ??
-				cookieStore.get('__Secure-authjs.session-token')?.value
-			if (sessionToken) {
-				const cookieName = cookieStore.get('authjs.session-token')
-					? 'authjs.session-token'
-					: '__Secure-authjs.session-token'
-				cookieHeader = `${cookieName}=${sessionToken}`
-			}
-		} catch (e) {
-			// cookies() が利用できない場合はスキップ
-		}
+	const cookieStore = await cookies()
+	const sessionToken =
+		cookieStore.get('authjs.session-token')?.value ??
+		cookieStore.get('__Secure-authjs.session-token')?.value
+	if (sessionToken) {
+		const cookieName = cookieStore.get('authjs.session-token')
+			? 'authjs.session-token'
+			: '__Secure-authjs.session-token'
+		cookieHeader = `${cookieName}=${sessionToken}`
 	}
 
 	const requestHeaders = normalizeHeaders(headers, shouldSkipContentType)

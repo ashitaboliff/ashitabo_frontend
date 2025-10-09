@@ -5,7 +5,7 @@ import { AuthPage } from '@/features/auth/components/UnifiedAuth'
 
 const Page = async () => {
 	return (
-		<AuthPage requireProfile={true} requireRole="ADMIN">
+		<AuthPage requireProfile requireRole="ADMIN">
 			{async (authResult) => {
 				const padLocks = await getAllPadLocksAction()
 				if (!padLocks.ok) {

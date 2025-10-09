@@ -1,5 +1,3 @@
-'use server'
-
 import { notFound } from 'next/navigation'
 import LogsPage from '@/features/booking/components/Logs' // インポート名とパスを変更
 import { getAllBookingAction } from '@/features/booking/components/actions'

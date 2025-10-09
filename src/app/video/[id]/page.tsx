@@ -1,5 +1,3 @@
-'use server'
-
 import { notFound } from 'next/navigation'
 import VideoDetailPage from '@/features/video/components/VideoDetailPage' // 修正
 import {

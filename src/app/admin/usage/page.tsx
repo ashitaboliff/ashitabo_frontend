@@ -1,14 +1,11 @@
-'use server'
-
 import { LuCalendarSync, LuCalendar } from 'react-icons/lu'
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
 import { compileMDX } from 'next-mdx-remote/rsc'
 import rehypeRaw from 'rehype-raw'
 import fs from 'fs/promises'
 import path from 'path'
-import type { Session } from '@/types/session'
 
-const UsagePage = async ({ session }: { session: Session }) => {
+const UsagePage = async () => {
 	const filePath = path.join(
 		process.cwd(),
 		'src',
@@ -60,7 +57,7 @@ const UsagePage = async ({ session }: { session: Session }) => {
 const Page = async () => {
 	return (
 		<AuthPage requireProfile requireRole="ADMIN">
-			{(authResult) => <UsagePage session={authResult.session!} />}
+			{() => <UsagePage />}
 		</AuthPage>
 	)
 }

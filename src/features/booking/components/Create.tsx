@@ -23,16 +23,6 @@ import type { Session } from '@/types/session'
 
 const today = getCurrentJSTDateString({})
 
-const generateBookingId = () => {
-	if (
-		typeof crypto !== 'undefined' &&
-		typeof crypto.randomUUID === 'function'
-	) {
-		return crypto.randomUUID()
-	}
-	return Math.random().toString(36).slice(2)
-}
-
 const schema = zod.object({
 	bookingDate: zod.string().min(1, '日付を入力してください'),
 	bookingTime: zod.string().min(1, '時間を入力してください'),
@@ -62,7 +52,7 @@ export default function CreatePage({
 	const bookingDate = initialDateParam ? new Date(initialDateParam) : new Date()
 	const bookingTime = initialTimeParam || '0'
 
-	const [bookingId] = useState<string>(generateBookingId())
+	const [bookingId, setBookingId] = useState<string>()
 
 	const { onGachaPlayedSuccessfully, gachaPlayCountToday } =
 		useGachaPlayManager()
@@ -94,7 +84,6 @@ export default function CreatePage({
 		}
 		try {
 			const res = await createBookingAction({
-				bookingId: bookingId,
 				userId: session.user.id,
 				booking: reservationData,
 				password: data.password,
@@ -102,6 +91,7 @@ export default function CreatePage({
 			})
 			if (res.ok) {
 				setNoticePopupOpen(true)
+				setBookingId(res.data.id)
 			} else {
 				setError(res)
 			}

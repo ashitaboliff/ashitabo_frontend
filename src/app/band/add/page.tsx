@@ -1,5 +1,3 @@
-'use server'
-
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
 import BandAddForm from '@/features/band/components/BandAddForm'
 

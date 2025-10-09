@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, ReactNode } from 'react'
 import { UseFormRegisterReturn, UseFormSetValue } from 'react-hook-form'
 import LabelInputField from '@/components/ui/atoms/LabelInputField'
+import InputFieldError from '@/components/ui/atoms/InputFieldError'
 
 interface SelectFieldProps<TValue extends string | number = string>
 	extends Omit<
@@ -230,11 +231,7 @@ const SelectField = <TValue extends string | number = string>({
 					)}
 				</select>
 			)}
-			{errorMessage && (
-				<div className="label">
-					<span className="label-text-alt text-error">{errorMessage}</span>
-				</div>
-			)}
+			<InputFieldError errorMessage={errorMessage} />
 		</div>
 	)
 }

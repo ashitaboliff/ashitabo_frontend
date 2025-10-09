@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, ReactNode } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 
 const Popup = ({
 	id,
@@ -30,19 +30,10 @@ const Popup = ({
 		if (!dialog) return
 
 		if (open) {
-			if (!dialog.open) {
-				dialog.showModal()
-			}
+			if (!dialog.open) dialog.showModal()
 		} else {
-			if (dialog.open) {
-				dialog.close()
-			}
+			if (dialog.open) dialog.close()
 		}
-	}, [open])
-
-	useEffect(() => {
-		const dialog = dialogRef.current
-		if (!dialog) return
 
 		const handleClose = () => {
 			onClose()
@@ -52,7 +43,7 @@ const Popup = ({
 		return () => {
 			dialog.removeEventListener('close', handleClose)
 		}
-	}, [onClose])
+	}, [open, onClose])
 
 	return (
 		<dialog

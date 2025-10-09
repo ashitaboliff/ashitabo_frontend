@@ -1,5 +1,3 @@
-'use server'
-
 import { notFound } from 'next/navigation'
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
 import YoutubeManagement from '@/features/admin/components/YoutubeManage'

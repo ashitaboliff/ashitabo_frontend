@@ -166,21 +166,18 @@ export const getBookingByUserIdAction = async ({
 }
 
 export const createBookingAction = async ({
-	bookingId,
 	userId,
 	booking,
 	password,
 	toDay,
 }: {
-	bookingId: string
 	userId: string
 	booking: BookingPayload
 	password: string
 	toDay: string
-}): Promise<ApiResponse<string>> => {
-	const res = await apiPost<unknown>('/booking', {
+}): Promise<ApiResponse<{ id: string }>> => {
+	const res = await apiPost<{ id: string }>('/booking', {
 		body: {
-			id: bookingId,
 			userId,
 			bookingDate: booking.bookingDate.split('T')[0],
 			bookingTime: booking.bookingTime,
@@ -195,7 +192,7 @@ export const createBookingAction = async ({
 		return withFallbackMessage(res, '予約の作成に失敗しました。')
 	}
 
-	return createdResponse('created')
+	return createdResponse({ id: res.data.id })
 }
 
 export const updateBookingAction = async ({

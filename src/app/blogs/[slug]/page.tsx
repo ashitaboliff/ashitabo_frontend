@@ -4,9 +4,8 @@ import fs from 'fs'
 import path from 'path'
 import { LuCalendarSync, LuCalendar } from 'react-icons/lu'
 import { createMetaData } from '@/hooks/useMetaData'
-import HomePageHeader from '@/components/shared/HomePageHeader' // Assuming this is a shared header
+import HomePageHeader from '@/components/shared/HomePageHeader'
 
-// Define the expected shape of the frontmatter
 interface Frontmatter {
 	title: string
 	description: string
@@ -15,7 +14,6 @@ interface Frontmatter {
 	// Add other frontmatter fields if needed
 }
 
-// Helper function to get blog post data
 async function getPost(slug: string) {
 	const postsDirectory = path.join(process.cwd(), 'src/app/blogs/_posts')
 	const filePath = path.join(postsDirectory, `${slug}.mdx`)
@@ -31,7 +29,7 @@ async function getPost(slug: string) {
 		return { content, frontmatter, slug }
 	} catch (error) {
 		console.error(`Error reading or compiling MDX for slug ${slug}:`, error)
-		return null // Or throw an error to be caught by Next.js error handling
+		return null
 	}
 }
 
@@ -83,8 +81,6 @@ const BlogPostPage = async ({
 	const post = await getPost(slug)
 
 	if (!post) {
-		// Handle post not found, e.g., by redirecting or showing a 404 component
-		// For now, just returning a simple message
 		return (
 			<>
 				<HomePageHeader />
@@ -105,7 +101,6 @@ const BlogPostPage = async ({
 			<div className="container mx-auto bg-white p-4 pb-8 rounded-lg">
 				<article className="prose lg:prose-xl max-w-none">
 					{' '}
-					{/* Apply Tailwind Typography for styling */}
 					<h1 className="text-3xl font-bold text-center mt-4">
 						{post.frontmatter.title}
 					</h1>

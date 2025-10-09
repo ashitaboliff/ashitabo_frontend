@@ -1,5 +1,3 @@
-'use server'
-
 import Loading from '@/components/ui/atoms/Loading'
 import VideoListPage from '@/features/video/components/VideoListPage'
 import { Suspense } from 'react'

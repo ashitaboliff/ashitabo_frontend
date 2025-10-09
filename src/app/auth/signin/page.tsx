@@ -1,5 +1,3 @@
-'use server'
-
 import SigninPage from '@/features/auth/components/SigninPage'
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
 import { createMetaData } from '@/hooks/useMetaData'

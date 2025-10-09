@@ -3,6 +3,7 @@
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import CustomHeader from '@/components/ui/atoms/DatePickerCustumHeader'
+import InputFieldError from '@/components/ui/atoms/InputFieldError'
 
 import { registerLocale } from 'react-datepicker'
 import { ja } from 'date-fns/locale'
@@ -42,11 +43,7 @@ const CustomDatePicker = ({
 				className="border border-base-300 rounded-md p-2 w-full bg-white"
 				calendarClassName="bg-white"
 			/>
-			{errorMessage && (
-				<div className="label">
-					<span className="label-text-alt text-error">{errorMessage}</span>
-				</div>
-			)}
+			<InputFieldError errorMessage={errorMessage} />
 		</div>
 	)
 }

@@ -15,7 +15,6 @@ const Page = async () => {
 	return (
 		<AuthPage allowUnauthenticated={true}>
 			{(authResult) => {
-				// 有効なセッションがある場合は適切なページにリダイレクト
 				if (authResult.hasProfile) {
 					redirect('/user')
 				}
@@ -24,7 +23,6 @@ const Page = async () => {
 					redirect('/auth/signin/setting')
 				}
 
-				// セッションがない、または無効な場合はエラーページを表示
 				return <SessionExpiredClient />
 			}}
 		</AuthPage>

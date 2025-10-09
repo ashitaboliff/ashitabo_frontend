@@ -1,11 +1,13 @@
 export const getCurrentJSTDateString = ({
 	yesterday = false,
 	anyDate,
+	now = Date.now(),
 }: {
 	yesterday?: boolean
 	anyDate?: Date
+	now?: number
 }): string => {
-	const baseTimestamp = anyDate instanceof Date ? anyDate.getTime() : Date.now()
+	const baseTimestamp = anyDate instanceof Date ? anyDate.getTime() : now
 	const adjustedTimestamp = yesterday
 		? baseTimestamp - 24 * 60 * 60 * 1000
 		: baseTimestamp
@@ -60,8 +62,7 @@ export const generateFiscalYearObject = (): Record<string, string> => {
  * 今年度の西暦を生成する
  * @returns
  */
-export const generateAcademicYear = () => {
-	const today = new Date()
+export const generateAcademicYear = (today = new Date()) => {
 	const currentYearFull = today.getFullYear() // 4桁の西暦
 	const currentMonth = today.getMonth() + 1 // 月 (0が1月なので+1)
 
