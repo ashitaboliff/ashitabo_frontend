@@ -1,6 +1,5 @@
 import { MdVisibility, MdVisibilityOff } from 'react-icons/md'
 import { UseFormRegisterReturn } from 'react-hook-form'
-import TextInputField from '@/components/ui/atoms/TextInputField'
 import LabelInputField from '@/components/ui/atoms/LabelInputField'
 
 /**
@@ -9,7 +8,6 @@ import LabelInputField from '@/components/ui/atoms/LabelInputField'
  * @param showPassword パスワード表示の有無
  * @param handleClickShowPassword パスワード表示の切り替え関数、見えるほう
  * @param handleMouseDownPassword パスワード表示の切り替え関数、見えなくするほう
- * @param autocomplete オートコンプリートの設定
  */
 const PasswordInputField = ({
 	label,
@@ -19,7 +17,7 @@ const PasswordInputField = ({
 	handleClickShowPassword,
 	handleMouseDownPassword,
 	errorMessage,
-	autocomplete = 'new-password',
+	className = '',
 }: {
 	label?: string
 	labelId?: string
@@ -28,23 +26,23 @@ const PasswordInputField = ({
 	handleClickShowPassword: () => void
 	handleMouseDownPassword: (event: React.MouseEvent<HTMLButtonElement>) => void
 	errorMessage?: string
-	autocomplete?: string
+	className?: string
 }) => {
 	return (
 		<div>
 			{label && <LabelInputField label={label} labelId={labelId} />}
 			<div className="relative">
-				<TextInputField
-					labelId={labelId}
-					register={register}
+				<input
+					id={labelId}
+					{...register}
+					className={`input input-bordered w-full pr-10 bg-white ${className}`}
 					type={showPassword ? 'text' : 'password'}
 					placeholder="パスワード"
-					errorMessage={errorMessage}
-					autocomplete={autocomplete}
+					autoComplete="off"
 				/>
 				<button
 					type="button"
-					className="absolute inset-y-0 right-0 flex items-center px-2"
+					className="absolute inset-y-0 right-0 flex items-center px-2 z-20"
 					onClick={handleClickShowPassword}
 					onMouseDown={handleMouseDownPassword}
 				>
@@ -55,6 +53,11 @@ const PasswordInputField = ({
 					)}
 				</button>
 			</div>
+			{errorMessage && (
+				<div className="label">
+					<span className="text-error label-text-alt">{errorMessage}</span>
+				</div>
+			)}
 		</div>
 	)
 }

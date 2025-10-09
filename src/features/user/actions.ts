@@ -1,5 +1,7 @@
 import { ApiResponse, StatusCode } from '@/types/responseTypes'
-import { failure, noContentResponse } from '@/lib/api/helper'
+import { failure, noContentResponse, okResponse } from '@/lib/api/helper'
+import { apiGet } from '@/lib/api/crud'
+import type { UserForSelect } from '@/features/user/types'
 
 import { getFrontendOrigin } from '@/lib/env'
 
@@ -43,4 +45,19 @@ export const signOutUser = async (): Promise<ApiResponse<null>> => {
 			error instanceof Error ? error.message : 'Sign out error',
 		)
 	}
+}
+
+export const getUsersForSelect = async (): Promise<
+	ApiResponse<UserForSelect[]>
+> => {
+	const response = await apiGet<UserForSelect[]>('/users/select', {
+		cache: 'no-store',
+		next: { revalidate: 24 * 60 * 60, tags: ['users-select'] },
+	})
+
+	if (response.ok) {
+		return okResponse(response.data)
+	}
+
+	return failure(response.status, 'ユーザー情報の取得に失敗しました。')
 }

@@ -6,10 +6,8 @@ const InputFieldError = ({ errorMessage }: InputFieldErrorProps) => {
 	if (!errorMessage) return null
 
 	return (
-    <div className="label">
-			<span className="label-text-alt text-error">
-				{errorMessage}
-			</span>
+		<div className="label">
+			<span className="label-text-alt text-error">{errorMessage}</span>
 		</div>
 	)
 }

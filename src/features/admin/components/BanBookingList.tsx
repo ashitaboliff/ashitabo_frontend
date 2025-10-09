@@ -2,7 +2,7 @@
 
 import useSWR from 'swr'
 import GenericTableBody from '@/components/ui/molecules/GenericTableBody'
-import { getBanBookingAction } from './action'
+import { getBanBookingAction } from '../action'
 import { BanBooking, BookingTime } from '@/features/booking/types'
 import { TiDeleteOutline } from 'react-icons/ti'
 import { format } from 'date-fns'

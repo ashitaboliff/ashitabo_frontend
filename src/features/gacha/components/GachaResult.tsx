@@ -7,7 +7,7 @@ import { RarityType } from '@/features/gacha/types'
 import {
 	createUserGachaResultAction,
 	getSignedUrlForGachaImageAction,
-} from '@/features/gacha/components/actions'
+} from '@/features/gacha/actions'
 import { ApiResponse } from '@/types/responseTypes'
 import CardAnimation from '@/features/gacha/components/animations/CardAnimation'
 

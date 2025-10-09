@@ -8,7 +8,7 @@ import Header from '@/components/home/Header'
 import Footer from '@/components/home/Footer'
 import { createMetaData } from '@/hooks/useMetaData'
 import { SessionProvider } from '@/features/auth/context/SessionContext'
-import { getAuthDetails } from '@/features/auth/components/actions'
+import { getAuthDetails } from '@/features/auth/actions'
 
 const inter = Inter({ subsets: ['latin'] })
 

@@ -6,7 +6,7 @@ import {
 	adminRevalidateTagAction,
 	deleteUserAction,
 	updateUserRoleAction,
-} from './action'
+} from '../action'
 import { UserDetail, AccountRole } from '@/features/user/types'
 import { ApiError } from '@/types/responseTypes'
 import Pagination from '@/components/ui/atoms/Pagination'

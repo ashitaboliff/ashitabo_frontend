@@ -1,16 +1,17 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { addDays, subDays, format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { getBookingByDateAction } from './actions'
+import { getBookingByDateAction } from '../actions'
 import { BookingResponse, BookingTime } from '@/features/booking/types'
-import Popup from '@/components/ui/molecules/Popup'
 import BookingCalendar from '@/features/booking/components/BookingCalendar'
 import { getCurrentJSTDateString } from '@/utils'
-import { StatusCode, ApiError } from '@/types/responseTypes'
+import { ApiError } from '@/types/responseTypes'
 import { BOOKING_CALENDAR_SWR_KEY } from '@/features/booking/constants'
+import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
+import { useFeedback } from '@/hooks/useFeedback'
 
 const fetchBookings = async ([cacheKey, startDate, endDate]: [
 	string,
@@ -34,12 +35,11 @@ const MainPage = () => {
 	const VIEW_WINDOW_DAYS = 7
 	const VIEW_DAY_MAX_OFFSET = 27
 	const VIEW_DAY_MIN_OFFSET = 7
-	const [errorPopupOpen, setErrorPopupOpen] = useState<boolean>(false)
-	const [fetchError, setFetchError] = useState<ApiError | null>(null)
+	const errorFeedback = useFeedback()
 	const viewDate = new Date(viewDay)
 	const yesterdayDate = new Date(getCurrentJSTDateString({ yesterday: true }))
 	const endDateString = format(
-		addDays(viewDate, VIEW_WINDOW_DAYS - 1),
+		addDays(viewDate, VIEW_WINDOW_DAYS),
 		'yyyy-MM-dd',
 	)
 
@@ -53,11 +53,16 @@ const MainPage = () => {
 		{
 			revalidateOnFocus: false,
 			onError: (err) => {
-				setFetchError(err as ApiError)
-				setErrorPopupOpen(true)
+				errorFeedback.showApiError(err as ApiError)
 			},
 		},
 	)
+
+	useEffect(() => {
+		if (bookingData) {
+			errorFeedback.clearFeedback()
+		}
+	}, [bookingData, errorFeedback])
 
 	const prevAble =
 		subDays(viewDate, VIEW_WINDOW_DAYS) <
@@ -78,28 +83,27 @@ const MainPage = () => {
 		setViewDay(format(newDate, 'yyyy-MM-dd'))
 	}
 
-	const errorDetail = useMemo(() => {
-		if (!fetchError?.details) {
-			return null
-		}
-		if (typeof fetchError.details === 'string') {
-			return fetchError.details
-		}
-		try {
-			return JSON.stringify(fetchError.details, null, 2)
-		} catch (error) {
-			return String(fetchError.details)
-		}
-	}, [fetchError?.details])
-
 	const handleRetry = async () => {
-		setErrorPopupOpen(false)
-		setFetchError(null)
+		errorFeedback.clearFeedback()
 		await mutate()
 	}
 
 	return (
 		<>
+			{errorFeedback.feedback && (
+				<div className="my-4 flex flex-col items-center gap-3 border border-error p-4 rounded bg-error/10">
+					<div className="w-full max-w-lg">
+						<ErrorMessage message={errorFeedback.feedback} />
+					</div>
+					<button
+						type="button"
+						className="btn btn-primary"
+						onClick={handleRetry}
+					>
+						再試行
+					</button>
+				</div>
+			)}
 			<div className="flex flex-col justify-center space-x-2">
 				<div className="flex justify-between items-center mb-4 m-auto">
 					<button
@@ -132,51 +136,6 @@ const MainPage = () => {
 					<BookingCalendar bookingDate={bookingData} timeList={BookingTime} />
 				)}
 			</div>
-
-			<Popup
-				id="booking-error-popup"
-				title="エラー"
-				maxWidth="sm"
-				open={errorPopupOpen}
-				onClose={() => {
-					setErrorPopupOpen(false)
-					setFetchError(null)
-				}}
-			>
-				<div className="flex flex-col items-center space-y-4">
-					<div className="text-error text-lg font-bold">
-						{fetchError?.status ?? StatusCode.INTERNAL_SERVER_ERROR}{' '}
-						エラーが発生しました。このエラーが何度も発生する場合は、管理者にお問い合わせください。
-					</div>
-					<p className="text-sm text-center">
-						{fetchError?.message ?? 'データの取得に失敗しました'}
-					</p>
-					{errorDetail && (
-						<pre className="mt-2 w-full overflow-x-auto whitespace-pre-wrap rounded bg-base-200 p-3 text-xs">
-							{errorDetail}
-						</pre>
-					)}
-					<div className="flex justify-center space-x-2">
-						<button
-							type="button"
-							className="btn btn-outline"
-							onClick={() => {
-								setErrorPopupOpen(false)
-								setFetchError(null)
-							}}
-						>
-							閉じる
-						</button>
-						<button
-							type="button"
-							className="btn btn-primary"
-							onClick={handleRetry}
-						>
-							再試行
-						</button>
-					</div>
-				</div>
-			</Popup>
 		</>
 	)
 }

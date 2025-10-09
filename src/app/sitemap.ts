@@ -1,10 +1,11 @@
 import { MetadataRoute } from 'next'
-import { getBookingIdAction, getYoutubeIdAction } from '@/core/actions'
+import { getBookingIds } from '@/features/booking/actions'
+import { getYoutubeIds } from '@/features/video/actions'
 
 const URL = process.env.AUTH_URL
 
 const getBookingsMap = async (): Promise<MetadataRoute.Sitemap> => {
-	const bookingIds = await getBookingIdAction()
+	const bookingIds = await getBookingIds()
 	return bookingIds.map((id) => ({
 		url: `${URL}/booking/${id}`,
 		priority: 0.5,
@@ -12,7 +13,7 @@ const getBookingsMap = async (): Promise<MetadataRoute.Sitemap> => {
 }
 
 const getYoutubeMap = async (): Promise<MetadataRoute.Sitemap> => {
-	const youtubeIds = await getYoutubeIdAction()
+	const youtubeIds = await getYoutubeIds()
 	return youtubeIds.map((id) => ({
 		url: `${URL}/video/${id}`,
 		priority: 0.5,

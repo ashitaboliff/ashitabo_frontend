@@ -1,4 +1,4 @@
-import { apiGet, apiPost, apiPut } from '@/lib/api/crud'
+import { apiGet, apiPost } from '@/lib/api/crud'
 import { ApiResponse, StatusCode } from '@/types/responseTypes'
 import {
 	createdResponse,

@@ -5,7 +5,7 @@ import { ja } from 'date-fns/locale'
 import useSWR from 'swr'
 import { Booking, BookingTime } from '@/features/booking/types'
 import GenericTableBody from '@/components/ui/molecules/GenericTableBody'
-import { getBookingByUserIdAction } from '@/features/booking/components/actions'
+import { getBookingByUserIdAction } from '@/features/booking/actions'
 
 interface BookingLogListProps {
 	userId: string

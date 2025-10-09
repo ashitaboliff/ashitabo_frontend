@@ -45,11 +45,13 @@ const Popup = ({
 		}
 	}, [open, onClose])
 
+	if (!open) return null
+
 	return (
 		<dialog
 			id={id}
 			ref={dialogRef}
-			className="modal modal-bottom sm:modal-middle"
+			className="modal modal-middle"
 			aria-labelledby="popup-title"
 		>
 			{(() => {

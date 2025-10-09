@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next-nprogress-bar'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
@@ -8,76 +8,106 @@ import {
 	getAuthUrl,
 	createPlaylistAction,
 	revalidateYoutubeTag,
-} from '@/features/video/components/actions'
+} from '@/features/video/actions'
 import { Playlist } from '@/features/video/types'
-import { ApiError } from '@/types/responseTypes'
 import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import Pagination from '@/components/ui/atoms/Pagination'
 import SelectField from '@/components/ui/atoms/SelectField'
 import Tags from '@/components/ui/atoms/Tags'
-import Popup from '@/components/ui/molecules/Popup'
+import { useFeedback } from '@/hooks/useFeedback'
+import { usePagedResource } from '@/hooks/usePagedResource'
+
+interface YoutubeManagementProps {
+	playlists: Playlist[] | undefined | null
+	isAccessToken: boolean
+}
 
 const YoutubeManagement = ({
 	playlists,
 	isAccessToken,
-}: {
-	playlists: Playlist[] | undefined | null
-	isAccessToken: boolean
-}) => {
+}: YoutubeManagementProps) => {
 	const router = useRouter()
-	const [error, setError] = useState<ApiError>()
-	const [isSuccessPopupOpen, setIsSuccessPopupOpen] = useState<boolean>(false)
+	const actionFeedback = useFeedback()
+	const [isLoading, setIsLoading] = useState(false)
+	const [detailPlaylist, setDetailPlaylist] = useState<Playlist | null>(null)
+	const detailDialogRef = useRef<HTMLDialogElement>(null)
 
-	const [isLoading, setIsLoading] = useState<boolean>(false)
+	const {
+		state: { page, perPage },
+		pageCount,
+		setPage,
+		setPerPage,
+		setTotalCount,
+	} = usePagedResource<'default'>({
+		initialPerPage: 10,
+		initialSort: 'default',
+	})
 
-	const [currentPage, setCurrentPage] = useState<number>(1)
-	const [playlistPerPage, setPlaylistPerPage] = useState(10)
-	const [popupData, setPopupData] = useState<Playlist | undefined | null>(
-		playlists?.[0] ?? undefined,
-	)
-	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
+	useEffect(() => {
+		setTotalCount(playlists?.length ?? 0)
+	}, [playlists, setTotalCount])
 
-	const totalPlaylists = playlists?.length ?? 0
-	const pageMax = Math.ceil(totalPlaylists / playlistPerPage)
+	useEffect(() => {
+		if (detailPlaylist) {
+			detailDialogRef.current?.showModal()
+		} else {
+			detailDialogRef.current?.close()
+		}
+	}, [detailPlaylist])
 
-	const indexOfLastPlaylist = currentPage * playlistPerPage
-	const indexOfFirstPlaylist = indexOfLastPlaylist - playlistPerPage
+	const indexOfLastPlaylist = page * perPage
+	const indexOfFirstPlaylist = indexOfLastPlaylist - perPage
 	const currentPlaylist =
 		playlists?.slice(indexOfFirstPlaylist, indexOfLastPlaylist) ?? []
 
-	const onAuth = async () => {
+	const handleAuth = async () => {
+		actionFeedback.clearFeedback()
 		const url = await getAuthUrl()
 		if (url.ok) {
 			window.location.href = url.data
 		} else {
-			setError(url)
+			actionFeedback.showApiError(url)
 		}
 	}
 
-	const onPlaylist = async () => {
+	const handleFetchPlaylist = async () => {
+		actionFeedback.clearFeedback()
 		setIsLoading(true)
 		const res = await createPlaylistAction()
 		if (res.ok) {
-			setIsSuccessPopupOpen(true)
+			actionFeedback.showSuccess('プレイリストを取得しました。')
+			router.refresh()
 		} else {
-			setError(res)
+			actionFeedback.showApiError(res)
 		}
 		setIsLoading(false)
 	}
+
+	const handleRevalidate = async () => {
+		actionFeedback.clearFeedback()
+		await revalidateYoutubeTag()
+		actionFeedback.showSuccess('Youtubeのキャッシュを更新しました。')
+	}
+
+	const closeDetailDialog = () => {
+		setDetailPlaylist(null)
+	}
+
+	const lastUpdatedText = playlists?.[0]?.updatedAt
+		? format(new Date(playlists[0].updatedAt), 'yyyy/MM/dd', { locale: ja })
+		: '不明'
 
 	return (
 		<div className="flex flex-col items-center justify-center gap-y-2">
 			<h1 className="text-2xl font-bold">Youtube動画管理</h1>
 			<p className="text-sm text-center">
-				このページではYoutubeに上がってる動画を取得するためのページです。
+				このページではYoutubeに上がっている動画を取得できます。
 				<br />
-				Youtube認証が必要な可能性があるので、あしたぼのアカウントにログインしている人が操作をしてください。
-				<br />
-				気が向いたら自動化します。
+				Youtube認証が必要な場合があるため、あしたぼアカウントでログイン済みの方が操作してください。
 			</p>
 			<button
 				className="btn btn-primary btn-outline"
-				onClick={onAuth}
+				onClick={handleAuth}
 				disabled={isAccessToken}
 			>
 				Youtube認証
@@ -85,48 +115,38 @@ const YoutubeManagement = ({
 			<div className="flex flex-row gap-x-2">
 				<button
 					className="btn btn-primary"
-					onClick={() => {
-						onPlaylist()
-						setError(undefined)
-					}}
+					onClick={handleFetchPlaylist}
+					disabled={isLoading}
 				>
 					{isLoading ? '処理中...' : 'Youtubeから取得'}
 				</button>
 				<button
 					className="btn btn-secondary btn-outline"
-					onClick={async () => {
-						await revalidateYoutubeTag()
-					}}
+					onClick={handleRevalidate}
 				>
 					更新
 				</button>
 			</div>
-			<ErrorMessage error={error} />
+			<ErrorMessage message={actionFeedback.feedback} />
 
 			<div className="overflow-x-auto w-full flex flex-col justify-center gap-y-2">
 				<div className="flex flex-row items-center justify-between">
-					<div className="text-sm">
-						更新日:{' '}
-						{playlists?.[0]?.updatedAt
-							? format(new Date(playlists[0].updatedAt), 'yyyy/MM/dd', {
-									locale: ja,
-								})
-							: '不明'}
-					</div>
+					<div className="text-sm">更新日: {lastUpdatedText}</div>
 					<div className="flex flex-row items-center">
 						<p className="text-sm whitespace-nowrap">表示件数:</p>
 						<SelectField
-							value={playlistPerPage}
+							value={perPage}
 							onChange={(e) => {
-								setPlaylistPerPage(Number(e.target.value))
-								setCurrentPage(1)
+								const next = Number(e.target.value)
+								setPerPage(next)
+								setPage(1)
 							}}
 							options={{ '10件': 10, '20件': 20, '50件': 50, '100件': 100 }}
 							name="playlistPerPage"
 						/>
 					</div>
 				</div>
-				<table className="table table-zebra table-sm w-full max-w-36 justify-center">
+				<table className="table table-zebra table-sm w-full max-w-3xl self-center">
 					<thead>
 						<tr>
 							<th>タイトル</th>
@@ -137,14 +157,12 @@ const YoutubeManagement = ({
 						{currentPlaylist.map((playlist) => (
 							<tr
 								key={playlist.playlistId}
-								onClick={() => {
-									setPopupData(playlist)
-									setIsPopupOpen(true)
-								}}
+								onClick={() => setDetailPlaylist(playlist)}
+								className="cursor-pointer"
 							>
 								<td>{playlist.title}</td>
 								<td>
-									{playlist.tags ? <Tags tags={playlist.tags} /> : undefined}
+									{playlist.tags ? <Tags tags={playlist.tags} /> : '未設定'}
 								</td>
 							</tr>
 						))}
@@ -152,9 +170,9 @@ const YoutubeManagement = ({
 				</table>
 			</div>
 			<Pagination
-				currentPage={currentPage}
-				totalPages={pageMax}
-				onPageChange={(page) => setCurrentPage(page)}
+				currentPage={page}
+				totalPages={pageCount}
+				onPageChange={(newPage) => setPage(newPage)}
 			/>
 			<div className="flex flex-row justify-center mt-2">
 				<button
@@ -164,86 +182,92 @@ const YoutubeManagement = ({
 					戻る
 				</button>
 			</div>
-			<Popup
-				id="success-popup"
-				title="成功"
-				open={isSuccessPopupOpen}
-				onClose={() => setIsSuccessPopupOpen(false)}
+
+			<dialog
+				ref={detailDialogRef}
+				className="modal"
+				onClose={closeDetailDialog}
 			>
-				<div className="flex flex-col gap-y-2 justify-center">
-					<button
-						className="btn btn-primary"
-						onClick={() => setIsSuccessPopupOpen(false)}
-					>
-						閉じる
-					</button>
-				</div>
-			</Popup>
-			<Popup
-				id={`playlist-detail-popup-${popupData?.playlistId}`}
-				title="プレイリスト詳細"
-				open={isPopupOpen}
-				onClose={() => setIsPopupOpen(false)}
-			>
-				<div className="flex flex-col gap-y-2 text-sm">
-					<div className="flex flex-col gap-y-2">
-						<div className="flex flex-row gap-x-1">
+				<div className="modal-box text-sm space-y-3">
+					<h3 className="font-bold text-lg">プレイリスト詳細</h3>
+					<div className="space-y-2">
+						<div className="flex gap-x-1">
 							<div className="font-bold basis-1/4">プレイリストID:</div>
-							<div className="basis-3/4">{popupData?.playlistId}</div>
-						</div>
-						<div className="flex flex-row gap-x-1">
-							<div className="font-bold basis-1/4">タイトル:</div>
-							<div className="basis-3/4">{popupData?.title}</div>
-						</div>
-						<div className="flex flex-row gap-x-1">
-							<div className="font-bold basis-1/4">リンク:</div>
-							<div className="basis-3/4">
-								<a href={popupData?.link} target="_blank" rel="noreferrer">
-									{popupData?.link}
-								</a>
+							<div className="basis-3/4 break-all">
+								{detailPlaylist?.playlistId ?? '不明'}
 							</div>
 						</div>
-						<div className="flex flex-row gap-x-1">
+						<div className="flex gap-x-1">
+							<div className="font-bold basis-1/4">タイトル:</div>
+							<div className="basis-3/4">{detailPlaylist?.title ?? '不明'}</div>
+						</div>
+						<div className="flex gap-x-1">
+							<div className="font-bold basis-1/4">リンク:</div>
+							<div className="basis-3/4 break-all">
+								{detailPlaylist?.link ? (
+									<a
+										href={detailPlaylist.link}
+										target="_blank"
+										rel="noreferrer"
+									>
+										{detailPlaylist.link}
+									</a>
+								) : (
+									'不明'
+								)}
+							</div>
+						</div>
+						<div className="flex gap-x-1">
 							<div className="font-bold basis-1/4">タグ:</div>
 							<div className="basis-3/4">
-								{popupData?.tags ? (
-									<Tags tags={popupData.tags} size="text-sm" />
-								) : undefined}
+								{detailPlaylist?.tags ? (
+									<Tags tags={detailPlaylist.tags} size="text-sm" />
+								) : (
+									'未設定'
+								)}
 							</div>
 						</div>
-						<div className="flex flex-row gap-x-1">
+						<div className="flex gap-x-1">
 							<div className="font-bold basis-1/4">作成日:</div>
 							<div className="basis-3/4">
-								{popupData?.createdAt
-									? format(new Date(popupData.createdAt), 'yyyy年MM月dd日', {
-											locale: ja,
-										})
+								{detailPlaylist?.createdAt
+									? format(
+											new Date(detailPlaylist.createdAt),
+											'yyyy年MM月dd日',
+											{
+												locale: ja,
+											},
+										)
 									: '不明'}
 							</div>
 						</div>
-						<div className="flex flex-row gap-x-1">
+						<div className="flex gap-x-1">
 							<div className="font-bold basis-1/4">更新日:</div>
 							<div className="basis-3/4">
-								{popupData?.updatedAt
-									? format(new Date(popupData.updatedAt), 'yyyy年MM月dd日', {
-											locale: ja,
-										})
+								{detailPlaylist?.updatedAt
+									? format(
+											new Date(detailPlaylist.updatedAt),
+											'yyyy年MM月dd日',
+											{
+												locale: ja,
+											},
+										)
 									: '不明'}
 							</div>
 						</div>
 					</div>
-					<div className="flex flex-row justify-center gap-x-2">
-						<button
-							className="btn btn-primary"
-							onClick={() => {
-								setIsPopupOpen(false)
-							}}
-						>
+					<div className="flex justify-center">
+						<button className="btn btn-primary" onClick={closeDetailDialog}>
 							閉じる
 						</button>
 					</div>
 				</div>
-			</Popup>
+				<form method="dialog" className="modal-backdrop">
+					<button type="button" onClick={closeDetailDialog}>
+						close
+					</button>
+				</form>
+			</dialog>
 		</div>
 	)
 }

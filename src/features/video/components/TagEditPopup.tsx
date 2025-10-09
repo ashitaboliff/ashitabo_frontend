@@ -1,16 +1,16 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next-nprogress-bar'
 import { liveOrBand } from '@/features/video/types'
-import { ApiError } from '@/types/responseTypes'
 import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import TagInputField from '@/components/ui/molecules/TagsInputField'
 import Popup from '@/components/ui/molecules/Popup'
-import { updateTagsAction } from './actions'
+import { updateTagsAction } from '../actions'
 import { TbEdit } from 'react-icons/tb'
 import type { Session } from '@/types/session'
+import { useFeedback } from '@/hooks/useFeedback'
 
 type Props = {
 	session: Session | null
@@ -30,9 +30,14 @@ const TagEditPopup = ({
 	const router = useRouter()
 	const [isPopupOpen, setIsPopupOpen] = useState(false)
 	const [isSessionPopupOpen, setIsSessionPopupOpen] = useState(false)
-	const [error, setError] = useState<ApiError>()
+	const tagFeedback = useFeedback()
 
-	const { handleSubmit, control, reset, setValue } = useForm<{
+	const {
+		handleSubmit,
+		control,
+		reset,
+		formState: { isSubmitting },
+	} = useForm<{
 		tags: string[]
 	}>({
 		defaultValues: {
@@ -45,6 +50,7 @@ const TagEditPopup = ({
 	}, [currentTags, reset])
 
 	const onSubmit = async (data: { tags: string[] }) => {
+		tagFeedback.clearFeedback()
 		const res = await updateTagsAction({
 			userId: session?.user.id!,
 			id,
@@ -55,7 +61,7 @@ const TagEditPopup = ({
 			setIsPopupOpen(false)
 			router.refresh()
 		} else {
-			setError(res)
+			tagFeedback.showApiError(res)
 		}
 	}
 
@@ -64,6 +70,7 @@ const TagEditPopup = ({
 			setIsSessionPopupOpen(true)
 		} else {
 			reset({ tags: currentTags || [] })
+			tagFeedback.clearFeedback()
 			setIsPopupOpen(true)
 		}
 	}
@@ -85,7 +92,7 @@ const TagEditPopup = ({
 			>
 				<form
 					onSubmit={handleSubmit(onSubmit)}
-					className="flex flex-col gap-y-2 justify-center max-w-sm m-auto"
+					className="flex flex-col gap-y-3 justify-center max-w-sm m-auto"
 				>
 					<TagInputField
 						name="tags"
@@ -95,20 +102,23 @@ const TagEditPopup = ({
 						defaultValue={currentTags || []}
 					/>
 					<div className="flex flex-row justify-center gap-x-2 mt-2">
-						<button type="submit" className="btn btn-primary">
-							更新
+						<button
+							type="submit"
+							className="btn btn-primary"
+							disabled={isSubmitting}
+						>
+							{isSubmitting ? '更新中...' : '更新'}
 						</button>
 						<button
 							type="button"
 							className="btn btn-outline"
-							onClick={() => {
-								setIsPopupOpen(false)
-							}}
+							onClick={() => setIsPopupOpen(false)}
+							disabled={isSubmitting}
 						>
 							キャンセル
 						</button>
 					</div>
-					<ErrorMessage error={error} />
+					<ErrorMessage message={tagFeedback.feedback} />
 				</form>
 			</Popup>
 			<Popup
@@ -117,15 +127,14 @@ const TagEditPopup = ({
 				open={isSessionPopupOpen}
 				onClose={() => setIsSessionPopupOpen(false)}
 			>
-				<div className="flex flex-col gap-y-2 justify-center max-w-sm m-auto">
-					<div className="text-sm text-center">
-						タグ編集を行うには利用登録が必要です
-					</div>
+				<div className="flex flex-col gap-y-3 justify-center max-w-sm m-auto text-center">
+					<p className="text-sm">タグ編集を行うにはログインが必要です。</p>
 					<div className="flex flex-row justify-center gap-x-2 mt-2">
 						<button
 							type="button"
 							className="btn btn-primary"
 							onClick={() => {
+								setIsSessionPopupOpen(false)
 								router.push('/auth/signin')
 							}}
 						>
@@ -134,9 +143,7 @@ const TagEditPopup = ({
 						<button
 							type="button"
 							className="btn btn-outline"
-							onClick={() => {
-								setIsSessionPopupOpen(false)
-							}}
+							onClick={() => setIsSessionPopupOpen(false)}
 						>
 							閉じる
 						</button>

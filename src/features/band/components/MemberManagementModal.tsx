@@ -13,7 +13,7 @@ import {
 	searchUsersForBandAction,
 	getAvailablePartsAction,
 	getBandDetailsAction,
-} from './actions'
+} from '../actions'
 import type {
 	BandDetails,
 	UserWithProfile,

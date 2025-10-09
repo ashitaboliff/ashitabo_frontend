@@ -24,7 +24,7 @@ const EditPage = ({
 	)
 
 	return (
-		<div className="flex-col">
+		<>
 			{isAuth ? (
 				<EditFormPage
 					bookingDetail={bookingDetail}
@@ -39,7 +39,7 @@ const EditPage = ({
 					bookingDetail={bookingDetail}
 				/>
 			)}
-		</div>
+		</>
 	)
 }
 

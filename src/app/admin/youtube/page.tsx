@@ -4,7 +4,7 @@ import YoutubeManagement from '@/features/admin/components/YoutubeManage'
 import {
 	getAccessTokenAction,
 	getPlaylistAction,
-} from '@/features/video/components/actions'
+} from '@/features/video/actions'
 import { StatusCode } from '@/types/responseTypes'
 import type { Session } from '@/types/session'
 

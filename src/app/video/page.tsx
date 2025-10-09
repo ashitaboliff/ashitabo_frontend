@@ -1,7 +1,7 @@
 import Loading from '@/components/ui/atoms/Loading'
 import VideoListPage from '@/features/video/components/VideoListPage'
 import { Suspense } from 'react'
-import { searchYoutubeDetailsAction } from '@/features/video/components/actions'
+import { searchYoutubeDetailsAction } from '@/features/video/actions'
 import { YoutubeDetail, YoutubeSearchQuery } from '@/features/video/types'
 import { ApiError } from '@/types/responseTypes'
 

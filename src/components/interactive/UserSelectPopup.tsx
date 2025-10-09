@@ -5,8 +5,8 @@ import Image from 'next/image'
 import InstIcon from '@/components/ui/atoms/InstIcon'
 import TextSearchField from '@/components/ui/molecules/TextSearchField'
 import Popup from '@/components/ui/molecules/Popup'
-import { getAllUsersForSelectAction, UserForSelect } from '@/core/actions'
-import { Part, PartMap } from '@/features/user/types'
+import { getUsersForSelect } from '@/features/user/actions'
+import { Part, PartMap, UserForSelect } from '@/features/user/types'
 import { LuUserRound } from 'react-icons/lu'
 import { LuCheck } from 'react-icons/lu'
 
@@ -30,7 +30,7 @@ const UserSelectPopup = ({
 
 	useEffect(() => {
 		const fetchUsers = async () => {
-			const response = await getAllUsersForSelectAction()
+			const response = await getUsersForSelect()
 			if (response.ok) {
 				setUsers(response.data ?? [])
 				setAllUsers(response.data ?? [])

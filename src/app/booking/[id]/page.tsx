@@ -1,6 +1,6 @@
 import DetailPage from '@/features/booking/components/Detail'
 import DetailNotFoundPage from '@/features/booking/components/DetailNotFound'
-import { getBookingByIdAction } from '@/features/booking/components/actions'
+import { getBookingByIdAction } from '@/features/booking/actions'
 import { BookingDetailProps, BookingTime } from '@/features/booking/types'
 import { createMetaData } from '@/hooks/useMetaData'
 import { Metadata, ResolvingMetadata } from 'next'

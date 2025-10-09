@@ -3,7 +3,7 @@
 import useSWR from 'swr'
 import { UserDetail, RoleMap, AccountRoleMap } from '@/features/user/types'
 import GenericTableBody from '@/components/ui/molecules/GenericTableBody'
-import { getAllUserDetailsAction } from './action'
+import { getAllUserDetailsAction } from '../action'
 
 interface UserManageListProps {
 	currentPage: number

@@ -1,4 +1,4 @@
-import { apiGet, apiPost, apiPut } from '@/lib/api/crud'
+import { apiGet, apiPost } from '@/lib/api/crud'
 import { ApiResponse, StatusCode } from '@/types/responseTypes'
 import {
 	Playlist,
@@ -161,4 +161,16 @@ export const updateTagsAction = async ({
 		status: StatusCode.OK,
 		data: 'updated',
 	}
+}
+
+export const getYoutubeIds = async (): Promise<string[]> => {
+	const response = await apiGet<string[]>('/video/ids', {
+		cache: 'no-store',
+		next: { revalidate: 24 * 60 * 60, tags: ['youtube-ids'] },
+	})
+
+	if (response.ok && Array.isArray(response.data)) {
+		return response.data
+	}
+	return []
 }

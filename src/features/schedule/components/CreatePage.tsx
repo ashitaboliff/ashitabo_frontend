@@ -1,301 +1,331 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next-nprogress-bar'
-import { useForm, Controller } from 'react-hook-form'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import * as zod from 'zod'
-import { format, eachDayOfInterval } from 'date-fns'
+import { eachDayOfInterval, format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { DateToDayISOstring } from '@/utils'
-import { ApiError } from '@/types/responseTypes'
-import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
-import ShareButton from '@/components/ui/atoms/ShareButton'
-import CustomDatePicker from '@/components/ui/atoms/DatePicker'
 import TextInputField from '@/components/ui/atoms/TextInputField'
 import TextareaInputField from '@/components/ui/atoms/TextareaInputField'
+import CustomDatePicker from '@/components/ui/atoms/DatePicker'
 import SelectField from '@/components/ui/atoms/SelectField'
-import Popup from '@/components/ui/molecules/Popup'
-import { createScheduleAction } from './actions'
+import ShareButton from '@/components/ui/atoms/ShareButton'
+import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
+import { createScheduleAction } from '../actions'
+import { DateToDayISOstring } from '@/utils'
 import type { Session } from '@/types/session'
-
-const ScheduleCreateSchema = zod
-	.object({
-		startDate: zod.date().min(new Date(), '未来の日付を選択してください'),
-		endDate: zod.date().min(new Date(), '未来の日付を選択してください'),
-		deadline: zod.date().min(new Date(), '未来の日付を選択してください'),
-		isTimeExtended: zod.boolean().default(false),
-		isMentionChecked: zod.boolean().default(false),
-		mention: zod
-			.array(zod.string().min(1, '不正なユーザーが選択されました'))
-			.optional(),
-		title: zod.string().min(1, 'タイトルを入力してください'),
-		description: zod
-			.string()
-			.max(500, '説明は500文字以内で入力してください')
-			.optional()
-			.or(zod.literal('')),
-	})
-	.superRefine((data, ctx) => {
-		if (data.isMentionChecked) {
-			if (!data.mention || data.mention.length === 0) {
-				ctx.addIssue({
-					code: zod.ZodIssueCode.custom,
-					path: ['mention'],
-					message: '日程調整に参加する部員を選択してください',
-				})
-			}
-		}
-		if (data.endDate < data.startDate) {
-			ctx.addIssue({
-				code: zod.ZodIssueCode.custom,
-				path: ['endDate'],
-				message: '終了日は開始日以降の日付を選択してください',
-			})
-		}
-		if (data.deadline > data.startDate) {
-			ctx.addIssue({
-				code: zod.ZodIssueCode.custom,
-				path: ['deadline'],
-				message: '締め切りは開始日以前の日付を選択してください',
-			})
-		}
-	})
+import { useFeedback } from '@/hooks/useFeedback'
+import {
+	scheduleCreateSchema,
+	ScheduleCreateFormInput,
+	ScheduleCreateFormValues,
+} from '@/features/schedule/schemas/createScheduleSchema'
 
 interface ScheduleCreatePageProps {
 	session: Session
 	initialUsers: Record<string, string>
 }
 
+interface CreatedScheduleSummary {
+	id: string
+	title: string
+	description?: string
+	mention: string[]
+	startDate: Date
+	endDate: Date
+	deadline: Date
+}
+
+const scheduleFormDefaults: Partial<ScheduleCreateFormInput> = {
+	isTimeExtended: false,
+	isMentionChecked: false,
+	mention: [],
+	title: '',
+	description: '',
+}
+
+const generateScheduleId = () => {
+	if (
+		typeof crypto !== 'undefined' &&
+		typeof crypto.randomUUID === 'function'
+	) {
+		return crypto.randomUUID()
+	}
+	return Math.random().toString(36).slice(2)
+}
+
 const ScheduleCreatePage = ({
 	session,
 	initialUsers,
 }: ScheduleCreatePageProps) => {
-	const generateScheduleId = () => {
-		if (
-			typeof crypto !== 'undefined' &&
-			typeof crypto.randomUUID === 'function'
-		) {
-			return crypto.randomUUID()
-		}
-		return Math.random().toString(36).slice(2)
-	}
 	const router = useRouter()
+	const [currentScheduleId, setCurrentScheduleId] = useState(generateScheduleId)
+	const [createdSchedule, setCreatedSchedule] =
+		useState<CreatedScheduleSummary | null>(null)
+	const messageFeedback = useFeedback()
+
+	const mentionOptions = useMemo(() => {
+		return Object.entries(initialUsers).reduce<Record<string, string>>(
+			(acc, [id, name]) => {
+				const label = name ? `${name} (${id.slice(0, 4)})` : id
+				acc[label] = id
+				return acc
+			},
+			{},
+		)
+	}, [initialUsers])
+
+	const userNameById = useMemo(() => initialUsers, [initialUsers])
+
 	const {
 		register,
 		handleSubmit,
 		control,
 		setValue,
 		watch,
-		formState: { errors },
-	} = useForm({
-		resolver: zodResolver(ScheduleCreateSchema),
+		reset,
+		formState: { errors, isSubmitting },
+	} = useForm<ScheduleCreateFormInput, unknown, ScheduleCreateFormValues>({
+		resolver: zodResolver(scheduleCreateSchema),
+		defaultValues: scheduleFormDefaults,
 	})
+
+	useEffect(() => {
+		register('mention')
+	}, [register])
+
+	const isMentionChecked = watch('isMentionChecked') ?? false
+	const mentionSelection = watch('mention') ?? []
 	const startDate = watch('startDate')
-	const watchMention = watch('mention')
-	const watchAll = watch()
-	const isMentionChecked = watch('isMentionChecked')
-	// const [isLoading, setIsLoading] = useState<boolean>(false) // isLoading for users is removed
-	const [isSubmitLoading, setIsSubmitLoading] = useState<boolean>(false)
-	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
-	const [error, setError] = useState<ApiError>()
 
-	const [scheduleId] = useState<string>(generateScheduleId())
-
-	// const [users, setUsers] = useState<Record<string, string>>({}) // users are now from props
-
-	const onSubmit = async (data: any) => {
-		setIsSubmitLoading(true)
-		const allDates = eachDayOfInterval({
-			start: data.startDate,
-			end: data.endDate,
-		})
-		const dates = allDates.map((date) => DateToDayISOstring(date))
-
-		const res = await createScheduleAction({
-			id: scheduleId,
-			userId: session.user.id,
-			title: data.title,
-			description: data.description,
-			dates: dates,
-			mention: data.mention,
-			timeExtended: data.isTimeExtended,
-			deadline: DateToDayISOstring(data.deadline),
-		})
-		if (res.ok) {
-			setIsPopupOpen(true)
-		} else {
-			setError(res)
+	useEffect(() => {
+		if (!isMentionChecked && mentionSelection.length > 0) {
+			setValue('mention', [], { shouldDirty: true, shouldValidate: true })
 		}
+	}, [isMentionChecked, mentionSelection, setValue])
 
-		setIsSubmitLoading(false)
+	const onSubmit: SubmitHandler<ScheduleCreateFormValues> = async (data) => {
+		messageFeedback.clearFeedback()
+		setCreatedSchedule(null)
+
+		try {
+			const allDates = eachDayOfInterval({
+				start: data.startDate,
+				end: data.endDate,
+			})
+			const dates = allDates.map((date) => DateToDayISOstring(date))
+
+			const response = await createScheduleAction({
+				id: currentScheduleId,
+				userId: session.user.id,
+				title: data.title,
+				description: data.description,
+				dates,
+				mention: data.isMentionChecked ? data.mention ?? [] : [],
+				timeExtended: data.isTimeExtended,
+				deadline: DateToDayISOstring(data.deadline),
+			})
+
+			if (response.ok) {
+				setCreatedSchedule({
+					id: currentScheduleId,
+					title: data.title,
+					description: data.description ?? '',
+					mention: data.isMentionChecked ? data.mention ?? [] : [],
+					startDate: data.startDate,
+					endDate: data.endDate,
+					deadline: data.deadline,
+				})
+				messageFeedback.showSuccess('日程調整を作成しました。')
+				reset()
+				setCurrentScheduleId(generateScheduleId())
+			} else {
+				messageFeedback.showApiError(response)
+			}
+		} catch (error) {
+			messageFeedback.showError(
+				'日程調整の作成中にエラーが発生しました。時間をおいて再度お試しください。',
+				{
+					details: error instanceof Error ? error.message : String(error),
+				},
+			)
+			console.error('create schedule error', error)
+		}
 	}
+
+	const shareUrl =
+		typeof window !== 'undefined' && createdSchedule
+			? `${window.location.origin}/schedule/${createdSchedule.id}`
+			: ''
 
 	return (
 		<div className="flex flex-col items-center justify-center py-6 bg-white rounded-lg shadow-md">
-			<h1 className="text-2xl font-bold">日程調整作成</h1>
-			<form className="flex flex-col gap-y-2" onSubmit={handleSubmit(onSubmit)}>
-				<TextInputField
-					type="text"
-					register={register('title')}
-					label="イベント名"
-					name="title"
-					errorMessage={errors.title?.message}
-				/>
-				<TextareaInputField
-					register={register('description')}
-					label="イベント内容"
-					name="description"
-					errorMessage={errors.description?.message}
-				/>
-				<label className="cursor-pointer label gap-x-2 justify-start items-center">
-					<input
-						type="checkbox"
-						{...register('isTimeExtended')}
-						value="true"
-						className="checkbox checkbox-primary"
+			<h1 className="text-2xl font-bold mb-4">日程調整作成</h1>
+			<div className="w-full max-w-xl space-y-4">
+				<ErrorMessage message={messageFeedback.feedback} />
+				<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+					<TextInputField
+						type="text"
+						register={register('title')}
+						label="イベント名"
+						name="title"
+						errorMessage={errors.title?.message}
 					/>
-					<span className="label-text text-base">細かい時間指定をオン</span>
-				</label>
-				<p className="text-sm">
-					コマ表の時間を超えた予定調整が可能になります。
-				</p>
-				<label className="cursor-pointer label gap-x-2 justify-start items-center">
-					<input
-						type="checkbox"
-						{...register('isMentionChecked')}
-						value="true"
-						className="checkbox checkbox-primary"
+					<TextareaInputField
+						register={register('description')}
+						label="イベント内容"
+						name="description"
+						errorMessage={errors.description?.message}
 					/>
-					<span className="label-text text-base">メンションをオン</span>
-				</label>
-				<p className="text-sm">特定の部員とだけの予定を作成できます。</p>
-				{isMentionChecked && (
-					<SelectField
-						name="mention"
-						label="メンション"
-						options={initialUsers} // Use initialUsers from props
-						register={register('mention')}
-						isMultiple={true}
-						setValue={setValue}
-						watchValue={watchMention}
-						errorMessage={errors.mention?.message}
-					/>
-				)}
-				<Controller
-					name="startDate"
-					control={control}
-					render={({ field }) => (
-						<CustomDatePicker
-							label="開始日"
-							selectedDate={field.value}
-							onChange={field.onChange}
-							minDate={new Date()}
-							errorMessage={errors.startDate?.message}
+					<label className="cursor-pointer label gap-x-2 justify-start items-center">
+						<input
+							type="checkbox"
+							{...register('isTimeExtended')}
+							className="checkbox checkbox-primary"
+						/>
+						<span className="label-text text-base">細かい時間指定をオン</span>
+					</label>
+					<p className="text-sm">
+						コマ表の時間を超えた予定調整が可能になります。
+					</p>
+					<label className="cursor-pointer label gap-x-2 justify-start items-center">
+						<input
+							type="checkbox"
+							{...register('isMentionChecked')}
+							className="checkbox checkbox-primary"
+						/>
+						<span className="label-text text-base">メンションをオン</span>
+					</label>
+					<p className="text-sm">特定の部員とだけの予定を作成できます。</p>
+					{isMentionChecked && (
+						<SelectField
+							name="mention"
+							label="メンション"
+							options={mentionOptions}
+							isMultiple
+							setValue={setValue}
+							watchValue={mentionSelection}
+							errorMessage={errors.mention?.message}
+							className="bg-white"
 						/>
 					)}
-				/>
-				<Controller
-					name="endDate"
-					control={control}
-					render={({ field }) => (
-						<CustomDatePicker
-							label="終了日"
-							selectedDate={field.value ?? null}
-							onChange={field.onChange}
-							minDate={startDate}
-							errorMessage={errors.endDate?.message}
-						/>
-					)}
-				/>
-				<Controller
-					name="deadline"
-					control={control}
-					render={({ field }) => (
-						<CustomDatePicker
-							label="締め切り"
-							selectedDate={field.value ?? null}
-							onChange={field.onChange}
-							minDate={new Date()}
-							errorMessage={errors.deadline?.message}
-						/>
-					)}
-				/>
-				<button
-					className="btn btn-primary btn-md mt-4"
-					type="submit"
-					disabled={isSubmitLoading}
-				>
-					作成
-				</button>
-				<button
-					className="btn btn-outline btn-md"
-					onClick={() => router.back()}
-				>
-					戻る
-				</button>
-				<ErrorMessage error={error} />
-			</form>
-			<Popup
-				id={`schedule-create-popup-${scheduleId}`}
-				title="日程調整作成完了"
-				onClose={() => router.push('/schedule')}
-				open={isPopupOpen}
-			>
-				<div>
-					<p className="text-center">以下の内容で日程調整を作成しました。</p>
-					<div className="my-4 px-4 space-y-2 text-left">
-						<p>タイトル: {watchAll?.title}</p>
-						<p>
-							日程:
-							{watchAll?.startDate
-								? format(watchAll.startDate, 'yyyy/MM/dd(E)', { locale: ja })
-								: '未入力'}{' '}
-							-{' '}
-							{watchAll?.endDate
-								? format(watchAll.endDate, 'yyyy/MM/dd(E)', { locale: ja })
-								: '未入力'}
-						</p>
-						<p>説明: {watchAll?.description || '未入力'}</p>
-						<p>
-							締め切り:
-							{watchAll?.deadline
-								? format(watchAll.deadline, 'yyyy/MM/dd(E)', { locale: ja })
-								: '未入力'}
-						</p>
-						{watchAll?.isMentionChecked && (
-							<p>
-								メンション:{' '}
-								{watchAll?.mention
-									?.map((mention: string) => initialUsers[mention]) // Use initialUsers here as well
-									.join(', ') || '未入力'}
-							</p>
+					<Controller
+						name="startDate"
+						control={control}
+						render={({ field }) => (
+							<CustomDatePicker
+								label="開始日"
+								selectedDate={field.value ?? null}
+								onChange={field.onChange}
+								minDate={new Date()}
+								errorMessage={errors.startDate?.message}
+							/>
 						)}
-					</div>
-					<div className="flex flex-row justify-center space-x-2">
-						<ShareButton
-							url={`${window.location.origin}/schedule/${scheduleId}`}
-							title="日程調整を共有"
-							text={`日程: ${format(
-								watchAll.startDate || new Date(),
-								'yyyy/MM/dd(E)',
-								{
-									locale: ja,
-								},
-							)} - ${format(watchAll.endDate || new Date(), 'yyyy/MM/dd(E)', {
-								locale: ja,
-							})}`}
-							isFullButton
-						/>
+					/>
+					<Controller
+						name="endDate"
+						control={control}
+						render={({ field }) => (
+							<CustomDatePicker
+								label="終了日"
+								selectedDate={field.value ?? null}
+								onChange={field.onChange}
+								minDate={startDate}
+								errorMessage={errors.endDate?.message}
+							/>
+						)}
+					/>
+					<Controller
+						name="deadline"
+						control={control}
+						render={({ field }) => (
+							<CustomDatePicker
+								label="締め切り"
+								selectedDate={field.value ?? null}
+								onChange={field.onChange}
+								minDate={new Date()}
+								errorMessage={errors.deadline?.message}
+							/>
+						)}
+					/>
+					<div className="flex flex-col sm:flex-row gap-2">
 						<button
-							className="btn btn-primary"
-							onClick={() => router.push('/schedule')}
+							className="btn btn-primary btn-md"
+							type="submit"
+							disabled={isSubmitting}
 						>
-							一覧に戻る
+							{isSubmitting ? '作成中...' : '作成'}
+						</button>
+						<button
+							type="button"
+							className="btn btn-outline btn-md"
+							onClick={() => router.back()}
+						>
+							戻る
 						</button>
 					</div>
-				</div>
-			</Popup>
+				</form>
+
+				{createdSchedule && (
+					<div className="mt-6 rounded-md border border-base-200 bg-base-100 p-4 space-y-2">
+						<h2 className="text-lg font-semibold">作成した日程</h2>
+						<p>タイトル: {createdSchedule.title}</p>
+						<p>
+							日程:
+							{format(createdSchedule.startDate, 'yyyy/MM/dd(E)', {
+								locale: ja,
+							})}{' '}
+							-{' '}
+							{format(createdSchedule.endDate, 'yyyy/MM/dd(E)', { locale: ja })}
+						</p>
+						<p>説明: {createdSchedule.description || '未入力'}</p>
+						<p>
+							締め切り:{' '}
+							{format(createdSchedule.deadline, 'yyyy/MM/dd(E)', {
+								locale: ja,
+							})}
+						</p>
+						{createdSchedule.mention.length > 0 && (
+							<p>
+								メンション:{' '}
+								{createdSchedule.mention
+									.map((id) => userNameById[id] ?? id)
+									.join(', ')}
+							</p>
+						)}
+						<div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-end pt-2">
+							{shareUrl ? (
+								<ShareButton
+									url={shareUrl}
+									title="日程調整を共有"
+									text={`日程: ${format(
+										createdSchedule.startDate,
+										'yyyy/MM/dd(E)',
+										{
+											locale: ja,
+										},
+									)} - ${format(createdSchedule.endDate, 'yyyy/MM/dd(E)', {
+										locale: ja,
+									})}`}
+									isFullButton
+								/>
+							) : (
+								<p className="text-sm text-gray-500">
+									シェアURLを取得できませんでした。
+								</p>
+							)}
+							<button
+								type="button"
+								className="btn btn-secondary"
+								onClick={() => router.push('/schedule')}
+							>
+								一覧に戻る
+							</button>
+						</div>
+					</div>
+				)}
+			</div>
 		</div>
 	)
 }

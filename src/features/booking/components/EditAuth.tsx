@@ -1,89 +1,86 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import * as zod from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next-nprogress-bar'
 import { Booking } from '@/features/booking/types'
-import { authBookingAction } from './actions'
-import { ApiError } from '@/types/responseTypes'
+import { authBookingAction } from '../actions'
 import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import BookingDetailBox from '@/features/booking/components/BookingDetailBox'
 import PasswordInputField from '@/components/ui/molecules/PasswordInputField'
 import DetailNotFoundPage from '@/features/booking/components/DetailNotFound'
 import type { Session } from '@/types/session'
+import { useFeedback } from '@/hooks/useFeedback'
+import {
+	bookingAuthSchema,
+	BookingAuthFormValues,
+} from '@/features/booking/schemas/bookingAuthSchema'
 
-const passschema = zod.object({
-	password: zod.string().min(1, 'パスワードを入力してください'),
-})
+interface EditAuthPageProps {
+	session: Session
+	handleSetAuth: (isAuth: boolean) => void
+	bookingDetail: Booking
+}
 
 const EditAuthPage = ({
 	session,
 	handleSetAuth,
 	bookingDetail,
-}: {
-	session: Session
-	handleSetAuth: (isAuth: boolean) => void
-	bookingDetail: Booking
-}) => {
+}: EditAuthPageProps) => {
 	const router = useRouter()
-	const [isLoading, setIsLoading] = useState<boolean>(false) // Changed initial state to false
-	const [showPassword, setShowPassword] = useState<boolean>(false)
-	const [error, setError] = useState<ApiError>()
+	const [showPassword, setShowPassword] = useState(false)
+	const feedback = useFeedback()
+
 	const {
 		register,
 		handleSubmit,
-		formState: { errors },
-	} = useForm({
+		formState: { errors, isSubmitting },
+	} = useForm<BookingAuthFormValues>({
 		mode: 'onBlur',
-		resolver: zodResolver(passschema),
+		resolver: zodResolver(bookingAuthSchema),
 	})
-	const handleClickShowPassword = () => setShowPassword((show) => !show)
-	const handleMouseDownPassword = (
-		event: React.MouseEvent<HTMLButtonElement>,
-	) => {
-		event.preventDefault()
-	}
-
-	const onSubmit = async (data: { password: string }) => {
-		setIsLoading(true) // Set loading true only during submission
-		try {
-			const res = await authBookingAction({
-				userId: session.user.id,
-				bookingId: bookingDetail.id,
-				password: data.password,
-			})
-			if (res.ok) {
-				handleSetAuth(true)
-				router.push(`/booking/${bookingDetail.id}/edit`)
-			} else {
-				setError(res)
-			}
-		} catch (err) {
-			setError({
-				ok: false,
-				status: 500,
-				message: 'このエラーが出た際はわたべに問い合わせてください。',
-				details: err instanceof Error ? err.message : String(err),
-			})
-			console.error('Error authenticating booking:', err)
-		}
-		setIsLoading(false)
-	}
 
 	useEffect(() => {
-		// setIsLoading(false) // Removed as isLoading is now initially false
 		handleSetAuth(false)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []) // handleSetAuth might need to be in dependency array if it changes, but typically it doesn't for setters from parent.
+	}, [])
 
 	if (!bookingDetail) {
 		return <DetailNotFoundPage />
 	}
 
+	const togglePassword = () => setShowPassword((prev) => !prev)
+
+	const onSubmit = async (data: BookingAuthFormValues) => {
+		feedback.clearFeedback()
+		try {
+			const response = await authBookingAction({
+				userId: session.user.id,
+				bookingId: bookingDetail.id,
+				password: data.password,
+			})
+
+			if (response.ok) {
+				handleSetAuth(true)
+				router.push(`/booking/${bookingDetail.id}/edit`)
+			} else {
+				feedback.showApiError(response)
+			}
+		} catch (error) {
+			feedback.showError(
+				'エラーが発生しました。このエラーが続く場合は管理者にお問い合わせください。',
+				{
+					details: error instanceof Error ? error.message : String(error),
+					code: 500,
+				},
+			)
+			console.error('Error authenticating booking:', error)
+		}
+	}
+
 	return (
-		<div className="flex justify-center flex-col">
+		<div className="flex flex-col">
 			<div className="flex justify-center">
 				<BookingDetailBox
 					props={{
@@ -96,30 +93,27 @@ const EditAuthPage = ({
 			</div>
 			<form
 				onSubmit={handleSubmit(onSubmit)}
-				className="flex flex-col items-center mt-4"
+				className="mt-4 flex flex-col items-center space-y-4"
 			>
-				<p className="text-lg text-center">
-					予約編集用のパスワードを入力してください。
-				</p>
-				<div className="form-control w-full max-w-xs my-2">
+				<div className="form-control w-full max-w-xs">
 					<label className="label" htmlFor="password">
 						<span className="label-text">パスワード</span>
 					</label>
 					<PasswordInputField
 						register={register('password')}
 						showPassword={showPassword}
-						handleClickShowPassword={handleClickShowPassword}
-						handleMouseDownPassword={handleMouseDownPassword}
+						handleClickShowPassword={togglePassword}
+						handleMouseDownPassword={(event) => event.preventDefault()}
 						errorMessage={errors.password?.message}
 					/>
 				</div>
-				<div className="flex justify-center mt-4 space-x-4">
+				<div className="flex gap-4">
 					<button
 						type="submit"
 						className="btn btn-primary"
-						disabled={isLoading}
+						disabled={isSubmitting}
 					>
-						ログイン
+						{isSubmitting ? '認証中...' : 'ログイン'}
 					</button>
 					<button
 						type="button"
@@ -130,7 +124,7 @@ const EditAuthPage = ({
 					</button>
 				</div>
 			</form>
-			<ErrorMessage error={error} />
+			<ErrorMessage message={feedback.feedback} className="mt-4" />
 		</div>
 	)
 }

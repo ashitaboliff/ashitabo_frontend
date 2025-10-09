@@ -1,65 +1,48 @@
 'use client'
 
-import { useRef, useState, useEffect, FormEvent } from 'react'
-// import { useFormState, useFormStatus } from 'react-dom' // Not used
-import { createBandAction, updateBandAction } from './actions'
-import TextInputField from '@/components/ui/atoms/TextInputField' // Import TextInputField
-import type {
-	BandDetails,
-	CreateBandResponse,
-	UpdateBandResponse,
-} from '@/features/band/types'
-import { ApiError } from '@/types/responseTypes'
+import { useEffect, useMemo, useRef } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import TextInputField from '@/components/ui/atoms/TextInputField'
+import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
+import { createBandAction, updateBandAction } from '../actions'
+import type { BandDetails } from '@/features/band/types'
+import { useFeedback } from '@/hooks/useFeedback'
+import {
+	bandFormSchema,
+	BandFormValues,
+} from '@/features/band/schemas/bandSchema'
 
 interface BandFormModalProps {
 	isOpen: boolean
 	onClose: () => void
 	bandToEdit?: BandDetails | null
-	onFormSubmitSuccess: (band: BandDetails) => void
+	onFormSubmitSuccess: (band: BandDetails, mode: 'create' | 'update') => void
 }
 
-// function SubmitButton({ isEditing }: { isEditing: boolean }) { // Not used
-// 	// Not used with current form handling
-// 	const { pending } = useFormStatus()
-// 	return (
-// 		<button type="submit" className="btn btn-primary" disabled={pending}>
-// 			{pending ? (
-// 				<span className="loading loading-spinner"></span>
-// 			) : isEditing ? (
-// 				'更新'
-// 			) : (
-// 				'作成'
-// 			)}
-// 		</button>
-// 	)
-// }
+const defaultValues: BandFormValues = {
+	name: '',
+}
 
-export default function BandFormModal({
+const BandFormModal = ({
 	isOpen,
 	onClose,
 	bandToEdit,
 	onFormSubmitSuccess,
-}: BandFormModalProps) {
+}: BandFormModalProps) => {
 	const modalRef = useRef<HTMLDialogElement>(null)
-	const [bandName, setBandName] = useState('')
-	const isEditing = !!bandToEdit
+	const feedback = useFeedback()
+	const isEditing = useMemo(() => !!bandToEdit, [bandToEdit])
 
-	// `useFormState` expects the action to be passed directly.
-	// We need to conditionally choose the action based on `isEditing`.
-	// A common pattern is to wrap them or use a hidden input to dispatch.
-	// For simplicity here, we'll create a wrapper action or handle it inside.
-	// However, `useFormState` is designed for a single action.
-	// Let's use a more traditional form handling for conditional actions.
-	const [error, setError] = useState<ApiError | null>(null)
-	const [isSubmitting, setIsSubmitting] = useState(false)
-
-	useEffect(() => {
-		if (bandToEdit) {
-			setBandName(bandToEdit.name)
-		} else {
-			setBandName('')
-		}
-	}, [bandToEdit])
+	const {
+		register,
+		handleSubmit,
+		reset,
+		formState: { errors, isSubmitting },
+	} = useForm<BandFormValues>({
+		resolver: zodResolver(bandFormSchema),
+		defaultValues,
+	})
 
 	useEffect(() => {
 		if (isOpen) {
@@ -69,54 +52,76 @@ export default function BandFormModal({
 		}
 	}, [isOpen])
 
-	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-		event.preventDefault()
-		setIsSubmitting(true)
-		setError(null)
-
-		const formData = new FormData(event.currentTarget)
-		let res: CreateBandResponse | UpdateBandResponse
-
-		if (isEditing && bandToEdit) {
-			res = await updateBandAction(bandToEdit.id, formData)
+	useEffect(() => {
+		if (bandToEdit) {
+			reset({ name: bandToEdit.name ?? '' })
 		} else {
-			res = await createBandAction(formData)
+			reset(defaultValues)
 		}
-		setIsSubmitting(false)
+	}, [bandToEdit, reset])
 
-		if (res.ok) {
-			onFormSubmitSuccess(res.data as BandDetails)
-			onClose()
-		} else {
-			setError(res)
+	const closeAndReset = (values?: BandFormValues) => {
+		reset(
+			values ?? (bandToEdit ? { name: bandToEdit.name ?? '' } : defaultValues),
+		)
+		feedback.clearFeedback()
+		onClose()
+	}
+
+	const onSubmit = async (values: BandFormValues) => {
+		feedback.clearFeedback()
+
+		const formData = new FormData()
+		formData.append('name', values.name.trim())
+
+		try {
+			const response =
+				isEditing && bandToEdit
+					? await updateBandAction(bandToEdit.id, formData)
+					: await createBandAction(formData)
+
+			if (response.ok) {
+				onFormSubmitSuccess(
+					response.data as BandDetails,
+					isEditing ? 'update' : 'create',
+				)
+				closeAndReset(defaultValues)
+			} else {
+				feedback.showApiError(response)
+			}
+		} catch (error) {
+			feedback.showError(
+				'バンドの保存に失敗しました。しばらくしてから再度お試しください。',
+				{
+					details: error instanceof Error ? error.message : String(error),
+				},
+			)
+			console.error('band form submit error', error)
 		}
 	}
 
 	return (
-		<dialog ref={modalRef} className="modal" onClose={onClose}>
+		<dialog ref={modalRef} className="modal" onClose={() => closeAndReset()}>
 			<div className="modal-box">
 				<h3 className="font-bold text-lg">
 					{isEditing ? 'バンド名を編集' : '新しいバンドを作成'}
 				</h3>
-				<form onSubmit={handleSubmit} className="space-y-4 py-4">
+				<form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
+					<ErrorMessage message={feedback.feedback} />
 					<TextInputField
 						label="バンド名"
 						type="text"
-						name="name"
-						// id="bandName" // TextInputFieldPropsにidがないため削除
-						value={bandName}
-						onChange={(e) => setBandName(e.target.value)}
+						register={register('name')}
 						placeholder="バンド名を入力"
-						required
 						maxLength={100}
 						disabled={isSubmitting}
-						errorMessage={error?.message || undefined}
+						errorMessage={errors.name?.message}
 					/>
 					<div className="modal-action">
 						<button
 							type="button"
 							className="btn"
-							onClick={onClose}
+							onClick={() => closeAndReset()}
 							disabled={isSubmitting}
 						>
 							キャンセル
@@ -127,7 +132,7 @@ export default function BandFormModal({
 							disabled={isSubmitting}
 						>
 							{isSubmitting ? (
-								<span className="loading loading-spinner"></span>
+								<span className="loading loading-spinner" />
 							) : isEditing ? (
 								'更新'
 							) : (
@@ -138,10 +143,12 @@ export default function BandFormModal({
 				</form>
 			</div>
 			<form method="dialog" className="modal-backdrop">
-				<button type="button" onClick={onClose}>
+				<button type="button" onClick={() => closeAndReset()}>
 					close
 				</button>
 			</form>
 		</dialog>
 	)
 }
+
+export default BandFormModal

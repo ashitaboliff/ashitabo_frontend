@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import useSWR from 'swr'
 import { GachaData } from '@/features/gacha/types'
-import { getGachaByGachaSrcAction } from '@/features/gacha/components/actions'
+import { getGachaByGachaSrcAction } from '@/features/gacha/actions'
 import { ApiResponse, StatusCode } from '@/types/responseTypes'
 import type { Session } from '@/types/session'
 

@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { ReactNode } from 'react'
 import { AccountRole } from '@/features/user/types'
-import { getAuthDetails } from '@/features/auth/components/actions'
+import { getAuthDetails } from '@/features/auth/actions'
 import type { AuthDetails } from '@/features/auth/types'
 
 interface AuthPageProps {

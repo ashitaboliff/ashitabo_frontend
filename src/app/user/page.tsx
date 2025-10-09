@@ -4,7 +4,7 @@ import BookingLogs from '@/features/user/components/BookingLogs'
 import GachaLogs from '@/features/user/components/GachaLogs'
 import { createMetaData } from '@/hooks/useMetaData'
 import { gachaConfigs } from '@/features/gacha/components/config/gachaConfig'
-import { getSignedUrlForGachaImageAction } from '@/features/gacha/components/actions'
+import { getSignedUrlForGachaImageAction } from '@/features/gacha/actions'
 import {
 	GachaDataProvider,
 	CarouselPackDataItem,

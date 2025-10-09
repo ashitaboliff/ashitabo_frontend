@@ -92,3 +92,15 @@ export interface UserDetail {
 	role?: Role
 	part?: Part[]
 }
+
+export interface UserForSelectProfile {
+	name?: string | null
+	part?: Part[] | null
+}
+
+export interface UserForSelect {
+	id: string
+	name: string | null
+	image?: string | null
+	profile?: UserForSelectProfile | null
+}

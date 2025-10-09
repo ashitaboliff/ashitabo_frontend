@@ -6,7 +6,7 @@ import {
 import {
 	getBookingByIdAction,
 	getBookingByDateAction,
-} from '@/features/booking/components/actions'
+} from '@/features/booking/actions'
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
 import EditPage from '@/features/booking/components/Edit'
 import DetailNotFoundPage from '@/features/booking/components/DetailNotFound'
@@ -15,7 +15,6 @@ import { addDays, subDays, parseISO } from 'date-fns'
 import { createMetaData } from '@/hooks/useMetaData'
 import { Metadata, ResolvingMetadata } from 'next'
 import { cache } from 'react'
-import { StatusCode } from '@/types/responseTypes'
 
 type PageParams = Promise<{ id: string }>
 type PageSearchParams = Promise<{ viewStartDate?: string }>

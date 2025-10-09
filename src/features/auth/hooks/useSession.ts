@@ -1,7 +1,7 @@
 'use client'
 
 import useSWR from 'swr'
-import { getAuthDetails } from '@/features/auth/components/actions'
+import { getAuthDetails } from '@/features/auth/actions'
 import type { AuthDetails } from '@/features/auth/types'
 import type { Session } from '@/types/session'
 import { useSessionContext } from '@/features/auth/context/SessionContext'

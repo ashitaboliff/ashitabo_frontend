@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import useSWR from 'swr'
 import { GachaSort, GachaData } from '@/features/gacha/types'
-import { getGachaByUserIdAction } from '@/features/gacha/components/actions'
+import { getGachaByUserIdAction } from '@/features/gacha/actions'
 import GachaLogsSkeleton from './GachaLogsSkeleton'
 
 interface GachaLogListProps {

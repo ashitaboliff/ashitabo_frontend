@@ -5,10 +5,10 @@ import useSWR from 'swr'
 import BandListItem from '@/features/band/components/BandListItem'
 import BandFormModal from '@/features/band/components/BandFormModal'
 import MemberManagementModal from '@/features/band/components/MemberManagementModal'
-import { getUserBandsAction, deleteBandAction } from './actions'
+import { getUserBandsAction, deleteBandAction } from '../actions'
 import type { BandDetails } from '@/features/band/types'
 import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
-import { ApiError } from '@/types/responseTypes'
+import { useFeedback } from '@/hooks/useFeedback'
 import { FaPlusCircle } from 'react-icons/fa'
 
 // SWR fetcher function
@@ -32,6 +32,7 @@ export default function BandList({ currentUserId }: BandListProps) {
 		data: bands,
 		isLoading,
 		mutate,
+		error,
 	} = useSWR<BandDetails[]>('userBands', fetchUserBands)
 
 	const [isBandFormModalOpen, setIsBandFormModalOpen] = useState(false)
@@ -41,15 +42,18 @@ export default function BandList({ currentUserId }: BandListProps) {
 	const [bandForMemberManagement, setBandForMemberManagement] =
 		useState<BandDetails | null>(null)
 
-	const [error, setError] = useState<ApiError | null>(null)
+	const feedback = useFeedback()
+
 	const handleOpenCreateBandModal = () => {
 		setBandToEdit(null)
 		setIsBandFormModalOpen(true)
+		feedback.clearFeedback()
 	}
 
 	const handleOpenEditBandModal = (band: BandDetails) => {
 		setBandToEdit(band)
 		setIsBandFormModalOpen(true)
+		feedback.clearFeedback()
 	}
 
 	const handleOpenMemberManagementModal = (band: BandDetails) => {
@@ -57,14 +61,25 @@ export default function BandList({ currentUserId }: BandListProps) {
 		setIsMemberModalOpen(true)
 	}
 
-	const handleBandFormSuccess = (updatedOrCreatedBand: BandDetails) => {
-		// Refetch all bands to ensure list is up-to-date
+	const handleBandFormSuccess = (
+		updatedOrCreatedBand: BandDetails,
+		mode: 'create' | 'update',
+	) => {
 		mutate() // Trigger SWR revalidation
 		setIsBandFormModalOpen(false)
 		setBandToEdit(null)
+		if (mode === 'create') {
+			feedback.showSuccess(
+				`バンド「${updatedOrCreatedBand.name}」を作成しました。`,
+			)
+		} else {
+			feedback.showSuccess(
+				`バンド「${updatedOrCreatedBand.name}」を更新しました。`,
+			)
+		}
 	}
 
-	const handleBandUpdateFromMemberModal = (updatedBand: BandDetails) => {
+	const handleBandUpdateFromMemberModal = () => {
 		mutate() // Trigger SWR revalidation
 	}
 
@@ -76,17 +91,17 @@ export default function BandList({ currentUserId }: BandListProps) {
 		) {
 			return
 		}
-		setError(null)
+		feedback.clearFeedback()
 		const res = await deleteBandAction(bandId)
 		if (res.ok) {
-			mutate() // Trigger SWR revalidation
+			mutate()
+			feedback.showSuccess(`バンド「${bandName}」を削除しました。`)
 		} else {
-			setError(res)
+			feedback.showApiError(res)
 		}
 	}
 
 	if (isLoading) {
-		// SWR isLoading state
 		return (
 			<div className="flex justify-center items-center py-10">
 				<span className="loading loading-lg loading-spinner text-primary"></span>
@@ -94,16 +109,10 @@ export default function BandList({ currentUserId }: BandListProps) {
 		)
 	}
 
-	// Display action error if any
-	if (error) {
-		// This could be displayed alongside the list or as a more prominent message
-		// For now, let's add it above the list.
-		// Consider using a toast notification system for better UX.
-	}
-
 	return (
 		<div>
-			<ErrorMessage error={error} />
+			<ErrorMessage message={feedback.feedback} />
+			<ErrorMessage message={error} />
 			<div className="mb-6 text-right">
 				<button
 					onClick={handleOpenCreateBandModal}
@@ -113,17 +122,22 @@ export default function BandList({ currentUserId }: BandListProps) {
 				</button>
 			</div>
 
-			{(!bands || bands.length === 0) &&
-				!isLoading && ( // Check if bands data is available
-					<div className="text-center py-10">
-						<p className="text-lg text-gray-500">
-							まだ参加しているバンドはありません。
-						</p>
-						<p className="text-sm text-gray-400 mt-2">
-							新しいバンドを作成してみましょう！
-						</p>
-					</div>
-				)}
+			{error && !bands && (
+				<div className="text-center py-10 text-error">
+					バンド一覧の取得に失敗しました。時間をおいて再度お試しください。
+				</div>
+			)}
+
+			{(!bands || bands.length === 0) && !isLoading && !error && (
+				<div className="text-center py-10">
+					<p className="text-lg text-gray-500">
+						まだ参加しているバンドはありません。
+					</p>
+					<p className="text-sm text-gray-400 mt-2">
+						新しいバンドを作成してみましょう！
+					</p>
+				</div>
+			)}
 
 			{bands &&
 				bands.map((band) => (

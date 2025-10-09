@@ -3,8 +3,8 @@ import VideoDetailPage from '@/features/video/components/VideoDetailPage' // 修
 import {
 	getPlaylistByIdAction,
 	getVideoByIdAction,
-} from '@/features/video/components/actions'
-import { getAuthDetails } from '@/features/auth/components/actions'
+} from '@/features/video/actions'
+import { getAuthDetails } from '@/features/auth/actions'
 import { createMetaData } from '@/hooks/useMetaData'
 import { Metadata, ResolvingMetadata } from 'next'
 import { cache } from 'react'

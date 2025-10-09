@@ -1,6 +1,6 @@
 import IdPage from '@/features/schedule/components/IdPage'
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
-import { getScheduleByIdAction } from '@/features/schedule/components/actions'
+import { getScheduleByIdAction } from '@/features/schedule/actions'
 import { createMetaData } from '@/hooks/useMetaData'
 import { Metadata, ResolvingMetadata } from 'next'
 import { cache } from 'react'

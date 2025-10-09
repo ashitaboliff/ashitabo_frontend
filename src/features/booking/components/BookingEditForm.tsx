@@ -4,28 +4,22 @@ import { useState } from 'react'
 import { useRouter } from 'next-nprogress-bar'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
-import * as zod from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { addDays, subDays } from 'date-fns'
-import { updateBookingAction } from './actions'
+import { MdOutlineEditCalendar } from 'react-icons/md'
+import { updateBookingAction } from '../actions'
 import { BookingDetailProps, BookingResponse } from '@/features/booking/types'
 import type { Session } from '@/types/session'
-import { ApiError } from '@/types/responseTypes'
 import TextInputField from '@/components/ui/atoms/TextInputField'
 import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import Popup from '@/components/ui/molecules/Popup'
 import EditCalendar from '@/features/booking/components/EditCalendar'
 import { DateToDayISOstring } from '@/utils'
-import { MdOutlineEditCalendar } from 'react-icons/md'
-
-const formSchema = zod.object({
-	bookingDate: zod.string().min(1, '予約日を入力してください'),
-	bookingTime: zod.string().min(1, '予約時間を入力してください'),
-	registName: zod.string().min(1, 'バンド名を入力してください'),
-	name: zod.string().min(1, '責任者名を入力してください'),
-})
-
-type EditBookingFormValues = zod.infer<typeof formSchema>
+import { useFeedback } from '@/hooks/useFeedback'
+import {
+	bookingEditSchema,
+	BookingEditFormValues,
+} from '@/features/booking/schemas/bookingEditSchema'
 
 interface BookingEditFormProps {
 	bookingDetail: BookingDetailProps
@@ -48,32 +42,23 @@ const BookingEditForm = ({
 	const pathname = usePathname()
 	const searchParams = useSearchParams()
 
-	const [bookingDate, setBookingDate] = useState<string>(
+	const [bookingDate, setBookingDate] = useState(
 		new Date(bookingDetail.bookingDate).toISOString().split('T')[0],
 	)
-	const [bookingTime, setBookingTime] = useState<number>(
-		bookingDetail.bookingTime,
-	)
+	const [bookingTime, setBookingTime] = useState(bookingDetail.bookingTime)
 	const [calendarOpen, setCalendarOpen] = useState(false)
-	const [successPopupOpen, setSuccessPopupOpen] = useState(false)
-	const [error, setError] = useState<ApiError>()
-	const [loading, setLoading] = useState(false)
+	const [hasSuccess, setHasSuccess] = useState(false)
 
-	const yesterday = subDays(new Date(), 1)
-	const [viewDay, setViewDay] = useState<Date>(initialViewDay)
-	const viewDayRange = 7
-	const ableViewDayMax = 27
-	const ableViewDayMin = 1
-	const bookingResponse = initialBookingResponse
+	const messageFeedback = useFeedback()
 
 	const {
 		register,
 		handleSubmit,
-		formState: { errors },
 		setValue,
-	} = useForm<EditBookingFormValues>({
+		formState: { errors, isSubmitting },
+	} = useForm<BookingEditFormValues>({
 		mode: 'onBlur',
-		resolver: zodResolver(formSchema),
+		resolver: zodResolver(bookingEditSchema),
 		defaultValues: {
 			bookingDate,
 			bookingTime: timeList[bookingTime],
@@ -81,6 +66,18 @@ const BookingEditForm = ({
 			name: bookingDetail.name,
 		},
 	})
+
+	const yesterday = subDays(new Date(), 1)
+	const [viewDay, setViewDay] = useState(initialViewDay)
+	const viewRange = 7
+	const maxOffset = 27
+	const minOffset = 1
+	const bookingResponse = initialBookingResponse
+
+	const disableNextNavigation =
+		addDays(viewDay, viewRange) > addDays(yesterday, maxOffset)
+	const disablePrevNavigation =
+		subDays(viewDay, viewRange) < subDays(yesterday, minOffset)
 
 	const updateViewDayInUrl = (newViewDay: Date) => {
 		const newViewStartDate = DateToDayISOstring(newViewDay).split('T')[0]
@@ -92,31 +89,30 @@ const BookingEditForm = ({
 		setViewDay(newViewDay)
 	}
 
-	const disableNextNavigation =
-		addDays(viewDay, viewDayRange) > addDays(yesterday, ableViewDayMax)
-	const disablePrevNavigation =
-		subDays(viewDay, viewDayRange) < subDays(yesterday, ableViewDayMin)
-
 	const handleNextWeek = () => {
-		if (disableNextNavigation) return
-		updateViewDayInUrl(addDays(viewDay, viewDayRange))
+		if (!disableNextNavigation) {
+			updateViewDayInUrl(addDays(viewDay, viewRange))
+		}
 	}
 
 	const handlePrevWeek = () => {
-		if (disablePrevNavigation) return
-		updateViewDayInUrl(subDays(viewDay, viewDayRange))
+		if (!disablePrevNavigation) {
+			updateViewDayInUrl(subDays(viewDay, viewRange))
+		}
 	}
 
-	const onSubmit = async (data: EditBookingFormValues) => {
-		setSuccessPopupOpen(false)
-		setLoading(true)
+	const onSubmit = async (data: BookingEditFormValues) => {
+		setHasSuccess(false)
+		messageFeedback.clearFeedback()
 
 		try {
 			const response = await updateBookingAction({
 				bookingId: bookingDetail.id,
 				userId: session.user.id,
 				booking: {
-					bookingDate: DateToDayISOstring(new Date(data.bookingDate)),
+					bookingDate: DateToDayISOstring(new Date(data.bookingDate)).split(
+						'T',
+					)[0],
 					bookingTime,
 					registName: data.registName,
 					name: data.name,
@@ -125,29 +121,42 @@ const BookingEditForm = ({
 			})
 
 			if (response.ok) {
-				setSuccessPopupOpen(true)
+				setHasSuccess(true)
+				messageFeedback.showSuccess('予約を更新しました。')
 			} else {
-				setError(response)
+				messageFeedback.showApiError(response)
 			}
-		} catch (err) {
-			setError({
-				ok: false,
-				status: 500,
-				message: 'このエラーが出た際はわたべに問い合わせてください。',
-				details: err instanceof Error ? err.message : String(err),
-			})
-			console.error('Error updating booking:', err)
+		} catch (error) {
+			messageFeedback.showError(
+				'エラーが発生しました。このエラーが続く場合は管理者にお問い合わせください。',
+				{
+					details: error instanceof Error ? error.message : String(error),
+				},
+			)
+			console.error('Error updating booking:', error)
 		}
-		setLoading(false)
 	}
 
 	return (
-		<div className="p-8">
-			<div className="text-center mb-8">
+		<div className="p-8 space-y-6">
+			<div className="text-center">
 				<h2 className="text-2xl font-bold">予約編集</h2>
 			</div>
 
-			<div className="max-w-md mx-auto">
+			<div className="max-w-md mx-auto space-y-4">
+				<ErrorMessage message={messageFeedback.feedback} />
+				{hasSuccess && (
+					<div className="flex justify-center">
+						<button
+							type="button"
+							className="btn btn-secondary"
+							onClick={() => router.push('/booking')}
+						>
+							予約一覧に戻る
+						</button>
+					</div>
+				)}
+
 				<form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
 					<div className="flex flex-row justify-between gap-2">
 						<div className="flex flex-col space-y-2 grow">
@@ -195,9 +204,9 @@ const BookingEditForm = ({
 						<button
 							type="submit"
 							className="btn btn-primary"
-							disabled={loading}
+							disabled={isSubmitting}
 						>
-							{loading ? '処理中...' : '予約を更新する'}
+							{isSubmitting ? '処理中...' : '予約を更新する'}
 						</button>
 						<button
 							type="button"
@@ -208,7 +217,6 @@ const BookingEditForm = ({
 						</button>
 					</div>
 				</form>
-				<ErrorMessage error={error} />
 			</div>
 
 			<Popup
@@ -229,7 +237,7 @@ const BookingEditForm = ({
 						</button>
 						<div className="text-lg font-bold mx-2 w-60 text-center">
 							{viewDay.toLocaleDateString()}~
-							{addDays(viewDay, viewDayRange - 1).toLocaleDateString()}
+							{addDays(viewDay, viewRange - 1).toLocaleDateString()}
 						</div>
 						<button
 							className="btn btn-outline"
@@ -266,29 +274,6 @@ const BookingEditForm = ({
 							onClick={() => setCalendarOpen(false)}
 						>
 							閉じる
-						</button>
-					</div>
-				</div>
-			</Popup>
-
-			<Popup
-				id="booking-edit-success-popup"
-				title={successPopupOpen ? '予約編集' : ''}
-				maxWidth="sm"
-				open={successPopupOpen}
-				onClose={() => setSuccessPopupOpen(false)}
-			>
-				<div className="p-4 text-center">
-					<p className="font-bold text-primary">予約の編集に成功しました。</p>
-					<div className="flex justify-center gap-4 mt-4">
-						<button
-							className="btn btn-outline"
-							onClick={() => {
-								router.push('/booking')
-								setSuccessPopupOpen(false)
-							}}
-						>
-							ホームに戻る
 						</button>
 					</div>
 				</div>
