@@ -7,7 +7,7 @@ import {
 	StatusCode,
 	SuccessStatus,
 } from '@/types/responseTypes'
-import { getFrontendOrigin } from '@/lib/env'
+import { FRONTEND_ORIGIN } from '@/lib/env'
 
 export type QueryValue =
 	| string
@@ -22,7 +22,7 @@ const buildUrl = (path: string, searchParams?: Record<string, QueryValue>) => {
 		? path
 		: `/api${path.startsWith('/') ? path : `/${path}`}`
 
-	const url = new URL(normalizedPath, getFrontendOrigin())
+	const url = new URL(normalizedPath, FRONTEND_ORIGIN)
 	appendSearchParams(url, searchParams)
 	return url.toString()
 }

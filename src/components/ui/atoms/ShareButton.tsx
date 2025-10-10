@@ -2,6 +2,7 @@
 
 import { IoShareSocialSharp } from 'react-icons/io5'
 import { CiShare1 } from 'react-icons/ci'
+import { FRONTEND_ORIGIN } from '@/lib/env'
 
 const ShareButton = ({
 	url,
@@ -20,9 +21,7 @@ const ShareButton = ({
 }) => {
 	const handleShare = async () => {
 		if (isOnlyLine) {
-			const baseUrl =
-				process.env.NEXT_PUBLIC_APP_URL || 'https://www.ashitabo.net'
-			const shareUrl = `https://social-plugins.line.me/lineit/share?url=${baseUrl}${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`
+			const shareUrl = `https://social-plugins.line.me/lineit/share?url=${FRONTEND_ORIGIN}${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`
 			window.open(shareUrl, '_blank')
 		} else {
 			const shareData = {

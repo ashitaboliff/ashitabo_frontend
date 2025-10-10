@@ -3,13 +3,13 @@ import { failure, noContentResponse, okResponse } from '@/lib/api/helper'
 import { apiGet } from '@/lib/api/crud'
 import type { UserForSelect } from '@/features/user/types'
 
-import { getFrontendOrigin } from '@/lib/env'
+import { FRONTEND_ORIGIN } from '@/lib/env'
 
 const buildSignOutUrl = () => {
 	if (typeof window !== 'undefined') {
 		return '/api/auth/signout'
 	}
-	return `${getFrontendOrigin()}/api/auth/signout`
+	return `${FRONTEND_ORIGIN}/api/auth/signout`
 }
 
 export const signOutUser = async (): Promise<ApiResponse<null>> => {

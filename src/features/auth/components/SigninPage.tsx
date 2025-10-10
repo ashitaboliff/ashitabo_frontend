@@ -3,6 +3,7 @@
 import { useRouter } from 'next-nprogress-bar'
 import Image from 'next/image'
 import { nicomoji } from '@/lib/fonts'
+import { FRONTEND_ORIGIN } from '@/lib/env'
 
 const SigninPage = () => {
 	const router = useRouter()
@@ -32,7 +33,7 @@ const SigninPage = () => {
 			<div className="text-sm text-base-content mt-4">
 				登録した場合は、{' '}
 				<a
-					href={`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/terms`}
+					href={`${FRONTEND_ORIGIN}/terms`}
 					target="_blank"
 					rel="noopener noreferrer"
 					className="text-info hover:underline"
@@ -41,7 +42,7 @@ const SigninPage = () => {
 				</a>{' '}
 				と{' '}
 				<a
-					href={`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/privacy`}
+					href={`${FRONTEND_ORIGIN}/privacy`}
 					target="_blank"
 					rel="noopener noreferrer"
 					className="text-info hover:underline"

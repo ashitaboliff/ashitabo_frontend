@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next'
-const URL = process.env.NEXT_PUBLIC_APP_URL
+import { FRONTEND_ORIGIN } from '@/lib/env'
 
 export default function robots(): MetadataRoute.Robots {
 	return {
@@ -21,6 +21,6 @@ export default function robots(): MetadataRoute.Robots {
 				disallow: '/',
 			},
 		],
-		sitemap: `${URL}/sitemap.xml`,
+		sitemap: `${FRONTEND_ORIGIN}/sitemap.xml`,
 	}
 }

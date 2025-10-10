@@ -1,4 +1,4 @@
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.ashitabo.net'
+import { FRONTEND_ORIGIN } from '@/lib/env'
 
 export const createMetaData = ({
 	title,
@@ -31,11 +31,11 @@ export const createMetaData = ({
 	title = `${title} | あしたぼホームページ`
 	// Construct URL: if pathname is provided, use it directly. Otherwise, use initialUrl.
 	const finalPath = pathname || initialUrl || ''
-	const url = `${baseUrl}${finalPath.startsWith('/') ? '' : '/'}${finalPath}` // Ensure leading slash
+	const url = `${FRONTEND_ORIGIN}${finalPath.startsWith('/') ? '' : '/'}${finalPath}` // Ensure leading slash
 
 	return {
 		title,
-		metadataBase: new URL(baseUrl),
+		metadataBase: new URL(FRONTEND_ORIGIN),
 		generator: 'Next.js',
 		description,
 		keywords,
