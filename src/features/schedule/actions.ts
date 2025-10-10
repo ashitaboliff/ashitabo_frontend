@@ -2,7 +2,6 @@ import { apiGet, apiPost } from '@/lib/api/crud'
 import { ApiResponse, StatusCode } from '@/types/responseTypes'
 import {
 	createdResponse,
-	mapSuccess,
 	okResponse,
 	withFallbackMessage,
 } from '@/lib/api/helper'
@@ -37,16 +36,11 @@ export const getUserIdWithNames = async (): Promise<
 		next: { revalidate: 300, tags: ['schedule-users'] },
 	})
 
-	return mapSuccess(
-		res,
-		(users) =>
-			(users ?? []).map((user) => ({
-				id: user.id,
-				name: user.name,
-				image: (user as any).image ?? null,
-			})),
-		'ユーザー一覧の取得に失敗しました。',
-	)
+	if (!res.ok) {
+		return withFallbackMessage(res, 'ユーザー一覧の取得に失敗しました。')
+	}
+
+	return okResponse(res.data)
 }
 
 export const createScheduleAction = async ({

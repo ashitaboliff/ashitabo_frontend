@@ -2,7 +2,6 @@ import { apiDelete, apiGet, apiPost, apiPut } from '@/lib/api/crud'
 import { ApiResponse, StatusCode } from '@/types/responseTypes'
 import {
 	createdResponse,
-	mapSuccess,
 	noContentResponse,
 	okResponse,
 	withFallbackMessage,
@@ -17,50 +16,6 @@ type BookingPayload = {
 	isDeleted?: boolean
 }
 
-interface RawBookingData {
-	id: string
-	userId: string
-	createdAt: string
-	updatedAt: string
-	bookingDate: string
-	bookingTime: number
-	registName: string
-	name: string
-	isDeleted?: boolean
-}
-
-type RawBookingResponse = Record<string, Record<string, RawBookingData | null>>
-
-const mapBooking = (input: RawBookingData): Booking => ({
-	id: input.id,
-	userId: input.userId,
-	createdAt: new Date(input.createdAt),
-	updatedAt: new Date(input.updatedAt),
-	bookingDate: input.bookingDate,
-	bookingTime: input.bookingTime,
-	registName: input.registName,
-	name: input.name,
-	isDeleted: input.isDeleted ?? false,
-})
-
-const mapBookingResponse = (
-	input: RawBookingResponse | null,
-): BookingResponse => {
-	if (!input) {
-		return {}
-	}
-
-	const result: BookingResponse = {}
-	Object.entries(input).forEach(([date, timeMap]) => {
-		result[date] = {}
-		Object.entries(timeMap ?? {}).forEach(([timeKey, booking]) => {
-			const timeIndex = Number(timeKey)
-			result[date][timeIndex] = booking ? mapBooking(booking) : null
-		})
-	})
-	return result
-}
-
 export const getBookingByDateAction = async ({
 	startDate,
 	endDate,
@@ -68,46 +23,51 @@ export const getBookingByDateAction = async ({
 	startDate: string
 	endDate: string
 }): Promise<ApiResponse<BookingResponse>> => {
-	const res = await apiGet<RawBookingResponse>('/booking', {
+	const res = await apiGet<BookingResponse>('/booking', {
 		searchParams: {
 			start: startDate,
 			end: endDate,
 		},
-		...(typeof window === 'undefined'
-			? { next: { revalidate: 10, tags: ['booking-calendar'] } }
-			: {}),
+		next: { revalidate: 10, tags: ['booking-calendar'] }
 	})
 
-	return mapSuccess(
-		res,
-		(payload) => mapBookingResponse(payload ?? {}),
-		'予約情報の取得に失敗しました。',
-	)
+	if (!res.ok) {
+		return withFallbackMessage(res, '予約一覧の取得に失敗しました。')
+	}
+
+	if (!res.data) {
+		return withFallbackMessage(
+			{
+				ok: false,
+				status: StatusCode.INTERNAL_SERVER_ERROR,
+				message: '',
+			},
+			'予約一覧の取得に失敗しました。',
+		)
+	}
+
+	return okResponse(res.data)
 }
 
 export const getAllBookingAction = async (): Promise<
 	ApiResponse<BookingLog[]>
 > => {
-	const res = await apiGet<RawBookingData[]>('/booking/logs', {
-		...(typeof window === 'undefined'
-			? { next: { revalidate: 60, tags: ['booking-logs'] } }
-			: {}),
+	const res = await apiGet<BookingLog[]>('/booking/logs', {
+		next: { revalidate: 60 * 60, tags: ['booking-logs'] },
 	})
 
-	return mapSuccess(
-		res,
-		(rawLogs) => (rawLogs ?? []).map((log) => mapBooking(log)) as BookingLog[],
-		'予約ログの取得に失敗しました。',
-	)
+	if (!res.ok) {
+		return withFallbackMessage(res, '予約履歴の取得に失敗しました。')
+	}
+
+	return okResponse(res.data)
 }
 
 export const getBookingByIdAction = async (
 	bookingId: string,
 ): Promise<ApiResponse<Booking>> => {
-	const res = await apiGet<RawBookingData>(`/booking/${bookingId}`, {
-		...(typeof window === 'undefined'
-			? { next: { revalidate: 30, tags: ['booking-detail', bookingId] } }
-			: {}),
+	const res = await apiGet<Booking>(`/booking/${bookingId}`, {
+		next: { revalidate: 30, tags: ['booking-detail', bookingId] },
 	})
 
 	if (!res.ok) {
@@ -125,7 +85,7 @@ export const getBookingByIdAction = async (
 		)
 	}
 
-	return okResponse(mapBooking(res.data))
+	return okResponse(res.data)
 }
 
 export const getBookingByUserIdAction = async ({
@@ -140,7 +100,7 @@ export const getBookingByUserIdAction = async ({
 	sort: 'new' | 'old'
 }): Promise<ApiResponse<{ bookings: Booking[]; totalCount: number }>> => {
 	const res = await apiGet<{
-		bookings: RawBookingData[]
+		bookings: Booking[]
 		totalCount: number
 	}>(`/booking/user/${userId}`, {
 		searchParams: {
@@ -148,21 +108,28 @@ export const getBookingByUserIdAction = async ({
 			perPage,
 			sort,
 		},
-		...(typeof window === 'undefined'
-			? { next: { revalidate: 15, tags: ['booking-user', userId] } }
-			: {}),
+		next: { revalidate: 15, tags: ['booking-user', userId] },
 	})
 
-	return mapSuccess(
-		res,
-		(payload) => ({
-			bookings: ((payload?.bookings ?? []) as RawBookingData[]).map((booking) =>
-				mapBooking(booking),
-			),
-			totalCount: payload?.totalCount ?? 0,
-		}),
-		'ユーザー予約の取得に失敗しました。',
-	)
+	if (!res.ok) {
+		return withFallbackMessage(res, 'ユーザーの予約一覧の取得に失敗しました。')
+	}
+
+	if (!res.data) {
+		return withFallbackMessage(
+			{
+				ok: false,
+				status: StatusCode.INTERNAL_SERVER_ERROR,
+				message: '',
+			},
+			'ユーザーの予約一覧の取得に失敗しました。',
+		)
+	}
+
+	return okResponse({
+		bookings: res.data.bookings,
+		totalCount: res.data.totalCount,
+	})
 }
 
 export const createBookingAction = async ({
@@ -204,7 +171,7 @@ export const updateBookingAction = async ({
 	userId: string
 	booking: BookingPayload
 }): Promise<ApiResponse<Booking>> => {
-	const res = await apiPut<RawBookingData>(`/booking/${bookingId}`, {
+	const res = await apiPut<Booking>(`/booking/${bookingId}`, {
 		body: {
 			userId,
 			bookingDate: booking.bookingDate,
@@ -223,7 +190,7 @@ export const updateBookingAction = async ({
 		return getBookingByIdAction(bookingId)
 	}
 
-	return okResponse(mapBooking(res.data))
+	return okResponse(res.data)
 }
 
 export const deleteBookingAction = async ({

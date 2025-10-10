@@ -39,17 +39,6 @@ export const withFallbackMessage = <T>(
 	return ensureMessage(res, fallback)
 }
 
-export const mapSuccess = <T, U>(
-	res: ApiResponse<T>,
-	mapper: (data: T) => U,
-	fallback: string,
-): ApiResponse<U> => {
-	if (res.ok) {
-		return success(res.status, mapper(res.data))
-	}
-	return ensureMessage(res, fallback)
-}
-
 export const dataOrThrow = <T>(res: ApiResponse<T>, fallback?: string): T => {
 	if (res.ok) {
 		return res.data

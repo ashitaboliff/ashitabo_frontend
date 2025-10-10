@@ -2,7 +2,6 @@ import { apiGet, apiPost, apiPut, apiDelete } from '@/lib/api/crud'
 import { ApiResponse, StatusCode } from '@/types/responseTypes'
 import {
 	createdResponse,
-	mapSuccess,
 	noContentResponse,
 	okResponse,
 	withFallbackMessage,
@@ -173,11 +172,11 @@ export const getAvailablePartsAction = async (): Promise<
 		next: { revalidate: 86400, tags: ['band-parts'] },
 	})
 
-	return mapSuccess(
-		res,
-		(payload) => payload ?? [],
-		'パート一覧の取得に失敗しました。',
-	)
+	if (!res.ok) {
+		return withFallbackMessage(res, 'パート一覧の取得に失敗しました。')
+	}
+
+	return okResponse(res.data)
 }
 
 export const searchUsersForBandAction = async (
