@@ -1,5 +1,5 @@
 # Implementation Notes
-
+# このドキュメントは古くなっているので参考にしないでください
 ## 2025-10-03 Backend OpenAPI snapshot
 
 - Access to `http://localhost:8787/openapi.json` via curl (Chrome not available in sandbox).
