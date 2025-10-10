@@ -15,6 +15,7 @@ import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import Popup from '@/components/ui/molecules/Popup'
 import BookingEditForm from '@/features/booking/components/BookingEditForm'
 import { useFeedback } from '@/hooks/useFeedback'
+import { logError } from '@/utils/logger'
 
 interface EditFormPageProps {
 	bookingDetail: BookingDetailProps
@@ -63,7 +64,7 @@ const EditFormPage = ({
 					details: error instanceof Error ? error.message : String(error),
 				},
 			)
-			console.error('Error deleting booking:', error)
+			logError('Error deleting booking', error)
 		} finally {
 			setDeleteStatus((prevStatus) =>
 				prevStatus === 'success' ? 'success' : 'error',

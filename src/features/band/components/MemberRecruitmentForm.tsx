@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { SubmitHandler, useForm } from 'react-hook-form'
 import * as zod from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
@@ -10,14 +10,19 @@ import TextareaInputField from '@/components/ui/atoms/TextareaInputField'
 import SelectField from '@/components/ui/atoms/SelectField'
 import Popup from '@/components/ui/molecules/Popup'
 import { PartOptions, Part } from '@/features/user/types'
+import { logError } from '@/utils/logger'
 
 // import { createMemberRecruitmentAction } from './actions'
 
-const schema = zod.object({
-	bandName: zod.string().min(2).max(100).nonempty('バンド名を入力してください'),
+const memberRecruitmentSchema = zod.object({
+	bandName: zod
+		.string()
+		.trim()
+		.min(2, 'バンド名は2文字以上で入力してください')
+		.max(100, 'バンド名は100文字以内で入力してください'),
 	part: zod
 		.array(
-			zod.enum(Object.values(PartOptions), {
+			zod.enum(Object.values(PartOptions) as [Part, ...Part[]], {
 				message: '不正なパートが選択されました',
 			}),
 		)
@@ -27,6 +32,8 @@ const schema = zod.object({
 		.max(500, '説明は500文字以内で入力してください')
 		.optional(),
 })
+
+type MemberRecruitmentFormValues = zod.infer<typeof memberRecruitmentSchema>
 
 const MemberRecruitmentForm = () => {
 	const router = useRouter()
@@ -40,13 +47,18 @@ const MemberRecruitmentForm = () => {
 		watch,
 		handleSubmit,
 		formState: { errors },
-	} = useForm({
-		resolver: zodResolver(schema),
+	} = useForm<MemberRecruitmentFormValues>({
+		resolver: zodResolver(memberRecruitmentSchema),
+		defaultValues: {
+			bandName: '',
+			part: [],
+			description: '',
+		},
 	})
 
 	const part = watch('part')
 
-	const onSubmit = async (data: any) => {
+	const onSubmit: SubmitHandler<MemberRecruitmentFormValues> = async (data) => {
 		setLoading(true)
 		setError(null)
 
@@ -57,6 +69,7 @@ const MemberRecruitmentForm = () => {
 			// router.push('/band/board') // 募集完了後のリダイレクト
 		} catch (err) {
 			setError('募集の作成に失敗しました。もう一度お試しください。')
+			logError('Member recruitment submission failed', err)
 		} finally {
 			setLoading(false)
 		}

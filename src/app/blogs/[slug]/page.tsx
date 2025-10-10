@@ -5,6 +5,7 @@ import path from 'path'
 import { LuCalendarSync, LuCalendar } from 'react-icons/lu'
 import { createMetaData } from '@/hooks/useMetaData'
 import HomePageHeader from '@/components/shared/HomePageHeader'
+import { logError } from '@/utils/logger'
 
 interface Frontmatter {
 	title: string
@@ -28,7 +29,7 @@ async function getPost(slug: string) {
 		})
 		return { content, frontmatter, slug }
 	} catch (error) {
-		console.error(`Error reading or compiling MDX for slug ${slug}:`, error)
+		logError(`Error reading or compiling MDX for slug ${slug}`, error)
 		return null
 	}
 }
@@ -43,10 +44,7 @@ export async function generateStaticParams() {
 				slug: filename.replace(/\.mdx$/, ''),
 			}))
 	} catch (error) {
-		console.error(
-			'Error reading posts directory for generateStaticParams:',
-			error,
-		)
+		logError('Error reading posts directory for generateStaticParams', error)
 		return []
 	}
 }

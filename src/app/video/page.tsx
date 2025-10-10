@@ -4,6 +4,7 @@ import { Suspense } from 'react'
 import { searchYoutubeDetailsAction } from '@/features/video/actions'
 import { YoutubeDetail, YoutubeSearchQuery } from '@/features/video/types'
 import { ApiError } from '@/types/responseTypes'
+import { logError } from '@/utils/logger'
 
 const parseVideoPageSearchParams = (
 	params: URLSearchParams,
@@ -59,11 +60,11 @@ const Page = async ({ searchParams: params }: VideoPageProps) => {
 
 	if (res.ok) {
 		initialYoutubeDetails = res.data.results
-		initialPageMax =
-			Math.ceil(res.data.totalCount / currentQuery.videoPerPage) || 1
+	initialPageMax =
+		Math.ceil(res.data.totalCount / currentQuery.videoPerPage) || 1
 	} else {
 		initialError = res
-		console.error('Failed to fetch youtube details:', res.message)
+		logError('Failed to fetch youtube details', res)
 	}
 
 	return (

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next-nprogress-bar'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
@@ -16,6 +16,7 @@ import SelectField from '@/components/ui/atoms/SelectField'
 import Tags from '@/components/ui/atoms/Tags'
 import { useFeedback } from '@/hooks/useFeedback'
 import { usePagedResource } from '@/hooks/usePagedResource'
+import { useLocationNavigate } from '@/hooks/useBrowserApis'
 
 interface YoutubeManagementProps {
 	playlists: Playlist[] | undefined | null
@@ -28,6 +29,7 @@ const YoutubeManagement = ({
 }: YoutubeManagementProps) => {
 	const router = useRouter()
 	const actionFeedback = useFeedback()
+	const navigate = useLocationNavigate()
 	const [isLoading, setIsLoading] = useState(false)
 	const [detailPlaylist, setDetailPlaylist] = useState<Playlist | null>(null)
 	const detailDialogRef = useRef<HTMLDialogElement>(null)
@@ -60,17 +62,17 @@ const YoutubeManagement = ({
 	const currentPlaylist =
 		playlists?.slice(indexOfFirstPlaylist, indexOfLastPlaylist) ?? []
 
-	const handleAuth = async () => {
+	const handleAuth = useCallback(async () => {
 		actionFeedback.clearFeedback()
 		const url = await getAuthUrl()
 		if (url.ok) {
-			window.location.href = url.data
+			navigate(url.data)
 		} else {
 			actionFeedback.showApiError(url)
 		}
-	}
+	}, [actionFeedback, navigate])
 
-	const handleFetchPlaylist = async () => {
+	const handleFetchPlaylist = useCallback(async () => {
 		actionFeedback.clearFeedback()
 		setIsLoading(true)
 		const res = await createPlaylistAction()
@@ -81,17 +83,17 @@ const YoutubeManagement = ({
 			actionFeedback.showApiError(res)
 		}
 		setIsLoading(false)
-	}
+	}, [actionFeedback, router])
 
-	const handleRevalidate = async () => {
+	const handleRevalidate = useCallback(async () => {
 		actionFeedback.clearFeedback()
 		await revalidateYoutubeTag()
 		actionFeedback.showSuccess('Youtubeのキャッシュを更新しました。')
-	}
+	}, [actionFeedback])
 
-	const closeDetailDialog = () => {
+	const closeDetailDialog = useCallback(() => {
 		setDetailPlaylist(null)
-	}
+	}, [])
 
 	const lastUpdatedText = playlists?.[0]?.updatedAt
 		? format(new Date(playlists[0].updatedAt), 'yyyy/MM/dd', { locale: ja })

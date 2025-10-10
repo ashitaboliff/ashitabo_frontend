@@ -24,6 +24,7 @@ import {
 	BookingCreateFormInput,
 	BookingCreateFormValues,
 } from '@/features/booking/schemas/bookingCreateSchema'
+import { logError } from '@/utils/logger'
 
 const today = getCurrentJSTDateString({})
 
@@ -157,7 +158,7 @@ const CreatePage = ({
 					details: error instanceof Error ? error.message : String(error),
 				},
 			)
-			console.error('Error creating booking:', error)
+			logError('Error creating booking', error)
 		}
 	}
 

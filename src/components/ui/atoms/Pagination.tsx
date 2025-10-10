@@ -1,3 +1,5 @@
+import React, { useCallback, useMemo } from 'react'
+
 interface PaginationProps {
 	currentPage: number
 	totalPages: number
@@ -6,37 +8,45 @@ interface PaginationProps {
 
 type PaginationItem = number | 'ellipsis-left' | 'ellipsis-right'
 
-const createPaginationItems = (
+const EDGE_ITEM_COUNT = 2
+
+export const createPaginationItems = (
 	currentPage: number,
 	totalPages: number,
 	maxMiddleItems = 3,
 ): PaginationItem[] => {
-	if (totalPages <= maxMiddleItems + 4) {
+	// When the total number of pages is small enough, render the whole range without ellipses.
+	if (totalPages <= maxMiddleItems + EDGE_ITEM_COUNT * 2) {
 		return Array.from({ length: totalPages }, (_, index) => index + 1)
 	}
 
 	const items: PaginationItem[] = [1]
-	const halfRange = Math.floor(maxMiddleItems / 2)
-	let start = Math.max(2, currentPage - halfRange)
-	let end = Math.min(totalPages - 1, currentPage + halfRange)
+	const pagesAroundCurrent = Math.floor(maxMiddleItems / 2)
 
-	if (end - start < maxMiddleItems - 1) {
-		if (start === 2) {
-			end = Math.min(totalPages - 1, start + maxMiddleItems - 1)
-		} else if (end === totalPages - 1) {
-			start = Math.max(2, end - (maxMiddleItems - 1))
+	// Determine the initial sliding window around the current page.
+	let windowStart = Math.max(2, currentPage - pagesAroundCurrent)
+	let windowEnd = Math.min(totalPages - 1, currentPage + pagesAroundCurrent)
+
+	// Expand the window to keep the number of middle items stable when near the edges.
+	if (windowEnd - windowStart < maxMiddleItems - 1) {
+		if (windowStart === 2) {
+			windowEnd = Math.min(totalPages - 1, windowStart + maxMiddleItems - 1)
+		} else if (windowEnd === totalPages - 1) {
+			windowStart = Math.max(2, windowEnd - (maxMiddleItems - 1))
 		}
 	}
 
-	if (start > 2) {
+	// Insert left ellipsis if there is a gap between the first page and the window.
+	if (windowStart > 2) {
 		items.push('ellipsis-left')
 	}
 
-	for (let page = start; page <= end; page += 1) {
+	for (let page = windowStart; page <= windowEnd; page += 1) {
 		items.push(page)
 	}
 
-	if (end < totalPages - 1) {
+	// Insert right ellipsis if there is a gap between the window and the last page.
+	if (windowEnd < totalPages - 1) {
 		items.push('ellipsis-right')
 	}
 
@@ -49,7 +59,17 @@ const Pagination = ({
 	totalPages,
 	onPageChange,
 }: PaginationProps) => {
-	const items = createPaginationItems(currentPage, totalPages)
+	const items = useMemo(
+		() => createPaginationItems(currentPage, totalPages),
+		[currentPage, totalPages],
+	)
+
+	const handlePageClick = useCallback(
+		(page: number) => () => {
+			onPageChange(page)
+		},
+		[onPageChange],
+	)
 
 	return (
 		<div className="join justify-center">
@@ -61,7 +81,7 @@ const Pagination = ({
 							className={`join-item btn ${
 								currentPage === item ? 'btn-primary' : 'btn-outline'
 							}`}
-							onClick={() => onPageChange(item)}
+							onClick={handlePageClick(item)}
 						>
 							{item}
 						</button>
@@ -83,4 +103,4 @@ const Pagination = ({
 	)
 }
 
-export default Pagination
+export default React.memo(Pagination)

@@ -16,6 +16,7 @@ import Popup from '@/components/ui/molecules/Popup'
 import EditCalendar from '@/features/booking/components/EditCalendar'
 import { DateToDayISOstring } from '@/utils'
 import { useFeedback } from '@/hooks/useFeedback'
+import { logError } from '@/utils/logger'
 import {
 	bookingEditSchema,
 	BookingEditFormValues,
@@ -133,7 +134,7 @@ const BookingEditForm = ({
 					details: error instanceof Error ? error.message : String(error),
 				},
 			)
-			console.error('Error updating booking:', error)
+			logError('Error updating booking', error)
 		}
 	}
 

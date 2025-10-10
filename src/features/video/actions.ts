@@ -1,11 +1,19 @@
 import { apiGet, apiPost } from '@/lib/api/crud'
 import { ApiResponse, StatusCode } from '@/types/responseTypes'
+import { okResponse } from '@/lib/api/helper'
 import {
 	Playlist,
 	Video,
 	YoutubeDetail,
 	YoutubeSearchQuery,
 } from '@/features/video/types'
+import {
+	mapRawPlaylist,
+	mapRawPlaylists,
+	mapRawVideo,
+	type RawPlaylist,
+	type RawVideo,
+} from '@/features/video/services/videoTransforms'
 
 const withFallbackMessage = <T>(
 	res: ApiResponse<T>,
@@ -37,9 +45,7 @@ export const searchYoutubeDetailsAction = async (
 			tagSearchMode: query.tagSearchMode,
 			tag: query.tag && query.tag.length > 0 ? query.tag : undefined,
 		},
-		...(typeof window === 'undefined'
-			? { next: { revalidate: 30, tags: ['video-search'] } }
-			: {}),
+		next: { revalidate: 30, tags: ['video-search'] },
 	})
 
 	if (!res.ok) {
@@ -52,52 +58,44 @@ export const searchYoutubeDetailsAction = async (
 export const getVideoByIdAction = async (
 	videoId: string,
 ): Promise<ApiResponse<Video>> => {
-	const res = await apiGet<Video>(`/video/videos/${videoId}`, {
-		...(typeof window === 'undefined'
-			? { next: { revalidate: 300, tags: ['videos', `video:${videoId}`] } }
-			: {}),
+	const res = await apiGet<RawVideo>(`/video/videos/${videoId}`, {
+		next: { revalidate: 300, tags: ['videos', `video:${videoId}`] },
 	})
 
 	if (!res.ok) {
 		return withFallbackMessage(res, '動画の取得に失敗しました。')
 	}
 
-	return res
+	return okResponse(mapRawVideo(res.data))
 }
 
 export const getPlaylistByIdAction = async (
 	playlistId: string,
 ): Promise<ApiResponse<Playlist>> => {
-	const res = await apiGet<Playlist>(`/video/playlists/${playlistId}`, {
-		...(typeof window === 'undefined'
-			? {
-					next: {
-						revalidate: 600,
-						tags: ['video-playlists', `playlist:${playlistId}`],
-					},
-				}
-			: {}),
+	const res = await apiGet<RawPlaylist>(`/video/playlists/${playlistId}`, {
+		next: {
+			revalidate: 600,
+			tags: ['video-playlists', `playlist:${playlistId}`],
+		},
 	})
 
 	if (!res.ok) {
 		return withFallbackMessage(res, 'プレイリストの取得に失敗しました。')
 	}
 
-	return res
+	return okResponse(mapRawPlaylist(res.data))
 }
 
 export const getPlaylistAction = async (): Promise<ApiResponse<Playlist[]>> => {
-	const res = await apiGet<Playlist[]>('/video/playlists', {
-		...(typeof window === 'undefined'
-			? { next: { revalidate: 600, tags: ['video-playlists'] } }
-			: {}),
+	const res = await apiGet<RawPlaylist[]>('/video/playlists', {
+		next: { revalidate: 600, tags: ['video-playlists'] },
 	})
 
 	if (!res.ok) {
 		return withFallbackMessage(res, 'プレイリスト一覧の取得に失敗しました。')
 	}
 
-	return res
+	return okResponse(mapRawPlaylists(res.data))
 }
 
 export const getAccessTokenAction = async (): Promise<ApiResponse<null>> => {

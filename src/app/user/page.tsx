@@ -11,6 +11,7 @@ import {
 } from '@/features/gacha/context/GachaDataContext'
 import { apiGet } from '@/lib/api/crud'
 import type { Profile } from '@/features/user/types'
+import { logError } from '@/utils/logger'
 
 export async function metadata() {
 	return createMetaData({
@@ -54,8 +55,8 @@ const UserPageServer = async () => {
 									res.ok && typeof res.data === 'string' ? res.data : '',
 							}
 						} catch (error) {
-							console.error(
-								`Failed to get signed URL for packKey ${config.packKey} in UserPageContent:`,
+							logError(
+								`Failed to get signed URL for packKey ${config.packKey} in UserPageContent`,
 								error,
 							)
 							return {

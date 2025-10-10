@@ -1,43 +1,47 @@
 'use client'
 
+import React, { useCallback, useMemo } from 'react'
 import { BookingResponse } from '@/features/booking/types'
 import BookingTableBox from '@/features/booking/components/BookingTableBox'
-import CalendarFrame from '@/components/ui/molecules/CalendarFrame'
+import CalendarFrame, {
+	CalendarCellRenderProps,
+} from '@/components/ui/molecules/CalendarFrame'
 
 /**
  * これは予約カレンダーを描画するためだけのコンポーネント
  * @param booking_date
  * @returns
  */
-const BookingCalendar = ({
+const BookingCalendarComponent = ({
 	bookingDate,
 	timeList,
 }: {
 	bookingDate: BookingResponse
 	timeList: string[]
 }) => {
-	const dateList = Object.keys(bookingDate)
+	const dateList = useMemo(() => Object.keys(bookingDate), [bookingDate])
 
-	return (
-		<CalendarFrame
-			dates={dateList}
-			times={timeList}
-			renderCell={({ date, timeIndex }) => {
-				const booking = bookingDate[date]?.[timeIndex]
-				return (
-					<BookingTableBox
-						key={`booking-cell-${date}-${timeIndex}`}
-						index={`booking-${date}-${timeIndex}`}
-						id={booking?.id}
-						bookingDate={date}
-						bookingTime={timeIndex}
-						registName={booking?.registName}
-						name={booking?.name}
-					/>
-				)
-			}}
-		/>
+	const renderCell = useCallback(
+		({ date, timeIndex }: CalendarCellRenderProps) => {
+			const booking = bookingDate[date]?.[timeIndex]
+			return (
+				<BookingTableBox
+					key={`booking-cell-${date}-${timeIndex}`}
+					index={`booking-${date}-${timeIndex}`}
+					id={booking?.id}
+					bookingDate={date}
+					bookingTime={timeIndex}
+					registName={booking?.registName}
+					name={booking?.name}
+				/>
+			)
+		},
+		[bookingDate],
 	)
+
+	return <CalendarFrame dates={dateList} times={timeList} renderCell={renderCell} />
 }
 
-export default BookingCalendar
+BookingCalendarComponent.displayName = 'BookingCalendar'
+
+export default React.memo(BookingCalendarComponent)

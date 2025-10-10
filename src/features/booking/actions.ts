@@ -7,6 +7,14 @@ import {
 	withFallbackMessage,
 } from '@/lib/api/helper'
 import { Booking, BookingLog, BookingResponse } from '@/features/booking/types'
+import {
+	mapRawBooking,
+	mapRawBookingList,
+	mapRawBookingLogs,
+	mapRawBookingResponse,
+	type RawBookingData,
+	type RawBookingResponse,
+} from '@/features/booking/services/bookingTransforms'
 
 type BookingPayload = {
 	bookingDate: string
@@ -23,7 +31,7 @@ export const getBookingByDateAction = async ({
 	startDate: string
 	endDate: string
 }): Promise<ApiResponse<BookingResponse>> => {
-	const res = await apiGet<BookingResponse>('/booking', {
+	const res = await apiGet<RawBookingResponse>('/booking', {
 		searchParams: {
 			start: startDate,
 			end: endDate,
@@ -46,13 +54,13 @@ export const getBookingByDateAction = async ({
 		)
 	}
 
-	return okResponse(res.data)
+	return okResponse(mapRawBookingResponse(res.data))
 }
 
 export const getAllBookingAction = async (): Promise<
 	ApiResponse<BookingLog[]>
 > => {
-	const res = await apiGet<BookingLog[]>('/booking/logs', {
+	const res = await apiGet<RawBookingData[]>('/booking/logs', {
 		next: { revalidate: 60 * 60, tags: ['booking-logs'] },
 	})
 
@@ -60,13 +68,13 @@ export const getAllBookingAction = async (): Promise<
 		return withFallbackMessage(res, '予約履歴の取得に失敗しました。')
 	}
 
-	return okResponse(res.data)
+	return okResponse(mapRawBookingLogs(res.data))
 }
 
 export const getBookingByIdAction = async (
 	bookingId: string,
 ): Promise<ApiResponse<Booking>> => {
-	const res = await apiGet<Booking>(`/booking/${bookingId}`, {
+	const res = await apiGet<RawBookingData>(`/booking/${bookingId}`, {
 		next: { revalidate: 30, tags: ['booking-detail', bookingId] },
 	})
 
@@ -85,7 +93,7 @@ export const getBookingByIdAction = async (
 		)
 	}
 
-	return okResponse(res.data)
+	return okResponse(mapRawBooking(res.data))
 }
 
 export const getBookingByUserIdAction = async ({
@@ -100,7 +108,7 @@ export const getBookingByUserIdAction = async ({
 	sort: 'new' | 'old'
 }): Promise<ApiResponse<{ bookings: Booking[]; totalCount: number }>> => {
 	const res = await apiGet<{
-		bookings: Booking[]
+		bookings: RawBookingData[]
 		totalCount: number
 	}>(`/booking/user/${userId}`, {
 		searchParams: {
@@ -127,7 +135,7 @@ export const getBookingByUserIdAction = async ({
 	}
 
 	return okResponse({
-		bookings: res.data.bookings,
+		bookings: mapRawBookingList(res.data.bookings),
 		totalCount: res.data.totalCount,
 	})
 }
@@ -171,7 +179,7 @@ export const updateBookingAction = async ({
 	userId: string
 	booking: BookingPayload
 }): Promise<ApiResponse<Booking>> => {
-	const res = await apiPut<Booking>(`/booking/${bookingId}`, {
+	const res = await apiPut<RawBookingData>(`/booking/${bookingId}`, {
 		body: {
 			userId,
 			bookingDate: booking.bookingDate,
@@ -190,7 +198,7 @@ export const updateBookingAction = async ({
 		return getBookingByIdAction(bookingId)
 	}
 
-	return okResponse(res.data)
+	return okResponse(mapRawBooking(res.data))
 }
 
 export const deleteBookingAction = async ({

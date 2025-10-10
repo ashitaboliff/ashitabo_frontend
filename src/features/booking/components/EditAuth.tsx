@@ -12,6 +12,7 @@ import PasswordInputField from '@/components/ui/molecules/PasswordInputField'
 import DetailNotFoundPage from '@/features/booking/components/DetailNotFound'
 import type { Session } from '@/types/session'
 import { useFeedback } from '@/hooks/useFeedback'
+import { logError } from '@/utils/logger'
 import {
 	bookingAuthSchema,
 	BookingAuthFormValues,
@@ -75,7 +76,7 @@ const EditAuthPage = ({
 					code: 500,
 				},
 			)
-			console.error('Error authenticating booking:', error)
+			logError('Error authenticating booking', error)
 		}
 	}
 

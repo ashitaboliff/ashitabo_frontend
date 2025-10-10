@@ -15,6 +15,7 @@ import RadioSortGroup from '@/components/ui/atoms/RadioSortGroup'
 import UserManageList from './UserManageList'
 import UserDetailPopup from './UserDetailPopup'
 import UserDeleteConfirmPopup from './UserDeleteConfirmPopup'
+import { logError } from '@/utils/logger'
 
 const AdminUserPage = () => {
 	const router = useRouter()
@@ -65,7 +66,7 @@ const AdminUserPage = () => {
 				message: 'ユーザー削除中に予期せぬエラーが発生しました。',
 				details: error instanceof Error ? error.message : String(error),
 			})
-			console.error(error)
+			logError('deleteUserAction failed', error)
 		} finally {
 			setActionLoading(false)
 		}
@@ -91,7 +92,7 @@ const AdminUserPage = () => {
 				message: 'ユーザー権限変更中に予期せぬエラーが発生しました。',
 				details: error instanceof Error ? error.message : String(error),
 			})
-			console.error(error)
+			logError('updateUserRoleAction failed', error)
 		} finally {
 			setActionLoading(false)
 		}

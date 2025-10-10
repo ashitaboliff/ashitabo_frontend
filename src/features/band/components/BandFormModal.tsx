@@ -12,6 +12,7 @@ import {
 	bandFormSchema,
 	BandFormValues,
 } from '@/features/band/schemas/bandSchema'
+import { logError } from '@/utils/logger'
 
 interface BandFormModalProps {
 	isOpen: boolean
@@ -96,7 +97,7 @@ const BandFormModal = ({
 					details: error instanceof Error ? error.message : String(error),
 				},
 			)
-			console.error('band form submit error', error)
+			logError('band form submit error', error)
 		}
 	}
 

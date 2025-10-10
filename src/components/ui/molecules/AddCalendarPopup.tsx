@@ -1,8 +1,10 @@
 'use client'
 
 import { format } from 'date-fns'
+import { useCallback } from 'react'
 import Popup from '@/components/ui/molecules/Popup'
 import { BookingDetailProps, BookingTime } from '@/features/booking/types'
+import { useLocationNavigate, useWindowOpen } from '@/hooks/useBrowserApis'
 
 import { FaApple, FaYahoo } from 'react-icons/fa'
 import { SiGooglecalendar } from 'react-icons/si'
@@ -16,6 +18,8 @@ const AddCalendarPopup = ({
 	isPopupOpen: boolean
 	setIsPopupOpen: (arg: boolean) => void
 }) => {
+	const openWindow = useWindowOpen()
+	const navigate = useLocationNavigate()
 	const bookingDate = BookingTime[bookingDetail.bookingTime]
 		.split('~')
 		.map(
@@ -36,6 +40,18 @@ const AddCalendarPopup = ({
 	const yahooCalendarUrl = `https://calendar.yahoo.co.jp/?v=60&title=${encodeURIComponent(bookingDetail.registName)}&st=${encodeURIComponent(format(bookingDate[0], "yyyyMMdd'T'HHmmss"))}&et=${encodeURIComponent(format(bookingDate[1], "yyyyMMdd'T'HHmmss"))}&desc=${encodeURIComponent(bookingDetail.name)}による音楽室でのコマ予約&in_loc=あしたぼ`
 	const appleCalendarUrl = `/api/generate-ics?start=${encodeURIComponent(format(bookingDate[0], "yyyyMMdd'T'HHmmss"))}&end=${encodeURIComponent(format(bookingDate[1], "yyyyMMdd'T'HHmmss"))}&summary=${encodeURIComponent(bookingDetail.registName)}&description=${encodeURIComponent(bookingDetail.name)}による音楽室でのコマ予約&openExternalBrowser=1`
 
+	const handleOpenGoogleCalendar = useCallback(() => {
+		openWindow(googleCalendarUrl, '_blank', 'noopener')
+	}, [googleCalendarUrl, openWindow])
+
+	const handleOpenAppleCalendar = useCallback(() => {
+		navigate(appleCalendarUrl)
+	}, [appleCalendarUrl, navigate])
+
+	const handleOpenYahooCalendar = useCallback(() => {
+		openWindow(yahooCalendarUrl, '_blank', 'noopener')
+	}, [openWindow, yahooCalendarUrl])
+
 	return (
 		<Popup
 			id="add-calendar-popup"
@@ -50,21 +66,21 @@ const AddCalendarPopup = ({
 					<div className="flex justify-center gap-1">
 						<button
 							className="btn btn-outline btn-sm"
-							onClick={() => open(googleCalendarUrl)}
+							onClick={handleOpenGoogleCalendar}
 						>
 							<SiGooglecalendar color="#2180FC" />
 							Android
 						</button>
 						<button
 							className="btn btn-outline btn-sm"
-							onClick={() => (window.location.href = appleCalendarUrl)}
+							onClick={handleOpenAppleCalendar}
 						>
 							<FaApple color="#000" />
 							iPhone
 						</button>
 						<button
 							className="btn btn-outline btn-sm"
-							onClick={() => open(yahooCalendarUrl)}
+							onClick={handleOpenYahooCalendar}
 						>
 							<FaYahoo color="#720E9E" />
 							Yahoo!

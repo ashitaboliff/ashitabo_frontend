@@ -9,21 +9,27 @@ import {
 import { UserDetail, AccountRole } from '@/features/user/types'
 import { BanBooking } from '@/features/booking/types'
 import { PadLock } from '@/features/admin/types'
+import {
+	mapRawPadLocks,
+	mapRawUserDetails,
+	mapRawBanBookings,
+	type RawPadLock,
+	type RawUserDetail,
+	type RawBanBooking,
+} from '@/features/admin/services/adminTransforms'
 
 export const getAllPadLocksAction = async (): Promise<
 	ApiResponse<PadLock[]>
 > => {
-	const res = await apiGet<PadLock[]>('/admin/padlocks', {
-		...(typeof window === 'undefined'
-			? { next: { revalidate: 120, tags: ['admin-padlocks'] } }
-			: {}),
+	const res = await apiGet<RawPadLock[]>('/admin/padlocks', {
+		next: { revalidate: 120, tags: ['admin-padlocks'] },
 	})
 
 	if (!res.ok) {
 		return withFallbackMessage(res, '部室パスワード一覧の取得に失敗しました')
 	}
 
-	return okResponse(res.data)
+	return okResponse(mapRawPadLocks(res.data))
 }
 
 export const getAllUserDetailsAction = async ({
@@ -36,7 +42,7 @@ export const getAllUserDetailsAction = async ({
 	sort: 'new' | 'old'
 }): Promise<ApiResponse<{ users: UserDetail[]; totalCount: number }>> => {
 	const res = await apiGet<{
-		users: UserDetail[]
+		users: RawUserDetail[]
 		totalCount: number
 	}>('/admin/users', {
 		searchParams: {
@@ -44,14 +50,10 @@ export const getAllUserDetailsAction = async ({
 			perPage,
 			sort,
 		},
-		...(typeof window === 'undefined'
-			? {
-					next: {
-						revalidate: 30,
-						tags: ['admin-users'],
-					},
-				}
-			: {}),
+		next: {
+			revalidate: 30,
+			tags: ['admin-users'],
+		},
 	})
 
 	if (!res.ok) {
@@ -59,7 +61,7 @@ export const getAllUserDetailsAction = async ({
 	}
 
 	return okResponse({
-		users: res.data?.users ?? [],
+		users: mapRawUserDetails(res.data?.users),
 		totalCount: res.data?.totalCount ?? 0,
 	})
 }
@@ -146,7 +148,7 @@ export const getBanBookingAction = async ({
 	today: string
 }): Promise<ApiResponse<{ data: BanBooking[]; totalCount: number }>> => {
 	const res = await apiGet<{
-		data: BanBooking[]
+		data: RawBanBooking[]
 		totalCount: number
 	}>('/admin/booking-bans', {
 		searchParams: {
@@ -155,14 +157,10 @@ export const getBanBookingAction = async ({
 			sort,
 			today,
 		},
-		...(typeof window === 'undefined'
-			? {
-					next: {
-						revalidate: 60,
-						tags: ['admin-booking-bans'],
-					},
-				}
-			: {}),
+		next: {
+			revalidate: 60,
+			tags: ['admin-booking-bans'],
+		},
 	})
 
 	if (!res.ok) {
@@ -170,7 +168,7 @@ export const getBanBookingAction = async ({
 	}
 
 	return okResponse({
-		data: res.data?.data ?? [],
+		data: mapRawBanBookings(res.data?.data),
 		totalCount: res.data?.totalCount ?? 0,
 	})
 }

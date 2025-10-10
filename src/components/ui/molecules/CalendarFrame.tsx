@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react'
+import React from 'react'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 
@@ -9,10 +9,22 @@ export interface CalendarCellRenderProps {
 	timeIndex: number
 }
 
+export interface CalendarCell {
+	key?: React.Key
+	cellProps?: React.TdHTMLAttributes<HTMLTableCellElement>
+	children?: React.ReactNode
+}
+
+type CalendarCellRendererResult =
+	| CalendarCell
+	| React.ReactNode
+	| null
+	| undefined
+
 export interface CalendarFrameProps {
 	dates: string[]
 	times: string[]
-	renderCell: (props: CalendarCellRenderProps) => React.ReactNode
+	renderCell: (props: CalendarCellRenderProps) => CalendarCellRendererResult
 	containerClassName?: string
 	tableClassName?: string
 	cornerCellClassName?: string
@@ -23,6 +35,13 @@ export interface CalendarFrameProps {
 	renderTimeCellContent?: (time: string, index: number) => React.ReactNode
 }
 
+interface NormalizedCalendarCell {
+	key: React.Key
+	props: React.TdHTMLAttributes<HTMLTableCellElement>
+	content: React.ReactNode
+}
+
+const DEFAULT_CELL_CLASS = 'border border-base-200 p-0'
 const defaultContainerClass = 'flex justify-center'
 const defaultTableClass =
 	'w-auto border border-base-200 table-pin-rows table-pin-cols bg-white'
@@ -48,7 +67,40 @@ const defaultTimeContent = (time: string) => {
 	)
 }
 
-const CalendarFrame = ({
+const isCalendarCellDescriptor = (value: unknown): value is CalendarCell =>
+	Boolean(
+		value &&
+			typeof value === 'object' &&
+			('key' in value || 'cellProps' in value || 'children' in value),
+	)
+
+const mergeClassName = (className?: string) =>
+	className ? `${DEFAULT_CELL_CLASS} ${className}`.trim() : DEFAULT_CELL_CLASS
+
+const normalizeCalendarCell = (
+	raw: Exclude<CalendarCellRendererResult, React.ReactElement>,
+	fallbackKey: React.Key,
+): NormalizedCalendarCell => {
+	if (isCalendarCellDescriptor(raw)) {
+		const cellProps = raw.cellProps ?? {}
+		return {
+			key: raw.key ?? fallbackKey,
+			props: {
+				...cellProps,
+				className: mergeClassName(cellProps.className),
+			},
+			content: raw.children ?? null,
+		}
+	}
+
+	return {
+		key: fallbackKey,
+		props: { className: DEFAULT_CELL_CLASS },
+		content: raw as React.ReactNode,
+	}
+}
+
+const CalendarFrameComponent = ({
 	dates,
 	times,
 	renderCell,
@@ -92,24 +144,29 @@ const CalendarFrame = ({
 									return null
 								}
 
-								const element: ReactElement =
-									React.isValidElement(rawCell) &&
-									rawCell.type !== React.Fragment
-										? (rawCell as ReactElement)
-										: React.createElement(
-												'td',
-												{
-													className: 'border border-base-200 p-0',
-												},
-												rawCell,
-											)
+								const fallbackKey = `calendar-cell-${date}-${timeIndex}`
 
-								const key =
-									element.key && element.key !== null
-										? element.key
-										: `calendar-cell-${date}-${timeIndex}`
+								if (React.isValidElement(rawCell)) {
+									if (rawCell.type === 'td') {
+										return rawCell
+									}
+									const descriptor = normalizeCalendarCell(
+										{ children: rawCell },
+										fallbackKey,
+									)
+									return (
+										<td key={descriptor.key} {...descriptor.props}>
+											{descriptor.content}
+										</td>
+									)
+								}
 
-								return React.cloneElement(element, { key })
+								const descriptor = normalizeCalendarCell(rawCell, fallbackKey)
+								return (
+									<td key={descriptor.key} {...descriptor.props}>
+										{descriptor.content}
+									</td>
+								)
 							})}
 						</tr>
 					))}
@@ -118,5 +175,9 @@ const CalendarFrame = ({
 		</div>
 	)
 }
+
+CalendarFrameComponent.displayName = 'CalendarFrame'
+
+const CalendarFrame = React.memo(CalendarFrameComponent)
 
 export default CalendarFrame

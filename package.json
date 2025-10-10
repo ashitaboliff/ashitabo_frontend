@@ -10,7 +10,8 @@
 		"lint": "eslint --ext .ts,.tsx src",
 		"lint:fix": "eslint --ext .ts,.tsx src --fix",
 		"format": "prettier --check --ignore-path .prettierignore .",
-		"format:fix": "prettier --write --ignore-path .prettierignore ."
+		"format:fix": "prettier --write --ignore-path .prettierignore .",
+		"test": "vitest run"
 	},
 	"dependencies": {
 		"@gsap/react": "^2.1.2",
@@ -45,6 +46,7 @@
 		"postcss": "^8.5.3",
 		"prettier": "^3.2.5",
 		"tailwindcss": "^4.1.7",
-		"typescript": "^5"
+		"typescript": "^5",
+		"vitest": "^1.6.0"
 	}
 }

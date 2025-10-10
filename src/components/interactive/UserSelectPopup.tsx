@@ -1,16 +1,17 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import InstIcon from '@/components/ui/atoms/InstIcon'
 import TextSearchField from '@/components/ui/molecules/TextSearchField'
 import Popup from '@/components/ui/molecules/Popup'
 import { getUsersForSelect } from '@/features/user/actions'
 import { Part, PartMap, UserForSelect } from '@/features/user/types'
+import { logError } from '@/utils/logger'
 import { LuUserRound } from 'react-icons/lu'
 import { LuCheck } from 'react-icons/lu'
 
-const UserSelectPopup = ({
+const UserSelectPopupComponent = ({
 	open,
 	onClose,
 	userSelect,
@@ -35,13 +36,13 @@ const UserSelectPopup = ({
 				setUsers(response.data ?? [])
 				setAllUsers(response.data ?? [])
 			} else {
-				console.error('ユーザーの取得に失敗しました', response.message)
+				logError('ユーザーの取得に失敗しました', response)
 			}
 		}
 		fetchUsers()
 	}, [])
 
-	const handleSearch = (query: string) => {
+	const handleSearch = useCallback((query: string) => {
 		setSearchQuery(query)
 		const filteredUsers = allUsers.filter(
 			(user) =>
@@ -52,9 +53,10 @@ const UserSelectPopup = ({
 				),
 		)
 		setUsers(filteredUsers)
-	}
+	}, [allUsers])
 
-	const handleUserSelect = (userId: string) => {
+	const handleUserSelect = useCallback(
+		(userId: string) => {
 		if (singleSelect) {
 			// 単一選択モード
 			const newSelectedUsers = [userId]
@@ -68,12 +70,12 @@ const UserSelectPopup = ({
 				: [...selectedUsers, userId]
 			setSelectedUsers(newSelectedUsers)
 		}
-	}
+	}, [onClose, onUserSelect, selectedUsers, singleSelect])
 
-	const handleConfirm = () => {
+	const handleConfirm = useCallback(() => {
 		onUserSelect(selectedUsers)
 		onClose()
-	}
+	}, [onClose, onUserSelect, selectedUsers])
 
 	return (
 		<Popup
@@ -201,5 +203,9 @@ const UserSelectPopup = ({
 		</Popup>
 	)
 }
+
+const UserSelectPopup = React.memo(UserSelectPopupComponent)
+
+UserSelectPopup.displayName = 'UserSelectPopup'
 
 export default UserSelectPopup

@@ -5,6 +5,7 @@ import { Inter } from 'next/font/google'
 import { createMetaData } from '@/hooks/useMetaData'
 import HomePageHeader from '@/components/shared/HomePageHeader'
 import { compileMDX } from 'next-mdx-remote/rsc' // Required for frontmatter parsing
+import { logError } from '@/utils/logger'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -28,7 +29,7 @@ async function getAllPostsMeta(): Promise<PostMeta[]> {
 	try {
 		filenames = fs.readdirSync(postsDirectory)
 	} catch (error) {
-		console.error('Error reading posts directory:', error)
+		logError('Error reading posts directory', error)
 		return [] // Return empty if directory doesn't exist or other error
 	}
 
@@ -55,7 +56,7 @@ async function getAllPostsMeta(): Promise<PostMeta[]> {
 					createdAt: frontmatter.createdAt,
 				})
 			} catch (error) {
-				console.error(`Error processing frontmatter for ${filename}:`, error)
+				logError(`Error processing frontmatter for ${filename}`, error)
 				// Optionally add a post with an error state or skip it
 				postsMeta.push({
 					slug: filename.replace(/\.mdx$/, ''),

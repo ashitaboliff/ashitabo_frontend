@@ -6,32 +6,34 @@ import {
 	withFallbackMessage,
 } from '@/lib/api/helper'
 import { Schedule, UserWithName } from '@/features/schedule/types'
+import {
+	mapRawSchedule,
+	mapRawUserWithNames,
+	type RawSchedule,
+	type RawUserWithName,
+} from '@/features/schedule/services/scheduleTransforms'
 
 export const getScheduleByIdAction = async (
 	scheduleId: string,
 ): Promise<ApiResponse<Schedule>> => {
-	const res = await apiGet<Schedule>(`/schedule/${scheduleId}`, {
-		...(typeof window === 'undefined'
-			? {
-					next: {
-						revalidate: 60,
-						tags: ['schedules', `schedule:${scheduleId}`],
-					},
-				}
-			: {}),
+	const res = await apiGet<RawSchedule>(`/schedule/${scheduleId}`, {
+		next: {
+			revalidate: 60,
+			tags: ['schedules', `schedule:${scheduleId}`],
+		},
 	})
 
 	if (!res.ok) {
 		return withFallbackMessage(res, '日程の取得に失敗しました。')
 	}
 
-	return okResponse(res.data)
+	return okResponse(mapRawSchedule(res.data))
 }
 
 export const getUserIdWithNames = async (): Promise<
 	ApiResponse<UserWithName[]>
 > => {
-	const res = await apiGet<UserWithName[]>('/schedule/users', {
+	const res = await apiGet<RawUserWithName[]>('/schedule/users', {
 		cache: 'force-cache',
 		next: { revalidate: 300, tags: ['schedule-users'] },
 	})
@@ -40,7 +42,7 @@ export const getUserIdWithNames = async (): Promise<
 		return withFallbackMessage(res, 'ユーザー一覧の取得に失敗しました。')
 	}
 
-	return okResponse(res.data)
+	return okResponse(mapRawUserWithNames(res.data))
 }
 
 export const createScheduleAction = async ({
@@ -62,7 +64,7 @@ export const createScheduleAction = async ({
 	timeExtended: boolean
 	deadline: string
 }): Promise<ApiResponse<Schedule>> => {
-	const res = await apiPost<{ id: string } | Schedule>('/schedule', {
+	const res = await apiPost<{ id: string } | RawSchedule>('/schedule', {
 		body: {
 			id,
 			userId,

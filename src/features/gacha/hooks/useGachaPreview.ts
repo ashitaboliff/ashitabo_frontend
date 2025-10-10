@@ -6,6 +6,7 @@ import { GachaData } from '@/features/gacha/types'
 import { getGachaByGachaSrcAction } from '@/features/gacha/actions'
 import { ApiResponse, StatusCode } from '@/types/responseTypes'
 import type { Session } from '@/types/session'
+import { logError } from '@/utils/logger'
 
 interface UseGachaPreviewProps {
 	session: Session
@@ -28,7 +29,7 @@ const fetcher = async ({
 	if (res.ok) {
 		return res.data
 	}
-	console.error('Failed to fetch gacha preview data:', res.details)
+	logError('Failed to fetch gacha preview data', res)
 	return null
 }
 

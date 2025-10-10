@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useRouter } from 'next-nprogress-bar'
-import { useForm, Controller } from 'react-hook-form'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as zod from 'zod'
 import { eachDayOfInterval, getDay } from 'date-fns'
@@ -15,6 +15,7 @@ import TextInputField from '@/components/ui/atoms/TextInputField'
 import SelectField from '@/components/ui/atoms/SelectField'
 import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import Popup from '@/components/ui/molecules/Popup'
+import { logError } from '@/utils/logger'
 
 type BanTypeValue = 'single' | 'period' | 'regular'
 
@@ -76,7 +77,19 @@ const BanBookingSchema = zod
 				message: '曜日を選択してください',
 			})
 		}
-	})
+})
+type BanBookingFormInput = zod.input<typeof BanBookingSchema>
+type BanBookingFormValues = zod.output<typeof BanBookingSchema>
+
+const defaultFormValues: Partial<BanBookingFormInput> = {
+	type: 'single',
+	startDate: undefined,
+	endDate: undefined,
+	startTime: '',
+	endTime: '',
+	dayOfWeek: undefined,
+	description: '',
+}
 
 const BanBookingCreate = () => {
 	const router = useRouter()
@@ -90,46 +103,58 @@ const BanBookingCreate = () => {
 		reset,
 		control,
 		watch,
-	} = useForm({
+	} = useForm<BanBookingFormInput, unknown, BanBookingFormValues>({
 		mode: 'onBlur',
 		resolver: zodResolver(BanBookingSchema),
-		defaultValues: {
-			type: 'single',
-		},
+		defaultValues: defaultFormValues,
 	})
 
 	const type = watch('type')
 
-	const onSubmit = async (data: any) => {
-		if (data.type === 'single') {
-			const res = await createBookingBanDateAction({
-				startDate: DateToDayISOstring(data.startDate),
-				startTime: Number(data.startTime),
-				description: data.description,
-			})
-			if (res.ok) {
-				reset()
-				setIsPopupOpen(true)
-			} else {
-				setError(res)
+	const handleSuccess = useCallback(() => {
+		reset(defaultFormValues)
+		setIsPopupOpen(true)
+	}, [reset])
+
+	const handleError = useCallback((apiError: ApiError) => {
+		setError(apiError)
+	}, [])
+
+	const onSubmit: SubmitHandler<BanBookingFormValues> = async (data) => {
+		setError(undefined)
+		try {
+			if (data.type === 'single') {
+				const res = await createBookingBanDateAction({
+					startDate: DateToDayISOstring(data.startDate),
+					startTime: Number(data.startTime),
+					description: data.description,
+				})
+				if (res.ok) {
+					handleSuccess()
+				} else {
+					handleError(res)
+				}
+				return
 			}
-		} else if (data.type === 'period') {
-			const res = await createBookingBanDateAction({
-				startDate: DateToDayISOstring(data.startDate),
-				startTime: Number(data.startTime),
-				endTime: Number(data.endTime),
-				description: data.description,
-			})
-			if (res.ok) {
-				reset()
-				setIsPopupOpen(true)
-			} else {
-				setError(res)
+
+			if (data.type === 'period') {
+				const res = await createBookingBanDateAction({
+					startDate: DateToDayISOstring(data.startDate),
+					startTime: Number(data.startTime),
+					endTime: Number(data.endTime),
+					description: data.description,
+				})
+				if (res.ok) {
+					handleSuccess()
+				} else {
+					handleError(res)
+				}
+				return
 			}
-		} else if (data.type === 'regular') {
+
 			const allDates = eachDayOfInterval({
 				start: data.startDate,
-				end: data.endDate,
+				end: data.endDate!,
 			})
 			const dates = allDates
 				.filter((date) => getDay(date) === Number(data.dayOfWeek))
@@ -141,11 +166,18 @@ const BanBookingCreate = () => {
 				description: data.description,
 			})
 			if (res.ok) {
-				reset()
-				setIsPopupOpen(true)
+				handleSuccess()
 			} else {
-				setError(res)
+				handleError(res)
 			}
+		} catch (err) {
+			logError('Failed to create booking ban', err)
+			setError({
+				ok: false,
+				status: 500,
+				message: '予約禁止日の作成中にエラーが発生しました。',
+				details: err instanceof Error ? err.message : String(err),
+			})
 		}
 	}
 

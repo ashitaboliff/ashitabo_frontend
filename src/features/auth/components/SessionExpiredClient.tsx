@@ -4,6 +4,7 @@ import { useRouter } from 'next-nprogress-bar'
 import { useState } from 'react'
 import { useSession } from '@/features/auth/hooks/useSession'
 import { signOutUser } from '@/features/user/actions'
+import { logError } from '@/utils/logger'
 
 const SessionExpiredClient = () => {
 	const router = useRouter()
@@ -17,7 +18,7 @@ const SessionExpiredClient = () => {
 			await update()
 			router.push('/home')
 		} catch (error) {
-			console.error('ログアウト中にエラーが発生しました:', error)
+			logError('ログアウト中にエラーが発生しました', error)
 			// エラーが発生してもホームページへリダイレクト
 			router.push('/home')
 		} finally {
@@ -32,7 +33,7 @@ const SessionExpiredClient = () => {
 			await update()
 			router.push('/auth/padlock')
 		} catch (error) {
-			console.error('再ログイン処理中にエラーが発生しました:', error)
+			logError('再ログイン処理中にエラーが発生しました', error)
 			router.push('/auth/padlock')
 		} finally {
 			setIsLoading(false)

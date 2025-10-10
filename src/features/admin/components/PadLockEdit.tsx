@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useCallback, useState } from 'react'
+import { SubmitHandler, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as zod from 'zod'
 import { useRouter } from 'next-nprogress-bar'
@@ -18,14 +18,20 @@ import Popup from '@/components/ui/molecules/Popup'
 
 import { TiDeleteOutline } from 'react-icons/ti'
 import type { Session } from '@/types/session'
+import { logError } from '@/utils/logger'
 
-const PadLockSchema = zod.object({
+const padLockFormSchema = zod.object({
 	name: zod
 		.string()
+		.trim()
 		.min(2, '鍵管理のための名前を入力してください')
 		.max(100, '鍵管理のための名前は100文字以内で入力してください'),
-	password: zod.number().min(0, 'パスワードを入力してください').max(9999),
+	password: zod
+		.string()
+		.regex(/^\d{4}$/, 'パスワードは4桁の数字で入力してください'),
 })
+
+type PadLockFormValues = zod.infer<typeof padLockFormSchema>
 
 const PadLockEdit = ({
 	padLocks,
@@ -59,27 +65,29 @@ const PadLockEdit = ({
 		handleSubmit,
 		formState: { errors },
 		reset,
-	} = useForm({
+	} = useForm<PadLockFormValues>({
 		mode: 'onBlur',
-		resolver: zodResolver(PadLockSchema),
+		resolver: zodResolver(padLockFormSchema),
+		defaultValues: { name: '', password: '' },
 	})
 
-	const onSubmit = async (data: any) => {
-		const name = data.name
-		const password = data.password
-		const res = await createPadLockAction({
-			name,
-			password: password.toString(),
-		})
-		if (res.ok) {
-			setIsCreatePopupOpen(false)
-			reset()
-		} else {
-			setError(res)
-		}
-	}
+	const onSubmit: SubmitHandler<PadLockFormValues> = useCallback(
+		async (data) => {
+			const res = await createPadLockAction({
+				name: data.name,
+				password: data.password,
+			})
+			if (res.ok) {
+				setIsCreatePopupOpen(false)
+				reset({ name: '', password: '' })
+			} else {
+				setError(res)
+			}
+		},
+		[reset],
+	)
 
-	const onDelete = async (id: string) => {
+	const onDelete = useCallback(async (id: string) => {
 		const res = await deletePadLockAction({
 			id,
 		})
@@ -89,7 +97,7 @@ const PadLockEdit = ({
 		} else {
 			setError(res)
 		}
-	}
+	}, [])
 
 	return (
 		<div className="flex flex-col items-center justify-center gap-y-2">

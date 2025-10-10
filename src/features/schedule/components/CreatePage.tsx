@@ -16,6 +16,7 @@ import { createScheduleAction } from '../actions'
 import { DateToDayISOstring } from '@/utils'
 import type { Session } from '@/types/session'
 import { useFeedback } from '@/hooks/useFeedback'
+import { logError } from '@/utils/logger'
 import {
 	scheduleCreateSchema,
 	ScheduleCreateFormInput,
@@ -150,7 +151,7 @@ const ScheduleCreatePage = ({
 					details: error instanceof Error ? error.message : String(error),
 				},
 			)
-			console.error('create schedule error', error)
+			logError('create schedule error', error)
 		}
 	}
 

@@ -23,11 +23,7 @@ export const getBandDetailsAction = async (
 	bandId: string,
 ): Promise<ApiResponse<BandDetails>> => {
 	const res = await apiGet<BandDetails>(`/band/${bandId}`, {
-		...(typeof window === 'undefined'
-			? {
-					next: { revalidate: 60, tags: ['bands', `band:${bandId}`] },
-				}
-			: {}),
+		next: { revalidate: 60, tags: ['bands', `band:${bandId}`] },
 	})
 
 	if (!res.ok) {
@@ -41,9 +37,7 @@ export const getUserBandsAction = async (): Promise<
 	ApiResponse<BandDetails[]>
 > => {
 	const res = await apiGet<BandDetails[]>('/band/me', {
-		...(typeof window === 'undefined'
-			? { next: { revalidate: 30, tags: ['band-me'] } }
-			: {}),
+		next: { revalidate: 30, tags: ['band-me'] },
 	})
 
 	if (!res.ok) {
@@ -185,9 +179,7 @@ export const searchUsersForBandAction = async (
 ): Promise<ApiResponse<UserWithProfile[]>> => {
 	const res = await apiGet<UserWithProfile[]>('/band/search-users', {
 		searchParams: { query, part },
-		...(typeof window === 'undefined'
-			? { next: { revalidate: 30, tags: ['band-search-users'] } }
-			: {}),
+		next: { revalidate: 30, tags: ['band-search-users'] },
 	})
 
 	if (!res.ok) {

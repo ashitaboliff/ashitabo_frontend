@@ -1,8 +1,19 @@
 'use client'
 
+import { useCallback, useMemo } from 'react'
 import { IoShareSocialSharp } from 'react-icons/io5'
 import { CiShare1 } from 'react-icons/ci'
+import { useNavigatorShare, useWindowAlert, useWindowOpen } from '@/hooks/useBrowserApis'
 import { FRONTEND_ORIGIN } from '@/lib/env'
+
+type ShareButtonProps = {
+	url: string
+	title: string
+	text: string
+	isFullButton?: boolean
+	className?: string
+	isOnlyLine?: boolean
+}
 
 const ShareButton = ({
 	url,
@@ -11,50 +22,57 @@ const ShareButton = ({
 	isFullButton,
 	className,
 	isOnlyLine,
-}: {
-	url: string
-	title: string
-	text: string
-	isFullButton?: boolean
-	className?: string
-	isOnlyLine?: boolean
-}) => {
-	const handleShare = async () => {
+}: ShareButtonProps) => {
+	const openWindow = useWindowOpen()
+	const navigatorShare = useNavigatorShare()
+	const alertUser = useWindowAlert()
+
+	const lineShareUrl = useMemo(() => {
+		return `https://social-plugins.line.me/lineit/share?url=${FRONTEND_ORIGIN}${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`
+	}, [text, url])
+
+	const shareData = useMemo(
+		() => ({
+			title,
+			text,
+			url,
+		}),
+		[text, title, url],
+	)
+
+	const handleShare = useCallback(async () => {
 		if (isOnlyLine) {
-			const shareUrl = `https://social-plugins.line.me/lineit/share?url=${FRONTEND_ORIGIN}${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`
-			window.open(shareUrl, '_blank')
-		} else {
-			const shareData = {
-				title: title,
-				text: text,
-				url: url,
+			const result = openWindow(lineShareUrl, '_blank', 'noopener')
+			if (!result) {
+				alertUser('別タブで共有画面を開けませんでした。ポップアップのブロックを確認してください。')
 			}
-			if (navigator.share) {
-				await navigator.share(shareData)
-			} else {
-				alert('このブラウザはシェア機能に対応していません。')
+			return
+		}
+
+		try {
+			await navigatorShare(shareData)
+		} catch (error) {
+			const fallbackWindow = openWindow(lineShareUrl, '_blank', 'noopener')
+			if (!fallbackWindow) {
+				alertUser('このブラウザは共有機能に対応していません。LINE共有リンクを開けませんでした。')
 			}
 		}
-	}
+	}, [alertUser, isOnlyLine, lineShareUrl, navigatorShare, openWindow, shareData])
 
-	return isFullButton ? (
-		<button
-			type="button"
-			className={className || 'btn btn-outline w-full sm:w-auto'}
-			onClick={handleShare}
-		>
-			<div className="flex items-center justify-center">
-				<CiShare1 size={15} />
-				<span className="ml-2">{title}</span>
-			</div>
-		</button>
-	) : (
-		<button
-			type="button"
-			className={className || 'btn btn-ghost'}
-			onClick={handleShare}
-		>
-			<IoShareSocialSharp size={25} />
+	const buttonClassName =
+		className ||
+		(isFullButton ? 'btn btn-outline w-full sm:w-auto' : 'btn btn-ghost')
+
+	return (
+		<button type="button" className={buttonClassName} onClick={handleShare}>
+			{isFullButton ? (
+				<div className="flex items-center justify-center">
+					<CiShare1 size={15} />
+					<span className="ml-2">{title}</span>
+				</div>
+			) : (
+				<IoShareSocialSharp size={25} />
+			)}
 		</button>
 	)
 }

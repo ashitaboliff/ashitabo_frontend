@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useCallback, useMemo, useState } from 'react'
+import { SubmitHandler, useForm } from 'react-hook-form'
 import * as zod from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import TextInputField from '@/components/ui/atoms/TextInputField'
@@ -12,6 +12,27 @@ import { PartOptions, Part } from '@/features/user/types'
 
 // import { createBandAction } from './actions'
 
+const bandAddFormSchema = zod.object({
+	bandName: zod
+		.string()
+		.trim()
+		.min(2, 'バンド名は2文字以上で入力してください')
+		.max(100, 'バンド名は100文字以内で入力してください'),
+	part: zod
+		.array(
+			zod.enum(Object.values(PartOptions) as [Part, ...Part[]], {
+				message: '不正なパートが選択されました',
+			}),
+		)
+		.min(1, '少なくとも1つのパートを選択してください'),
+	description: zod
+		.string()
+		.max(500, '説明は500文字以内で入力してください')
+		.optional(),
+})
+
+type BandAddFormValues = zod.infer<typeof bandAddFormSchema>
+
 const BandAddForm = () => {
 	const [loading, setLoading] = useState<boolean>(false)
 	const [error, setError] = useState<string | null>(null)
@@ -19,34 +40,24 @@ const BandAddForm = () => {
 	const [userSelectPopupOpen, setUserSelectPopupOpen] = useState<boolean>(false)
 	const [selectedUsers, setSelectedUsers] = useState<string[]>([])
 
-	const schema = zod.object({
-		bandName: zod
-			.string()
-			.min(2)
-			.max(100)
-			.nonempty('バンド名を入力してください'),
-		part: zod
-			.array(
-				zod.enum(Object.values(PartOptions), {
-					message: '不正なパートが選択されました',
-				}),
-			)
-			.min(1, '少なくとも1つのパートを選択してください'),
-		description: zod
-			.string()
-			.max(500, '説明は500文字以内で入力してください')
-			.optional(),
-	})
-
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
-	} = useForm({
-		resolver: zodResolver(schema),
+	} = useForm<BandAddFormValues>({
+		resolver: zodResolver(bandAddFormSchema),
+		defaultValues: {
+			bandName: '',
+			part: [],
+			description: '',
+		},
 	})
 
-	const onSubmit = async (data: any) => {
+	const handleUserSelect = useCallback((userIds: string[]) => {
+		setSelectedUsers(userIds)
+	}, [])
+
+	const onSubmit: SubmitHandler<BandAddFormValues> = async (data) => {
 		setLoading(true)
 		setError(null)
 
@@ -113,9 +124,7 @@ const BandAddForm = () => {
 				open={userSelectPopupOpen}
 				onClose={() => setUserSelectPopupOpen(false)}
 				userSelect={selectedUsers}
-				onUserSelect={(userIds) => {
-					setSelectedUsers(userIds)
-				}}
+				onUserSelect={handleUserSelect}
 			/>
 		</form>
 	)

@@ -11,6 +11,7 @@ import { padLockAction } from '../actions'
 import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import { ApiError } from '@/types/responseTypes'
 import { getImageUrl } from '@/lib/r2'
+import { logError } from '@/utils/logger'
 
 const PasswordSchema = zod.object({
 	digit1: zod.string().regex(/^\d$/, '0から9の数字を入力してください'),
@@ -62,7 +63,7 @@ const AuthPadLock = ({ csrfToken, callbackUrl }: AuthPadLockProps) => {
 			}
 			return token
 		} catch (error) {
-			console.error('Failed to fetch CSRF token', error)
+			logError('Failed to fetch CSRF token', error)
 			return null
 		}
 	}
@@ -162,7 +163,7 @@ const AuthPadLock = ({ csrfToken, callbackUrl }: AuthPadLockProps) => {
 				message: 'パスワードの確認中にエラーが発生しました。',
 				details: error instanceof Error ? error.message : String(error),
 			})
-			console.error('Error during padlock authentication:', error)
+			logError('Error during padlock authentication', error)
 			setIsLoading(false)
 		}
 	}

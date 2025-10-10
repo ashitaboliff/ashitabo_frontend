@@ -18,6 +18,7 @@ import { StatusCode } from '@/types/responseTypes'
 import { createProfileAction } from '@/features/auth/actions'
 import { putProfileAction } from '@/features/auth/actions'
 import type { Profile } from '@/features/user/types'
+import { logError } from '@/utils/logger'
 
 export type ProfileFormMode = 'create' | 'edit'
 
@@ -114,7 +115,7 @@ export const useProfileForm = ({ mode, profile }: UseProfileFormOptions) => {
 					details: error instanceof Error ? error.message : String(error),
 				},
 			)
-			console.error('Profile submit error:', error)
+			logError('Profile submit error', error)
 		}
 	}
 

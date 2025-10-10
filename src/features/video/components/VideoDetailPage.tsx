@@ -8,6 +8,7 @@ import YouTube from 'react-youtube'
 import { liveOrBand, Playlist, Video } from '@/features/video/types'
 import Tags from '@/components/ui/atoms/Tags'
 import TagEditPopup from './TagEditPopup'
+import { useWindowOpen } from '@/hooks/useBrowserApis'
 
 import { HiOutlineExternalLink } from 'react-icons/hi'
 import type { Session } from '@/types/session'
@@ -22,6 +23,7 @@ type Props = {
 
 const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 	const router = useRouter()
+	const openWindow = useWindowOpen()
 
 	const currentPlaylist =
 		liveOrBand === 'band'
@@ -86,7 +88,7 @@ const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 							className="btn btn-secondary w-auto sm:w-44 mt-4 self-start"
 							onClick={() => {
 								if (videoId) {
-									window.open(
+									openWindow(
 										`https://www.youtube.com/watch?v=${videoId}`,
 										'_blank',
 									)
@@ -101,7 +103,7 @@ const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 						className="flex flex-col items-center gap-y-2 mt-6 p-3 border rounded-lg shadow-sm w-full max-w-xl md:max-w-2xl lg:max-w-3xl cursor-pointer hover:bg-base-200 transition"
 						onClick={() => {
 							if (currentPlaylist.playlistId) {
-								window.open(
+								openWindow(
 									`https://www.youtube.com/playlist?list=${currentPlaylist.playlistId}`,
 									'_blank',
 								)
@@ -197,7 +199,7 @@ const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 						<button
 							className="btn btn-secondary w-auto sm:w-44 mt-4 self-start"
 							onClick={() => {
-								window.open(
+								openWindow(
 									`https://www.youtube.com/playlist?list=${detail.playlistId}`,
 									'_blank',
 								)

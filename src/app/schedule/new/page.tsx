@@ -2,6 +2,7 @@ import { getUserIdWithNames } from '@/features/schedule/actions'
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
 import { createMetaData } from '@/hooks/useMetaData'
 import ScheduleCreatePage from '@/features/schedule/components/CreatePage'
+import { logError } from '@/utils/logger'
 
 export async function metadata() {
 	return createMetaData({
@@ -27,7 +28,7 @@ const Page = async () => {
 						{},
 					)
 				} else {
-					console.error('Failed to fetch mention users:', usersRes.message)
+					logError('Failed to fetch mention users', usersRes)
 				}
 
 				return (

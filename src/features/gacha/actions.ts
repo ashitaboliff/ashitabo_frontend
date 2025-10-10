@@ -7,6 +7,11 @@ import {
 } from '@/lib/api/helper'
 import { GachaData, GachaSort, RarityType } from '@/features/gacha/types'
 import { getImageUrl } from '@/lib/r2'
+import {
+	mapRawGacha,
+	mapRawGachaList,
+	type RawGachaData,
+} from '@/features/gacha/services/gachaTransforms'
 
 export const getGachaByUserIdAction = async ({
 	userId,
@@ -20,7 +25,7 @@ export const getGachaByUserIdAction = async ({
 	sort: GachaSort
 }): Promise<ApiResponse<{ gacha: GachaData[]; totalCount: number }>> => {
 	const res = await apiGet<{
-		gacha: GachaData[]
+		gacha: RawGachaData[]
 		totalCount: number
 	}>(`/gacha/users/${userId}`, {
 		searchParams: {
@@ -28,9 +33,7 @@ export const getGachaByUserIdAction = async ({
 			perPage,
 			sort,
 		},
-		...(typeof window === 'undefined'
-			? { next: { revalidate: 30, tags: ['gacha-user', userId] } }
-			: {}),
+		next: { revalidate: 30, tags: ['gacha-user', userId] },
 	})
 
 	if (!res.ok) {
@@ -38,7 +41,7 @@ export const getGachaByUserIdAction = async ({
 	}
 
 	return okResponse({
-		gacha: res.data?.gacha,
+		gacha: mapRawGachaList(res.data?.gacha),
 		totalCount: res.data?.totalCount ?? 0,
 	})
 }
@@ -51,15 +54,13 @@ export const getGachaByGachaSrcAction = async ({
 	gachaSrc: string
 }): Promise<ApiResponse<{ gacha: GachaData | null; totalCount: number }>> => {
 	const res = await apiGet<{
-		gacha: GachaData | null
+		gacha: RawGachaData | null
 		totalCount: number
 	}>(`/gacha/users/${userId}/by-src`, {
 		searchParams: {
 			gachaSrc,
 		},
-		...(typeof window === 'undefined'
-			? { next: { revalidate: 60, tags: ['gacha-user', userId, gachaSrc] } }
-			: {}),
+		next: { revalidate: 60, tags: ['gacha-user', userId, gachaSrc] },
 	})
 
 	if (!res.ok) {
@@ -67,7 +68,7 @@ export const getGachaByGachaSrcAction = async ({
 	}
 
 	return okResponse({
-		gacha: res.data?.gacha,
+		gacha: res.data?.gacha ? mapRawGacha(res.data.gacha) : null,
 		totalCount: res.data?.totalCount ?? 0,
 	})
 }
