@@ -1,11 +1,4 @@
-import type { Session } from '@/types/session'
 import { NextRequest, NextResponse } from 'next/server'
-import { API_BASE_URL, API_KEY } from '@/lib/env'
-import {
-	cleanSession,
-	makeAuthDetails,
-} from '@/features/auth/utils/sessionInfo'
-import type { AuthStatus } from '@/features/auth/types'
 
 export const config = {
 	matcher: [
@@ -48,41 +41,11 @@ const PUBLIC_ROUTES = [
 const AUTH_FLOW_ROUTES = ['/auth/padlock', '/auth/signin']
 
 class MiddlewareApp {
-	private static readonly SESSION_CACHE_TTL = Number(
-		process.env.MIDDLEWARE_SESSION_CACHE_MS ?? 5000,
-	)
-	private static sessionCache = new Map<
-		string,
-		{ value: Session | null; expires: number }
-	>()
-
 	private request: NextRequest
-	private isMaintenanceMode: boolean = process.env.MAINTENANCE_MODE === 'true'
-	private session: Session | null
-	private sessionPromise: Promise<Session | null> | null = null
-	private sessionState: AuthStatus | null = null
+	private isMaintenanceMode: boolean = process.env.MAINTENANCE_MODE
 
 	constructor(request: NextRequest) {
 		this.request = request
-		this.session = ((request as any)?.auth as Session | null) ?? null
-	}
-
-	private static readCachedSession(token: string) {
-		const cached = this.sessionCache.get(token)
-		if (!cached) return undefined
-		if (cached.expires < Date.now()) {
-			this.sessionCache.delete(token)
-			return undefined
-		}
-		return cached.value
-	}
-
-	private static writeCachedSession(token: string, session: Session | null) {
-		const ttl = Math.max(0, this.SESSION_CACHE_TTL)
-		this.sessionCache.set(token, {
-			value: session,
-			expires: Date.now() + ttl,
-		})
 	}
 
 	private matchesRoute(path: string, routePatterns: string[]): boolean {
@@ -107,80 +70,10 @@ class MiddlewareApp {
 		return index === -1 ? ip : ip.slice(index)
 	}
 
-	private async fetchSession(): Promise<Session | null> {
-		if (this.session) {
-			return this.session
-		}
-
-		if (this.sessionPromise) {
-			return this.sessionPromise
-		}
-
-		this.sessionPromise = (async () => {
-			try {
-				const authCookie =
-					this.request.cookies.get('authjs.session-token') ??
-					this.request.cookies.get('__Secure-authjs.session-token')
-				const sessionToken = authCookie?.value
-
-				if (!sessionToken) {
-					this.session = null
-					return null
-				}
-
-				const cachedSession = MiddlewareApp.readCachedSession(sessionToken)
-				if (cachedSession !== undefined) {
-					this.session = cachedSession
-					return cachedSession
-				}
-
-				const cookieName = authCookie?.name ?? 'authjs.session-token'
-				const response = await fetch(`${API_BASE_URL}/auth/session`, {
-					headers: {
-						Cookie: `${cookieName}=${sessionToken}`,
-						'X-API-Key': API_KEY,
-					},
-					cache: 'no-store',
-				})
-
-				if (!response.ok) {
-					this.session = null
-					MiddlewareApp.writeCachedSession(sessionToken, null)
-					return null
-				}
-
-				const rawSession = (await response.json()) as Session
-				const normalizedSession = cleanSession(rawSession)
-				this.session = normalizedSession
-				MiddlewareApp.writeCachedSession(sessionToken, normalizedSession)
-				return normalizedSession
-			} catch (error) {
-				console.error('Failed to get session state:', error)
-				this.session = null
-				return null
-			} finally {
-				this.sessionPromise = null
-			}
-		})()
-
-		return this.sessionPromise
-	}
-
-	private async getSessionState(): Promise<AuthStatus> {
-		if (this.sessionState) {
-			return this.sessionState
-		}
-
-		try {
-			const session = await this.fetchSession()
-			const details = makeAuthDetails(session)
-			this.sessionState = details.status
-			return this.sessionState
-		} catch (error) {
-			console.error('Failed to determine session state:', error)
-			this.sessionState = 'guest'
-			return this.sessionState
-		}
+	private hasAuthCookie(): boolean {
+		const c1 = this.request.cookies.get('authjs.session-token')?.value
+		const c2 = this.request.cookies.get('__Secure-authjs.session-token')?.value
+		return Boolean(c1 || c2)
 	}
 
 	public async run() {
@@ -188,12 +81,16 @@ class MiddlewareApp {
 
 		// メンテナンスモードの処理
 		if (this.isMaintenanceMode) {
-			if (pathname === '/maintenance' || pathname.startsWith('/_next')) {
+			// メンテナンスモード中のリクエスト処理
+			if (pathname !== '/maintenance' && !pathname.startsWith('/_next')) {
+				// ホワイトリストにIPアドレスが含まれていない場合、メンテナンスページへリダイレクト
+				const whitelistIPs = process.env.MAINTENANCE_WHITELIST?.split(',') ?? []
+				if (!whitelistIPs.includes(this.getSimpleIpAddress())) {
+					return this.redirect('/maintenance')
+				}
+			} else {
+				// Next.jsの内部リクエストとメンテナンスはそのまま通す
 				return NextResponse.next()
-			}
-			const whitelistIPs = process.env.MAINTENANCE_WHITELIST?.split(',') ?? []
-			if (!whitelistIPs.includes(this.getSimpleIpAddress())) {
-				return this.redirect('/maintenance')
 			}
 		} else {
 			if (pathname === '/maintenance') {
@@ -201,88 +98,39 @@ class MiddlewareApp {
 			}
 		}
 
-		// ルートパスは /home にリダイレクト
 		if (pathname === '/') {
 			return this.redirect('/home', 301)
 		}
 
-		// /auth は /auth/padlock にリダイレクト
 		if (pathname === '/auth') {
-			return this.redirect('/auth/padlock')
+			return this.redirect('/auth/padlock', 302)
 		}
 
-		// 認証フローのルートの処理
 		if (this.matchesRoute(pathname, AUTH_FLOW_ROUTES)) {
-			const sessionState = await this.getSessionState()
-			if (sessionState === 'signed-in') {
-				// プロフィール設定済みの場合は /user にリダイレクト
-				return this.redirect('/user')
-			}
-			if (sessionState === 'needs-profile') {
-				// セッションあり、プロフィール未設定の場合は /auth/signin/setting にリダイレクト
-				return this.redirect('/auth/signin/setting')
-			}
-			// no-session または invalid-session の場合はそのまま通す
-			return NextResponse.next()
-		}
-
-		// プロフィール設定ページの処理
-		if (pathname === '/auth/signin/setting') {
-			const sessionState = await this.getSessionState()
-			if (sessionState === 'guest' || sessionState === 'invalid') {
+			if (!this.hasAuthCookie()) {
 				return this.redirect('/auth/signin')
 			}
-			if (sessionState === 'signed-in') {
-				// 既にプロフィール設定済みの場合は /user にリダイレクト
-				return this.redirect('/user')
-			}
-			// session 状態の場合はアクセス許可
-			return NextResponse.next()
+			return this.redirect('/user')
 		}
 
-		// プロフィール必須ルートの処理
 		if (this.matchesRoute(pathname, PROFILE_REQUIRED_ROUTES)) {
-			const sessionState = await this.getSessionState()
-			if (sessionState === 'guest') {
+			if (!this.hasAuthCookie()) {
 				return this.redirect('/auth/signin')
 			}
-			if (sessionState === 'invalid') {
-				// ログを出力してからリダイレクト
-				console.warn('Redirecting to session-expired from middleware:', {
-					pathname,
-					sessionError: this.session?.error,
-					userId: this.session?.user?.id,
-					sessionState: sessionState,
-				})
-				return this.redirect('/auth/session-expired')
-			}
-			if (sessionState === 'needs-profile') {
-				// プロフィール未設定の場合は設定ページにリダイレクト
-				return this.redirect('/auth/signin/setting')
-			}
-			// profile 状態の場合はアクセス許可
 			return NextResponse.next()
 		}
 
-		// セッション必須ルートの処理
 		if (this.matchesRoute(pathname, SESSION_REQUIRED_ROUTES)) {
-			const sessionState = await this.getSessionState()
-			if (sessionState === 'guest') {
+			if (!this.hasAuthCookie()) {
 				return this.redirect('/auth/signin')
 			}
-			if (sessionState === 'invalid') {
-				return this.redirect('/auth/session-expired')
-			}
-			// session または profile 状態の場合はアクセス許可
 			return NextResponse.next()
 		}
 
-		// 公開ルートの場合はそのまま通す
 		if (this.matchesRoute(pathname, PUBLIC_ROUTES)) {
 			return NextResponse.next()
 		}
 
-		// その他のルートもそのまま通す（デフォルト）
 		return NextResponse.next()
 	}
 }

@@ -1,4 +1,4 @@
-const baseUrl = process.env.AUTH_URL || 'https://www.ashitabo.net'
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.ashitabo.net'
 
 export const createMetaData = ({
 	title,

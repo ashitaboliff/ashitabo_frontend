@@ -2,7 +2,7 @@
 
 import { apiGet, apiPost, apiPut } from '@/lib/api/crud'
 import type { Profile } from '@/features/user/types'
-import { ApiResponse, StatusCode } from '@/types/responseTypes'
+import { ApiResponse } from '@/types/responseTypes'
 import type { Session } from '@/types/session'
 import type { AuthDetails } from '@/features/auth/types'
 import { makeAuthDetails } from '@/features/auth/utils/sessionInfo'

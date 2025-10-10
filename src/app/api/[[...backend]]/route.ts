@@ -3,7 +3,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 const DEFAULT_BACKEND_BASE_URL = 'http://localhost:8787'
 
 const resolveBackendBaseUrl = () => {
-	const envValue = process.env.NEXT_PUBLIC_API_BASE_URL?.trim()
+	const envValue = process.env.API_URL?.trim()
 	if (envValue && envValue.length > 0) {
 		return envValue.endsWith('/') ? envValue.slice(0, -1) : envValue
 	}
@@ -23,7 +23,7 @@ const createProxyHeaders = (request: NextRequest) => {
 	headers.delete('accept-encoding')
 	headers.delete('content-length')
 
-	const apiKey = process.env.NEXT_PUBLIC_API_KEY?.trim()
+	const apiKey = process.env.API_KEY?.trim()
 	if (apiKey) {
 		headers.set('X-API-Key', apiKey)
 	}

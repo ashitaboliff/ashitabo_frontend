@@ -32,7 +32,7 @@ const SigninPage = () => {
 			<div className="text-sm text-base-content mt-4">
 				登録した場合は、{' '}
 				<a
-					href={`${process.env.AUTH_URL || 'http://localhost:3000'}/terms`}
+					href={`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/terms`}
 					target="_blank"
 					rel="noopener noreferrer"
 					className="text-info hover:underline"
@@ -41,7 +41,7 @@ const SigninPage = () => {
 				</a>{' '}
 				と{' '}
 				<a
-					href={`${process.env.AUTH_URL || 'http://localhost:3000'}/privacy`}
+					href={`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/privacy`}
 					target="_blank"
 					rel="noopener noreferrer"
 					className="text-info hover:underline"

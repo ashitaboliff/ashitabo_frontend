@@ -1,5 +1,3 @@
-'use server'
-
 import Image from 'next/image'
 
 const list = [
@@ -52,7 +50,7 @@ const Carousel = () => {
 						width={900}
 						height={675}
 						className="object-cover w-full h-auto"
-						priority
+						priority={index === 0}
 					/>
 					<div className="absolute left-2 right-2 top-1/2 flex -translate-y-1/2 transform justify-between">
 						<a

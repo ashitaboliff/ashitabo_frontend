@@ -45,7 +45,7 @@ const Page = async ({ params }: PageProps) => {
 		notFound()
 	}
 	return (
-		<AuthPage>
+		<AuthPage requireProfile={true}>
 			{async (authResult) => {
 				if (!authResult.session) {
 					notFound()

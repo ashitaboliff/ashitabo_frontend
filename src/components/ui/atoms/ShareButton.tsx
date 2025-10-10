@@ -21,7 +21,7 @@ const ShareButton = ({
 	const handleShare = async () => {
 		if (isOnlyLine) {
 			const baseUrl =
-				process.env.NEXT_PUBLIC_AUTH_URL || 'https://www.ashitabo.net'
+				process.env.NEXT_PUBLIC_APP_URL || 'https://www.ashitabo.net'
 			const shareUrl = `https://social-plugins.line.me/lineit/share?url=${baseUrl}${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`
 			window.open(shareUrl, '_blank')
 		} else {

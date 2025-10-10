@@ -28,7 +28,7 @@ export const getBookingByDateAction = async ({
 			start: startDate,
 			end: endDate,
 		},
-		next: { revalidate: 10, tags: ['booking-calendar'] }
+		next: { revalidate: 10, tags: ['booking-calendar'] },
 	})
 
 	if (!res.ok) {

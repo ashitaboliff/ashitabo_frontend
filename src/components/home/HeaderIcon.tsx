@@ -10,7 +10,6 @@ const HeaderIcon = () => {
 	const { data: session } = useSession()
 
 	return (
-		// <div className="w-10 h-10 skeleton rounded-full"></div>
 		<Link href="/user" className="btn btn-square btn-ghost text-3xl">
 			{session?.user?.image ? (
 				<Image
