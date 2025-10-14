@@ -9,7 +9,7 @@ import { ja } from 'date-fns/locale'
 import TextInputField from '@/components/ui/atoms/TextInputField'
 import TextareaInputField from '@/components/ui/atoms/TextareaInputField'
 import CustomDatePicker from '@/components/ui/atoms/DatePicker'
-import SelectField from '@/components/ui/atoms/SelectField'
+import MultiSelectField from '@/components/ui/molecules/MultiSelectField'
 import ShareButton from '@/components/ui/atoms/ShareButton'
 import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import { createScheduleAction } from '../actions'
@@ -200,11 +200,10 @@ const ScheduleCreatePage = ({
 					</label>
 					<p className="text-sm">特定の部員とだけの予定を作成できます。</p>
 					{isMentionChecked && (
-						<SelectField
+						<MultiSelectField
 							name="mention"
 							label="メンション"
 							options={mentionOptions}
-							isMultiple
 							setValue={setValue}
 							watchValue={mentionSelection}
 							errorMessage={errors.mention?.message}

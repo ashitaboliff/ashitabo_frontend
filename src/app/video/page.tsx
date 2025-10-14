@@ -60,8 +60,8 @@ const Page = async ({ searchParams: params }: VideoPageProps) => {
 
 	if (res.ok) {
 		initialYoutubeDetails = res.data.results
-	initialPageMax =
-		Math.ceil(res.data.totalCount / currentQuery.videoPerPage) || 1
+		initialPageMax =
+			Math.ceil(res.data.totalCount / currentQuery.videoPerPage) || 1
 	} else {
 		initialError = res
 		logError('Failed to fetch youtube details', res)

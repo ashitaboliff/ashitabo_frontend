@@ -4,6 +4,7 @@ import { useRouter } from 'next-nprogress-bar'
 import TextInputField from '@/components/ui/atoms/TextInputField'
 import SelectField from '@/components/ui/atoms/SelectField'
 import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
+import MultiSelectField from '@/components/ui/molecules/MultiSelectField'
 import AuthLoadingIndicator from './AuthLoadingIndicator'
 import { useProfileForm } from '@/features/user/hooks/useProfileForm'
 import { PartOptions } from '@/features/user/types'
@@ -91,12 +92,11 @@ const SigninSetting = () => {
 					<span className="text-xs text-error">{errors.role.message}</span>
 				)}
 
-				<SelectField
+				<MultiSelectField
 					name="part"
 					register={register('part')}
 					options={PartOptions}
 					label="使用楽器(複数選択可)"
-					isMultiple
 					setValue={setValue}
 					watchValue={selectedParts}
 					infoDropdown={

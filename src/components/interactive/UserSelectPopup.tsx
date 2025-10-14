@@ -42,35 +42,40 @@ const UserSelectPopupComponent = ({
 		fetchUsers()
 	}, [])
 
-	const handleSearch = useCallback((query: string) => {
-		setSearchQuery(query)
-		const filteredUsers = allUsers.filter(
-			(user) =>
-				user.name?.toLowerCase().includes(query.toLowerCase()) ||
-				user.profile?.name?.toLowerCase().includes(query.toLowerCase()) ||
-				user.profile?.part?.some((part) =>
-					PartMap[part as Part]?.toLowerCase().includes(query.toLowerCase()),
-				),
-		)
-		setUsers(filteredUsers)
-	}, [allUsers])
+	const handleSearch = useCallback(
+		(query: string) => {
+			setSearchQuery(query)
+			const filteredUsers = allUsers.filter(
+				(user) =>
+					user.name?.toLowerCase().includes(query.toLowerCase()) ||
+					user.profile?.name?.toLowerCase().includes(query.toLowerCase()) ||
+					user.profile?.part?.some((part) =>
+						PartMap[part as Part]?.toLowerCase().includes(query.toLowerCase()),
+					),
+			)
+			setUsers(filteredUsers)
+		},
+		[allUsers],
+	)
 
 	const handleUserSelect = useCallback(
 		(userId: string) => {
-		if (singleSelect) {
-			// 単一選択モード
-			const newSelectedUsers = [userId]
-			setSelectedUsers(newSelectedUsers)
-			onUserSelect(newSelectedUsers)
-			onClose()
-		} else {
-			// 複数選択モード
-			const newSelectedUsers = selectedUsers.includes(userId)
-				? selectedUsers.filter((id) => id !== userId)
-				: [...selectedUsers, userId]
-			setSelectedUsers(newSelectedUsers)
-		}
-	}, [onClose, onUserSelect, selectedUsers, singleSelect])
+			if (singleSelect) {
+				// 単一選択モード
+				const newSelectedUsers = [userId]
+				setSelectedUsers(newSelectedUsers)
+				onUserSelect(newSelectedUsers)
+				onClose()
+			} else {
+				// 複数選択モード
+				const newSelectedUsers = selectedUsers.includes(userId)
+					? selectedUsers.filter((id) => id !== userId)
+					: [...selectedUsers, userId]
+				setSelectedUsers(newSelectedUsers)
+			}
+		},
+		[onClose, onUserSelect, selectedUsers, singleSelect],
+	)
 
 	const handleConfirm = useCallback(() => {
 		onUserSelect(selectedUsers)

@@ -21,8 +21,9 @@ export const mapRawPadLock = (raw: RawPadLock): PadLock => ({
 	isDeleted: Boolean(raw.isDeleted),
 })
 
-export const mapRawPadLocks = (raw: RawPadLock[] | null | undefined): PadLock[] =>
-	raw ? raw.map(mapRawPadLock) : []
+export const mapRawPadLocks = (
+	raw: RawPadLock[] | null | undefined,
+): PadLock[] => (raw ? raw.map(mapRawPadLock) : [])
 
 export interface RawUserDetail {
 	id: string

@@ -7,11 +7,25 @@ describe('createPaginationItems', () => {
 	})
 
 	it('includes ellipsis when there is a gap at the beginning', () => {
-		expect(createPaginationItems(5, 10)).toEqual([1, 'ellipsis-left', 4, 5, 6, 'ellipsis-right', 10])
+		expect(createPaginationItems(5, 10)).toEqual([
+			1,
+			'ellipsis-left',
+			4,
+			5,
+			6,
+			'ellipsis-right',
+			10,
+		])
 	})
 
 	it('includes ellipsis when there is a gap at the end', () => {
-		expect(createPaginationItems(2, 10)).toEqual([1, 2, 3, 'ellipsis-right', 10])
+		expect(createPaginationItems(2, 10)).toEqual([
+			1,
+			2,
+			3,
+			'ellipsis-right',
+			10,
+		])
 	})
 
 	it('handles current page near the end', () => {
@@ -19,6 +33,14 @@ describe('createPaginationItems', () => {
 	})
 
 	it('handles current page in the middle', () => {
-		expect(createPaginationItems(6, 12)).toEqual([1, 'ellipsis-left', 5, 6, 7, 'ellipsis-right', 12])
+		expect(createPaginationItems(6, 12)).toEqual([
+			1,
+			'ellipsis-left',
+			5,
+			6,
+			7,
+			'ellipsis-right',
+			12,
+		])
 	})
 })

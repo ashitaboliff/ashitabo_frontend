@@ -1,13 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import * as zod from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
 import TextInputField from '@/components/ui/atoms/TextInputField'
 import TextareaInputField from '@/components/ui/atoms/TextareaInputField'
-import SelectField from '@/components/ui/atoms/SelectField'
+import MultiSelectField from '@/components/ui/molecules/MultiSelectField'
 import Popup from '@/components/ui/molecules/Popup'
 import { PartOptions, Part } from '@/features/user/types'
 import { logError } from '@/utils/logger'
@@ -58,6 +58,10 @@ const MemberRecruitmentForm = () => {
 
 	const part = watch('part')
 
+	useEffect(() => {
+		register('part')
+	}, [register])
+
 	const onSubmit: SubmitHandler<MemberRecruitmentFormValues> = async (data) => {
 		setLoading(true)
 		setError(null)
@@ -89,15 +93,14 @@ const MemberRecruitmentForm = () => {
 					{...register('bandName')}
 					errorMessage={errors.bandName?.message}
 				/>
-				<SelectField
+				<MultiSelectField
+					name="part"
 					label="募集パート"
 					labelId="part-select"
 					options={PartOptions}
-					{...register('part')}
 					watchValue={part as Part[]}
 					setValue={setValue}
 					errorMessage={errors.part?.message}
-					isMultiple
 				/>
 				<TextareaInputField
 					label="説明"

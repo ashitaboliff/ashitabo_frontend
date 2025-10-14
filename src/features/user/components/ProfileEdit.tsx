@@ -4,6 +4,7 @@ import TextInputField from '@/components/ui/atoms/TextInputField'
 import SelectField from '@/components/ui/atoms/SelectField'
 import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import Loading from '@/components/ui/atoms/Loading'
+import MultiSelectField from '@/components/ui/molecules/MultiSelectField'
 import { useProfileForm } from '@/features/user/hooks/useProfileForm'
 import { PartOptions, Profile } from '@/features/user/types'
 import { expectedYearMap } from '@/features/user/schemas/profileSchema'
@@ -66,12 +67,10 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 					<span className="text-xs text-error">{errors.role.message}</span>
 				)}
 
-				<SelectField
+				<MultiSelectField
 					name="part"
-					register={register('part')}
 					options={PartOptions}
 					label="使用楽器(複数選択可)"
-					isMultiple
 					setValue={setValue}
 					watchValue={selectedParts}
 					infoDropdown={

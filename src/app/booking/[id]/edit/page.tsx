@@ -89,7 +89,10 @@ const Page = async ({ params, searchParams }: PageProps) => {
 				if (calendarBookingRes.ok) {
 					initialBookingResponse = calendarBookingRes.data
 				} else {
-					logError('Failed to get calendar booking data for edit page', calendarBookingRes)
+					logError(
+						'Failed to get calendar booking data for edit page',
+						calendarBookingRes,
+					)
 				}
 
 				return (

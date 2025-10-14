@@ -40,7 +40,11 @@ export const getBookingByDateAction = async ({
 		next: { revalidate: 10, tags: ['booking-calendar'] },
 	})
 
-	return mapSuccess(res, mapRawBookingResponse, '予約一覧の取得に失敗しました。')
+	return mapSuccess(
+		res,
+		mapRawBookingResponse,
+		'予約一覧の取得に失敗しました。',
+	)
 }
 
 export const getAllBookingAction = async (): Promise<

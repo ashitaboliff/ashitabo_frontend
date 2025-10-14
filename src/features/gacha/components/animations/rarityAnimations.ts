@@ -61,21 +61,9 @@ const animateRare: RarityAnimation = ({ timeline, card }) => {
 
 const animateSuperRare: RarityAnimation = ({ timeline, card }) => {
 	timeline
-		.to(
-			card,
-			{ x: '-=5', yoyo: true, repeat: 5, duration: 0.05 },
-			'>',
-		)
-		.to(
-			card,
-			{ x: '+=5', yoyo: true, repeat: 5, duration: 0.05 },
-			'<',
-		)
-		.to(
-			card,
-			{ rotationY: 360, duration: 1, ease: 'power3.inOut' },
-			'+=0.1',
-		)
+		.to(card, { x: '-=5', yoyo: true, repeat: 5, duration: 0.05 }, '>')
+		.to(card, { x: '+=5', yoyo: true, repeat: 5, duration: 0.05 }, '<')
+		.to(card, { rotationY: 360, duration: 1, ease: 'power3.inOut' }, '+=0.1')
 		.fromTo(
 			card.querySelectorAll<HTMLDivElement>('.backface-hidden'),
 			{
@@ -95,21 +83,9 @@ const animateSuperRare: RarityAnimation = ({ timeline, card }) => {
 
 const animateSSR: RarityAnimation = ({ timeline, card, effectsContainer }) => {
 	timeline
-		.to(
-			card,
-			{ scale: 1.1, duration: 0.2, ease: 'power1.in' },
-			'>',
-		)
-		.to(
-			card,
-			{ x: '-=8', yoyo: true, repeat: 7, duration: 0.04 },
-			'<0.1',
-		)
-		.to(
-			card,
-			{ x: '+=8', yoyo: true, repeat: 7, duration: 0.04 },
-			'<',
-		)
+		.to(card, { scale: 1.1, duration: 0.2, ease: 'power1.in' }, '>')
+		.to(card, { x: '-=8', yoyo: true, repeat: 7, duration: 0.04 }, '<0.1')
+		.to(card, { x: '+=8', yoyo: true, repeat: 7, duration: 0.04 }, '<')
 		.to(
 			card,
 			{
@@ -162,11 +138,7 @@ const animateUltraRare: RarityAnimation = ({
 		{ scale: 0.9, duration: 2, opacity: 1, ease: 'elastic.out(1,0.2)' },
 	)
 	timeline
-		.to(
-			card,
-			{ rotationY: 1080, duration: 2, ease: 'expo.inOut' },
-			'-=1.2',
-		)
+		.to(card, { rotationY: 1080, duration: 2, ease: 'expo.inOut' }, '-=1.2')
 		.to(
 			card,
 			{

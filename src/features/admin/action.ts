@@ -26,7 +26,11 @@ export const getAllPadLocksAction = async (): Promise<
 		next: { revalidate: 120, tags: ['admin-padlocks'] },
 	})
 
-	return mapSuccess(res, mapRawPadLocks, '部室パスワード一覧の取得に失敗しました')
+	return mapSuccess(
+		res,
+		mapRawPadLocks,
+		'部室パスワード一覧の取得に失敗しました',
+	)
 }
 
 export const getAllUserDetailsAction = async ({

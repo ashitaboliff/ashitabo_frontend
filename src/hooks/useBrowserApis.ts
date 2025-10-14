@@ -2,7 +2,11 @@
 
 import { useCallback } from 'react'
 
-export type WindowOpenFn = (url: string, target?: string, features?: string) => Window | null
+export type WindowOpenFn = (
+	url: string,
+	target?: string,
+	features?: string,
+) => Window | null
 
 export const useWindowOpen = (): WindowOpenFn =>
 	useCallback((url: string, target?: string, features?: string) => {
@@ -16,7 +20,10 @@ export type ShareFn = (data: ShareData) => Promise<void>
 
 export const useNavigatorShare = (): ShareFn =>
 	useCallback(async (data: ShareData) => {
-		if (typeof navigator === 'undefined' || typeof navigator.share !== 'function') {
+		if (
+			typeof navigator === 'undefined' ||
+			typeof navigator.share !== 'function'
+		) {
 			throw new Error('This browser does not support navigator.share')
 		}
 		await navigator.share(data)

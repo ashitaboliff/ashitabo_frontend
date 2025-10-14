@@ -1,11 +1,11 @@
 'use client'
 
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import * as zod from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import TextInputField from '@/components/ui/atoms/TextInputField'
-import SelectField from '@/components/ui/atoms/SelectField'
+import MultiSelectField from '@/components/ui/molecules/MultiSelectField'
 import Popup from '@/components/ui/molecules/Popup'
 import UserSelectPopup from '@/components/interactive/UserSelectPopup'
 import { PartOptions, Part } from '@/features/user/types'
@@ -44,6 +44,8 @@ const BandAddForm = () => {
 		register,
 		handleSubmit,
 		formState: { errors },
+		setValue,
+		watch,
 	} = useForm<BandAddFormValues>({
 		resolver: zodResolver(bandAddFormSchema),
 		defaultValues: {
@@ -52,6 +54,12 @@ const BandAddForm = () => {
 			description: '',
 		},
 	})
+
+	const watchedParts = watch('part') ?? []
+
+	useEffect(() => {
+		register('part')
+	}, [register])
 
 	const handleUserSelect = useCallback((userIds: string[]) => {
 		setSelectedUsers(userIds)
@@ -81,11 +89,12 @@ const BandAddForm = () => {
 				{...register('bandName')}
 				errorMessage={errors.bandName?.message}
 			/>
-			<SelectField
+			<MultiSelectField
+				name="part"
 				label="パート"
 				options={PartOptions}
-				isMultiple
-				{...register('part')}
+				setValue={setValue}
+				watchValue={watchedParts}
 				errorMessage={errors.part?.message}
 			/>
 			<TextInputField

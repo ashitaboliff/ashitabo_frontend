@@ -66,11 +66,7 @@ export const CardAnimation = ({
 			const timeline = gsap.timeline()
 
 			if (rarity !== 'SECRET_RARE') {
-				timeline.to(
-					cardElement,
-					{ opacity: 1, duration: 0.5 },
-					initialDelay,
-				)
+				timeline.to(cardElement, { opacity: 1, duration: 0.5 }, initialDelay)
 			}
 
 			const animationContext: AnimationContext = {

@@ -76,8 +76,13 @@ const Popup = ({
 			aria-labelledby={titleId}
 			aria-hidden={!open}
 		>
-			<div className={`modal-box bg-base-100 relative mx-auto ${maxWidth ? `max-w-${maxWidth}` : 'max-w-lg'} ${noPadding ? 'paddingless' : ''} ${className ?? ''}`}>
-				<h2 id={titleId} className={`text-center mb-4 text-xl font-bold ${noPadding ? 'pt-6' : ''}`}>
+			<div
+				className={`modal-box bg-base-100 relative mx-auto ${maxWidth ? `max-w-${maxWidth}` : 'max-w-lg'} ${noPadding ? 'paddingless' : ''} ${className ?? ''}`}
+			>
+				<h2
+					id={titleId}
+					className={`text-center mb-4 text-xl font-bold ${noPadding ? 'pt-6' : ''}`}
+				>
 					{title}
 				</h2>
 				{isCloseButton && (

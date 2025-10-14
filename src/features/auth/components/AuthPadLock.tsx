@@ -201,14 +201,14 @@ const AuthPadLock = ({ csrfToken, callbackUrl }: AuthPadLockProps) => {
 							<input
 								type="tel"
 								{...register('digit1')}
-								className="input input-bordered w-16 h-16 text-center text-2xl"
+								className="input w-16 h-16 text-center text-2xl"
 								maxLength={1}
 								onChange={(e) => handleChange(e, 'digit2')}
 							/>
 							<input
 								type="tel"
 								{...register('digit2')}
-								className="input input-bordered w-16 h-16 text-center text-2xl"
+								className="input w-16 h-16 text-center text-2xl"
 								maxLength={1}
 								onChange={(e) => handleChange(e, 'digit3')}
 								onKeyDown={(e) => handleKeyDown(e, 'digit1')}
@@ -216,7 +216,7 @@ const AuthPadLock = ({ csrfToken, callbackUrl }: AuthPadLockProps) => {
 							<input
 								type="tel"
 								{...register('digit3')}
-								className="input input-bordered w-16 h-16 text-center text-2xl"
+								className="input w-16 h-16 text-center text-2xl"
 								maxLength={1}
 								onChange={(e) => handleChange(e, 'digit4')}
 								onKeyDown={(e) => handleKeyDown(e, 'digit2')}
@@ -224,7 +224,7 @@ const AuthPadLock = ({ csrfToken, callbackUrl }: AuthPadLockProps) => {
 							<input
 								type="tel"
 								{...register('digit4')}
-								className="input input-bordered w-16 h-16 text-center text-2xl"
+								className="input w-16 h-16 text-center text-2xl"
 								maxLength={1}
 								onKeyDown={(e) => handleKeyDown(e, 'digit3')}
 							/>

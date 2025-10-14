@@ -3,7 +3,11 @@
 import { useCallback, useMemo } from 'react'
 import { IoShareSocialSharp } from 'react-icons/io5'
 import { CiShare1 } from 'react-icons/ci'
-import { useNavigatorShare, useWindowAlert, useWindowOpen } from '@/hooks/useBrowserApis'
+import {
+	useNavigatorShare,
+	useWindowAlert,
+	useWindowOpen,
+} from '@/hooks/useBrowserApis'
 import { FRONTEND_ORIGIN } from '@/lib/env'
 
 type ShareButtonProps = {
@@ -44,7 +48,9 @@ const ShareButton = ({
 		if (isOnlyLine) {
 			const result = openWindow(lineShareUrl, '_blank', 'noopener')
 			if (!result) {
-				alertUser('別タブで共有画面を開けませんでした。ポップアップのブロックを確認してください。')
+				alertUser(
+					'別タブで共有画面を開けませんでした。ポップアップのブロックを確認してください。',
+				)
 			}
 			return
 		}
@@ -54,10 +60,19 @@ const ShareButton = ({
 		} catch (error) {
 			const fallbackWindow = openWindow(lineShareUrl, '_blank', 'noopener')
 			if (!fallbackWindow) {
-				alertUser('このブラウザは共有機能に対応していません。LINE共有リンクを開けませんでした。')
+				alertUser(
+					'このブラウザは共有機能に対応していません。LINE共有リンクを開けませんでした。',
+				)
 			}
 		}
-	}, [alertUser, isOnlyLine, lineShareUrl, navigatorShare, openWindow, shareData])
+	}, [
+		alertUser,
+		isOnlyLine,
+		lineShareUrl,
+		navigatorShare,
+		openWindow,
+		shareData,
+	])
 
 	const buttonClassName =
 		className ||

@@ -44,7 +44,7 @@ const LogsPage = ({
 							}}
 							options={{ '10件': 10, '20件': 20, '50件': 50, '100件': 100 }}
 							name="logsPerPage"
-							className="select select-bordered select-sm w-full xs:w-auto"
+							className="select-sm w-full xs:w-auto"
 						/>
 					</div>
 				</div>

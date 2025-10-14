@@ -77,7 +77,7 @@ const BanBookingSchema = zod
 				message: '曜日を選択してください',
 			})
 		}
-})
+	})
 type BanBookingFormInput = zod.input<typeof BanBookingSchema>
 type BanBookingFormValues = zod.output<typeof BanBookingSchema>
 

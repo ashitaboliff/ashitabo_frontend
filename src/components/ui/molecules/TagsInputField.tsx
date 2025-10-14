@@ -147,7 +147,7 @@ const TagInputField = ({
 									onChange={handleInputChange}
 									onKeyDown={handleKeyDownController}
 									placeholder={placeholder}
-									className="input input-bordered flex-grow bg-white text-sm sm:text-base min-w-[150px]"
+									className="input flex-grow bg-white text-sm sm:text-base min-w-[150px]"
 									onBlur={() => {
 										// 入力値がある場合のみタグを追加
 										if (inputValue.trim()) {
@@ -195,7 +195,7 @@ const TagInputField = ({
 							}
 						}}
 						placeholder={placeholder}
-						className="input input-bordered flex-grow bg-white text-sm sm:text-base min-w-[150px]"
+						className="input flex-grow bg-white text-sm sm:text-base min-w-[150px]"
 						onBlur={() => {
 							if (inputValue.trim()) {
 								addTagInternal(inputValue, tags, onChange)

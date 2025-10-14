@@ -39,7 +39,9 @@ const BookingCalendarComponent = ({
 		[bookingDate],
 	)
 
-	return <CalendarFrame dates={dateList} times={timeList} renderCell={renderCell} />
+	return (
+		<CalendarFrame dates={dateList} times={timeList} renderCell={renderCell} />
+	)
 }
 
 BookingCalendarComponent.displayName = 'BookingCalendar'

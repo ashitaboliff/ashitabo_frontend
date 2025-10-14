@@ -35,7 +35,7 @@ const PasswordInputField = ({
 				<input
 					id={labelId}
 					{...register}
-					className={`input input-bordered w-full pr-10 bg-white ${className}`}
+					className={`input w-full pr-10 bg-white ${className}`}
 					type={showPassword ? 'text' : 'password'}
 					placeholder="パスワード"
 					autoComplete="off"
