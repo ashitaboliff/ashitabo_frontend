@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import Image from 'next/image'
 import useSWR from 'swr'
 import { GachaSort, GachaData } from '@/features/gacha/types'
@@ -13,6 +14,7 @@ interface GachaLogListProps {
 	sort: GachaSort
 	onGachaItemClick: (gachaSrc: string) => void
 	onDataLoaded: (totalCount: number) => void
+	initialData?: { gacha: GachaData[]; totalCount: number }
 }
 
 const fetchGachas = async ([userId, page, perPage, sort]: [
@@ -39,13 +41,15 @@ const GachaLogList = ({
 	sort,
 	onGachaItemClick,
 	onDataLoaded,
+	initialData,
 }: GachaLogListProps) => {
 	const swrKey = userId ? [userId, currentPage, logsPerPage, sort] : null
 	const { data, error, isLoading } = useSWR(swrKey, fetchGachas, {
-		revalidateOnFocus: true,
-		revalidateIfStale: true,
-		revalidateOnReconnect: true,
+		fallbackData: currentPage === 1 ? initialData : undefined,
+		revalidateOnFocus: false,
+		revalidateOnReconnect: false,
 		revalidateOnMount: true,
+		revalidateIfStale: false,
 		shouldRetryOnError: false,
 		onSuccess: (fetchedData) => {
 			if (fetchedData) {
@@ -53,6 +57,12 @@ const GachaLogList = ({
 			}
 		},
 	})
+
+	useEffect(() => {
+		if (initialData && currentPage === 1) {
+			onDataLoaded(initialData.totalCount)
+		}
+	}, [currentPage, initialData, onDataLoaded])
 
 	const displayGachaData = data?.gacha
 

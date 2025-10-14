@@ -146,19 +146,9 @@ const CalendarFrameComponent = ({
 
 								const fallbackKey = `calendar-cell-${date}-${timeIndex}`
 
+								// 基本React要素が返ってきた場合はそのまま描画する
 								if (React.isValidElement(rawCell)) {
-									if (rawCell.type === 'td') {
-										return rawCell
-									}
-									const descriptor = normalizeCalendarCell(
-										{ children: rawCell },
-										fallbackKey,
-									)
-									return (
-										<td key={descriptor.key} {...descriptor.props}>
-											{descriptor.content}
-										</td>
-									)
+									return rawCell
 								}
 
 								const descriptor = normalizeCalendarCell(rawCell, fallbackKey)

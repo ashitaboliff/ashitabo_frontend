@@ -6,7 +6,6 @@ export const config = {
 	],
 }
 
-// 認証が必要なルート（プロフィール設定完了が必要）
 const PROFILE_REQUIRED_ROUTES = [
 	'/user',
 	'/admin',
@@ -16,10 +15,8 @@ const PROFILE_REQUIRED_ROUTES = [
 	'/schedule/[^/]+/edit',
 ]
 
-// セッションが必要だがプロフィール未設定でもアクセス可能なルート
 const SESSION_REQUIRED_ROUTES = ['/auth/signin/setting']
 
-// 完全に公開されているルート
 const PUBLIC_ROUTES = [
 	'/',
 	'/home',
@@ -37,105 +34,144 @@ const PUBLIC_ROUTES = [
 	'/not-found',
 ]
 
-// 認証フローのルート（ログイン済みの場合は適切な場所にリダイレクト）
 const AUTH_FLOW_ROUTES = ['/auth/padlock', '/auth/signin']
 
-class MiddlewareApp {
-	private request: NextRequest
-	private isMaintenanceMode: boolean = process.env.MAINTENANCE_MODE
+const AUTH_COOKIE_NAMES = [
+	'authjs.session-token',
+	'__Secure-authjs.session-token',
+]
 
-	constructor(request: NextRequest) {
-		this.request = request
+export const matchesRoute = (pathname: string, patterns: string[]): boolean =>
+	patterns.some((pattern) => new RegExp(`^${pattern}$`).test(pathname))
+
+export const extractClientIp = (
+	xForwardedFor: string | null,
+	fallback: string,
+): string => {
+	if (!xForwardedFor) return fallback
+	const [first] = xForwardedFor.split(',')
+	return first?.trim() || fallback
+}
+
+export const simplifyIpAddress = (ip: string): string => {
+	const index = ip.search(/[0-9]/)
+	return index === -1 ? ip : ip.slice(index)
+}
+
+export const hasAuthCookie = (request: NextRequest): boolean =>
+	AUTH_COOKIE_NAMES.some((name) => Boolean(request.cookies.get(name)?.value))
+
+const redirect = (request: NextRequest, path: string, status = 302) =>
+	NextResponse.redirect(new URL(path, request.url), { status })
+
+const handleMaintenance = (
+	request: NextRequest,
+	options: { maintenanceMode: boolean; whitelist: string[] },
+): NextResponse | null => {
+	const { maintenanceMode, whitelist } = options
+	const { pathname } = request.nextUrl
+
+	if (!maintenanceMode) {
+		if (pathname === '/maintenance') {
+			return redirect(request, '/home')
+		}
+		return null
 	}
 
-	private matchesRoute(path: string, routePatterns: string[]): boolean {
-		return routePatterns.some((pattern) => {
-			const regex = new RegExp(`^${pattern}$`)
-			return regex.test(path)
-		})
-	}
-
-	private redirect(path: string, status = 302) {
-		return NextResponse.redirect(new URL(path, this.request.url), { status })
-	}
-
-	private getIpAddress() {
-		const xff = this.request.headers.get('x-forwarded-for')
-		return xff ? (Array.isArray(xff) ? xff[0] : xff.split(',')[0]) : '127.0.0.1'
-	}
-
-	private getSimpleIpAddress() {
-		const ip = this.getIpAddress()
-		const index = ip.search(/[0-9]/)
-		return index === -1 ? ip : ip.slice(index)
-	}
-
-	private hasAuthCookie(): boolean {
-		const c1 = this.request.cookies.get('authjs.session-token')?.value
-		const c2 = this.request.cookies.get('__Secure-authjs.session-token')?.value
-		return Boolean(c1 || c2)
-	}
-
-	public async run() {
-		const { pathname } = this.request.nextUrl
-
-		// メンテナンスモードの処理
-		if (this.isMaintenanceMode) {
-			// メンテナンスモード中のリクエスト処理
-			if (pathname !== '/maintenance' && !pathname.startsWith('/_next')) {
-				// ホワイトリストにIPアドレスが含まれていない場合、メンテナンスページへリダイレクト
-				const whitelistIPs = process.env.MAINTENANCE_WHITELIST?.split(',') ?? []
-				if (!whitelistIPs.includes(this.getSimpleIpAddress())) {
-					return this.redirect('/maintenance')
-				}
-			} else {
-				// Next.jsの内部リクエストとメンテナンスはそのまま通す
-				return NextResponse.next()
-			}
-		} else {
-			if (pathname === '/maintenance') {
-				return this.redirect('/home')
-			}
-		}
-
-		if (pathname === '/') {
-			return this.redirect('/home', 301)
-		}
-
-		if (pathname === '/auth') {
-			return this.redirect('/auth/padlock', 302)
-		}
-
-		if (this.matchesRoute(pathname, AUTH_FLOW_ROUTES)) {
-			if (!this.hasAuthCookie()) {
-				return this.redirect('/auth/signin')
-			}
-			return this.redirect('/user')
-		}
-
-		if (this.matchesRoute(pathname, PROFILE_REQUIRED_ROUTES)) {
-			if (!this.hasAuthCookie()) {
-				return this.redirect('/auth/signin')
-			}
-			return NextResponse.next()
-		}
-
-		if (this.matchesRoute(pathname, SESSION_REQUIRED_ROUTES)) {
-			if (!this.hasAuthCookie()) {
-				return this.redirect('/auth/signin')
-			}
-			return NextResponse.next()
-		}
-
-		if (this.matchesRoute(pathname, PUBLIC_ROUTES)) {
-			return NextResponse.next()
-		}
-
+	if (pathname === '/maintenance' || pathname.startsWith('/_next')) {
 		return NextResponse.next()
 	}
+
+	const ip = extractClientIp(
+		request.headers.get('x-forwarded-for'),
+		'127.0.0.1',
+	)
+	const simplifiedIp = simplifyIpAddress(ip)
+
+	if (!whitelist.includes(simplifiedIp)) {
+		return redirect(request, '/maintenance')
+	}
+
+	return null
+}
+
+const handleRootRedirects = (request: NextRequest): NextResponse | null => {
+	const { pathname } = request.nextUrl
+
+	if (pathname === '/') {
+		return redirect(request, '/home', 301)
+	}
+
+	if (pathname === '/auth') {
+		return redirect(request, '/auth/padlock')
+	}
+
+	return null
+}
+
+const handleAuthFlow = (request: NextRequest): NextResponse | null => {
+	const { pathname } = request.nextUrl
+
+	if (!matchesRoute(pathname, AUTH_FLOW_ROUTES)) {
+		return null
+	}
+
+	if (!hasAuthCookie(request)) {
+		return redirect(request, '/auth/signin')
+	}
+
+	return redirect(request, '/user')
+}
+
+const handleProtectedRoutes = (request: NextRequest): NextResponse | null => {
+	const { pathname } = request.nextUrl
+
+	if (matchesRoute(pathname, PROFILE_REQUIRED_ROUTES)) {
+		if (!hasAuthCookie(request)) {
+			return redirect(request, '/auth/signin')
+		}
+		return NextResponse.next()
+	}
+
+	if (matchesRoute(pathname, SESSION_REQUIRED_ROUTES)) {
+		if (!hasAuthCookie(request)) {
+			return redirect(request, '/auth/signin')
+		}
+		return NextResponse.next()
+	}
+
+	return null
+}
+
+const handlePublicRoutes = (pathname: string): NextResponse | null => {
+	if (matchesRoute(pathname, PUBLIC_ROUTES)) {
+		return NextResponse.next()
+	}
+	return null
+}
+
+export const handleRequest = (request: NextRequest): NextResponse => {
+	const maintenanceResponse = handleMaintenance(request, {
+		maintenanceMode: process.env.MAINTENANCE_MODE === 'true',
+		whitelist: process.env.MAINTENANCE_WHITELIST?.split(',') ?? [],
+	})
+	if (maintenanceResponse) return maintenanceResponse
+
+	const rootRedirect = handleRootRedirects(request)
+	if (rootRedirect) return rootRedirect
+
+	const authFlowResponse = handleAuthFlow(request)
+	if (authFlowResponse) return authFlowResponse
+
+	const protectedRouteResponse = handleProtectedRoutes(request)
+	if (protectedRouteResponse) return protectedRouteResponse
+
+	const publicRouteResponse = handlePublicRoutes(request.nextUrl.pathname)
+	if (publicRouteResponse) return publicRouteResponse
+
+	return NextResponse.next()
 }
 
 export default function middleware(request: NextRequest) {
-	const app = new MiddlewareApp(request)
-	return app.run()
+	return handleRequest(request)
 }

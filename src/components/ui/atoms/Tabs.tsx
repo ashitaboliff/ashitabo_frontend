@@ -52,7 +52,7 @@ export const Tabs = ({ children }: TabsProps) => {
 					const isActive = index === activeIndex
 					return (
 						<button
-							key={child.key ?? index}
+							key={`${child.key}${index}`}
 							className={`py-2 px-4 text-lg ${
 								isActive
 									? 'border-b-2 text-accent'

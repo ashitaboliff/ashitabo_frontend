@@ -1,7 +1,7 @@
 'use client'
 
-import type { ChangeEvent } from 'react'
-import { GachaSort } from '@/features/gacha/types'
+import { useEffect, type ChangeEvent } from 'react'
+import { GachaSort, type GachaData } from '@/features/gacha/types'
 import Pagination from '@/components/ui/atoms/Pagination'
 import SelectField from '@/components/ui/atoms/SelectField'
 import GachaPreviewPopup from '@/features/gacha/components/GachaPreviewPopup'
@@ -13,9 +13,10 @@ import { usePagedResource } from '@/hooks/usePagedResource'
 
 interface UserGachaLogsProps {
 	session: Session
+	initialData?: { gacha: GachaData[]; totalCount: number }
 }
 
-const UserGachaLogs = ({ session }: UserGachaLogsProps) => {
+const UserGachaLogs = ({ session, initialData }: UserGachaLogsProps) => {
 	const {
 		state: { page, perPage, sort, totalCount },
 		pageCount,
@@ -39,22 +40,18 @@ const UserGachaLogs = ({ session }: UserGachaLogsProps) => {
 
 	const userId = session.user.id
 
+	useEffect(() => {
+		if (initialData && totalCount === 0) {
+			setTotalCount(initialData.totalCount)
+		}
+	}, [initialData, setTotalCount, totalCount])
+
 	const handlePageChange = (nextPage: number) => {
 		setPage(nextPage)
 	}
 
-	const handleLogsPerPageChange = (
-		event:
-			| ChangeEvent<HTMLSelectElement>
-			| { target: { name: string; value: number | number[] } },
-	) => {
-		const newLogsPerPage =
-			typeof event.target.value === 'string'
-				? parseInt(event.target.value)
-				: Array.isArray(event.target.value)
-					? event.target.value[0]
-					: event.target.value
-		setPerPage(newLogsPerPage)
+	const handleLogsPerPageChange = (event: ChangeEvent<HTMLSelectElement>) => {
+		setPerPage(Number(event.target.value))
 	}
 
 	const handleSortChange = (newSort: GachaSort) => {
@@ -70,7 +67,7 @@ const UserGachaLogs = ({ session }: UserGachaLogsProps) => {
 			<div className="flex flex-col gap-y-2">
 				<div className="flex flex-row items-center ml-auto space-x-2 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
 					<p className="text-sm whitespace-nowrap">表示件数:</p>
-					<SelectField
+					<SelectField<number>
 						name="gachaLogsPerPage"
 						options={{ '15件': 15, '25件': 25, '35件': 35 }}
 						value={perPage}
@@ -98,6 +95,7 @@ const UserGachaLogs = ({ session }: UserGachaLogsProps) => {
 					sort={sort}
 					onGachaItemClick={openGachaPreview}
 					onDataLoaded={handleDataLoaded}
+					initialData={page === 1 ? initialData : undefined}
 				/>
 				{pageCount > 1 && totalCount > 0 && (
 					<div className="mt-4 mx-auto">

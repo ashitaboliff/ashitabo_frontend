@@ -1,18 +1,9 @@
 'use client'
 
-import { useState, ReactNode } from 'react'
+import { type ReactNode, useCallback } from 'react'
 import { useRouter } from 'next-nprogress-bar'
-import { useSession } from '@/features/auth/hooks/useSession'
 import { signOutUser as signOutAction } from '@/features/user/actions'
-import { Tabs, Tab } from '@/components/ui/atoms/Tabs'
 import ProfileDisplay from './ProfileDisplay'
-import { gkktt } from '@/lib/fonts'
-import GachaMainPopup from '@/features/gacha/components/GachaMainPopup'
-import { useGachaPlayManager } from '@/features/gacha/hooks/useGachaPlayManager'
-
-import { GiCardRandom, GiGuitarHead } from 'react-icons/gi' // GiGuitarHead を追加
-import { MdOutlineEditCalendar } from 'react-icons/md'
-import RatioPopup from '@/features/gacha/components/RatioPopup'
 import type { Session } from '@/types/session'
 import type { Profile } from '@/features/user/types'
 
@@ -27,111 +18,67 @@ const UserPageLayout = ({
 	profile,
 	children,
 }: UserPageLayoutProps) => {
-	const session2 = useSession()
 	const router = useRouter()
-	const [isGachaPopupOpen, setIsGachaPopupOpen] = useState(false)
 
-	const {
-		canPlayGacha,
-		gachaPlayCountToday,
-		gachaMessage,
-		onGachaPlayedSuccessfully,
-		MAX_GACHA_PLAYS_PER_DAY,
-	} = useGachaPlayManager()
+	const handleEditProfile = useCallback(() => {
+		router.push('/user/edit')
+	}, [router])
 
-	const handleOpenGachaMainPopup = () => {
-		if (canPlayGacha) {
-			setIsGachaPopupOpen(true)
-		} else {
-			console.log(gachaMessage)
-		}
-	}
+	const handleNavigateAdmin = useCallback(() => {
+		router.push('/admin')
+	}, [router])
 
-	const signOutUser = async () => {
+	const handleNavigateTopAdmin = useCallback(() => {
+		router.push('/admin/topadmin')
+	}, [router])
+
+	const handleSignOut = useCallback(async () => {
 		await signOutAction()
-		await session2.update({ triggerUpdate: Date.now() })
 		router.push('/home')
-	}
-
-	// children は bookingLogs と gachaLogs のタプルを期待している可能性がある
-	// children の構造に合わせて調整が必要。ここでは bookingLogs, gachaLogs のみと仮定
-	const [bookingLogs, gachaLogs] = Array.isArray(children)
-		? children
-		: [children, null]
-	// もし children が固定で2つの要素しか持たないなら、上記は不要で元のままで良い。
-	// BandList は children とは独立して配置する。
+	}, [router])
 
 	return (
 		<div className="container mx-auto p-4 flex flex-col items-center">
 			<ProfileDisplay session={session} profile={profile} />
-			<button
-				className="btn btn-outline btn-primary w-full md:w-1/2 lg:w-1/3 mb-4"
-				onClick={() => router.push('/user/edit')}
-			>
-				プロフィールを編集
-			</button>
-			{(session.user.role ?? 'USER') === 'ADMIN' && (
+			<div className="flex flex-col gap-3 w-full md:w-1/2 lg:w-1/3 mb-6">
 				<button
-					className="btn btn-secondary btn-outline w-full md:w-1/2 lg:w-1/3 mb-4"
-					onClick={() => router.push('/admin')}
+					className="btn btn-outline btn-primary"
+					onClick={handleEditProfile}
 				>
-					管理者ページへ
+					プロフィールを編集
 				</button>
-			)}
-			{(session.user.role ?? 'USER') === 'TOPADMIN' && (
-				<div className="flex flex-col md:flex-row justify-center gap-2 mb-4 w-full md:w-2/3 lg:w-1/2">
+				{(session.user.role ?? 'USER') === 'ADMIN' && (
 					<button
-						className="btn btn-accent btn-outline w-full md:w-1/2"
-						onClick={() => router.push('/admin')}
+						className="btn btn-secondary btn-outline"
+						onClick={handleNavigateAdmin}
 					>
-						管理者ページ
+						管理者ページへ
 					</button>
-					<button
-						className="btn btn-accent btn-outline w-full md:w-1/2"
-						onClick={() => router.push('/admin/topadmin')}
-					>
-						トップ管理者ページ
-					</button>
-				</div>
-			)}
-			<div className="w-full">
-				<Tabs>
-					<Tab label={<MdOutlineEditCalendar size={30} />}>{bookingLogs}</Tab>
-					<Tab label={<GiCardRandom size={30} />}>
-						<div className="flex flex-col items-center mb-4 gap-y-2">
-							<div className="flex flex-col sm:flex-row justify-center gap-2 w-full">
-								<button
-									className="btn btn-primary w-full sm:w-auto"
-									onClick={handleOpenGachaMainPopup}
-									disabled={!canPlayGacha}
-								>
-									ガチャを引く ({MAX_GACHA_PLAYS_PER_DAY - gachaPlayCountToday}
-									回残)
-								</button>
-								<RatioPopup gkktt={gkktt} />
-							</div>
-							{gachaMessage && (
-								<div className="text-error text-center mt-2">
-									{gachaMessage}
-								</div>
-							)}
-						</div>
-						{gachaLogs}
-					</Tab>
-					<Tab label={<GiGuitarHead size={30} />}>
-						{/* <BandList currentUserId={session.user.id} /> */}
-						<div className="flex flex-col items-center">
-							<p className="text-sm text-center mt-2">
-								バンド機能を追加予定！まだ出来てないよ～
-							</p>
-						</div>
-					</Tab>
-				</Tabs>
+				)}
+				{(session.user.role ?? 'USER') === 'TOPADMIN' && (
+					<div className="flex flex-col gap-2">
+						<button
+							className="btn btn-accent btn-outline"
+							onClick={handleNavigateAdmin}
+						>
+							管理者ページ
+						</button>
+						<button
+							className="btn btn-accent btn-outline"
+							onClick={handleNavigateTopAdmin}
+						>
+							トップ管理者ページ
+						</button>
+					</div>
+				)}
 			</div>
+
+			<div className="w-full">{children}</div>
+
 			<div className="flex flex-col sm:flex-row justify-center gap-4 mt-6 w-full md:w-1/2 lg:w-1/3">
 				<button
 					className="btn btn-error btn-outline w-full sm:w-1/2"
-					onClick={signOutUser}
+					onClick={handleSignOut}
 				>
 					ログアウト
 				</button>
@@ -139,15 +86,6 @@ const UserPageLayout = ({
 					アカウントを削除
 				</button>
 			</div>
-			<GachaMainPopup
-				session={session}
-				gachaPlayCountToday={gachaPlayCountToday}
-				onGachaPlayedSuccessfully={() => {
-					onGachaPlayedSuccessfully()
-				}}
-				open={isGachaPopupOpen}
-				onClose={() => setIsGachaPopupOpen(false)}
-			/>
 		</div>
 	)
 }

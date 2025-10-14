@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, ReactNode } from 'react'
+import { createContext, useContext, type ReactNode } from 'react'
 
 export interface CarouselPackDataItem {
 	version: string
@@ -24,9 +24,9 @@ export const GachaDataProvider = ({
 	gachaCarouselData: CarouselPackDataItem[]
 }) => {
 	return (
-		<GachaDataContext.Provider value={{ gachaCarouselData }}>
+		<GachaDataContext value={{ gachaCarouselData }}>
 			{children}
-		</GachaDataContext.Provider>
+		</GachaDataContext>
 	)
 }
 

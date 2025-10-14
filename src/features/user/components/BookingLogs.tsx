@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { Booking, BookingTime } from '@/features/booking/types'
@@ -15,9 +15,10 @@ import { usePagedResource } from '@/hooks/usePagedResource'
 
 interface UserBookingLogsProps {
 	session: Session
+	initialData?: { bookings: Booking[]; totalCount: number }
 }
 
-const UserBookingLogs = ({ session }: UserBookingLogsProps) => {
+const UserBookingLogs = ({ session, initialData }: UserBookingLogsProps) => {
 	const {
 		state: { page, perPage, sort, totalCount },
 		pageCount,
@@ -35,6 +36,12 @@ const UserBookingLogs = ({ session }: UserBookingLogsProps) => {
 		useState<boolean>(false)
 
 	const userId = session.user.id
+
+	useEffect(() => {
+		if (initialData && totalCount === 0) {
+			setTotalCount(initialData.totalCount)
+		}
+	}, [initialData, setTotalCount, totalCount])
 
 	const handlePageChange = (nextPage: number) => {
 		setPage(nextPage)
@@ -56,24 +63,20 @@ const UserBookingLogs = ({ session }: UserBookingLogsProps) => {
 	return (
 		<div className="flex flex-col justify-center mt-4">
 			{' '}
-			{/* デザイン維持のため mt-4 を追加 */}
 			<div className="flex flex-col">
 				<div className="flex flex-row items-center ml-auto space-x-2 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
-					{' '}
-					{/* レスポンシブ対応 */}
 					<p className="text-sm whitespace-nowrap">表示件数:</p>
-					<SelectField
+					<SelectField<number>
 						name="logsPerPage"
 						options={{ '10件': 10, '20件': 20, '30件': 30 }}
 						value={perPage}
-						onChange={(e) => {
-							setPerPage(Number(e.target.value))
+						onChange={(event) => {
+							setPerPage(Number(event.target.value))
 						}}
 					/>
 				</div>
 				<div className="flex flex-row gap-x-2 my-2">
 					{' '}
-					{/* my-2 を追加して上下に少しマージン */}
 					<RadioSortGroup
 						name="booking_sort_options"
 						options={[
@@ -103,6 +106,7 @@ const UserBookingLogs = ({ session }: UserBookingLogsProps) => {
 								sort={sort}
 								onBookingItemClick={handleBookingItemClick}
 								onDataLoaded={handleDataLoaded}
+								initialData={page === 1 ? initialData : undefined}
 							/>
 						</tbody>
 					</table>

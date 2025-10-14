@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import useSWR from 'swr'
@@ -14,6 +15,7 @@ interface BookingLogListProps {
 	sort: 'new' | 'old'
 	onBookingItemClick: (booking: Booking) => void
 	onDataLoaded: (totalCount: number) => void
+	initialData?: { bookings: Booking[]; totalCount: number }
 }
 
 const fetchBookings = async ([userId, page, perPage, sort]: [
@@ -37,12 +39,17 @@ const BookingLogList = ({
 	sort,
 	onBookingItemClick,
 	onDataLoaded,
+	initialData,
 }: BookingLogListProps) => {
 	const { data, error, isLoading } = useSWR(
 		userId ? [userId, currentPage, logsPerPage, sort] : null,
 		fetchBookings,
 		{
+			fallbackData: currentPage === 1 ? initialData : undefined,
 			revalidateOnFocus: false,
+			revalidateOnReconnect: false,
+			revalidateIfStale: false,
+			shouldRetryOnError: false,
 			onSuccess: (fetchedData) => {
 				if (fetchedData) {
 					onDataLoaded(fetchedData.totalCount)
@@ -50,6 +57,12 @@ const BookingLogList = ({
 			},
 		},
 	)
+
+	useEffect(() => {
+		if (initialData && currentPage === 1) {
+			onDataLoaded(initialData.totalCount)
+		}
+	}, [currentPage, initialData, onDataLoaded])
 
 	const bookings = data?.bookings
 
