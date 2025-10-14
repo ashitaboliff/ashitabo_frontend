@@ -1,6 +1,6 @@
 import { apiGet, apiPost } from '@/lib/api/crud'
 import { ApiResponse, StatusCode } from '@/types/responseTypes'
-import { okResponse } from '@/lib/api/helper'
+import { okResponse, mapSuccess, withFallbackMessage } from '@/lib/api/helper'
 import {
 	Playlist,
 	Video,
@@ -14,19 +14,6 @@ import {
 	type RawPlaylist,
 	type RawVideo,
 } from '@/features/video/services/videoTransforms'
-
-const withFallbackMessage = <T>(
-	res: ApiResponse<T>,
-	message: string,
-): ApiResponse<T> => {
-	if (res.ok) {
-		return res
-	}
-	return {
-		...res,
-		message: res.message || message,
-	}
-}
 
 export const searchYoutubeDetailsAction = async (
 	query: YoutubeSearchQuery,
@@ -62,11 +49,7 @@ export const getVideoByIdAction = async (
 		next: { revalidate: 300, tags: ['videos', `video:${videoId}`] },
 	})
 
-	if (!res.ok) {
-		return withFallbackMessage(res, '動画の取得に失敗しました。')
-	}
-
-	return okResponse(mapRawVideo(res.data))
+	return mapSuccess(res, mapRawVideo, '動画の取得に失敗しました。')
 }
 
 export const getPlaylistByIdAction = async (
@@ -79,11 +62,7 @@ export const getPlaylistByIdAction = async (
 		},
 	})
 
-	if (!res.ok) {
-		return withFallbackMessage(res, 'プレイリストの取得に失敗しました。')
-	}
-
-	return okResponse(mapRawPlaylist(res.data))
+	return mapSuccess(res, mapRawPlaylist, 'プレイリストの取得に失敗しました。')
 }
 
 export const getPlaylistAction = async (): Promise<ApiResponse<Playlist[]>> => {

@@ -2,7 +2,7 @@ import { apiGet, apiPost } from '@/lib/api/crud'
 import { ApiResponse, StatusCode } from '@/types/responseTypes'
 import {
 	createdResponse,
-	okResponse,
+	mapSuccess,
 	withFallbackMessage,
 } from '@/lib/api/helper'
 import { Schedule, UserWithName } from '@/features/schedule/types'
@@ -23,11 +23,7 @@ export const getScheduleByIdAction = async (
 		},
 	})
 
-	if (!res.ok) {
-		return withFallbackMessage(res, '日程の取得に失敗しました。')
-	}
-
-	return okResponse(mapRawSchedule(res.data))
+	return mapSuccess(res, mapRawSchedule, '日程調整の取得に失敗しました。')
 }
 
 export const getUserIdWithNames = async (): Promise<
@@ -38,11 +34,11 @@ export const getUserIdWithNames = async (): Promise<
 		next: { revalidate: 300, tags: ['schedule-users'] },
 	})
 
-	if (!res.ok) {
-		return withFallbackMessage(res, 'ユーザー一覧の取得に失敗しました。')
-	}
-
-	return okResponse(mapRawUserWithNames(res.data))
+	return mapSuccess(
+		res,
+		mapRawUserWithNames,
+		'ユーザー一覧の取得に失敗しました。',
+	)
 }
 
 export const createScheduleAction = async ({

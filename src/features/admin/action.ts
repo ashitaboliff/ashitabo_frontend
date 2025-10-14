@@ -4,6 +4,7 @@ import {
 	createdResponse,
 	noContentResponse,
 	okResponse,
+	mapSuccess,
 	withFallbackMessage,
 } from '@/lib/api/helper'
 import { UserDetail, AccountRole } from '@/features/user/types'
@@ -25,11 +26,7 @@ export const getAllPadLocksAction = async (): Promise<
 		next: { revalidate: 120, tags: ['admin-padlocks'] },
 	})
 
-	if (!res.ok) {
-		return withFallbackMessage(res, '部室パスワード一覧の取得に失敗しました')
-	}
-
-	return okResponse(mapRawPadLocks(res.data))
+	return mapSuccess(res, mapRawPadLocks, '部室パスワード一覧の取得に失敗しました')
 }
 
 export const getAllUserDetailsAction = async ({
@@ -56,14 +53,14 @@ export const getAllUserDetailsAction = async ({
 		},
 	})
 
-	if (!res.ok) {
-		return withFallbackMessage(res, 'ユーザー一覧の取得に失敗しました')
-	}
-
-	return okResponse({
-		users: mapRawUserDetails(res.data?.users),
-		totalCount: res.data?.totalCount ?? 0,
-	})
+	return mapSuccess(
+		res,
+		(data) => ({
+			users: mapRawUserDetails(data.users),
+			totalCount: data.totalCount ?? 0,
+		}),
+		'ユーザー一覧の取得に失敗しました',
+	)
 }
 
 export const deleteUserAction = async ({
@@ -163,14 +160,14 @@ export const getBanBookingAction = async ({
 		},
 	})
 
-	if (!res.ok) {
-		return withFallbackMessage(res, '予約禁止日の取得に失敗しました')
-	}
-
-	return okResponse({
-		data: mapRawBanBookings(res.data?.data),
-		totalCount: res.data?.totalCount ?? 0,
-	})
+	return mapSuccess(
+		res,
+		(data) => ({
+			data: mapRawBanBookings(data.data),
+			totalCount: data.totalCount ?? 0,
+		}),
+		'予約禁止日の取得に失敗しました',
+	)
 }
 
 export const deleteBanBookingAction = async ({

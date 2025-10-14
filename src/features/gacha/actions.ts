@@ -3,6 +3,7 @@ import { ApiResponse } from '@/types/responseTypes'
 import {
 	createdResponse,
 	okResponse,
+	mapSuccess,
 	withFallbackMessage,
 } from '@/lib/api/helper'
 import { GachaData, GachaSort, RarityType } from '@/features/gacha/types'
@@ -36,14 +37,14 @@ export const getGachaByUserIdAction = async ({
 		next: { revalidate: 30, tags: ['gacha-user', userId] },
 	})
 
-	if (!res.ok) {
-		return withFallbackMessage(res, 'ガチャ一覧の取得に失敗しました。')
-	}
-
-	return okResponse({
-		gacha: mapRawGachaList(res.data?.gacha),
-		totalCount: res.data?.totalCount ?? 0,
-	})
+	return mapSuccess(
+		res,
+		(data) => ({
+			gacha: mapRawGachaList(data.gacha),
+			totalCount: data.totalCount ?? 0,
+		}),
+		'ガチャ情報の取得に失敗しました。',
+	)
 }
 
 export const getGachaByGachaSrcAction = async ({
@@ -63,14 +64,14 @@ export const getGachaByGachaSrcAction = async ({
 		next: { revalidate: 60, tags: ['gacha-user', userId, gachaSrc] },
 	})
 
-	if (!res.ok) {
-		return withFallbackMessage(res, 'ガチャ情報の取得に失敗しました。')
-	}
-
-	return okResponse({
-		gacha: res.data?.gacha ? mapRawGacha(res.data.gacha) : null,
-		totalCount: res.data?.totalCount ?? 0,
-	})
+	return mapSuccess(
+		res,
+		(data) => ({
+			gacha: data.gacha ? mapRawGacha(data.gacha) : null,
+			totalCount: data.totalCount ?? 0,
+		}),
+		'ガチャ情報の取得に失敗しました。',
+	)
 }
 
 export const createUserGachaResultAction = async ({

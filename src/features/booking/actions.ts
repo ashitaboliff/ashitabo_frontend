@@ -4,6 +4,7 @@ import {
 	createdResponse,
 	noContentResponse,
 	okResponse,
+	mapSuccess,
 	withFallbackMessage,
 } from '@/lib/api/helper'
 import { Booking, BookingLog, BookingResponse } from '@/features/booking/types'
@@ -39,22 +40,7 @@ export const getBookingByDateAction = async ({
 		next: { revalidate: 10, tags: ['booking-calendar'] },
 	})
 
-	if (!res.ok) {
-		return withFallbackMessage(res, '予約一覧の取得に失敗しました。')
-	}
-
-	if (!res.data) {
-		return withFallbackMessage(
-			{
-				ok: false,
-				status: StatusCode.INTERNAL_SERVER_ERROR,
-				message: '',
-			},
-			'予約一覧の取得に失敗しました。',
-		)
-	}
-
-	return okResponse(mapRawBookingResponse(res.data))
+	return mapSuccess(res, mapRawBookingResponse, '予約一覧の取得に失敗しました。')
 }
 
 export const getAllBookingAction = async (): Promise<
@@ -64,11 +50,11 @@ export const getAllBookingAction = async (): Promise<
 		next: { revalidate: 60 * 60, tags: ['booking-logs'] },
 	})
 
-	if (!res.ok) {
-		return withFallbackMessage(res, '予約履歴の取得に失敗しました。')
-	}
-
-	return okResponse(mapRawBookingLogs(res.data))
+	return mapSuccess(
+		res,
+		(data) => mapRawBookingLogs(data),
+		'予約履歴の取得に失敗しました。',
+	)
 }
 
 export const getBookingByIdAction = async (
@@ -78,22 +64,7 @@ export const getBookingByIdAction = async (
 		next: { revalidate: 30, tags: ['booking-detail', bookingId] },
 	})
 
-	if (!res.ok) {
-		return withFallbackMessage(res, '予約詳細の取得に失敗しました。')
-	}
-
-	if (!res.data) {
-		return withFallbackMessage(
-			{
-				ok: false,
-				status: StatusCode.INTERNAL_SERVER_ERROR,
-				message: '',
-			},
-			'予約詳細の取得に失敗しました。',
-		)
-	}
-
-	return okResponse(mapRawBooking(res.data))
+	return mapSuccess(res, mapRawBooking, '予約詳細の取得に失敗しました。')
 }
 
 export const getBookingByUserIdAction = async ({
@@ -119,25 +90,14 @@ export const getBookingByUserIdAction = async ({
 		next: { revalidate: 15, tags: ['booking-user', userId] },
 	})
 
-	if (!res.ok) {
-		return withFallbackMessage(res, 'ユーザーの予約一覧の取得に失敗しました。')
-	}
-
-	if (!res.data) {
-		return withFallbackMessage(
-			{
-				ok: false,
-				status: StatusCode.INTERNAL_SERVER_ERROR,
-				message: '',
-			},
-			'ユーザーの予約一覧の取得に失敗しました。',
-		)
-	}
-
-	return okResponse({
-		bookings: mapRawBookingList(res.data.bookings),
-		totalCount: res.data.totalCount,
-	})
+	return mapSuccess(
+		res,
+		(data) => ({
+			bookings: mapRawBookingList(data.bookings),
+			totalCount: data.totalCount ?? 0,
+		}),
+		'ユーザーの予約一覧の取得に失敗しました。',
+	)
 }
 
 export const createBookingAction = async ({
@@ -190,15 +150,11 @@ export const updateBookingAction = async ({
 		},
 	})
 
-	if (!res.ok) {
-		return withFallbackMessage(res, '予約の更新に失敗しました。')
-	}
-
 	if (res.status === StatusCode.NO_CONTENT) {
 		return getBookingByIdAction(bookingId)
 	}
 
-	return okResponse(mapRawBooking(res.data))
+	return mapSuccess(res, mapRawBooking, '予約の更新に失敗しました。')
 }
 
 export const deleteBookingAction = async ({

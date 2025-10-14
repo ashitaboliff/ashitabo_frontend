@@ -54,3 +54,14 @@ export const createdResponse = <T>(data: T): ApiSuccess<T> =>
 
 export const noContentResponse = (): ApiSuccess<null> =>
 	success(StatusCode.NO_CONTENT, null)
+
+export const mapSuccess = <T, U>(
+	res: ApiResponse<T>,
+	mapper: (data: T) => U,
+	fallback: string,
+): ApiResponse<U> => {
+	if (res.ok) {
+		return success(res.status, mapper(res.data))
+	}
+	return ensureMessage(res, fallback)
+}
