@@ -1,4 +1,4 @@
-import React from 'react'
+import { memo, type Key, type ReactNode } from 'react'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 
@@ -9,36 +9,25 @@ export interface CalendarCellRenderProps {
 	timeIndex: number
 }
 
-export interface CalendarCell {
-	key?: React.Key
-	cellProps?: React.TdHTMLAttributes<HTMLTableCellElement>
-	children?: React.ReactNode
+export interface CalendarCellConfig {
+	key?: Key
+	className?: string
+	onClick?: () => void
+	content: ReactNode
 }
-
-type CalendarCellRendererResult =
-	| CalendarCell
-	| React.ReactNode
-	| null
-	| undefined
 
 export interface CalendarFrameProps {
 	dates: string[]
 	times: string[]
-	renderCell: (props: CalendarCellRenderProps) => CalendarCellRendererResult
+	renderCell: (props: CalendarCellRenderProps) => CalendarCellConfig | null
 	containerClassName?: string
 	tableClassName?: string
 	cornerCellClassName?: string
 	headerCellClassName?: string
 	timeCellClassName?: string
 	bodyRowClassName?: string
-	renderHeaderContent?: (date: string, index: number) => React.ReactNode
-	renderTimeCellContent?: (time: string, index: number) => React.ReactNode
-}
-
-interface NormalizedCalendarCell {
-	key: React.Key
-	props: React.TdHTMLAttributes<HTMLTableCellElement>
-	content: React.ReactNode
+	renderHeader?: (date: string, index: number) => ReactNode
+	renderTime?: (time: string, index: number) => ReactNode
 }
 
 const DEFAULT_CELL_CLASS = 'border border-base-200 p-0'
@@ -51,56 +40,38 @@ const defaultHeaderCellClass =
 const defaultTimeCellClass =
 	'border border-base-200 p-1 sm:p-2 w-11 h-13 sm:w-16 sm:h-16 break-words'
 
-const defaultHeaderContent = (date: string) => (
+const defaultHeader = (date: string) => (
 	<p className="text-xs-custom sm:text-sm text-base-content">
-		{format(new Date(date), 'MM/dd', { locale: ja })} <br />{' '}
+		{format(new Date(date), 'MM/dd', { locale: ja })}
+		<br />
 		{format(new Date(date), '(E)', { locale: ja })}
 	</p>
 )
 
-const defaultTimeContent = (time: string) => {
+const defaultTime = (time: string) => {
 	const [start = '', end = ''] = time.split('~')
 	return (
 		<p className="text-xs-custom sm:text-sm text-base-content break-words">
-			{start}~ <br /> {end}
+			{start}~
+			<br />
+			{end}
 		</p>
 	)
 }
 
-const isCalendarCellDescriptor = (value: unknown): value is CalendarCell =>
-	Boolean(
-		value &&
-			typeof value === 'object' &&
-			('key' in value || 'cellProps' in value || 'children' in value),
-	)
+const mergeClassName = (base: string, custom?: string) =>
+	custom ? `${base} ${custom}`.trim() : base
 
-const mergeClassName = (className?: string) =>
-	className ? `${DEFAULT_CELL_CLASS} ${className}`.trim() : DEFAULT_CELL_CLASS
 
-const normalizeCalendarCell = (
-	raw: Exclude<CalendarCellRendererResult, React.ReactElement>,
-	fallbackKey: React.Key,
-): NormalizedCalendarCell => {
-	if (isCalendarCellDescriptor(raw)) {
-		const cellProps = raw.cellProps ?? {}
-		return {
-			key: raw.key ?? fallbackKey,
-			props: {
-				...cellProps,
-				className: mergeClassName(cellProps.className),
-			},
-			content: raw.children ?? null,
-		}
-	}
-
-	return {
-		key: fallbackKey,
-		props: { className: DEFAULT_CELL_CLASS },
-		content: raw as React.ReactNode,
-	}
-}
-
-const CalendarFrameComponent = ({
+/**
+ * セルの内容をレンダリングするカレンダーフレームコンポーネント
+ * @param dates - 日付の配列 (ISO 8601形式の文字列)
+ * @param times - 時間帯の配列 (例: "10:00~11:00")
+ * @param renderCell - 各セルの内容をレンダリングする関数
+ * @param other - その他のオプションプロパティ(ClassNameやレンダリング関数など)
+ * @returns カレンダーフレームコンポーネント
+ */
+const CalendarFrame = ({
 	dates,
 	times,
 	renderCell,
@@ -110,64 +81,54 @@ const CalendarFrameComponent = ({
 	headerCellClassName = defaultHeaderCellClass,
 	timeCellClassName = defaultTimeCellClass,
 	bodyRowClassName = '',
-	renderHeaderContent = defaultHeaderContent,
-	renderTimeCellContent = defaultTimeContent,
-}: CalendarFrameProps) => {
-	return (
-		<div className={containerClassName}>
-			<table className={tableClassName}>
-				<thead>
-					<tr>
-						<th className={cornerCellClassName}></th>
-						{dates.map((date, dateIndex) => (
-							<th
-								key={`calendar-header-${date}-${dateIndex}`}
-								className={headerCellClassName}
-							>
-								{renderHeaderContent(date, dateIndex)}
-							</th>
-						))}
-					</tr>
-				</thead>
-				<tbody>
-					{times.map((time, timeIndex) => (
-						<tr
-							key={`calendar-row-${time}-${timeIndex}`}
-							className={bodyRowClassName}
-						>
-							<td className={timeCellClassName}>
-								{renderTimeCellContent(time, timeIndex)}
-							</td>
-							{dates.map((date, dateIndex) => {
-								const rawCell = renderCell({ date, dateIndex, time, timeIndex })
-								if (rawCell === null || rawCell === undefined) {
-									return null
-								}
-
-								const fallbackKey = `calendar-cell-${date}-${timeIndex}`
-
-								// 基本React要素が返ってきた場合はそのまま描画する
-								if (React.isValidElement(rawCell)) {
-									return rawCell
-								}
-
-								const descriptor = normalizeCalendarCell(rawCell, fallbackKey)
-								return (
-									<td key={descriptor.key} {...descriptor.props}>
-										{descriptor.content}
-									</td>
-								)
-							})}
-						</tr>
+	renderHeader = defaultHeader,
+	renderTime = defaultTime,
+}: CalendarFrameProps) => (
+	<div className={containerClassName}>
+		<table className={tableClassName}>
+			<thead>
+				<tr>
+					<th className={cornerCellClassName}></th>
+					{dates.map((date, index) => (
+						<th key={`header-${date}-${index}`} className={headerCellClassName}>
+							{renderHeader(date, index)}
+						</th>
 					))}
-				</tbody>
-			</table>
-		</div>
-	)
-}
+				</tr>
+			</thead>
+			<tbody>
+				{times.map((time, timeIndex) => (
+					<tr key={`row-${time}-${timeIndex}`} className={bodyRowClassName}>
+						<td className={timeCellClassName}>{renderTime(time, timeIndex)}</td>
+						{dates.map((date, dateIndex) => {
+							const result = renderCell({ date, dateIndex, time, timeIndex })
+							if (!result) {
+								return (
+									<td
+										key={`empty-${date}-${timeIndex}`}
+										className={DEFAULT_CELL_CLASS}
+									/>
+								)
+							}
 
-CalendarFrameComponent.displayName = 'CalendarFrame'
+							const { key, className, content, onClick } = result
+							const cellClass = mergeClassName(DEFAULT_CELL_CLASS, className)
 
-const CalendarFrame = React.memo(CalendarFrameComponent)
+							return (
+								<td
+									key={key ?? `cell-${date}-${timeIndex}`}
+									className={cellClass}
+									onClick={onClick}
+								>
+									{content}
+								</td>
+							)
+						})}
+					</tr>
+				))}
+			</tbody>
+		</table>
+	</div>
+)
 
-export default CalendarFrame
+export default memo(CalendarFrame)

@@ -149,14 +149,11 @@ export const apiRequest = async <T>(
 
 	if (response.ok) {
 		const successStatus = response.status as SuccessStatus
-		const data = (
-			successStatus === StatusCode.NO_CONTENT ? null : (payload as T) ?? null
-		) as T
 
 		return {
 			ok: true,
 			status: successStatus,
-			data,
+			data: payload,
 		}
 	}
 

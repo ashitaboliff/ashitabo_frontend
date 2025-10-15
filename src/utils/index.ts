@@ -1,3 +1,10 @@
+/**
+ * 現在の日本標準時 (JST) の日付文字列を取得する
+ * @param yesterday - trueの場合、昨日の日付を返す
+ * @param anyDate - 任意の日付オブジェクトを指定 (指定しない場合は現在日時)
+ * @param now - 任意のタイムスタンプを指定 (指定しない場合は現在のタイムスタンプ)
+ * @returns 日本標準時 (JST) の日付文字列 (YYYY-MM-DD)
+ */
 export const getCurrentJSTDateString = ({
 	yesterday = false,
 	anyDate,
@@ -8,13 +15,9 @@ export const getCurrentJSTDateString = ({
 	now?: number
 }): string => {
 	const baseTimestamp = anyDate instanceof Date ? anyDate.getTime() : now
-	const adjustedTimestamp = yesterday
-		? baseTimestamp - 24 * 60 * 60 * 1000
-		: baseTimestamp
-	const adjustedDate = new Date(adjustedTimestamp)
-	const timezoneOffsetMs = adjustedDate.getTimezoneOffset() * 60 * 1000
-	const jstTimestamp = adjustedTimestamp - timezoneOffsetMs + 9 * 60 * 60 * 1000
-	const jstDate = new Date(jstTimestamp)
+	const adjustedTimestamp =
+		baseTimestamp - (yesterday ? 24 * 60 * 60 * 1000 : 0)
+	const jstDate = new Date(adjustedTimestamp + 9 * 60 * 60 * 1000)
 	const year = jstDate.getUTCFullYear()
 	const month = (jstDate.getUTCMonth() + 1).toString().padStart(2, '0')
 	const day = jstDate.getUTCDate().toString().padStart(2, '0')
@@ -23,23 +26,15 @@ export const getCurrentJSTDateString = ({
 
 export function DateToDayISOstring(date: Date): string {
 	const utcDate = new Date(
-		Date.UTC(
-			date.getFullYear(),
-			date.getMonth(),
-			date.getDate(),
-			0, // 時間を 0 時に設定
-			0, // 分を 0 分に設定
-			0, // 秒を 0 秒に設定
-			0, // ミリ秒を 0 ミリ秒に設定
-		),
+		Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0),
 	)
 	const ISOstring = utcDate.toISOString()
 	return ISOstring
 }
 
 /**
- * 今年から10年前まで、7年後までの "XX年度" のオブジェクトを生成する
- * @returns "XX年度"のオブジェクト
+ * 10年前から7年後までの "XX年度" のオブジェクトを生成する
+ * @returns "XX年度"のオブジェクト (例: { '23年度': '23', '24年度': '24', ... })
  */
 export const generateFiscalYearObject = (): Record<string, string> => {
 	const currentYear = generateAcademicYear() // 現在の年を取得
@@ -60,7 +55,8 @@ export const generateFiscalYearObject = (): Record<string, string> => {
 
 /**
  * 今年度の西暦を生成する
- * @returns
+ * @param today - 任意の日付オブジェクトを指定 (指定しない場合は現在日時)
+ * @returns 今年度の西暦 (例: 2023年度なら23を返す)
  */
 export const generateAcademicYear = (today = new Date()) => {
 	const currentYearFull = today.getFullYear() // 4桁の西暦

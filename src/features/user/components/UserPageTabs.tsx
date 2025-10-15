@@ -33,12 +33,14 @@ const UserPageTabs = ({ session }: UserPageTabsProps) => {
 		}
 	}
 
-	const tabs: { label: ReactNode; content: ReactNode }[] = [
+	const tabs: { id: string; label: ReactNode; content: ReactNode }[] = [
 		{
+			id: 'booking',
 			label: <MdOutlineEditCalendar size={30} />,
 			content: <BookingLogs session={session} />,
 		},
 		{
+			id: 'gacha',
 			label: <GiCardRandom size={30} />,
 			content: (
 				<div className="flex flex-col gap-4">
@@ -60,6 +62,7 @@ const UserPageTabs = ({ session }: UserPageTabsProps) => {
 			),
 		},
 		{
+			id: 'band',
 			label: <GiGuitarHead size={30} />,
 			content: (
 				<div className="flex flex-col items-center">
@@ -75,7 +78,7 @@ const UserPageTabs = ({ session }: UserPageTabsProps) => {
 		<>
 			<Tabs>
 				{tabs.map((tab) => (
-					<Tab key={String(tab.label)} label={tab.label}>
+					<Tab key={tab.id} label={tab.label}>
 						{tab.content}
 					</Tab>
 				))}
