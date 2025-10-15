@@ -6,8 +6,7 @@ import { addDays } from 'date-fns'
 import { BookingResponse } from '@/features/booking/types'
 import CalendarFrame from '@/components/ui/molecules/CalendarFrame'
 import { DateToDayISOstring, toDateKey } from '@/utils'
-import { ABLE_BOOKING_DAYS } from '@/features/booking/config'
-import { FORBIDDEN_BOOKING } from '@/features/booking/constants'
+import { FORBIDDEN_BOOKING, ABLE_BOOKING_DAYS } from '@/features/booking/constants'
 import {
 	AvailableCell,
 	BookingInfoCell,

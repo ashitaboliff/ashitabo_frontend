@@ -1,11 +1,14 @@
 'use client'
 
+import { addDays } from 'date-fns'
+import { DateToDayISOstring } from '@/utils'
 import { UseFormSetValue } from 'react-hook-form'
 import { BookingResponse } from '@/features/booking/types'
 import CalendarFrame from '@/components/ui/molecules/CalendarFrame'
 import {
 	FORBIDDEN_BOOKING,
 	BOOKING_TIME_LIST,
+	ABLE_BOOKING_DAYS,
 } from '@/features/booking/constants'
 import {
 	AvailableCell,
@@ -41,6 +44,11 @@ const BookingEditCalendar = ({
 		setCalendarOpen(false)
 	}
 
+	const bookingAbleMaxDate = DateToDayISOstring(
+			addDays(new Date(), ABLE_BOOKING_DAYS),
+		)
+		const bookingAbleMinDate = DateToDayISOstring(addDays(new Date(), -1))
+
 	return (
 		<CalendarFrame
 			dates={dateList}
@@ -53,14 +61,18 @@ const BookingEditCalendar = ({
 				const isSelected = date === bookingDate && timeIndex === bookingTime
 				const isOriginalBooking =
 					date === actualBookingDate && timeIndex === actualBookingTime
-				const className = isSelected ? 'bg-primary-light' : undefined
+				const withinRange =
+					date >= bookingAbleMinDate && date <= bookingAbleMaxDate
+
+				const className =
+					withinRange ? (isSelected ? 'bg-primary-light' : undefined) : 'bg-base-300'
 				const key = `edit-calendar-${date}-${timeIndex}`
 
 				if (!booking) {
 					return {
 						key,
 						className,
-						onClick: () => handleSelect(date, timeIndex),
+						onClick: withinRange ? () => handleSelect(date, timeIndex) : undefined,
 						content: <AvailableCell />,
 					}
 				}
@@ -77,7 +89,7 @@ const BookingEditCalendar = ({
 					return {
 						key,
 						className,
-						onClick: () => handleSelect(date, timeIndex),
+						onClick: withinRange ? () => handleSelect(date, timeIndex) : undefined,
 						content: (
 							<BookingInfoCell
 								registName={booking.registName}
