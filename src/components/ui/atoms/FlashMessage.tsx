@@ -4,7 +4,7 @@ import { type ReactNode, useEffect, useState } from 'react'
 
 export type NoticeType = 'info' | 'success' | 'warning' | 'error'
 
-export interface NoticeDialogProps {
+export interface Props {
 	type?: NoticeType
 	children: ReactNode
 	className?: string
@@ -14,12 +14,12 @@ export interface NoticeDialogProps {
 const ENTER_MS = 300
 const LEAVE_MS = 300
 
-const NoticeDialog = ({
+const FlashMessage = ({
 	type = 'info',
 	children,
 	className,
 	duration = 2000,
-}: NoticeDialogProps) => {
+}: Props) => {
 	const [inView, setInView] = useState(false) // true: 画面内、false: 画面外(上)
 	const [visible, setVisible] = useState(true) // コンポーネント自体の生存
 
@@ -60,4 +60,4 @@ const NoticeDialog = ({
 	)
 }
 
-export default NoticeDialog
+export default FlashMessage

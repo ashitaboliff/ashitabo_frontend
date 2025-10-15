@@ -12,9 +12,9 @@ import {
 	BOOKING_TIME_LIST,
 } from '@/features/booking/constants'
 import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
-import NoticeDialog, {
+import FlashMessage, {
 	type NoticeType,
-} from '@/components/ui/atoms/NoticeDialog'
+} from '@/components/ui/atoms/FlashMessage'
 import { useFeedback } from '@/hooks/useFeedback'
 import {
 	bookingRangeFetcher,
@@ -78,7 +78,7 @@ const MainPage = ({ initialViewDate, type, message }: MainPageProps) => {
 
 	return (
 		<>
-			{type && message && <NoticeDialog type={type}>{message}</NoticeDialog>}
+			{type && message && <FlashMessage type={type}>{message}</FlashMessage>}
 			{errorFeedback.feedback && (
 				<div className="my-4 flex flex-col items-center gap-3 border border-error p-4 rounded bg-error/10">
 					<div className="w-full max-w-lg">

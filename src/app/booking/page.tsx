@@ -4,7 +4,7 @@ import { cookies } from 'next/headers'
 import MainPage from '@/features/booking/components/MainPage'
 import MainPageLayout from '@/features/booking/components/MainPageLayout'
 import { getCurrentJSTDateString } from '@/utils'
-import type { NoticeType } from '@/components/ui/atoms/NoticeDialog'
+import type { NoticeType } from '@/components/ui/atoms/FlashMessage'
 
 const Page = async () => {
 	const cookieStore = await cookies()
