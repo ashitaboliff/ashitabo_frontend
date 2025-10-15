@@ -2,23 +2,23 @@
 
 import { useState } from 'react'
 import { BookingDetailProps, BookingResponse } from '@/features/booking/types' // Added BookingResponse
-import EditAuthPage from '@/features/booking/components/EditAuth'
-import EditFormPage from '@/features/booking/components/EditForm'
+import BookingEditAuthPage from '@/features/booking/components/edit/BookingEditAuth'
+import BookingEditPage from '@/features/booking/components/edit/BookingEditPage'
 import type { Session } from '@/types/session'
 
-interface EditPageProps {
+interface Props {
 	bookingDetail: BookingDetailProps
 	session: Session
 	initialBookingResponse: BookingResponse | null
 	initialViewDay: Date
 }
 
-const EditPage = ({
+const BookingEditMainPage = ({
 	bookingDetail,
 	session,
 	initialBookingResponse,
 	initialViewDay,
-}: EditPageProps) => {
+}: Props) => {
 	const [isAuth, setIsAuth] = useState<boolean>(
 		bookingDetail.userId === session?.user.id,
 	)
@@ -26,14 +26,14 @@ const EditPage = ({
 	return (
 		<>
 			{isAuth ? (
-				<EditFormPage
+				<BookingEditPage
 					bookingDetail={bookingDetail}
 					session={session}
 					initialBookingResponse={initialBookingResponse}
 					initialViewDay={initialViewDay}
 				/>
 			) : (
-				<EditAuthPage
+				<BookingEditAuthPage
 					session={session}
 					handleSetAuth={setIsAuth}
 					bookingDetail={bookingDetail}
@@ -43,4 +43,4 @@ const EditPage = ({
 	)
 }
 
-export default EditPage
+export default BookingEditMainPage

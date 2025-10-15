@@ -3,7 +3,7 @@
 import { useCallback, useEffect } from 'react'
 import { addDays } from 'date-fns'
 import Popup from '@/components/ui/molecules/Popup'
-import EditCalendar from '@/features/booking/components/EditCalendar'
+import BookingEditCalendar from '@/features/booking/components/edit/BookingEditCalendar'
 import { BookingErrorMessage } from '@/features/booking/components/BookingActionFeedback'
 import type { BookingResponse } from '@/features/booking/types'
 import type { UseFormSetValue } from 'react-hook-form'
@@ -15,7 +15,7 @@ import {
 import { useFeedback } from '@/hooks/useFeedback'
 import type { ApiError } from '@/types/responseTypes'
 
-type BookingEditCalendarPopupProps = {
+type Props = {
 	open: boolean
 	onClose: () => void
 	timeList: string[]
@@ -43,7 +43,7 @@ const BookingEditCalendarPopup = ({
 	bookingTime,
 	setBookingTime,
 	setValue,
-}: BookingEditCalendarPopupProps) => {
+}: Props) => {
 	const calendarFeedback = useFeedback()
 
 	const {
@@ -114,7 +114,7 @@ const BookingEditCalendarPopup = ({
 				</div>
 				<BookingErrorMessage feedback={calendarFeedback.feedback} />
 				{bookingResponse ? (
-					<EditCalendar
+					<BookingEditCalendar
 						bookingResponse={bookingResponse}
 						timeList={timeList}
 						actualBookingDate={actualBookingDate}

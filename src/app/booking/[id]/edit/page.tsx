@@ -8,7 +8,7 @@ import {
 	getBookingByDateAction,
 } from '@/features/booking/actions'
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
-import EditPage from '@/features/booking/components/Edit'
+import BookingEditMainPage from '@/features/booking/components/edit/BookingEdit'
 import DetailNotFoundPage from '@/features/booking/components/DetailNotFound'
 import { logError } from '@/utils/logger'
 import { toDateKey } from '@/utils'
@@ -95,7 +95,7 @@ const Page = async ({ params, searchParams }: PageProps) => {
 				}
 
 				return (
-					<EditPage
+					<BookingEditMainPage
 						bookingDetail={bookingDetail}
 						session={session}
 						initialBookingResponse={initialBookingResponse}

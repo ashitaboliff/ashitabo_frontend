@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next-nprogress-bar'
-import { deleteBookingAction } from '../actions'
+import { deleteBookingAction } from '../../actions'
 import {
 	BookingDetailProps,
 	BookingResponse,
@@ -12,7 +12,7 @@ import type { Session } from '@/types/session'
 import BookingDetailBox from '@/features/booking/components/BookingDetailBox'
 import DetailNotFoundPage from '@/features/booking/components/DetailNotFound'
 import Popup from '@/components/ui/molecules/Popup'
-import BookingEditForm from '@/features/booking/components/BookingEditForm'
+import BookingEditForm from '@/features/booking/components/edit/BookingEditForm'
 import {
 	BookingErrorMessage,
 	BookingSuccessMessage,
@@ -20,19 +20,19 @@ import {
 import { useFeedback } from '@/hooks/useFeedback'
 import { logError } from '@/utils/logger'
 
-interface EditFormPageProps {
+interface Props {
 	bookingDetail: BookingDetailProps
 	session: Session
 	initialBookingResponse: BookingResponse | null
 	initialViewDay: Date
 }
 
-const EditFormPage = ({
+const BookingEditPage = ({
 	bookingDetail,
 	session,
 	initialBookingResponse,
 	initialViewDay,
-}: EditFormPageProps) => {
+}: Props) => {
 	const router = useRouter()
 	const [editState, setEditState] = useState<'edit' | 'select'>('select')
 	const [deleteStatus, setDeleteStatus] = useState<
@@ -181,4 +181,4 @@ const EditFormPage = ({
 	)
 }
 
-export default EditFormPage
+export default BookingEditPage

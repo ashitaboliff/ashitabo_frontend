@@ -7,7 +7,7 @@ import { MdOutlineEditCalendar } from 'react-icons/md'
 import { BookingErrorMessage } from '@/features/booking/components/BookingActionFeedback'
 import type { FeedbackMessage } from '@/types/feedback'
 
-type BookingEditFormFieldsProps = {
+type Props = {
 	register: UseFormRegister<BookingEditFormValues>
 	errors: FieldErrors<BookingEditFormValues>
 	isSubmitting: boolean
@@ -27,7 +27,7 @@ const BookingEditFormFields = ({
 	onOpenCalendar,
 	onSubmit,
 	errorFeedback,
-}: BookingEditFormFieldsProps) => (
+}: Props) => (
 	<>
 		<form onSubmit={onSubmit} className="space-y-2 p-4">
 			<div className="flex flex-row justify-between gap-2">

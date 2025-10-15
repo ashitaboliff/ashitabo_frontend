@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next-nprogress-bar'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { updateBookingAction } from '../actions'
+import { updateBookingAction } from '../../actions'
 import {
 	Booking,
 	BookingDetailProps,
@@ -16,14 +16,14 @@ import { BookingSuccessMessage } from '@/features/booking/components/BookingActi
 import { toDateKey } from '@/utils'
 import { useFeedback } from '@/hooks/useFeedback'
 import { logError } from '@/utils/logger'
-import BookingEditCalendarPopup from '@/features/booking/components/BookingEditCalendarPopup'
-import BookingEditFormFields from '@/features/booking/components/BookingEditFormFields'
+import BookingEditCalendarPopup from '@/features/booking/components/edit/BookingEditCalendarPopup'
+import BookingEditFormFields from '@/features/booking/components/edit/BookingEditFormFields'
 import {
 	bookingEditSchema,
 	BookingEditFormValues,
 } from '@/features/booking/schemas/bookingEditSchema'
 
-interface BookingEditFormProps {
+interface Props {
 	bookingDetail: BookingDetailProps
 	session: Session
 	timeList: string[]
@@ -39,7 +39,7 @@ const BookingEditForm = ({
 	onCancel,
 	initialBookingResponse,
 	initialViewDay,
-}: BookingEditFormProps) => {
+}: Props) => {
 	const router = useRouter()
 
 	const [bookingDate, setBookingDate] = useState(

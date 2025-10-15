@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next-nprogress-bar'
 import { Booking } from '@/features/booking/types'
-import { authBookingAction } from '../actions'
+import { authBookingAction } from '../../actions'
 import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import BookingDetailBox from '@/features/booking/components/BookingDetailBox'
 import PasswordInputField from '@/components/ui/molecules/PasswordInputField'
@@ -18,17 +18,17 @@ import {
 	BookingAuthFormValues,
 } from '@/features/booking/schemas/bookingAuthSchema'
 
-interface EditAuthPageProps {
+interface Props {
 	session: Session
 	handleSetAuth: (isAuth: boolean) => void
 	bookingDetail: Booking
 }
 
-const EditAuthPage = ({
+const BookingEditAuthPage = ({
 	session,
 	handleSetAuth,
 	bookingDetail,
-}: EditAuthPageProps) => {
+}: Props) => {
 	const router = useRouter()
 	const [showPassword, setShowPassword] = useState(false)
 	const feedback = useFeedback()
@@ -128,4 +128,4 @@ const EditAuthPage = ({
 	)
 }
 
-export default EditAuthPage
+export default BookingEditAuthPage

@@ -1,9 +1,7 @@
 'use client'
 
 import { UseFormSetValue } from 'react-hook-form'
-import { addDays } from 'date-fns'
 import { BookingResponse } from '@/features/booking/types'
-import { ABLE_BOOKING_DAYS } from '@/features/booking/config'
 import CalendarFrame from '@/components/ui/molecules/CalendarFrame'
 import { FORBIDDEN_BOOKING } from '@/features/booking/constants'
 import {
@@ -12,7 +10,7 @@ import {
 	ForbiddenCell,
 } from '@/features/booking/components/CalendarCellContent'
 
-interface EditCalendarProps {
+interface Props {
 	bookingResponse: BookingResponse
 	timeList: string[]
 	actualBookingDate: string
@@ -25,7 +23,7 @@ interface EditCalendarProps {
 	setValue: UseFormSetValue<any>
 }
 
-const EditCalendar = ({
+const BookingEditCalendar = ({
 	bookingResponse,
 	timeList,
 	actualBookingDate,
@@ -36,8 +34,7 @@ const EditCalendar = ({
 	setBookingTime,
 	setCalendarOpen,
 	setValue,
-}: EditCalendarProps) => {
-	const bookingAbleMaxDate = addDays(new Date(), ABLE_BOOKING_DAYS)
+}: Props) => {
 	const dateList = Object.keys(bookingResponse)
 
 	const handleSelect = (date: string, timeIndex: number) => {
@@ -104,4 +101,4 @@ const EditCalendar = ({
 	)
 }
 
-export default EditCalendar
+export default BookingEditCalendar
