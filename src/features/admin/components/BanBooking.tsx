@@ -10,7 +10,8 @@ import SelectField from '@/components/ui/atoms/SelectField'
 import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import Popup from '@/components/ui/molecules/Popup'
 import RadioSortGroup from '@/components/ui/atoms/RadioSortGroup'
-import { BanBooking, BookingTime } from '@/features/booking/types'
+import { BanBooking } from '@/features/booking/types'
+import { BOOKING_TIME_LIST } from '@/features/booking/constants'
 import { ApiError } from '@/types/responseTypes'
 import { BanBookingSort } from '../types'
 import BanBookingList from './BanBookingList'
@@ -151,10 +152,10 @@ const BanBookingPage = () => {
 							<div className="font-bold">時間:</div>
 							<div>
 								{popupData.endTime
-									? BookingTime[popupData.startTime].split('~')[0] +
+									? BOOKING_TIME_LIST[popupData.startTime].split('~')[0] +
 										' ~ ' +
-										BookingTime[popupData.endTime].split('~')[1]
-									: BookingTime[popupData.startTime]}
+										BOOKING_TIME_LIST[popupData.endTime].split('~')[1]
+									: BOOKING_TIME_LIST[popupData.startTime]}
 							</div>
 							<div className="font-bold">禁止理由:</div>
 							<div>{popupData.description}</div>

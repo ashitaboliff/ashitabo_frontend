@@ -1,21 +1,18 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next-nprogress-bar'
 import { usePathname } from 'next/navigation'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale/ja'
-import { BookingDetailProps, BookingTime } from '@/features/booking/types'
+import { Booking } from '@/features/booking/types'
+import { BOOKING_TIME_LIST } from '@/features/booking/constants'
 import ShareButton from '@/components/ui/atoms/ShareButton'
 import AddCalendarPopup from '@/components/ui/molecules/AddCalendarPopup'
 import BookingDetailBox from '@/features/booking/components/BookingDetailBox'
 import DetailNotFoundPage from '@/features/booking/components/DetailNotFound'
 
-const DetailPage = ({
-	bookingDetail,
-}: {
-	bookingDetail: BookingDetailProps
-}) => {
+const DetailPage = ({ bookingDetail }: { bookingDetail: Booking }) => {
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 	const router = useRouter()
 	const pathname = usePathname()
@@ -54,7 +51,7 @@ const DetailPage = ({
 						{
 							locale: ja,
 						},
-					)} ${BookingTime[Number(bookingDetail.bookingTime)]}`}
+					)} ${BOOKING_TIME_LIST[Number(bookingDetail.bookingTime)]}`}
 					isFullButton
 					isOnlyLine
 				/>

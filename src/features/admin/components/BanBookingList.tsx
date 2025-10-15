@@ -3,13 +3,13 @@
 import useSWR from 'swr'
 import GenericTableBody from '@/components/ui/molecules/GenericTableBody'
 import { getBanBookingAction } from '../action'
-import { BanBooking, BookingTime } from '@/features/booking/types'
+import { BanBooking } from '@/features/booking/types'
+import { BOOKING_TIME_LIST } from '@/features/booking/constants'
 import { TiDeleteOutline } from 'react-icons/ti'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { BanBookingSort } from '../types'
 import { getCurrentJSTDateString } from '@/utils'
-import { StatusCode } from '@/types/responseTypes'
 
 interface BanBookingListProps {
 	currentPage: number
@@ -71,10 +71,10 @@ const BanBookingList = ({
 			</td>
 			<td>
 				{banBooking.endTime
-					? BookingTime[banBooking.startTime].split('~')[0] +
+					? BOOKING_TIME_LIST[banBooking.startTime].split('~')[0] +
 						'~' +
-						BookingTime[banBooking.endTime].split('~')[1]
-					: BookingTime[banBooking.startTime]}
+						BOOKING_TIME_LIST[banBooking.endTime].split('~')[1]
+					: BOOKING_TIME_LIST[banBooking.startTime]}
 			</td>
 			<td>{banBooking.description}</td>
 		</>

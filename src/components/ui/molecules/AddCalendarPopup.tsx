@@ -3,7 +3,8 @@
 import { format } from 'date-fns'
 import { useCallback } from 'react'
 import Popup from '@/components/ui/molecules/Popup'
-import { BookingDetailProps, BookingTime } from '@/features/booking/types'
+import { Booking } from '@/features/booking/types'
+import { BOOKING_TIME_LIST } from '@/features/booking/constants'
 import { useLocationNavigate, useWindowOpen } from '@/hooks/useBrowserApis'
 
 import { FaApple, FaYahoo } from 'react-icons/fa'
@@ -14,13 +15,13 @@ const AddCalendarPopup = ({
 	isPopupOpen,
 	setIsPopupOpen,
 }: {
-	bookingDetail: BookingDetailProps
+	bookingDetail: Booking
 	isPopupOpen: boolean
 	setIsPopupOpen: (arg: boolean) => void
 }) => {
 	const openWindow = useWindowOpen()
 	const navigate = useLocationNavigate()
-	const bookingDate = BookingTime[bookingDetail.bookingTime]
+	const bookingDate = BOOKING_TIME_LIST[bookingDetail.bookingTime]
 		.split('~')
 		.map(
 			(time) =>

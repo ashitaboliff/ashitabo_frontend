@@ -18,30 +18,24 @@ import type { ApiError } from '@/types/responseTypes'
 type Props = {
 	open: boolean
 	onClose: () => void
-	timeList: string[]
 	initialViewDay: Date
 	initialBookingResponse: BookingResponse | null
 	actualBookingDate: string
 	actualBookingTime: number
 	bookingDate: string
-	setBookingDate: (date: string) => void
 	bookingTime: number
-	setBookingTime: (timeIndex: number) => void
 	setValue: UseFormSetValue<BookingEditFormValues>
 }
 
 const BookingEditCalendarPopup = ({
 	open,
 	onClose,
-	timeList,
 	initialViewDay,
 	initialBookingResponse,
 	actualBookingDate,
 	actualBookingTime,
 	bookingDate,
-	setBookingDate,
 	bookingTime,
-	setBookingTime,
 	setValue,
 }: Props) => {
 	const calendarFeedback = useFeedback()
@@ -116,13 +110,10 @@ const BookingEditCalendarPopup = ({
 				{bookingResponse ? (
 					<BookingEditCalendar
 						bookingResponse={bookingResponse}
-						timeList={timeList}
 						actualBookingDate={actualBookingDate}
 						actualBookingTime={actualBookingTime}
 						bookingDate={bookingDate}
-						setBookingDate={setBookingDate}
 						bookingTime={bookingTime}
-						setBookingTime={setBookingTime}
 						setCalendarOpen={handleSelectClose}
 						setValue={setValue}
 					/>
@@ -136,11 +127,7 @@ const BookingEditCalendarPopup = ({
 					</p>
 				)}
 				<div className="flex justify-center space-x-2">
-					<button
-						type="button"
-						className="btn btn-outline"
-						onClick={onClose}
-					>
+					<button type="button" className="btn btn-outline" onClick={onClose}>
 						閉じる
 					</button>
 				</div>

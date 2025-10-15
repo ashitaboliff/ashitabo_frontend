@@ -4,7 +4,8 @@ import { useEffect } from 'react'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import useSWR from 'swr'
-import { Booking, BookingTime } from '@/features/booking/types'
+import { Booking } from '@/features/booking/types'
+import { BOOKING_TIME_LIST } from '@/features/booking/constants'
 import GenericTableBody from '@/components/ui/molecules/GenericTableBody'
 import { getBookingByUserIdAction } from '@/features/booking/actions'
 
@@ -73,7 +74,7 @@ const BookingLogList = ({
 					locale: ja,
 				})}
 			</td>
-			<td>{BookingTime[booking.bookingTime]}</td>
+			<td>{BOOKING_TIME_LIST[booking.bookingTime]}</td>
 			<td>{booking.name}</td>
 			<td>{booking.registName}</td>
 		</>

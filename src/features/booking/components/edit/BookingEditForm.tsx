@@ -1,18 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next-nprogress-bar'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { updateBookingAction } from '../../actions'
-import {
-	Booking,
-	BookingDetailProps,
-	BookingResponse,
-} from '@/features/booking/types'
+import { Booking, BookingResponse } from '@/features/booking/types'
 import type { Session } from '@/types/session'
-import BookingDetailBox from '@/features/booking/components/BookingDetailBox'
-import { BookingSuccessMessage } from '@/features/booking/components/BookingActionFeedback'
 import { toDateKey } from '@/utils'
 import { useFeedback } from '@/hooks/useFeedback'
 import { logError } from '@/utils/logger'
@@ -24,10 +17,10 @@ import {
 } from '@/features/booking/schemas/bookingEditSchema'
 
 interface Props {
-	bookingDetail: BookingDetailProps
+	bookingDetail: Booking
 	session: Session
-	timeList: string[]
 	onCancel: () => void
+	onSuccess: (updatedBooking: Booking) => void
 	initialBookingResponse: BookingResponse | null
 	initialViewDay: Date
 }
@@ -35,22 +28,13 @@ interface Props {
 const BookingEditForm = ({
 	bookingDetail,
 	session,
-	timeList,
 	onCancel,
+	onSuccess,
 	initialBookingResponse,
 	initialViewDay,
 }: Props) => {
-	const router = useRouter()
-
-	const [bookingDate, setBookingDate] = useState(
-		toDateKey(bookingDetail.bookingDate),
-	)
-	const [bookingTime, setBookingTime] = useState(bookingDetail.bookingTime)
 	const [calendarOpen, setCalendarOpen] = useState(false)
-	const [submitStatus, setSubmitStatus] = useState<
-		'idle' | 'loading' | 'success'
-	>('idle')
-	const [resultBooking, setResultBooking] = useState<Booking | null>(null)
+	const [submitStatus, setSubmitStatus] = useState<'idle' | 'loading'>('idle')
 
 	const submissionFeedback = useFeedback()
 	const {
@@ -58,20 +42,23 @@ const BookingEditForm = ({
 		handleSubmit,
 		setValue,
 		formState: { errors, isSubmitting },
+		watch,
 	} = useForm<BookingEditFormValues>({
 		mode: 'onBlur',
 		resolver: zodResolver(bookingEditSchema),
 		defaultValues: {
-			bookingDate,
-			bookingTime: timeList[bookingTime],
+			bookingDate: bookingDetail.bookingDate,
+			bookingTime: bookingDetail.bookingTime,
 			registName: bookingDetail.registName,
 			name: bookingDetail.name,
 		},
 	})
 
+	const bookingDate = watch('bookingDate')
+	const bookingTime = watch('bookingTime')
+
 	const onSubmit = async (data: BookingEditFormValues) => {
 		setSubmitStatus('loading')
-		setResultBooking(null)
 		submissionFeedback.clearFeedback()
 
 		try {
@@ -80,7 +67,7 @@ const BookingEditForm = ({
 				userId: session.user.id,
 				booking: {
 					bookingDate: toDateKey(data.bookingDate),
-					bookingTime,
+					bookingTime: Number(data.bookingTime),
 					registName: data.registName,
 					name: data.name,
 					isDeleted: false,
@@ -88,15 +75,19 @@ const BookingEditForm = ({
 			})
 
 			if (response.ok) {
-				const nextBooking = response.data
-				setResultBooking(nextBooking)
-				setBookingDate(nextBooking.bookingDate)
-				setBookingTime(nextBooking.bookingTime)
-				setValue('bookingDate', nextBooking.bookingDate)
-				setValue('bookingTime', timeList[nextBooking.bookingTime])
 				setCalendarOpen(false)
-				submissionFeedback.showSuccess('予約を更新しました。')
-				setSubmitStatus('success')
+				onSuccess({
+					id: bookingDetail.id,
+					userId: bookingDetail.userId,
+					bookingDate: data.bookingDate,
+					bookingTime: Number(data.bookingTime),
+					registName: data.registName,
+					name: data.name,
+					createdAt: bookingDetail.createdAt,
+					updatedAt: new Date(),
+					isDeleted: false,
+				})
+				setSubmitStatus('idle')
 				return
 			}
 
@@ -114,13 +105,8 @@ const BookingEditForm = ({
 		}
 	}
 
-	const isSuccess = submitStatus === 'success'
 	const errorFeedback =
-		!isSuccess && submissionFeedback.feedback?.kind === 'error'
-			? submissionFeedback.feedback
-			: null
-	const successFeedback =
-		isSuccess && submissionFeedback.feedback?.kind === 'success'
+		submissionFeedback.feedback?.kind === 'error'
 			? submissionFeedback.feedback
 			: null
 
@@ -131,47 +117,28 @@ const BookingEditForm = ({
 			</div>
 
 			<div className="max-w-md mx-auto space-y-4">
-				{!isSuccess && (
-					<BookingEditFormFields
-						register={register}
-						errors={errors}
-						isSubmitting={isSubmitting}
-						isLoading={submitStatus === 'loading'}
-						onCancel={onCancel}
-						onOpenCalendar={() => setCalendarOpen(true)}
-						onSubmit={handleSubmit(onSubmit)}
-						errorFeedback={errorFeedback}
-					/>
-				)}
-
-				{isSuccess && resultBooking && (
-					<BookingSuccessMessage
-						feedback={successFeedback}
-						onBack={() => router.push('/booking')}
-						backButtonClassName="btn btn-outline w-full"
-					>
-						<BookingDetailBox
-							bookingDate={resultBooking.bookingDate}
-							bookingTime={resultBooking.bookingTime}
-							registName={resultBooking.registName}
-							name={resultBooking.name}
-						/>
-					</BookingSuccessMessage>
-				)}
+				<BookingEditFormFields
+					register={register}
+					errors={errors}
+					isSubmitting={isSubmitting}
+					isLoading={submitStatus === 'loading'}
+					onCancel={onCancel}
+					onOpenCalendar={() => setCalendarOpen(true)}
+					onSubmit={handleSubmit(onSubmit)}
+					errorFeedback={errorFeedback}
+					bookingTimeIndex={Number(bookingTime)}
+				/>
 			</div>
 
 			<BookingEditCalendarPopup
 				open={calendarOpen}
 				onClose={() => setCalendarOpen(false)}
-				timeList={timeList}
 				initialViewDay={initialViewDay}
 				initialBookingResponse={initialBookingResponse}
 				actualBookingDate={toDateKey(bookingDetail.bookingDate)}
 				actualBookingTime={bookingDetail.bookingTime}
 				bookingDate={bookingDate}
-				setBookingDate={setBookingDate}
 				bookingTime={bookingTime}
-				setBookingTime={setBookingTime}
 				setValue={setValue}
 			/>
 		</div>

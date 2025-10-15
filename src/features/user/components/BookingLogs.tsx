@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { Booking, BookingTime } from '@/features/booking/types'
+import { Booking } from '@/features/booking/types'
+import { BOOKING_TIME_LIST } from '@/features/booking/constants'
 import Pagination from '@/components/ui/atoms/Pagination'
 import SelectField from '@/components/ui/atoms/SelectField'
 import Popup from '@/components/ui/molecules/Popup'
@@ -43,18 +44,6 @@ const UserBookingLogs = ({ session, initialData }: UserBookingLogsProps) => {
 		}
 	}, [initialData, setTotalCount, totalCount])
 
-	const handlePageChange = (nextPage: number) => {
-		setPage(nextPage)
-	}
-
-	const handleSortChange = (newSort: 'new' | 'old') => {
-		setSort(newSort)
-	}
-
-	const handleDataLoaded = (count: number) => {
-		setTotalCount(count)
-	}
-
 	const handleBookingItemClick = (booking: Booking) => {
 		setPopupData(booking)
 		setIsPopupOpen(true)
@@ -84,7 +73,7 @@ const UserBookingLogs = ({ session, initialData }: UserBookingLogsProps) => {
 							{ value: 'old', label: '古い順' },
 						]}
 						currentSort={sort}
-						onSortChange={handleSortChange}
+						onSortChange={setSort}
 						buttonClassName="btn-outline"
 					/>
 				</div>
@@ -105,7 +94,7 @@ const UserBookingLogs = ({ session, initialData }: UserBookingLogsProps) => {
 								logsPerPage={perPage}
 								sort={sort}
 								onBookingItemClick={handleBookingItemClick}
-								onDataLoaded={handleDataLoaded}
+								onDataLoaded={setTotalCount}
 								initialData={page === 1 ? initialData : undefined}
 							/>
 						</tbody>
@@ -116,7 +105,7 @@ const UserBookingLogs = ({ session, initialData }: UserBookingLogsProps) => {
 						<Pagination
 							currentPage={page}
 							totalPages={pageCount}
-							onPageChange={handlePageChange}
+							onPageChange={setPage}
 						/>
 					</div>
 				)}
@@ -140,7 +129,7 @@ const UserBookingLogs = ({ session, initialData }: UserBookingLogsProps) => {
 									})}
 								</div>
 								<div className="font-bold">予約時間:</div>
-								<div>{BookingTime[popupData.bookingTime]}</div>
+								<div>{BOOKING_TIME_LIST[popupData.bookingTime]}</div>
 								<div className="font-bold">バンド名:</div>
 								<div>{popupData.name}</div>
 								<div className="font-bold">登録者名:</div>{' '}

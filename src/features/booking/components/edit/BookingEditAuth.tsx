@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next-nprogress-bar'
@@ -20,15 +20,11 @@ import {
 
 interface Props {
 	session: Session
-	handleSetAuth: (isAuth: boolean) => void
 	bookingDetail: Booking
+	onSuccess: () => void
 }
 
-const BookingEditAuthPage = ({
-	session,
-	handleSetAuth,
-	bookingDetail,
-}: Props) => {
+const BookingEditAuthForm = ({ session, bookingDetail, onSuccess }: Props) => {
 	const router = useRouter()
 	const [showPassword, setShowPassword] = useState(false)
 	const feedback = useFeedback()
@@ -41,11 +37,6 @@ const BookingEditAuthPage = ({
 		mode: 'onBlur',
 		resolver: zodResolver(bookingAuthSchema),
 	})
-
-	useEffect(() => {
-		handleSetAuth(false)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
 
 	if (!bookingDetail) {
 		return <DetailNotFoundPage />
@@ -63,8 +54,7 @@ const BookingEditAuthPage = ({
 			})
 
 			if (response.ok) {
-				handleSetAuth(true)
-				router.push(`/booking/${bookingDetail.id}/edit`)
+				onSuccess()
 			} else {
 				feedback.showApiError(response)
 			}
@@ -128,4 +118,4 @@ const BookingEditAuthPage = ({
 	)
 }
 
-export default BookingEditAuthPage
+export default BookingEditAuthForm

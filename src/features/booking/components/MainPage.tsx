@@ -4,11 +4,12 @@ import { useEffect, useMemo } from 'react'
 import useSWR from 'swr'
 import { addDays, format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { BookingResponse, BookingTime } from '@/features/booking/types'
+import { BookingResponse } from '@/features/booking/types'
 import BookingCalendar from '@/features/booking/components/BookingCalendar'
 import {
 	BOOKING_MAIN_VIEW_MIN_OFFSET_DAYS,
 	BOOKING_VIEW_RANGE_DAYS,
+	BOOKING_TIME_LIST,
 } from '@/features/booking/constants'
 import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import { useFeedback } from '@/hooks/useFeedback'
@@ -131,7 +132,10 @@ const MainPage = ({
 						<div className="skeleton w-[360px] h-[400px] sm:w-[520px] sm:h-[580px]"></div>
 					</div>
 				) : bookingData ? (
-					<BookingCalendar bookingDate={bookingData} timeList={BookingTime} />
+					<BookingCalendar
+						bookingDate={bookingData}
+						timeList={BOOKING_TIME_LIST}
+					/>
 				) : null}
 			</div>
 		</>

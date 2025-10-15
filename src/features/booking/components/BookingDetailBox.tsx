@@ -2,8 +2,7 @@
 
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-// BaseTable のインポートを削除
-import { BookingTime } from '@/features/booking/types'
+import { BOOKING_TIME_LIST } from '@/features/booking/constants'
 import { ReactNode } from 'react'
 
 interface BookingDetailItem {
@@ -11,7 +10,7 @@ interface BookingDetailItem {
 	value: string | ReactNode
 }
 
-interface BookingDetailProps {
+interface Props {
 	bookingDate: string
 	bookingTime: number
 	registName: string
@@ -23,7 +22,7 @@ const BookingDetailBox = ({
 	bookingTime,
 	registName,
 	name,
-}: BookingDetailProps) => {
+}: Props) => {
 	const data: BookingDetailItem[] = [
 		{
 			label: '日付',
@@ -33,7 +32,7 @@ const BookingDetailBox = ({
 		},
 		{
 			label: '時間',
-			value: BookingTime[bookingTime],
+			value: BOOKING_TIME_LIST[bookingTime],
 		},
 		{
 			label: 'バンド名',

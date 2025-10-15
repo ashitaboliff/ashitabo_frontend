@@ -16,7 +16,7 @@ export const BookingSuccessMessage = ({
 	children,
 	onBack,
 	backButtonLabel = 'コマ表に戻る',
-	className = 'space-y-4',
+	className = 'space-y-4 w-full',
 	backButtonClassName = 'btn btn-outline w-full max-w-md',
 }: BookingSuccessMessageProps) => {
 	if (!feedback && !children && !onBack) {

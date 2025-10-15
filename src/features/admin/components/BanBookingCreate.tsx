@@ -6,7 +6,7 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as zod from 'zod'
 import { eachDayOfInterval, getDay } from 'date-fns'
-import { BookingTime } from '@/features/booking/types'
+import { BOOKING_TIME_LIST } from '@/features/booking/constants'
 import { DateToDayISOstring } from '@/utils'
 import { createBookingBanDateAction } from '../action'
 import { ApiError } from '@/types/responseTypes'
@@ -251,7 +251,7 @@ const BanBookingCreate = () => {
 					label="開始時間"
 					name="startTime"
 					register={register('startTime')}
-					options={BookingTime.reduce(
+					options={BOOKING_TIME_LIST.reduce(
 						(acc, time, index) => {
 							acc[time] = index.toString()
 							return acc
@@ -265,7 +265,7 @@ const BanBookingCreate = () => {
 						label="終了時間"
 						name="endTime"
 						register={register('endTime')}
-						options={BookingTime.reduce(
+						options={BOOKING_TIME_LIST.reduce(
 							(acc, time, index) => {
 								acc[time] = index.toString()
 								return acc

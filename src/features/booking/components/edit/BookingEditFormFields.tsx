@@ -6,6 +6,7 @@ import TextInputField from '@/components/ui/atoms/TextInputField'
 import { MdOutlineEditCalendar } from 'react-icons/md'
 import { BookingErrorMessage } from '@/features/booking/components/BookingActionFeedback'
 import type { FeedbackMessage } from '@/types/feedback'
+import { BOOKING_TIME_LIST } from '@/features/booking/constants'
 
 type Props = {
 	register: UseFormRegister<BookingEditFormValues>
@@ -16,6 +17,7 @@ type Props = {
 	onOpenCalendar: () => void
 	onSubmit: (event: React.FormEvent<HTMLFormElement>) => void
 	errorFeedback: FeedbackMessage | null
+	bookingTimeIndex: number
 }
 
 const BookingEditFormFields = ({
@@ -27,8 +29,13 @@ const BookingEditFormFields = ({
 	onOpenCalendar,
 	onSubmit,
 	errorFeedback,
+	bookingTimeIndex,
 }: Props) => (
 	<>
+		<input
+			type="hidden"
+			{...register('bookingTime', { valueAsNumber: true })}
+		/>
 		<form onSubmit={onSubmit} className="space-y-2 p-4">
 			<div className="flex flex-row justify-between gap-2">
 				<div className="flex flex-col space-y-2 grow">
@@ -41,9 +48,9 @@ const BookingEditFormFields = ({
 					/>
 					<TextInputField
 						label="時間"
-						register={register('bookingTime')}
 						placeholder="時間"
 						type="text"
+						value={BOOKING_TIME_LIST[bookingTimeIndex] ?? ''}
 						disabled
 					/>
 				</div>

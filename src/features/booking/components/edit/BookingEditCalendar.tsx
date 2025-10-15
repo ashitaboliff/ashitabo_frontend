@@ -3,52 +3,48 @@
 import { UseFormSetValue } from 'react-hook-form'
 import { BookingResponse } from '@/features/booking/types'
 import CalendarFrame from '@/components/ui/molecules/CalendarFrame'
-import { FORBIDDEN_BOOKING } from '@/features/booking/constants'
+import {
+	FORBIDDEN_BOOKING,
+	BOOKING_TIME_LIST,
+} from '@/features/booking/constants'
 import {
 	AvailableCell,
 	BookingInfoCell,
 	ForbiddenCell,
 } from '@/features/booking/components/CalendarCellContent'
+import { BookingEditFormValues } from '@/features/booking/schemas/bookingEditSchema'
 
 interface Props {
 	bookingResponse: BookingResponse
-	timeList: string[]
 	actualBookingDate: string
 	actualBookingTime: number
 	bookingDate: string
-	setBookingDate: (bookingDate: string) => void
 	bookingTime: number
-	setBookingTime: (bookingTime: number) => void
 	setCalendarOpen: (calendarOpen: boolean) => void
-	setValue: UseFormSetValue<any>
+	setValue: UseFormSetValue<BookingEditFormValues>
 }
 
 const BookingEditCalendar = ({
 	bookingResponse,
-	timeList,
 	actualBookingDate,
 	actualBookingTime,
 	bookingDate,
-	setBookingDate,
 	bookingTime,
-	setBookingTime,
 	setCalendarOpen,
 	setValue,
 }: Props) => {
 	const dateList = Object.keys(bookingResponse)
 
 	const handleSelect = (date: string, timeIndex: number) => {
-		setBookingDate(date)
-		setBookingTime(timeIndex)
 		setValue('bookingDate', date)
-		setValue('bookingTime', timeList[timeIndex])
+		setValue('bookingTime', timeIndex)
 		setCalendarOpen(false)
 	}
 
 	return (
 		<CalendarFrame
 			dates={dateList}
-			times={timeList}
+			times={BOOKING_TIME_LIST}
 			cornerCellClassName="border border-base-200 w-11 sm:w-14 md:w-16"
 			headerCellClassName="border border-base-200 p-1 sm:p-2 w-11 h-9 sm:w-14 sm:h-12 md:w-16 md:h-14"
 			timeCellClassName="border border-base-200 p-1 sm:p-2 w-11 h-13 sm:w-14 sm:h-14 md:w-16 md:h-16 break-words"

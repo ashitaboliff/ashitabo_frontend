@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { BookingLog, BookingTime } from '@/features/booking/types'
+import { BookingLog } from '@/features/booking/types'
+import { BOOKING_TIME_LIST } from '@/features/booking/constants'
 import Popup from '@/components/ui/molecules/Popup'
 import Pagination from '@/components/ui/atoms/Pagination'
 import SelectField from '@/components/ui/atoms/SelectField'
@@ -91,7 +92,7 @@ const LogsPage = ({
 										{format(log.bookingDate, 'yyyy/MM/dd (E)', { locale: ja })}
 									</td>
 									<td className="p-3 whitespace-nowrap text-xs-custom sm:text-sm hidden sm:table-cell">
-										{BookingTime[log.bookingTime]}
+										{BOOKING_TIME_LIST[log.bookingTime]}
 									</td>
 									<td className="p-3 text-xs-custom sm:text-sm break-words">
 										{log.registName}
@@ -147,7 +148,7 @@ const LogsPage = ({
 							},
 							{
 								label: '予約時間',
-								value: popupData && BookingTime[popupData.bookingTime],
+								value: popupData && BOOKING_TIME_LIST[popupData.bookingTime],
 							},
 							{ label: 'バンド名', value: popupData?.registName, break: true },
 							{ label: '責任者', value: popupData?.name, break: true },

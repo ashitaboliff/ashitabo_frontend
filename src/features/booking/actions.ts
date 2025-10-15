@@ -143,8 +143,8 @@ export const updateBookingAction = async ({
 	bookingId: string
 	userId: string
 	booking: BookingPayload
-}): Promise<ApiResponse<Booking>> => {
-	const res = await apiPut<RawBookingData>(`/booking/${bookingId}`, {
+}): Promise<ApiResponse<null>> => {
+	const res = await apiPut<null>(`/booking/${bookingId}`, {
 		body: {
 			userId,
 			bookingDate: booking.bookingDate,
@@ -155,11 +155,11 @@ export const updateBookingAction = async ({
 		},
 	})
 
-	if (res.status === StatusCode.NO_CONTENT) {
-		return getBookingByIdAction(bookingId)
+	if (!res.ok) {
+		return withFallbackMessage(res, '予約の更新に失敗しました。')
 	}
 
-	return mapSuccess(res, mapRawBooking, '予約の更新に失敗しました。')
+	return noContentResponse()
 }
 
 export const deleteBookingAction = async ({

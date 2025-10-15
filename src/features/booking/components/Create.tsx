@@ -14,7 +14,7 @@ import Popup from '@/components/ui/molecules/Popup'
 import AddCalendarPopup from '@/components/ui/molecules/AddCalendarPopup'
 import PasswordInputField from '@/components/ui/molecules/PasswordInputField'
 import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
-import { BookingTime } from '@/features/booking/types'
+import { BOOKING_TIME_LIST } from '@/features/booking/constants'
 import { useGachaPlayManager } from '@/features/gacha/hooks/useGachaPlayManager'
 import GachaResult from '@/features/gacha/components/GachaResult'
 import type { Session } from '@/types/session'
@@ -64,7 +64,7 @@ const CreatePage = ({
 		if (
 			!Number.isFinite(parsed) ||
 			parsed < 0 ||
-			parsed >= BookingTime.length
+			parsed >= BOOKING_TIME_LIST.length
 		) {
 			return 0
 		}
@@ -74,7 +74,8 @@ const CreatePage = ({
 	const defaultValues: Partial<BookingCreateFormInput> = useMemo(
 		() => ({
 			bookingDate: toDateKey(defaultBookingDate),
-			bookingTime: BookingTime[defaultBookingTimeIndex] ?? BookingTime[0],
+			bookingTime:
+				BOOKING_TIME_LIST[defaultBookingTimeIndex] ?? BOOKING_TIME_LIST[0],
 			registName: '',
 			name: '',
 			password: '',
@@ -111,8 +112,8 @@ const CreatePage = ({
 
 		const bookingDate = new Date(data.bookingDate)
 		const bookingTimeIndex =
-			BookingTime.indexOf(data.bookingTime) >= 0
-				? BookingTime.indexOf(data.bookingTime)
+			BOOKING_TIME_LIST.indexOf(data.bookingTime) >= 0
+				? BOOKING_TIME_LIST.indexOf(data.bookingTime)
 				: defaultBookingTimeIndex
 
 		const reservationData = {
@@ -246,7 +247,7 @@ const CreatePage = ({
 							})}
 						</p>
 						<p className="text-center">
-							時間: {BookingTime[createdBooking.bookingTimeIndex]}
+							時間: {BOOKING_TIME_LIST[createdBooking.bookingTimeIndex]}
 						</p>
 						<p className="text-center">バンド名: {createdBooking.registName}</p>
 						<p className="text-center">責任者: {createdBooking.name}</p>
@@ -274,7 +275,7 @@ const CreatePage = ({
 										{
 											locale: ja,
 										},
-									)} ${BookingTime[createdBooking.bookingTimeIndex]}`}
+									)} ${BOOKING_TIME_LIST[createdBooking.bookingTimeIndex]}`}
 									isFullButton
 									isOnlyLine
 									className="btn btn-outline"

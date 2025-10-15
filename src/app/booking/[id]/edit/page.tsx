@@ -1,43 +1,32 @@
 import {
-	BookingDetailProps,
-	BookingResponse,
-	BookingTime,
-} from '@/features/booking/types'
+	BOOKING_TIME_LIST,
+	BOOKING_VIEW_RANGE_DAYS,
+} from '@/features/booking/constants'
 import {
 	getBookingByIdAction,
 	getBookingByDateAction,
 } from '@/features/booking/actions'
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
-import BookingEditMainPage from '@/features/booking/components/edit/BookingEdit'
+import BookingEdit from '@/features/booking/components/edit/BookingEdit'
 import DetailNotFoundPage from '@/features/booking/components/DetailNotFound'
 import { logError } from '@/utils/logger'
 import { toDateKey } from '@/utils'
-import { addDays, subDays, parseISO } from 'date-fns'
+import { addDays, subDays } from 'date-fns'
 import { createMetaData } from '@/hooks/useMetaData'
 import { Metadata, ResolvingMetadata } from 'next'
-import { cache } from 'react'
 
 type PageParams = Promise<{ id: string }>
-type PageSearchParams = Promise<{ viewStartDate?: string }>
 type PageProps = {
 	params: PageParams
-	searchParams: PageSearchParams
 }
-
-const getBookingDetail = cache(async (id: string) => {
-	const result = await getBookingByIdAction(id)
-	if (result.ok) {
-		return result.data as BookingDetailProps
-	}
-	return null
-})
 
 export async function generateMetadata(
 	{ params }: { params: PageParams },
 	parent: ResolvingMetadata,
 ): Promise<Metadata> {
 	const { id } = await params
-	const bookingDetail = await getBookingDetail(id)
+	const bookingDetailRes = await getBookingByIdAction(id)
+	const bookingDetail = bookingDetailRes.ok ? bookingDetailRes.data : null
 
 	let title = `予約編集 ${id} | あしたぼホームページ`
 	let description = `コマ表の予約編集 (${id}) です。`
@@ -47,7 +36,7 @@ export async function generateMetadata(
 		title = bookingData.registName
 			? `${bookingData.registName}の予約 | あしたぼホームページ`
 			: `予約編集 ${id} | あしたぼホームページ`
-		description = `コマ表の予約 (${bookingData.registName || id}さん、${bookingData.bookingDate} ${BookingTime[bookingData.bookingTime] || ''}) の編集ページです。`
+		description = `コマ表の予約 (${bookingData.registName || id}さん、${bookingData.bookingDate} ${BOOKING_TIME_LIST[bookingData.bookingTime] || ''}) の編集ページです。`
 	}
 
 	return createMetaData({
@@ -57,46 +46,41 @@ export async function generateMetadata(
 	})
 }
 
-const Page = async ({ params, searchParams }: PageProps) => {
+const Page = async ({ params }: PageProps) => {
 	return (
 		<AuthPage requireProfile={true}>
 			{async (authResult) => {
 				const session = authResult.session!
-				const bookingDetail = await getBookingDetail((await params).id)
-				if (!bookingDetail) {
-					return <DetailNotFoundPage />
-				}
 
-				// Fetch calendar data based on viewStartDate
-				const viewDayMax = 7
-				const { viewStartDate } = await searchParams
-				const initialViewDayDate = viewStartDate
-					? parseISO(viewStartDate)
-					: subDays(new Date(), 1)
+				const initialViewDayDate = subDays(new Date(), 1)
 
 				const calendarStartDate = toDateKey(initialViewDayDate)
 				const calendarEndDate = toDateKey(
-					addDays(initialViewDayDate, viewDayMax - 1),
+					addDays(initialViewDayDate, BOOKING_VIEW_RANGE_DAYS - 1),
 				)
 
-				let initialBookingResponse: BookingResponse | null = null
-				const calendarBookingRes = await getBookingByDateAction({
-					startDate: calendarStartDate,
-					endDate: calendarEndDate,
-				})
+				const { id } = await params
 
-				if (calendarBookingRes.ok) {
-					initialBookingResponse = calendarBookingRes.data
-				} else {
-					logError(
-						'Failed to get calendar booking data for edit page',
-						calendarBookingRes,
-					)
+				const [bookingDetail, bookingResponse] = await Promise.all([
+					getBookingByIdAction(id),
+					getBookingByDateAction({
+						startDate: calendarStartDate,
+						endDate: calendarEndDate,
+					}),
+				])
+
+				if (!bookingDetail.ok || !bookingDetail.data) {
+					logError('Failed to get booking detail for edit page', bookingDetail)
+					return <DetailNotFoundPage />
 				}
 
+				const initialBookingResponse = bookingResponse.ok
+					? bookingResponse.data
+					: null
+
 				return (
-					<BookingEditMainPage
-						bookingDetail={bookingDetail}
+					<BookingEdit
+						bookingDetail={bookingDetail.data}
 						session={session}
 						initialBookingResponse={initialBookingResponse}
 						initialViewDay={initialViewDayDate}
