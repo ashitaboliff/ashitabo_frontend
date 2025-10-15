@@ -2,6 +2,7 @@ import fs from 'fs/promises'
 import path from 'path'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import Modal from '@/components/ui/molecules/Modal'
+import NoticeDialog from '@/components/ui/atoms/NoticeDialog'
 import RefreshButton from './RefreshButton'
 
 const MainPageLayout = async () => {

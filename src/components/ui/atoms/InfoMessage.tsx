@@ -16,9 +16,7 @@ type Message = {
 const InfoMessage = ({ messageType, message, IconColor }: Message) => {
 	const iconColor = IconColor ?? messageType
 	let className = ''
-	switch (
-		messageType // 冗長だけどこうしなきゃ色が反映されない
-	) {
+	switch (messageType) {
 		case 'info':
 			className = 'alert alert-info w-auto'
 			break

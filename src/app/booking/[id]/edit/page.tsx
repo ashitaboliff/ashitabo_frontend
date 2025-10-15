@@ -1,3 +1,6 @@
+'use server'
+
+import { cookies } from 'next/headers'
 import {
 	BOOKING_TIME_LIST,
 	BOOKING_VIEW_RANGE_DAYS,
@@ -47,6 +50,8 @@ export async function generateMetadata(
 }
 
 const Page = async ({ params }: PageProps) => {
+	const cookieStore = await cookies()
+	const flash = cookieStore.get('booking:flash')?.value
 	return (
 		<AuthPage requireProfile={true}>
 			{async (authResult) => {
@@ -70,6 +75,9 @@ const Page = async ({ params }: PageProps) => {
 				])
 
 				if (!bookingDetail.ok || !bookingDetail.data) {
+					if (flash) {
+						return null
+					}
 					logError('Failed to get booking detail for edit page', bookingDetail)
 					return <DetailNotFoundPage />
 				}

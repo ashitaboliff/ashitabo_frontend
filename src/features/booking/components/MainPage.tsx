@@ -12,6 +12,9 @@ import {
 	BOOKING_TIME_LIST,
 } from '@/features/booking/constants'
 import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
+import NoticeDialog, {
+	type NoticeType,
+} from '@/components/ui/atoms/NoticeDialog'
 import { useFeedback } from '@/hooks/useFeedback'
 import {
 	bookingRangeFetcher,
@@ -22,17 +25,11 @@ import type { ApiError } from '@/types/responseTypes'
 
 type MainPageProps = {
 	initialViewDate: string
-	initialData?: BookingResponse | null
-	initialRangeDays?: number
-	initialError?: string
+	type?: NoticeType
+	message?: string
 }
 
-const MainPage = ({
-	initialViewDate,
-	initialData = null,
-	initialRangeDays = BOOKING_VIEW_RANGE_DAYS,
-	initialError,
-}: MainPageProps) => {
+const MainPage = ({ initialViewDate, type, message }: MainPageProps) => {
 	const initialDate = useMemo(
 		() => new Date(initialViewDate),
 		[initialViewDate],
@@ -47,18 +44,11 @@ const MainPage = ({
 		canGoNextWeek,
 	} = useBookingWeekNavigation({
 		initialDate,
-		viewRangeDays: initialRangeDays,
+		viewRangeDays: BOOKING_VIEW_RANGE_DAYS,
 		minOffsetDays: BOOKING_MAIN_VIEW_MIN_OFFSET_DAYS,
 	})
 
 	const errorFeedback = useFeedback()
-
-	useEffect(() => {
-		if (initialError) {
-			errorFeedback.showError(initialError)
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
 
 	const swrKey = buildBookingRangeKey(viewDate, viewRangeDays)
 
@@ -88,6 +78,7 @@ const MainPage = ({
 
 	return (
 		<>
+			{type && message && <NoticeDialog type={type}>{message}</NoticeDialog>}
 			{errorFeedback.feedback && (
 				<div className="my-4 flex flex-col items-center gap-3 border border-error p-4 rounded bg-error/10">
 					<div className="w-full max-w-lg">

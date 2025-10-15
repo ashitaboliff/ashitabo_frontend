@@ -1,5 +1,6 @@
 'use server'
 
+import { cookies } from 'next/headers'
 import { revalidateTag } from 'next/cache'
 import { apiDelete, apiGet, apiPost, apiPut } from '@/lib/api/crud'
 import { ApiResponse } from '@/types/responseTypes'
@@ -221,6 +222,13 @@ export const deleteBookingAction = async ({
 	revalidateTag(`booking-detail-${bookingId}`)
 	revalidateTag(`booking-user-${userId}`)
 	revalidateBookingCalendarsForDate(bookingDateKey)
+
+	const cookieStore = await cookies()
+	cookieStore.set(
+		'booking:flash',
+		JSON.stringify({ type: 'success', message: '予約を削除しました。' }),
+		{ path: '/booking', maxAge: 10, httpOnly: true },
+	)
 
 	return noContentResponse()
 }

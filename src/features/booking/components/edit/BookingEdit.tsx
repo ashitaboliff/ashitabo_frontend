@@ -20,7 +20,7 @@ import { logError } from '@/utils/logger'
 import { mutateBookingCalendarsForDate } from '@/utils/calendarCache'
 import { toDateKey } from '@/utils'
 
-type ViewMode = 'auth' | 'summary' | 'editing' | 'editSuccess' | 'deleteSuccess'
+type ViewMode = 'auth' | 'summary' | 'editing' | 'editSuccess'
 
 type State = {
 	mode: ViewMode
@@ -44,8 +44,6 @@ const reducer = (state: State, action: Action): State => {
 			return { ...state, mode: 'summary' }
 		case 'EDIT_SUCCESS':
 			return { mode: 'editSuccess', booking: action.payload }
-		case 'DELETE_SUCCESS':
-			return { ...state, mode: 'deleteSuccess' }
 		default:
 			return state
 	}
@@ -105,11 +103,7 @@ const BookingEdit = ({
 					mutate,
 					toDateKey(state.booking.bookingDate),
 				)
-				setFlashMessage('予約を削除しました。')
-				dispatch({ type: 'DELETE_SUCCESS' })
-				setTimeout(() => {
-					router.replace('/booking?status=deleted')
-				}, 1200)
+				router.push('/booking')
 			} else {
 				deleteFeedback.showApiError(response)
 			}
@@ -217,19 +211,6 @@ const BookingEdit = ({
 			)}
 
 			{state.mode === 'editSuccess' && editSuccessView}
-
-			{state.mode === 'deleteSuccess' && (
-				<div className="flex flex-col items-center justify-center w-full space-y-4">
-					<BookingSuccessMessage
-						feedback={{
-							kind: 'success',
-							message: flashMessage ?? '予約を削除しました。',
-						}}
-						onBack={() => router.push('/booking')}
-						backButtonClassName="btn btn-outline w-full max-w-md"
-					/>
-				</div>
-			)}
 
 			<Popup
 				id="booking-delete-popup"
