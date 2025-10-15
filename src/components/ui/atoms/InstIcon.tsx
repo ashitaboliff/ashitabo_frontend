@@ -12,7 +12,6 @@ import { IoEllipsisHorizontalCircleSharp as OtherIcon } from 'react-icons/io5'
 const InstIcon = ({ part, size }: { part: Part[]; size?: number }) => {
 	const iconSize = size || 20
 
-	// アイコン定義
 	const icons = {
 		VOCAL: <MicIcon size={iconSize} color="#000000" />,
 		BACKING_GUITAR: <GuitarIcon size={iconSize} color="#FF6F61" />,
@@ -23,7 +22,6 @@ const InstIcon = ({ part, size }: { part: Part[]; size?: number }) => {
 		OTHER: <OtherIcon size={iconSize} color="#6C757D" />,
 	}
 
-	// 表示順にソート
 	const sortedParts = Object.keys(icons).filter((key) =>
 		part.includes(key as Part),
 	)

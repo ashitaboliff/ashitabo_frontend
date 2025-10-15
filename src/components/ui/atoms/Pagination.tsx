@@ -15,7 +15,6 @@ export const createPaginationItems = (
 	totalPages: number,
 	maxMiddleItems = 3,
 ): PaginationItem[] => {
-	// When the total number of pages is small enough, render the whole range without ellipses.
 	if (totalPages <= maxMiddleItems + EDGE_ITEM_COUNT * 2) {
 		return Array.from({ length: totalPages }, (_, index) => index + 1)
 	}
@@ -23,11 +22,9 @@ export const createPaginationItems = (
 	const items: PaginationItem[] = [1]
 	const pagesAroundCurrent = Math.floor(maxMiddleItems / 2)
 
-	// Determine the initial sliding window around the current page.
 	let windowStart = Math.max(2, currentPage - pagesAroundCurrent)
 	let windowEnd = Math.min(totalPages - 1, currentPage + pagesAroundCurrent)
 
-	// Expand the window to keep the number of middle items stable when near the edges.
 	if (windowEnd - windowStart < maxMiddleItems - 1) {
 		if (windowStart === 2) {
 			windowEnd = Math.min(totalPages - 1, windowStart + maxMiddleItems - 1)
@@ -36,7 +33,6 @@ export const createPaginationItems = (
 		}
 	}
 
-	// Insert left ellipsis if there is a gap between the first page and the window.
 	if (windowStart > 2) {
 		items.push('ellipsis-left')
 	}
@@ -45,7 +41,6 @@ export const createPaginationItems = (
 		items.push(page)
 	}
 
-	// Insert right ellipsis if there is a gap between the window and the last page.
 	if (windowEnd < totalPages - 1) {
 		items.push('ellipsis-right')
 	}

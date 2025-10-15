@@ -73,4 +73,4 @@ const DetailPage = ({ bookingDetail }: { bookingDetail: Booking }) => {
 	)
 }
 
-export default DetailPage // export名も変更
+export default DetailPage
