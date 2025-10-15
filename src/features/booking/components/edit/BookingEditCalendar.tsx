@@ -45,9 +45,9 @@ const BookingEditCalendar = ({
 	}
 
 	const bookingAbleMaxDate = DateToDayISOstring(
-			addDays(new Date(), ABLE_BOOKING_DAYS),
-		)
-		const bookingAbleMinDate = DateToDayISOstring(addDays(new Date(), -1))
+		addDays(new Date(), ABLE_BOOKING_DAYS),
+	)
+	const bookingAbleMinDate = DateToDayISOstring(addDays(new Date(), -1))
 
 	return (
 		<CalendarFrame
@@ -64,15 +64,20 @@ const BookingEditCalendar = ({
 				const withinRange =
 					date >= bookingAbleMinDate && date <= bookingAbleMaxDate
 
-				const className =
-					withinRange ? (isSelected ? 'bg-primary-light' : undefined) : 'bg-base-300'
+				const className = withinRange
+					? isSelected
+						? 'bg-primary-light'
+						: undefined
+					: 'bg-base-300'
 				const key = `edit-calendar-${date}-${timeIndex}`
 
 				if (!booking) {
 					return {
 						key,
 						className,
-						onClick: withinRange ? () => handleSelect(date, timeIndex) : undefined,
+						onClick: withinRange
+							? () => handleSelect(date, timeIndex)
+							: undefined,
 						content: <AvailableCell />,
 					}
 				}
@@ -89,7 +94,9 @@ const BookingEditCalendar = ({
 					return {
 						key,
 						className,
-						onClick: withinRange ? () => handleSelect(date, timeIndex) : undefined,
+						onClick: withinRange
+							? () => handleSelect(date, timeIndex)
+							: undefined,
 						content: (
 							<BookingInfoCell
 								registName={booking.registName}

@@ -26,8 +26,8 @@ export const getCurrentJSTDateString = ({
 
 /**
  * 日付をISO形式の文字列に変換する
- * @param date 
- * @returns 
+ * @param date
+ * @returns
  */
 export function DateToDayISOstring(date: Date): string {
 	const utcDate = new Date(

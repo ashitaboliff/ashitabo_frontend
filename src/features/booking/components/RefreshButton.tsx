@@ -2,7 +2,7 @@
 
 import { useTransition } from 'react'
 import { useSWRConfig } from 'swr'
-import { BOOKING_CALENDAR_SWR_KEY } from '@/features/booking/constants'
+import { mutateAllBookingCalendars } from '@/utils/calendarCache'
 
 const RefreshButton = () => {
 	const [isPending, startTransition] = useTransition()
@@ -10,11 +10,7 @@ const RefreshButton = () => {
 
 	const handleClick = () => {
 		startTransition(async () => {
-			await mutate(
-				(key) => Array.isArray(key) && key[0] === BOOKING_CALENDAR_SWR_KEY,
-				undefined,
-				{ revalidate: true },
-			)
+			await mutateAllBookingCalendars(mutate)
 		})
 	}
 

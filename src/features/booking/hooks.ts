@@ -2,13 +2,13 @@ import { useCallback, useMemo, useState } from 'react'
 import useSWR, { SWRConfiguration, SWRResponse } from 'swr'
 import { addDays, format, subDays } from 'date-fns'
 import {
+	BOOKING_CALENDAR_SWR_KEY,
 	BOOKING_VIEW_RANGE_DAYS,
 	BOOKING_VIEW_MAX_OFFSET_DAYS,
 	BOOKING_VIEW_MIN_OFFSET_DAYS,
 } from './constants'
 import { getBookingByDateAction } from './actions'
 import type { BookingResponse } from './types'
-import { BOOKING_CALENDAR_SWR_KEY } from './constants'
 
 type BookingWeekNavigationOptions = {
 	initialDate: Date
@@ -107,13 +107,13 @@ export const useBookingWeekNavigation = ({
 	}
 }
 
-type BookingRangeKey = [string, string, string]
+type BookingRangeKey = [typeof BOOKING_CALENDAR_SWR_KEY, string, string]
 
-export const bookingRangeFetcher = async ([cacheKey, startDate, endDate]: [
-	string,
-	string,
-	string,
-]): Promise<BookingResponse | null> => {
+export const bookingRangeFetcher = async ([
+	cacheKey,
+	startDate,
+	endDate,
+]: BookingRangeKey): Promise<BookingResponse | null> => {
 	if (cacheKey !== BOOKING_CALENDAR_SWR_KEY) {
 		throw new Error('Invalid cache key for booking calendar fetcher')
 	}

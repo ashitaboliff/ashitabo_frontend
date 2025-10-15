@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next-nprogress-bar'
+import { useSWRConfig } from 'swr'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { DateToDayISOstring, getCurrentJSTDateString, toDateKey } from '@/utils'
@@ -23,8 +24,9 @@ import {
 	bookingCreateSchema,
 	BookingCreateFormInput,
 	BookingCreateFormValues,
-} from '@/features/booking/schemas/bookingCreateSchema'
+} from '@/features/booking/schema'
 import { logError } from '@/utils/logger'
+import { mutateBookingCalendarsForDate } from '@/utils/calendarCache'
 
 const today = getCurrentJSTDateString({})
 
@@ -48,6 +50,7 @@ const CreatePage = ({
 	initialTimeParam,
 }: CreatePageProps) => {
 	const router = useRouter()
+	const { mutate } = useSWRConfig()
 	const messageFeedback = useFeedback()
 	const [calendarPopupOpen, setCalendarPopupOpen] = useState(false)
 	const [popupOpen, setPopupOpen] = useState(false)
@@ -129,10 +132,11 @@ const CreatePage = ({
 				userId: session.user.id,
 				booking: reservationData,
 				password: data.password,
-				toDay: today,
+				today,
 			})
 
 			if (res.ok) {
+				await mutateBookingCalendarsForDate(mutate, toDateKey(bookingDate))
 				setCreatedBooking({
 					id: res.data.id,
 					bookingDate,

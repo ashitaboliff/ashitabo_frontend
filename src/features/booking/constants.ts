@@ -1,4 +1,6 @@
 export const FORBIDDEN_BOOKING = 'ForbiddenBooking'
+
+export const BOOKING_CALENDAR_TAG = 'booking-calendar'
 export const BOOKING_CALENDAR_SWR_KEY = 'booking-calendar'
 
 export const BOOKING_VIEW_RANGE_DAYS = 7

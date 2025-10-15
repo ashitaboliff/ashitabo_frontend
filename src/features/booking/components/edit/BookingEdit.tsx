@@ -2,6 +2,7 @@
 
 import { useReducer, useState } from 'react'
 import { useRouter } from 'next-nprogress-bar'
+import { useSWRConfig } from 'swr'
 import { deleteBookingAction } from '../../actions'
 import { Booking, BookingResponse } from '@/features/booking/types'
 import type { Session } from '@/types/session'
@@ -16,6 +17,8 @@ import {
 } from '@/features/booking/components/BookingActionFeedback'
 import { useFeedback } from '@/hooks/useFeedback'
 import { logError } from '@/utils/logger'
+import { mutateBookingCalendarsForDate } from '@/utils/calendarCache'
+import { toDateKey } from '@/utils'
 
 type ViewMode = 'auth' | 'summary' | 'editing' | 'editSuccess' | 'deleteSuccess'
 
@@ -62,6 +65,7 @@ const BookingEdit = ({
 	initialViewDay,
 }: Props) => {
 	const router = useRouter()
+	const { mutate } = useSWRConfig()
 	const deleteFeedback = useFeedback()
 	const [flashMessage, setFlashMessage] = useState<string | null>(null)
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -92,12 +96,20 @@ const BookingEdit = ({
 		try {
 			const response = await deleteBookingAction({
 				bookingId: state.booking.id,
+				bookingDate: state.booking.bookingDate,
 				userId: session.user.id,
 			})
 
 			if (response.ok) {
+				await mutateBookingCalendarsForDate(
+					mutate,
+					toDateKey(state.booking.bookingDate),
+				)
 				setFlashMessage('予約を削除しました。')
 				dispatch({ type: 'DELETE_SUCCESS' })
+				setTimeout(() => {
+					router.replace('/booking?status=deleted')
+				}, 1200)
 			} else {
 				deleteFeedback.showApiError(response)
 			}

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { addDays, format } from 'date-fns'
 import { ja } from 'date-fns/locale'
@@ -67,7 +67,6 @@ const MainPage = ({
 		isLoading,
 		mutate,
 	} = useSWR<BookingResponse | null>(swrKey, bookingRangeFetcher, {
-		fallbackData: initialData,
 		revalidateOnFocus: false,
 		onError: (err) => {
 			errorFeedback.showApiError(err as ApiError)
@@ -129,7 +128,7 @@ const MainPage = ({
 				</div>
 				{showSkeleton ? (
 					<div className="flex justify-center">
-						<div className="skeleton w-[360px] h-[400px] sm:w-[520px] sm:h-[580px]"></div>
+						<div className="skeleton w-[360px] h-[466px] sm:w-[520px] sm:h-[578px]"></div>
 					</div>
 				) : bookingData ? (
 					<BookingCalendar

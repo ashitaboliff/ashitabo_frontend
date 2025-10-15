@@ -16,7 +16,7 @@ import { logError } from '@/utils/logger'
 import {
 	bookingAuthSchema,
 	BookingAuthFormValues,
-} from '@/features/booking/schemas/bookingAuthSchema'
+} from '@/features/booking/schema'
 
 interface Props {
 	session: Session

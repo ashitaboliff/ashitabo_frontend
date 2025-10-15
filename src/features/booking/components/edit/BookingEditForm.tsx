@@ -2,11 +2,12 @@
 
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useSWRConfig } from 'swr'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { updateBookingAction } from '../../actions'
 import { Booking, BookingResponse } from '@/features/booking/types'
 import type { Session } from '@/types/session'
-import { toDateKey } from '@/utils'
+import { toDateKey, getCurrentJSTDateString } from '@/utils'
 import { useFeedback } from '@/hooks/useFeedback'
 import { logError } from '@/utils/logger'
 import BookingEditCalendarPopup from '@/features/booking/components/edit/BookingEditCalendarPopup'
@@ -14,7 +15,8 @@ import BookingEditFormFields from '@/features/booking/components/edit/BookingEdi
 import {
 	bookingEditSchema,
 	BookingEditFormValues,
-} from '@/features/booking/schemas/bookingEditSchema'
+} from '@/features/booking/schema'
+import { mutateBookingCalendarsForDate } from '@/utils/calendarCache'
 
 interface Props {
 	bookingDetail: Booking
@@ -25,6 +27,8 @@ interface Props {
 	initialViewDay: Date
 }
 
+const today = getCurrentJSTDateString({})
+
 const BookingEditForm = ({
 	bookingDetail,
 	session,
@@ -33,6 +37,7 @@ const BookingEditForm = ({
 	initialBookingResponse,
 	initialViewDay,
 }: Props) => {
+	const { mutate } = useSWRConfig()
 	const [calendarOpen, setCalendarOpen] = useState(false)
 	const [submitStatus, setSubmitStatus] = useState<'idle' | 'loading'>('idle')
 
@@ -55,7 +60,11 @@ const BookingEditForm = ({
 	})
 
 	const bookingDate = watch('bookingDate')
-	const bookingTime = watch('bookingTime')
+	const watchedBookingTime = watch('bookingTime')
+	const bookingTimeIndex =
+		typeof watchedBookingTime === 'number'
+			? watchedBookingTime
+			: Number(watchedBookingTime ?? 0)
 
 	const onSubmit = async (data: BookingEditFormValues) => {
 		setSubmitStatus('loading')
@@ -72,9 +81,11 @@ const BookingEditForm = ({
 					name: data.name,
 					isDeleted: false,
 				},
+				today,
 			})
 
 			if (response.ok) {
+				await mutateBookingCalendarsForDate(mutate, data.bookingDate)
 				setCalendarOpen(false)
 				onSuccess({
 					id: bookingDetail.id,
@@ -126,7 +137,7 @@ const BookingEditForm = ({
 					onOpenCalendar={() => setCalendarOpen(true)}
 					onSubmit={handleSubmit(onSubmit)}
 					errorFeedback={errorFeedback}
-					bookingTimeIndex={Number(bookingTime)}
+					bookingTimeIndex={bookingTimeIndex}
 				/>
 			</div>
 
@@ -138,7 +149,7 @@ const BookingEditForm = ({
 				actualBookingDate={toDateKey(bookingDetail.bookingDate)}
 				actualBookingTime={bookingDetail.bookingTime}
 				bookingDate={bookingDate}
-				bookingTime={bookingTime}
+				bookingTime={bookingTimeIndex}
 				setValue={setValue}
 			/>
 		</div>

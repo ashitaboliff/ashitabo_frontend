@@ -1,5 +1,8 @@
+'use server'
+
+import { revalidateTag } from 'next/cache'
 import { apiDelete, apiGet, apiPost, apiPut } from '@/lib/api/crud'
-import { ApiResponse, StatusCode } from '@/types/responseTypes'
+import { ApiResponse } from '@/types/responseTypes'
 import {
 	createdResponse,
 	noContentResponse,
@@ -9,6 +12,11 @@ import {
 } from '@/lib/api/helper'
 import { Booking, BookingLog, BookingResponse } from '@/features/booking/types'
 import { toDateKey } from '@/utils'
+import { BOOKING_CALENDAR_TAG } from '@/features/booking/constants'
+import {
+	buildBookingCalendarTag,
+	getBookingCalendarRangesForDate,
+} from '@/utils/calendarCache'
 import {
 	mapRawBooking,
 	mapRawBookingList,
@@ -16,7 +24,7 @@ import {
 	mapRawBookingResponse,
 	type RawBookingData,
 	type RawBookingResponse,
-} from '@/features/booking/services/bookingTransforms'
+} from '@/features/booking/service'
 
 type BookingPayload = {
 	bookingDate: string
@@ -38,7 +46,10 @@ export const getBookingByDateAction = async ({
 			start: startDate,
 			end: endDate,
 		},
-		next: { revalidate: 10, tags: ['booking-calendar'] },
+		next: {
+			revalidate: 60 * 60,
+			tags: [BOOKING_CALENDAR_TAG, buildBookingCalendarTag(startDate, endDate)],
+		},
 	})
 
 	return mapSuccess(
@@ -52,7 +63,7 @@ export const getAllBookingAction = async (): Promise<
 	ApiResponse<BookingLog[]>
 > => {
 	const res = await apiGet<RawBookingData[]>('/booking/logs', {
-		next: { revalidate: 60 * 60, tags: ['booking-logs'] },
+		next: { revalidate: 60 * 60, tags: ['booking'] },
 	})
 
 	return mapSuccess(
@@ -66,7 +77,10 @@ export const getBookingByIdAction = async (
 	bookingId: string,
 ): Promise<ApiResponse<Booking>> => {
 	const res = await apiGet<RawBookingData>(`/booking/${bookingId}`, {
-		next: { revalidate: 30, tags: ['booking-detail', bookingId] },
+		next: {
+			revalidate: 7 * 24 * 60 * 60,
+			tags: [`booking-detail-${bookingId}`],
+		},
 	})
 
 	return mapSuccess(res, mapRawBooking, '予約詳細の取得に失敗しました。')
@@ -92,7 +106,7 @@ export const getBookingByUserIdAction = async ({
 			perPage,
 			sort,
 		},
-		next: { revalidate: 15, tags: ['booking-user', userId] },
+		next: { revalidate: 24 * 60 * 60, tags: [`booking-user-${userId}`] },
 	})
 
 	return mapSuccess(
@@ -105,32 +119,45 @@ export const getBookingByUserIdAction = async ({
 	)
 }
 
+const revalidateBookingCalendarsForDate = (date: string) => {
+	const ranges = getBookingCalendarRangesForDate(date)
+	ranges.forEach(({ startDate, endDate }) => {
+		revalidateTag(buildBookingCalendarTag(startDate, endDate))
+	})
+	revalidateTag(BOOKING_CALENDAR_TAG)
+}
+
 export const createBookingAction = async ({
 	userId,
 	booking,
 	password,
-	toDay,
+	today,
 }: {
 	userId: string
 	booking: BookingPayload
 	password: string
-	toDay: string
+	today: string
 }): Promise<ApiResponse<{ id: string }>> => {
+	const bookingDateKey = toDateKey(booking.bookingDate)
 	const res = await apiPost<{ id: string }>('/booking', {
 		body: {
 			userId,
-			bookingDate: toDateKey(booking.bookingDate),
+			bookingDate: bookingDateKey,
 			bookingTime: booking.bookingTime,
 			registName: booking.registName,
 			name: booking.name,
 			password,
-			today: toDay,
+			today,
 		},
 	})
 
 	if (!res.ok) {
 		return withFallbackMessage(res, '予約の作成に失敗しました。')
 	}
+
+	revalidateTag('booking')
+	revalidateTag(`booking-user-${userId}`)
+	revalidateBookingCalendarsForDate(bookingDateKey)
 
 	return createdResponse({ id: res.data.id })
 }
@@ -139,19 +166,23 @@ export const updateBookingAction = async ({
 	bookingId,
 	userId,
 	booking,
+	today,
 }: {
 	bookingId: string
 	userId: string
 	booking: BookingPayload
+	today: string
 }): Promise<ApiResponse<null>> => {
+	const bookingDateKey = toDateKey(booking.bookingDate)
 	const res = await apiPut<null>(`/booking/${bookingId}`, {
 		body: {
 			userId,
-			bookingDate: booking.bookingDate,
+			bookingDate: bookingDateKey,
 			bookingTime: booking.bookingTime,
 			registName: booking.registName,
 			name: booking.name,
 			isDeleted: booking.isDeleted ?? false,
+			today,
 		},
 	})
 
@@ -159,14 +190,21 @@ export const updateBookingAction = async ({
 		return withFallbackMessage(res, '予約の更新に失敗しました。')
 	}
 
+	revalidateTag('booking')
+	revalidateTag(`booking-detail-${bookingId}`)
+	revalidateTag(`booking-user-${userId}`)
+	revalidateBookingCalendarsForDate(bookingDateKey)
+
 	return noContentResponse()
 }
 
 export const deleteBookingAction = async ({
 	bookingId,
+	bookingDate,
 	userId,
 }: {
 	bookingId: string
+	bookingDate: string
 	userId: string
 }): Promise<ApiResponse<null>> => {
 	const res = await apiDelete<null>(`/booking/${bookingId}`, {
@@ -176,6 +214,13 @@ export const deleteBookingAction = async ({
 	if (!res.ok) {
 		return withFallbackMessage(res, '予約の削除に失敗しました。')
 	}
+
+	const bookingDateKey = toDateKey(bookingDate)
+
+	revalidateTag('booking')
+	revalidateTag(`booking-detail-${bookingId}`)
+	revalidateTag(`booking-user-${userId}`)
+	revalidateBookingCalendarsForDate(bookingDateKey)
 
 	return noContentResponse()
 }
@@ -203,7 +248,7 @@ export const authBookingAction = async ({
 export const getBookingIds = async (): Promise<string[]> => {
 	const response = await apiGet<string[]>('/booking/ids', {
 		cache: 'no-store',
-		next: { revalidate: 24 * 60 * 60, tags: ['booking-ids'] },
+		next: { revalidate: 24 * 60 * 60, tags: ['booking'] },
 	})
 
 	if (response.ok && Array.isArray(response.data)) {
