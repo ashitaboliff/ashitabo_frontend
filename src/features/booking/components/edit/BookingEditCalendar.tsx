@@ -15,7 +15,7 @@ import {
 	BookingInfoCell,
 	ForbiddenCell,
 } from '@/features/booking/components/CalendarCellContent'
-import { BookingEditFormValues } from '@/features/booking/schemas/bookingEditSchema'
+import { BookingEditFormValues } from '@/features/booking/schema'
 
 interface Props {
 	bookingResponse: BookingResponse

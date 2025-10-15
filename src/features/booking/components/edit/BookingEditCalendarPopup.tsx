@@ -7,7 +7,7 @@ import BookingEditCalendar from '@/features/booking/components/edit/BookingEditC
 import { BookingErrorMessage } from '@/features/booking/components/BookingActionFeedback'
 import type { BookingResponse } from '@/features/booking/types'
 import type { UseFormSetValue } from 'react-hook-form'
-import { BookingEditFormValues } from '@/features/booking/schemas/bookingEditSchema'
+import { BookingEditFormValues } from '@/features/booking/schema'
 import {
 	useBookingCalendarData,
 	useBookingWeekNavigation,

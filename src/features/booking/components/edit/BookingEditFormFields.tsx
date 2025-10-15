@@ -1,7 +1,7 @@
 'use client'
 
 import { UseFormRegister, FieldErrors } from 'react-hook-form'
-import { BookingEditFormValues } from '@/features/booking/schemas/bookingEditSchema'
+import { BookingEditFormValues } from '@/features/booking/schema'
 import TextInputField from '@/components/ui/atoms/TextInputField'
 import { MdOutlineEditCalendar } from 'react-icons/md'
 import { BookingErrorMessage } from '@/features/booking/components/BookingActionFeedback'
