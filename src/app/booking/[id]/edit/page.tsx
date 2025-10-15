@@ -11,7 +11,7 @@ import { AuthPage } from '@/features/auth/components/UnifiedAuth'
 import EditPage from '@/features/booking/components/Edit'
 import DetailNotFoundPage from '@/features/booking/components/DetailNotFound'
 import { logError } from '@/utils/logger'
-import { DateToDayISOstring } from '@/utils'
+import { toDateKey } from '@/utils'
 import { addDays, subDays, parseISO } from 'date-fns'
 import { createMetaData } from '@/hooks/useMetaData'
 import { Metadata, ResolvingMetadata } from 'next'
@@ -74,11 +74,10 @@ const Page = async ({ params, searchParams }: PageProps) => {
 					? parseISO(viewStartDate)
 					: subDays(new Date(), 1)
 
-				const calendarStartDate =
-					DateToDayISOstring(initialViewDayDate).split('T')[0]
-				const calendarEndDate = DateToDayISOstring(
+				const calendarStartDate = toDateKey(initialViewDayDate)
+				const calendarEndDate = toDateKey(
 					addDays(initialViewDayDate, viewDayMax - 1),
-				).split('T')[0]
+				)
 
 				let initialBookingResponse: BookingResponse | null = null
 				const calendarBookingRes = await getBookingByDateAction({

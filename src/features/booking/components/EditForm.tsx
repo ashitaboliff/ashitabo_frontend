@@ -11,9 +11,12 @@ import {
 import type { Session } from '@/types/session'
 import BookingDetailBox from '@/features/booking/components/BookingDetailBox'
 import DetailNotFoundPage from '@/features/booking/components/DetailNotFound'
-import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import Popup from '@/components/ui/molecules/Popup'
 import BookingEditForm from '@/features/booking/components/BookingEditForm'
+import {
+	BookingErrorMessage,
+	BookingSuccessMessage,
+} from '@/features/booking/components/BookingActionFeedback'
 import { useFeedback } from '@/hooks/useFeedback'
 import { logError } from '@/utils/logger'
 
@@ -52,11 +55,13 @@ const EditFormPage = ({
 			})
 
 			if (response.ok) {
-				setDeleteStatus('success')
 				deleteFeedback.showSuccess('予約を削除しました。')
-			} else {
-				deleteFeedback.showApiError(response)
+				setDeleteStatus('success')
+				return
 			}
+
+			deleteFeedback.showApiError(response)
+			setDeleteStatus('error')
 		} catch (error) {
 			deleteFeedback.showError(
 				'予約の削除に失敗しました。時間をおいて再度お試しください。',
@@ -65,11 +70,16 @@ const EditFormPage = ({
 				},
 			)
 			logError('Error deleting booking', error)
-		} finally {
-			setDeleteStatus((prevStatus) =>
-				prevStatus === 'success' ? 'success' : 'error',
-			)
+			setDeleteStatus('error')
 		}
+	}
+
+	const handleClosePopup = () => {
+		if (deleteStatus === 'success') {
+			return
+		}
+		setDeleteStatus('idle')
+		deleteFeedback.clearFeedback()
 	}
 
 	return (
@@ -77,25 +87,18 @@ const EditFormPage = ({
 			{editState === 'select' && (
 				<div className="flex flex-col items-center justify-center w-full">
 					<BookingDetailBox
-						props={{
-							bookingDate: bookingDetail.bookingDate,
-							bookingTime: bookingDetail.bookingTime,
-							registName: bookingDetail.registName,
-							name: bookingDetail.name,
-						}}
+						bookingDate={bookingDetail.bookingDate}
+						bookingTime={bookingDetail.bookingTime}
+						registName={bookingDetail.registName}
+						name={bookingDetail.name}
 					/>
 					{deleteStatus === 'success' ? (
-						<div className="w-full space-y-4 text-center">
-							{/* Error Messageコンポーネント使ってるけど成功用 */}
-							<ErrorMessage message={deleteFeedback.feedback} />
-							<button
-								type="button"
-								className="btn btn-outline w-full max-w-md"
-								onClick={() => router.push('/booking')}
-							>
-								コマ表に戻る
-							</button>
-						</div>
+						<BookingSuccessMessage
+							feedback={deleteFeedback.feedback}
+							onBack={() => router.push('/booking')}
+							className="w-full space-y-4 text-center"
+							backButtonClassName="btn btn-outline w-full max-w-md"
+						/>
 					) : (
 						<>
 							<div className="flex flex-col sm:flex-row justify-center gap-2 w-full max-w-md">
@@ -123,12 +126,12 @@ const EditFormPage = ({
 									戻る
 								</button>
 							</div>
+							{deleteStatus === 'error' && (
+								<div className="w-full max-w-md">
+									<BookingErrorMessage feedback={deleteFeedback.feedback} />
+								</div>
+							)}
 						</>
-					)}
-					{deleteStatus === 'error' && deleteFeedback.feedback && (
-						<div className="w-full max-w-md">
-							<ErrorMessage message={deleteFeedback.feedback} />
-						</div>
 					)}
 				</div>
 			)}
@@ -153,7 +156,7 @@ const EditFormPage = ({
 					deleteStatus === 'loading' ||
 					deleteStatus === 'error'
 				}
-				onClose={() => setDeleteStatus('idle')}
+				onClose={handleClosePopup}
 			>
 				<div className="p-4">
 					<p className="text-center">予約を削除しますか？</p>
@@ -165,16 +168,13 @@ const EditFormPage = ({
 						>
 							{deleteStatus === 'loading' ? '削除中...' : '削除'}
 						</button>
-						<button
-							className="btn btn-outline"
-							onClick={() => setDeleteStatus('idle')}
-						>
+						<button className="btn btn-outline" onClick={handleClosePopup}>
 							キャンセル
 						</button>
 					</div>
-					{deleteFeedback.feedback && (
-						<ErrorMessage message={deleteFeedback.feedback} />
-					)}
+					<BookingErrorMessage
+						feedback={deleteStatus === 'error' ? deleteFeedback.feedback : null}
+					/>
 				</div>
 			</Popup>
 		</>

@@ -6,9 +6,11 @@ import { BookingResponse } from '@/features/booking/types'
 import { ABLE_BOOKING_DAYS } from '@/features/booking/config'
 import CalendarFrame from '@/components/ui/molecules/CalendarFrame'
 import { FORBIDDEN_BOOKING } from '@/features/booking/constants'
-
-import { PiCircle as CircleIcon } from 'react-icons/pi'
-import { HiMiniXMark as ForbiddenIcon } from 'react-icons/hi2'
+import {
+	AvailableCell,
+	BookingInfoCell,
+	ForbiddenCell,
+} from '@/features/booking/components/CalendarCellContent'
 
 interface EditCalendarProps {
 	bookingResponse: BookingResponse
@@ -22,9 +24,6 @@ interface EditCalendarProps {
 	setCalendarOpen: (calendarOpen: boolean) => void
 	setValue: UseFormSetValue<any>
 }
-
-const cellContentClass =
-	'w-11 h-13 sm:w-14 sm:h-14 md:w-16 md:h-16 flex flex-col justify-center items-center text-center break-words py-1'
 
 const EditCalendar = ({
 	bookingResponse,
@@ -69,11 +68,7 @@ const EditCalendar = ({
 						key,
 						className,
 						onClick: () => handleSelect(date, timeIndex),
-						content: (
-							<div className={cellContentClass}>
-								<CircleIcon color="blue" size={20} />
-							</div>
-						),
+						content: <AvailableCell />,
 					}
 				}
 
@@ -81,11 +76,7 @@ const EditCalendar = ({
 					return {
 						key,
 						className,
-						content: (
-							<div className={cellContentClass}>
-								<ForbiddenIcon color="red" size={20} />
-							</div>
-						),
+						content: <ForbiddenCell />,
 					}
 				}
 
@@ -95,18 +86,10 @@ const EditCalendar = ({
 						className,
 						onClick: () => handleSelect(date, timeIndex),
 						content: (
-							<div className={cellContentClass}>
-								<p className="text-xxxs sm:text-xs-custom text-base-content font-bold">
-									{booking.registName.length > 21
-										? `${booking.registName.slice(0, 20)}...`
-										: booking.registName}
-								</p>
-								<p className="text-xxxs sm:text-xs-custom text-base-content">
-									{booking.name && booking.name.length > 14
-										? `${booking.name.slice(0, 13)}...`
-										: booking.name}
-								</p>
-							</div>
+							<BookingInfoCell
+								registName={booking.registName}
+								name={booking.name}
+							/>
 						),
 					}
 				}
@@ -114,11 +97,7 @@ const EditCalendar = ({
 				return {
 					key,
 					className,
-					content: (
-						<div className={cellContentClass}>
-							<ForbiddenIcon color="red" size={20} />
-						</div>
-					),
+					content: <ForbiddenCell />,
 				}
 			}}
 		/>

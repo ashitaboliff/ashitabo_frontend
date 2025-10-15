@@ -84,12 +84,10 @@ const EditAuthPage = ({
 		<div className="flex flex-col">
 			<div className="flex justify-center">
 				<BookingDetailBox
-					props={{
-						bookingDate: bookingDetail.bookingDate,
-						bookingTime: bookingDetail.bookingTime,
-						registName: bookingDetail.registName,
-						name: bookingDetail.name,
-					}}
+					bookingDate={bookingDetail.bookingDate}
+					bookingTime={bookingDetail.bookingTime}
+					registName={bookingDetail.registName}
+					name={bookingDetail.name}
 				/>
 			</div>
 			<form

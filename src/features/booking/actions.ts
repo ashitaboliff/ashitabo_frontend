@@ -8,6 +8,7 @@ import {
 	withFallbackMessage,
 } from '@/lib/api/helper'
 import { Booking, BookingLog, BookingResponse } from '@/features/booking/types'
+import { toDateKey } from '@/utils'
 import {
 	mapRawBooking,
 	mapRawBookingList,
@@ -118,7 +119,7 @@ export const createBookingAction = async ({
 	const res = await apiPost<{ id: string }>('/booking', {
 		body: {
 			userId,
-			bookingDate: booking.bookingDate.split('T')[0],
+			bookingDate: toDateKey(booking.bookingDate),
 			bookingTime: booking.bookingTime,
 			registName: booking.registName,
 			name: booking.name,

@@ -27,12 +27,10 @@ const DetailPage = ({
 	return (
 		<div className="container mx-auto flex flex-col items-center">
 			<BookingDetailBox
-				props={{
-					bookingDate: bookingDetail.bookingDate,
-					bookingTime: bookingDetail.bookingTime,
-					registName: bookingDetail.registName,
-					name: bookingDetail.name,
-				}}
+				bookingDate={bookingDetail.bookingDate}
+				bookingTime={bookingDetail.bookingTime}
+				registName={bookingDetail.registName}
+				name={bookingDetail.name}
 			/>
 			<div className="flex flex-col sm:flex-row justify-center items-center gap-2 w-full max-w-md">
 				<button

@@ -18,25 +18,30 @@ interface BookingDetailProps {
 	name: string
 }
 
-const BookingDetailBox = ({ props }: { props: BookingDetailProps }) => {
+const BookingDetailBox = ({
+	bookingDate,
+	bookingTime,
+	registName,
+	name,
+}: BookingDetailProps) => {
 	const data: BookingDetailItem[] = [
 		{
 			label: '日付',
-			value: format(new Date(props.bookingDate), 'yyyy年MM月dd日(E)', {
+			value: format(new Date(bookingDate), 'yyyy年MM月dd日(E)', {
 				locale: ja,
 			}),
 		},
 		{
 			label: '時間',
-			value: BookingTime[props.bookingTime],
+			value: BookingTime[bookingTime],
 		},
 		{
 			label: 'バンド名',
-			value: props.registName,
+			value: registName,
 		},
 		{
 			label: '責任者',
-			value: props.name,
+			value: name,
 		},
 	]
 

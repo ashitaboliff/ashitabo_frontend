@@ -32,6 +32,11 @@ export function DateToDayISOstring(date: Date): string {
 	return ISOstring
 }
 
+export const toDateKey = (input: Date | string | number): string => {
+	const date = input instanceof Date ? input : new Date(input)
+	return DateToDayISOstring(date).slice(0, 10)
+}
+
 /**
  * 10年前から7年後までの "XX年度" のオブジェクトを生成する
  * @returns "XX年度"のオブジェクト (例: { '23年度': '23', '24年度': '24', ... })

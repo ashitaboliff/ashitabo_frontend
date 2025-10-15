@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next-nprogress-bar'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { DateToDayISOstring, getCurrentJSTDateString } from '@/utils'
+import { DateToDayISOstring, getCurrentJSTDateString, toDateKey } from '@/utils'
 import { createBookingAction } from '../actions'
 import ShareButton from '@/components/ui/atoms/ShareButton'
 import TextInputField from '@/components/ui/atoms/TextInputField'
@@ -73,7 +73,7 @@ const CreatePage = ({
 
 	const defaultValues: Partial<BookingCreateFormInput> = useMemo(
 		() => ({
-			bookingDate: defaultBookingDate.toISOString().split('T')[0],
+			bookingDate: toDateKey(defaultBookingDate),
 			bookingTime: BookingTime[defaultBookingTimeIndex] ?? BookingTime[0],
 			registName: '',
 			name: '',
