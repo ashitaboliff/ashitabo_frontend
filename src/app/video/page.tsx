@@ -1,9 +1,9 @@
-import Loading from '@/components/ui/atoms/Loading'
-import VideoListPage from '@/features/video/components/VideoListPage'
 import { Suspense } from 'react'
+import Loading from '@/components/ui/atoms/Loading'
 import { searchYoutubeDetailsAction } from '@/features/video/actions'
-import { YoutubeDetail, YoutubeSearchQuery } from '@/features/video/types'
-import { ApiError } from '@/types/responseTypes'
+import VideoListPage from '@/features/video/components/VideoListPage'
+import type { YoutubeDetail, YoutubeSearchQuery } from '@/features/video/types'
+import type { ApiError } from '@/types/responseTypes'
 import { logError } from '@/utils/logger'
 
 const parseVideoPageSearchParams = (
@@ -45,7 +45,9 @@ const Page = async ({ searchParams: params }: VideoPageProps) => {
 		if (typeof value === 'string') {
 			queryParams.set(key, value)
 		} else if (Array.isArray(value)) {
-			value.forEach((v) => queryParams.append(key, v))
+			value.forEach((v) => {
+				queryParams.append(key, v)
+			})
 		}
 	}
 
@@ -54,7 +56,7 @@ const Page = async ({ searchParams: params }: VideoPageProps) => {
 
 	let initialYoutubeDetails: YoutubeDetail[] = []
 	let initialPageMax = 1
-	let initialError: ApiError | undefined = undefined
+	let initialError: ApiError | undefined
 
 	const res = await searchYoutubeDetailsAction(currentQuery)
 

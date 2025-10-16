@@ -1,14 +1,13 @@
 import { notFound } from 'next/navigation'
-import { AuthPage } from '@/features/auth/components/UnifiedAuth'
 import YoutubeManagement from '@/features/admin/components/YoutubeManage'
+import { AuthPage } from '@/features/auth/components/UnifiedAuth'
 import {
 	getAccessTokenAction,
 	getPlaylistAction,
 } from '@/features/video/actions'
 import { StatusCode } from '@/types/responseTypes'
-import type { Session } from '@/types/session'
 
-const YoutubePage = async ({ session }: { session: Session }) => {
+const YoutubePage = async () => {
 	const accessToken = await getAccessTokenAction()
 	const playlist = await getPlaylistAction()
 	if (!playlist.ok) {
@@ -25,7 +24,7 @@ const YoutubePage = async ({ session }: { session: Session }) => {
 const Page = async () => {
 	return (
 		<AuthPage requireProfile requireRole="ADMIN">
-			{(authResult) => <YoutubePage session={authResult.session!} />}
+			{() => <YoutubePage />}
 		</AuthPage>
 	)
 }

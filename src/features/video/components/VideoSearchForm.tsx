@@ -1,14 +1,14 @@
 'use client'
 
-import { useRef, useState, useEffect } from 'react'
-import { useSearchParams, useRouter, usePathname } from 'next/navigation'
-import { YoutubeSearchQuery } from '@/features/video/types'
-import ShareButton from '@/components/ui/atoms/ShareButton'
-import TextSearchField from '@/components/ui/molecules/TextSearchField'
-import TagInputField from '@/components/ui/molecules/TagsInputField'
-import Popup from '@/components/ui/molecules/Popup'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useEffect, useId, useState } from 'react'
 import { BiSearch } from 'react-icons/bi'
 import { RiQuestionLine } from 'react-icons/ri'
+import ShareButton from '@/components/ui/atoms/ShareButton'
+import Popup from '@/components/ui/molecules/Popup'
+import TagInputField from '@/components/ui/molecules/TagsInputField'
+import TextSearchField from '@/components/ui/molecules/TextSearchField'
+import type { YoutubeSearchQuery } from '@/features/video/types'
 
 type Props = {
 	defaultQuery: YoutubeSearchQuery
@@ -23,6 +23,8 @@ const VideoSearchForm = ({ defaultQuery, isSearching, onSearch }: Props) => {
 	const [isPopupOpen, setIsPopupOpen] = useState(false)
 	const [isUsagePopupOpen, setIsUsagePopupOpen] = useState(false)
 	const [formKey, setFormKey] = useState<number>(0)
+	const searchPopupId = useId()
+	const usagePopupId = useId()
 	const [currentTags, setCurrentTags] = useState<string[]>(
 		(searchParams.getAll('tag') as string[]) ?? defaultQuery.tag ?? [],
 	)
@@ -116,12 +118,14 @@ const VideoSearchForm = ({ defaultQuery, isSearching, onSearch }: Props) => {
 				<button
 					className="btn btn-ghost w-16"
 					onClick={() => setIsUsagePopupOpen(true)}
+					type="button"
 				>
 					<RiQuestionLine size={25} />
 				</button>
 				<button
 					className={`btn btn-outline w-64 ${isSearching ? 'btn-tetiary' : ''}`}
 					onClick={() => setIsPopupOpen(true)}
+					type="button"
 				>
 					<div className="flex flex-row items-center space-x-2">
 						<BiSearch size={25} />
@@ -135,7 +139,7 @@ const VideoSearchForm = ({ defaultQuery, isSearching, onSearch }: Props) => {
 				/>
 			</div>
 			<Popup
-				id="video-search-popup"
+				id={searchPopupId}
 				title="条件検索"
 				open={isPopupOpen}
 				onClose={() => setIsPopupOpen(false)}
@@ -237,7 +241,7 @@ const VideoSearchForm = ({ defaultQuery, isSearching, onSearch }: Props) => {
 				</form>
 			</Popup>
 			<Popup
-				id="video-search-usage-popup"
+				id={usagePopupId}
 				title="条件検索の使い方"
 				open={isUsagePopupOpen}
 				onClose={() => setIsUsagePopupOpen(false)}

@@ -1,12 +1,12 @@
 import * as zod from 'zod'
 import {
-	RoleMap,
+	type Part,
 	PartOptions,
-	Part,
-	Profile,
-	Role,
+	type Profile,
+	type Role,
+	RoleMap,
 } from '@/features/user/types'
-import { generateFiscalYearObject, generateAcademicYear } from '@/utils'
+import { generateAcademicYear, generateFiscalYearObject } from '@/utils'
 
 const academicYearLastTwoDigits = generateAcademicYear() % 100
 

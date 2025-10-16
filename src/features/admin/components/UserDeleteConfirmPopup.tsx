@@ -2,8 +2,8 @@
 
 import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import Popup from '@/components/ui/molecules/Popup'
-import { UserDetail } from '@/features/user/types'
-import { ApiError } from '@/types/responseTypes'
+import type { UserDetail } from '@/features/user/types'
+import type { ApiError } from '@/types/responseTypes'
 
 interface UserDeleteConfirmPopupProps {
 	open: boolean
@@ -39,6 +39,7 @@ const UserDeleteConfirmPopup = ({
 				<div>この操作は取り消せません</div>
 				<div className="flex flex-row justify-center gap-x-2">
 					<button
+						type="button"
 						className="btn btn-error"
 						disabled={actionLoading}
 						onClick={() => {
@@ -49,7 +50,7 @@ const UserDeleteConfirmPopup = ({
 					>
 						{actionLoading ? '削除中...' : 'はい'}
 					</button>
-					<button className="btn btn-outline" onClick={onClose}>
+					<button type="button" className="btn btn-outline" onClick={onClose}>
 						いいえ
 					</button>
 				</div>

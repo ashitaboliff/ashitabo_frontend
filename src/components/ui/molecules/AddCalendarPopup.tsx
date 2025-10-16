@@ -1,14 +1,13 @@
 'use client'
 
 import { format } from 'date-fns'
-import { useCallback } from 'react'
-import Popup from '@/components/ui/molecules/Popup'
-import { Booking } from '@/features/booking/types'
-import { BOOKING_TIME_LIST } from '@/features/booking/constants'
-import { useLocationNavigate, useWindowOpen } from '@/hooks/useBrowserApis'
-
+import { useCallback, useId } from 'react'
 import { FaApple, FaYahoo } from 'react-icons/fa'
 import { SiGooglecalendar } from 'react-icons/si'
+import Popup from '@/components/ui/molecules/Popup'
+import { BOOKING_TIME_LIST } from '@/features/booking/constants'
+import type { Booking } from '@/features/booking/types'
+import { useLocationNavigate, useWindowOpen } from '@/hooks/useBrowserApis'
 
 const AddCalendarPopup = ({
 	bookingDetail,
@@ -52,10 +51,11 @@ const AddCalendarPopup = ({
 	const handleOpenYahooCalendar = useCallback(() => {
 		openWindow(yahooCalendarUrl, '_blank', 'noopener')
 	}, [openWindow, yahooCalendarUrl])
+	const popupId = useId()
 
 	return (
 		<Popup
-			id="add-calendar-popup"
+			id={popupId}
 			open={isPopupOpen}
 			onClose={() => setIsPopupOpen(false)}
 			title="カレンダーに追加"
@@ -66,6 +66,7 @@ const AddCalendarPopup = ({
 					<p>予定を追加するカレンダーアプリを選択してください。</p>
 					<div className="flex justify-center gap-1">
 						<button
+							type="button"
 							className="btn btn-outline btn-sm"
 							onClick={handleOpenGoogleCalendar}
 						>
@@ -73,6 +74,7 @@ const AddCalendarPopup = ({
 							Android
 						</button>
 						<button
+							type="button"
 							className="btn btn-outline btn-sm"
 							onClick={handleOpenAppleCalendar}
 						>
@@ -80,6 +82,7 @@ const AddCalendarPopup = ({
 							iPhone
 						</button>
 						<button
+							type="button"
 							className="btn btn-outline btn-sm"
 							onClick={handleOpenYahooCalendar}
 						>
@@ -90,6 +93,7 @@ const AddCalendarPopup = ({
 				</div>
 				<div className="mt-4">
 					<button
+						type="button"
 						className="btn btn-outline"
 						onClick={() => setIsPopupOpen(false)}
 					>

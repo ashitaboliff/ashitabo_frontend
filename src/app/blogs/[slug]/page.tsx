@@ -1,10 +1,10 @@
+import fs from 'node:fs'
+import path from 'node:path'
 import Link from 'next/link'
 import { compileMDX } from 'next-mdx-remote/rsc'
-import fs from 'fs'
-import path from 'path'
-import { LuCalendarSync, LuCalendar } from 'react-icons/lu'
-import { createMetaData } from '@/hooks/useMetaData'
+import { LuCalendar, LuCalendarSync } from 'react-icons/lu'
 import HomePageHeader from '@/components/shared/HomePageHeader'
+import { createMetaData } from '@/hooks/useMetaData'
 import { logError } from '@/utils/logger'
 
 interface Frontmatter {

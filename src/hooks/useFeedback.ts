@@ -1,8 +1,8 @@
 'use client'
 
 import { useCallback, useState } from 'react'
+import type { FeedbackMessage } from '@/types/feedback'
 import type { ApiError } from '@/types/responseTypes'
-import type { FeedbackMessage, FeedbackKind } from '@/types/feedback'
 
 const normalizeApiError = (error: ApiError): FeedbackMessage => ({
 	kind: 'error',

@@ -1,17 +1,17 @@
-import { apiGet, apiPost } from '@/lib/api/crud'
-import { ApiResponse, StatusCode } from '@/types/responseTypes'
-import {
-	createdResponse,
-	mapSuccess,
-	withFallbackMessage,
-} from '@/lib/api/helper'
-import { Schedule, UserWithName } from '@/features/schedule/types'
 import {
 	mapRawSchedule,
 	mapRawUserWithNames,
 	type RawSchedule,
 	type RawUserWithName,
 } from '@/features/schedule/services/scheduleTransforms'
+import type { Schedule, UserWithName } from '@/features/schedule/types'
+import { apiGet, apiPost } from '@/lib/api/crud'
+import {
+	createdResponse,
+	mapSuccess,
+	withFallbackMessage,
+} from '@/lib/api/helper'
+import { type ApiResponse, StatusCode } from '@/types/responseTypes'
 
 export const getScheduleByIdAction = async (
 	scheduleId: string,
@@ -78,10 +78,11 @@ export const createScheduleAction = async ({
 	}
 
 	const createdId =
-		res.status === StatusCode.CREATED
-			? typeof res.data === 'object' && res.data
-				? (res.data as any).id ?? id
-				: id
+		res.status === StatusCode.CREATED &&
+		typeof res.data === 'object' &&
+		res.data !== null &&
+		'id' in res.data
+			? ((res.data.id as string | undefined) ?? id)
 			: id
 
 	const detail = await getScheduleByIdAction(createdId)

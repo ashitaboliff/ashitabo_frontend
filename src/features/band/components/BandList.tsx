@@ -1,15 +1,15 @@
 'use client'
 
 import { useState } from 'react'
-import useSWR from 'swr'
-import BandListItem from '@/features/band/components/BandListItem'
-import BandFormModal from '@/features/band/components/BandFormModal'
-import MemberManagementModal from '@/features/band/components/MemberManagementModal'
-import { getUserBandsAction, deleteBandAction } from '../actions'
-import type { BandDetails } from '@/features/band/types'
-import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
-import { useFeedback } from '@/hooks/useFeedback'
 import { FaPlusCircle } from 'react-icons/fa'
+import useSWR from 'swr'
+import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
+import BandFormModal from '@/features/band/components/BandFormModal'
+import BandListItem from '@/features/band/components/BandListItem'
+import MemberManagementModal from '@/features/band/components/MemberManagementModal'
+import type { BandDetails } from '@/features/band/types'
+import { useFeedback } from '@/hooks/useFeedback'
+import { deleteBandAction, getUserBandsAction } from '../actions'
 
 // SWR fetcher function
 const fetchUserBands = async () => {
@@ -117,6 +117,7 @@ export default function BandList({ currentUserId }: BandListProps) {
 				<button
 					onClick={handleOpenCreateBandModal}
 					className="btn btn-primary btn-md"
+					type="button"
 				>
 					<FaPlusCircle /> 新しいバンドを作成
 				</button>
@@ -139,17 +140,16 @@ export default function BandList({ currentUserId }: BandListProps) {
 				</div>
 			)}
 
-			{bands &&
-				bands.map((band) => (
-					<BandListItem
-						key={band.id}
-						band={band}
-						onEditBand={handleOpenEditBandModal}
-						onManageMembers={handleOpenMemberManagementModal}
-						onDeleteBand={handleDeleteBand}
-						currentUserId={currentUserId}
-					/>
-				))}
+			{bands?.map((band) => (
+				<BandListItem
+					key={band.id}
+					band={band}
+					onEditBand={handleOpenEditBandModal}
+					onManageMembers={handleOpenMemberManagementModal}
+					onDeleteBand={handleDeleteBand}
+					currentUserId={currentUserId}
+				/>
+			))}
 
 			{isBandFormModalOpen && (
 				<BandFormModal

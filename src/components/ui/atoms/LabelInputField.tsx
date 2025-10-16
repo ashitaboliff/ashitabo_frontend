@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import IconFactory from '@/utils/IconFactory'
 
 const LabelInputField = ({
@@ -18,9 +18,14 @@ const LabelInputField = ({
 			{label}
 			{infoDropdown && (
 				<div className="dropdown dropdown-right">
-					<div tabIndex={0} role="button">
+					<button
+						type="button"
+						tabIndex={0}
+						className="btn btn-ghost btn-xs p-0"
+						aria-label="追加情報"
+					>
 						{IconFactory.getIcon({ color: 'info', type: 'info' })}
-					</div>
+					</button>
 					<div className="card dropdown-content card-sm w-48 bg-white shadow rounded-box p-2 z-10">
 						<p className="text-sm">{infoDropdown}</p>
 					</div>

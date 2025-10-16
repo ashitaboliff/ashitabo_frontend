@@ -1,19 +1,19 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next-nprogress-bar'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { deleteBanBookingAction, adminRevalidateTagAction } from '../action'
-import Pagination from '@/components/ui/atoms/Pagination'
-import SelectField from '@/components/ui/atoms/SelectField'
+import { useRouter } from 'next-nprogress-bar'
+import { useId, useState } from 'react'
 import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
-import Popup from '@/components/ui/molecules/Popup'
+import Pagination from '@/components/ui/atoms/Pagination'
 import RadioSortGroup from '@/components/ui/atoms/RadioSortGroup'
-import { BanBooking } from '@/features/booking/types'
+import SelectField from '@/components/ui/atoms/SelectField'
+import Popup from '@/components/ui/molecules/Popup'
 import { BOOKING_TIME_LIST } from '@/features/booking/constants'
-import { ApiError } from '@/types/responseTypes'
-import { BanBookingSort } from '../types'
+import type { BanBooking } from '@/features/booking/types'
+import type { ApiError } from '@/types/responseTypes'
+import { adminRevalidateTagAction, deleteBanBookingAction } from '../action'
+import type { BanBookingSort } from '../types'
 import BanBookingList from './BanBookingList'
 
 const BanBookingPage = () => {
@@ -27,6 +27,9 @@ const BanBookingPage = () => {
 	const [isdeletePopupOpen, setIsDeletePopupOpen] = useState<boolean>(false)
 	const [error, setError] = useState<ApiError>()
 	const [isSuccessPopupOpen, setIsSuccessPopupOpen] = useState<boolean>(false)
+	const detailPopupId = useId()
+	const deletePopupId = useId()
+	const deleteSuccessPopupId = useId()
 
 	const pageMax = Math.ceil(totalCount / banBookingsPerPage) || 1
 
@@ -65,12 +68,14 @@ const BanBookingPage = () => {
 			</p>
 			<div className="flex flex-row justify-center space-x-2 w-1/2">
 				<button
+					type="button"
 					className="btn btn-primary btn-outline btn-md"
 					onClick={() => router.push('/admin/forbidden/new')}
 				>
 					予約禁止日を追加
 				</button>
 				<button
+					type="button"
 					className="btn btn-outline btn-md"
 					onClick={async () => await adminRevalidateTagAction('banBooking')}
 				>
@@ -132,7 +137,7 @@ const BanBookingPage = () => {
 				/>
 			</div>
 			<Popup
-				id="forbidden-booking-popup"
+				id={detailPopupId}
 				title="予約禁止日詳細"
 				open={isPopupOpen}
 				onClose={() => setIsPopupOpen(false)}
@@ -176,6 +181,7 @@ const BanBookingPage = () => {
 						</div>
 						<div className="flex flex-row gap-x-2 justify-center">
 							<button
+								type="button"
 								className="btn btn-error"
 								onClick={() => {
 									setIsDeletePopupOpen(true)
@@ -185,6 +191,7 @@ const BanBookingPage = () => {
 								削除
 							</button>
 							<button
+								type="button"
 								className="btn btn-outline"
 								onClick={() => setIsPopupOpen(false)}
 							>
@@ -195,7 +202,7 @@ const BanBookingPage = () => {
 				)}
 			</Popup>
 			<Popup
-				id="forbidden-booking-delete-popup"
+				id={deletePopupId}
 				title="予約禁止日削除"
 				open={isdeletePopupOpen}
 				onClose={() => setIsDeletePopupOpen(false)}
@@ -204,6 +211,7 @@ const BanBookingPage = () => {
 					<p className="text-center">本当に削除しますか？</p>
 					<div className="flex flex-row gap-x-2">
 						<button
+							type="button"
 							className="btn btn-error"
 							onClick={async () => {
 								if (popupData) {
@@ -214,6 +222,7 @@ const BanBookingPage = () => {
 							はい
 						</button>
 						<button
+							type="button"
 							className="btn btn-outline"
 							onClick={() => setIsDeletePopupOpen(false)}
 						>
@@ -224,7 +233,7 @@ const BanBookingPage = () => {
 				</div>
 			</Popup>
 			<Popup
-				id="forbidden-booking-delete-success-popup"
+				id={deleteSuccessPopupId}
 				title="削除完了"
 				open={isSuccessPopupOpen}
 				onClose={() => setIsSuccessPopupOpen(false)}
@@ -232,6 +241,7 @@ const BanBookingPage = () => {
 				<div className="flex flex-col items-center space-y-2 text-sm">
 					<p className="text-center">削除が完了しました</p>
 					<button
+						type="button"
 						className="btn btn-primary"
 						onClick={() => setIsSuccessPopupOpen(false)}
 					>
@@ -239,7 +249,11 @@ const BanBookingPage = () => {
 					</button>
 				</div>
 			</Popup>
-			<button className="btn btn-outline" onClick={() => router.push('/admin')}>
+			<button
+				type="button"
+				className="btn btn-outline"
+				onClick={() => router.push('/admin')}
+			>
 				戻る
 			</button>
 		</div>

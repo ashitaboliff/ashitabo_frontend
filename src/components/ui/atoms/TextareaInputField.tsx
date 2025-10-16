@@ -1,7 +1,7 @@
-import { ReactNode } from 'react'
-import { UseFormRegisterReturn } from 'react-hook-form'
-import LabelInputField from '@/components/ui/atoms/LabelInputField'
+import type { ReactNode } from 'react'
+import type { UseFormRegisterReturn } from 'react-hook-form'
 import InputFieldError from '@/components/ui/atoms/InputFieldError'
+import LabelInputField from '@/components/ui/atoms/LabelInputField'
 
 /**
  * テキスト入力フィールド

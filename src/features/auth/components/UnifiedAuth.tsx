@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation'
-import { ReactNode } from 'react'
-import { AccountRole } from '@/features/user/types'
+import type { ReactNode } from 'react'
 import { getAuthDetails } from '@/features/auth/actions'
 import type { AuthDetails } from '@/features/auth/types'
+import type { AccountRole } from '@/features/user/types'
 
 interface AuthPageProps {
 	children: (authResult: AuthDetails) => ReactNode
@@ -10,7 +10,6 @@ interface AuthPageProps {
 	allowUnauthenticated?: boolean
 	redirectIfAuthenticated?: boolean
 	requireRole?: AccountRole
-	fallback?: ReactNode
 }
 
 /**
@@ -23,7 +22,6 @@ export async function AuthPage({
 	allowUnauthenticated = false,
 	redirectIfAuthenticated = false,
 	requireRole = 'USER',
-	fallback,
 }: AuthPageProps) {
 	const authResult = await getAuthDetails(true)
 	const { status, issue } = authResult
@@ -46,6 +44,14 @@ export async function AuthPage({
 	}
 	if (issue === 'profile-required' && requireProfile) {
 		redirect('/auth/signin/setting')
+	}
+
+	if (requireProfile && !authResult.hasProfile) {
+		redirect('/auth/signin/setting')
+	}
+
+	if (!allowUnauthenticated && authResult.session === null) {
+		redirect('/auth/signin')
 	}
 
 	// ユーザーのロールチェック

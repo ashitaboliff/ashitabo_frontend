@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 export const createSyntheticEvent = <TValue extends string | number>(
 	name: string,

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { makeAuthDetails } from '../sessionInfo'
 import type { Session } from '@/types/session'
+import { makeAuthDetails } from '../sessionInfo'
 
 const buildSession = (overrides: Partial<Session> = {}): Session => ({
 	user: {

@@ -1,6 +1,6 @@
-import { memo, type Key, type ReactNode } from 'react'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
+import { type Key, type KeyboardEvent, memo, type ReactNode } from 'react'
 
 export interface CalendarCellRenderProps {
 	date: string
@@ -89,7 +89,7 @@ const CalendarFrame = ({
 				<tr>
 					<th className={cornerCellClassName}></th>
 					{dates.map((date, index) => (
-						<th key={`header-${date}-${index}`} className={headerCellClassName}>
+						<th key={date} className={headerCellClassName}>
 							{renderHeader(date, index)}
 						</th>
 					))}
@@ -97,14 +97,14 @@ const CalendarFrame = ({
 			</thead>
 			<tbody>
 				{times.map((time, timeIndex) => (
-					<tr key={`row-${time}-${timeIndex}`} className={bodyRowClassName}>
+					<tr key={time} className={bodyRowClassName}>
 						<td className={timeCellClassName}>{renderTime(time, timeIndex)}</td>
 						{dates.map((date, dateIndex) => {
 							const result = renderCell({ date, dateIndex, time, timeIndex })
 							if (!result) {
 								return (
 									<td
-										key={`empty-${date}-${timeIndex}`}
+										key={`empty-${date}-${time}`}
 										className={DEFAULT_CELL_CLASS}
 									/>
 								)
@@ -113,11 +113,24 @@ const CalendarFrame = ({
 							const { key, className, content, onClick } = result
 							const cellClass = mergeClassName(DEFAULT_CELL_CLASS, className)
 
+							const handleKeyDown = (
+								event: KeyboardEvent<HTMLTableCellElement>,
+							) => {
+								if (!onClick) return
+								if (event.key === 'Enter' || event.key === ' ') {
+									event.preventDefault()
+									onClick()
+								}
+							}
+
 							return (
 								<td
-									key={key ?? `cell-${date}-${timeIndex}`}
+									key={key ?? `cell-${date}-${time}`}
 									className={cellClass}
 									onClick={onClick}
+									onKeyDown={onClick ? handleKeyDown : undefined}
+									role={onClick ? 'button' : undefined}
+									tabIndex={onClick ? 0 : undefined}
 								>
 									{content}
 								</td>

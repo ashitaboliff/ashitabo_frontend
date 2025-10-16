@@ -1,16 +1,16 @@
+import type { Metadata, ResolvingMetadata } from 'next'
+import { getBookingByIdAction } from '@/features/booking/actions'
 import DetailPage from '@/features/booking/components/Detail'
 import DetailNotFoundPage from '@/features/booking/components/DetailNotFound'
-import { getBookingByIdAction } from '@/features/booking/actions'
 import { BOOKING_TIME_LIST } from '@/features/booking/constants'
 import { createMetaData } from '@/hooks/useMetaData'
-import { Metadata, ResolvingMetadata } from 'next'
 
 type PageParams = Promise<{ id: string }>
 type PageProps = { params: PageParams }
 
 export async function generateMetadata(
 	{ params }: { params: PageParams },
-	parent: ResolvingMetadata,
+	_parent: ResolvingMetadata,
 ): Promise<Metadata> {
 	const { id } = await params
 	const bookingDetailRes = await getBookingByIdAction(id)

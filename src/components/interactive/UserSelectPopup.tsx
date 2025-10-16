@@ -1,15 +1,14 @@
 'use client'
 
-import React, { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
+import { memo, useCallback, useEffect, useId, useState } from 'react'
+import { LuCheck, LuUserRound } from 'react-icons/lu'
 import InstIcon from '@/components/ui/atoms/InstIcon'
-import TextSearchField from '@/components/ui/molecules/TextSearchField'
 import Popup from '@/components/ui/molecules/Popup'
+import TextSearchField from '@/components/ui/molecules/TextSearchField'
 import { getUsersForSelect } from '@/features/user/actions'
-import { Part, PartMap, UserForSelect } from '@/features/user/types'
+import { type Part, PartMap, type UserForSelect } from '@/features/user/types'
 import { logError } from '@/utils/logger'
-import { LuUserRound } from 'react-icons/lu'
-import { LuCheck } from 'react-icons/lu'
 
 const UserSelectPopupComponent = ({
 	open,
@@ -28,6 +27,7 @@ const UserSelectPopupComponent = ({
 	const [users, setUsers] = useState<UserForSelect[]>([])
 	const [allUsers, setAllUsers] = useState<UserForSelect[]>([])
 	const [selectedUsers, setSelectedUsers] = useState<string[]>(userSelect || [])
+	const popupId = useId()
 
 	useEffect(() => {
 		const fetchUsers = async () => {
@@ -84,7 +84,7 @@ const UserSelectPopupComponent = ({
 
 	return (
 		<Popup
-			id="user-select-popup"
+			id={popupId}
 			title="ユーザー選択"
 			open={open}
 			onClose={onClose}
@@ -98,52 +98,58 @@ const UserSelectPopupComponent = ({
 				onChange={(e) => handleSearch(e.target.value)}
 			/>
 			<div className="mt-4 max-h-96 overflow-y-auto">
-				{users.map((user) => (
-					<div
-						key={user.id}
-						className={`p-2 hover:bg-gray-100 cursor-pointer ${
-							selectedUsers.includes(user.id!) ? 'bg-gray-50 opacity-70' : ''
-						}`}
-						onClick={() => handleUserSelect(user.id!)}
-					>
-						<div className="flex items-center justify-between">
-							<div className="flex items-center">
-								{user.image ? (
-									<Image
-										src={user.image}
-										alt={user.name!}
-										width={32}
-										height={32}
-										onError={(e) => {
-											e.currentTarget.style.display = 'none'
-											e.currentTarget.nextElementSibling?.classList.remove(
-												'hidden',
-											)
-										}}
-										className="rounded-full bg-white mr-2"
-									/>
-								) : (
-									<LuUserRound className="w-8 h-8 text-base-300 rounded-full bg-white mr-2" />
-								)}
-								<LuUserRound className="w-8 h-8 text-base-300 hidden rounded-full bg-white mr-2" />
-								<div className="flex flex-col">
-									<span className="font-semibold">{user.name}</span>
-									{user.profile?.name && (
-										<span className="text-sm text-gray-600">
-											{user.profile.name}
-										</span>
+				{users.map((user) => {
+					if (!user.id) {
+						return null
+					}
+					const isSelected = selectedUsers.includes(user.id)
+					const handleClick = () => handleUserSelect(user.id)
+					return (
+						<button
+							key={user.id}
+							type="button"
+							className={`w-full text-left p-2 hover:bg-gray-100 cursor-pointer ${
+								isSelected ? 'bg-gray-50 opacity-70' : ''
+							}`}
+							onClick={handleClick}
+						>
+							<div className="flex items-center justify-between">
+								<div className="flex items-center">
+									{user.image ? (
+										<Image
+											src={user.image}
+											alt={user.name ?? 'ユーザーアイコン'}
+											width={32}
+											height={32}
+											onError={(e) => {
+												e.currentTarget.style.display = 'none'
+												e.currentTarget.nextElementSibling?.classList.remove(
+													'hidden',
+												)
+											}}
+											className="rounded-full bg-white mr-2"
+										/>
+									) : (
+										<LuUserRound className="w-8 h-8 text-base-300 rounded-full bg-white mr-2" />
 									)}
-									{user.profile?.part && user.profile.part.length > 0 && (
-										<InstIcon part={user.profile.part} size={16} />
-									)}
+									<LuUserRound className="w-8 h-8 text-base-300 hidden rounded-full bg-white mr-2" />
+									<div className="flex flex-col">
+										<span className="font-semibold">{user.name}</span>
+										{user.profile?.name && (
+											<span className="text-sm text-gray-600">
+												{user.profile.name}
+											</span>
+										)}
+										{user.profile?.part && user.profile.part.length > 0 && (
+											<InstIcon part={user.profile.part} size={16} />
+										)}
+									</div>
 								</div>
+								{isSelected && <LuCheck className="w-6 h-6 text-primary" />}
 							</div>
-							{selectedUsers.includes(user.id!) && (
-								<LuCheck className="w-6 h-6 text-primary" />
-							)}
-						</div>
-					</div>
-				))}
+						</button>
+					)
+				})}
 			</div>
 			<div className="p-4 border-t bg-white flex justify-between items-center">
 				<div className="flex-1">
@@ -152,16 +158,17 @@ const UserSelectPopupComponent = ({
 							{selectedUsers.map((userId) => {
 								const user = users.find((u) => u.id === userId)
 								return user ? (
-									<div
+									<button
 										key={user.id}
+										type="button"
 										className="flex flex-col items-center"
-										onClick={() => handleUserSelect(user.id!)}
+										onClick={() => user.id && handleUserSelect(user.id)}
 									>
 										<div className="rounded-full bg-white avatar">
 											{user.image ? (
 												<Image
 													src={user.image}
-													alt={user.name!}
+													alt={user.name ?? 'ユーザーアイコン'}
 													width={40}
 													height={40}
 													onError={(e) => {
@@ -184,7 +191,7 @@ const UserSelectPopupComponent = ({
 												{user.profile?.name || user.name}
 											</span>
 										</div>
-									</div>
+									</button>
 								) : null
 							})}
 						</div>
@@ -198,6 +205,7 @@ const UserSelectPopupComponent = ({
 				</div>
 				{!singleSelect && (
 					<button
+						type="button"
 						onClick={handleConfirm}
 						className="ml-4 btn btn-primary btn-sm"
 					>
@@ -209,7 +217,7 @@ const UserSelectPopupComponent = ({
 	)
 }
 
-const UserSelectPopup = React.memo(UserSelectPopupComponent)
+const UserSelectPopup = memo(UserSelectPopupComponent)
 
 UserSelectPopup.displayName = 'UserSelectPopup'
 

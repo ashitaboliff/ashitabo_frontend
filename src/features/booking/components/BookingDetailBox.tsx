@@ -2,8 +2,8 @@
 
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
+import type { ReactNode } from 'react'
 import { BOOKING_TIME_LIST } from '@/features/booking/constants'
-import { ReactNode } from 'react'
 
 interface BookingDetailItem {
 	label: string
@@ -53,9 +53,9 @@ const BookingDetailBox = ({
 				<div className="divider my-1"></div>
 				{/* 各項目をリストまたはテーブル形式で表示 */}
 				<dl className="space-y-2">
-					{data.map((item, index) => (
+					{data.map((item) => (
 						<div
-							key={index}
+							key={item.label}
 							// 小さい画面ではラベルと値が縦、sm以上で横並び、グリッドで整形
 							className="grid grid-cols-1 sm:grid-cols-3 gap-1 items-center py-2 border-b border-base-300 last:border-b-0"
 						>

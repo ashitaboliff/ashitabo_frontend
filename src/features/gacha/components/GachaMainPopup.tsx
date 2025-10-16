@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
-import ImageCarousel from './ImageCarousel'
-import GachaResult from './GachaResult'
+import { useId, useState } from 'react'
+import Popup from '@/components/ui/molecules/Popup'
 import { MAX_GACHA_PLAYS_PER_DAY } from '@/features/gacha/components/config/gachaConfig'
 import { useGachaData } from '@/features/gacha/context/GachaDataContext'
-import Popup from '@/components/ui/molecules/Popup'
 import type { Session } from '@/types/session'
+import GachaResult from './GachaResult'
+import ImageCarousel from './ImageCarousel'
 
 interface GachaMainPopupProps {
 	session: Session
@@ -28,6 +28,7 @@ const GachaMainPopup = ({
 	const { gachaCarouselData } = useGachaData()
 	const [currentStep, setCurrentStep] = useState<GachaStep>('select')
 	const [selectedVersion, setSelectedVersion] = useState<string | null>(null)
+	const popupId = useId()
 
 	const handleGachaSuccessInternal = () => {
 		onGachaPlayedSuccessfully()
@@ -64,7 +65,7 @@ const GachaMainPopup = ({
 
 	return (
 		<Popup
-			id="gacha-main-popup"
+			id={popupId}
 			title={getPopupTitle()}
 			open={open}
 			onClose={handleClose}
@@ -95,6 +96,7 @@ const GachaMainPopup = ({
 							onGachaSuccess={handleGachaSuccessInternal}
 						/>
 						<button
+							type="button"
 							className="btn btn-primary mt-2 w-full"
 							onClick={() => {
 								setCurrentStep('select')
@@ -114,7 +116,7 @@ const GachaMainPopup = ({
 						{MAX_GACHA_PLAYS_PER_DAY}
 					</div>
 				)}
-				<button className="btn btn-outline" onClick={handleClose}>
+				<button className="btn btn-outline" onClick={handleClose} type="button">
 					閉じる
 				</button>
 			</div>

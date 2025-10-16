@@ -1,23 +1,22 @@
 'use client'
 
-import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next-nprogress-bar'
+import { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { createProfileAction, putProfileAction } from '@/features/auth/actions'
 import { useSession } from '@/features/auth/hooks/useSession'
-import { useFeedback } from '@/hooks/useFeedback'
-import {
-	profileSchema,
-	profileDefaultValues,
-	ProfileFormValues,
-	toProfileFormValues,
-	getAutoExpectedYear,
-} from '@/features/user/schemas/profileSchema'
 import { makeAuthDetails } from '@/features/auth/utils/sessionInfo'
-import { StatusCode } from '@/types/responseTypes'
-import { createProfileAction } from '@/features/auth/actions'
-import { putProfileAction } from '@/features/auth/actions'
+import {
+	getAutoExpectedYear,
+	type ProfileFormValues,
+	profileDefaultValues,
+	profileSchema,
+	toProfileFormValues,
+} from '@/features/user/schemas/profileSchema'
 import type { Profile } from '@/features/user/types'
+import { useFeedback } from '@/hooks/useFeedback'
+import { StatusCode } from '@/types/responseTypes'
 import { logError } from '@/utils/logger'
 
 export type ProfileFormMode = 'create' | 'edit'

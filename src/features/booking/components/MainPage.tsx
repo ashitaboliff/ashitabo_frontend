@@ -1,25 +1,23 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
-import useSWR from 'swr'
 import { addDays, format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { BookingResponse } from '@/features/booking/types'
-import BookingCalendar from '@/features/booking/components/BookingCalendar'
-import {
-	BOOKING_MAIN_VIEW_MIN_OFFSET_DAYS,
-	BOOKING_VIEW_RANGE_DAYS,
-	BOOKING_TIME_LIST,
-} from '@/features/booking/constants'
+import { useEffect, useMemo } from 'react'
 import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import FlashMessage, {
 	type NoticeType,
 } from '@/components/ui/atoms/FlashMessage'
-import { useFeedback } from '@/hooks/useFeedback'
+import BookingCalendar from '@/features/booking/components/BookingCalendar'
+import {
+	BOOKING_MAIN_VIEW_MIN_OFFSET_DAYS,
+	BOOKING_TIME_LIST,
+	BOOKING_VIEW_RANGE_DAYS,
+} from '@/features/booking/constants'
 import {
 	useBookingCalendarData,
 	useBookingWeekNavigation,
 } from '@/features/booking/hooks'
+import { useFeedback } from '@/hooks/useFeedback'
 import type { ApiError } from '@/types/responseTypes'
 
 type MainPageProps = {
@@ -96,6 +94,7 @@ const MainPage = ({ initialViewDate, type, message }: MainPageProps) => {
 			<div className="flex flex-col justify-center space-x-2">
 				<div className="flex justify-between items-center mb-4 m-auto">
 					<button
+						type="button"
 						className="btn btn-outline"
 						onClick={goPrevWeek}
 						disabled={!canGoPrevWeek}
@@ -110,6 +109,7 @@ const MainPage = ({ initialViewDate, type, message }: MainPageProps) => {
 						までのコマ表
 					</div>
 					<button
+						type="button"
 						className="btn btn-outline"
 						onClick={goNextWeek}
 						disabled={!canGoNextWeek}

@@ -1,22 +1,22 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { useRouter } from 'next-nprogress-bar'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import {
-	getAuthUrl,
-	createPlaylistAction,
-	revalidateYoutubeTag,
-} from '@/features/video/actions'
-import { Playlist } from '@/features/video/types'
+import { useRouter } from 'next-nprogress-bar'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import Pagination from '@/components/ui/atoms/Pagination'
 import SelectField from '@/components/ui/atoms/SelectField'
 import Tags from '@/components/ui/atoms/Tags'
+import {
+	createPlaylistAction,
+	getAuthUrl,
+	revalidateYoutubeTag,
+} from '@/features/video/actions'
+import type { Playlist } from '@/features/video/types'
+import { useLocationNavigate } from '@/hooks/useBrowserApis'
 import { useFeedback } from '@/hooks/useFeedback'
 import { usePagedResource } from '@/hooks/usePagedResource'
-import { useLocationNavigate } from '@/hooks/useBrowserApis'
 
 interface YoutubeManagementProps {
 	playlists: Playlist[] | undefined | null
@@ -108,6 +108,7 @@ const YoutubeManagement = ({
 				Youtube認証が必要な場合があるため、あしたぼアカウントでログイン済みの方が操作してください。
 			</p>
 			<button
+				type="button"
 				className="btn btn-primary btn-outline"
 				onClick={handleAuth}
 				disabled={isAccessToken}
@@ -116,6 +117,7 @@ const YoutubeManagement = ({
 			</button>
 			<div className="flex flex-row gap-x-2">
 				<button
+					type="button"
 					className="btn btn-primary"
 					onClick={handleFetchPlaylist}
 					disabled={isLoading}
@@ -123,6 +125,7 @@ const YoutubeManagement = ({
 					{isLoading ? '処理中...' : 'Youtubeから取得'}
 				</button>
 				<button
+					type="button"
 					className="btn btn-secondary btn-outline"
 					onClick={handleRevalidate}
 				>
@@ -178,6 +181,7 @@ const YoutubeManagement = ({
 			/>
 			<div className="flex flex-row justify-center mt-2">
 				<button
+					type="button"
 					className="btn btn-outline"
 					onClick={() => router.push('/admin')}
 				>
@@ -259,7 +263,11 @@ const YoutubeManagement = ({
 						</div>
 					</div>
 					<div className="flex justify-center">
-						<button className="btn btn-primary" onClick={closeDetailDialog}>
+						<button
+							type="button"
+							className="btn btn-primary"
+							onClick={closeDetailDialog}
+						>
 							閉じる
 						</button>
 					</div>

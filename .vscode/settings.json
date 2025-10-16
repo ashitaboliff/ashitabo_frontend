@@ -1,11 +1,11 @@
 {
-	"files.associations": {
-		"*.tsx": "typescriptreact",
-		"*.css": "tailwindcss"
-	},
-	"tailwindCSS.experimental.configFile": "src/app/globals.css",
-	"tailwindcss-intellisense.trace.server": "messages",
-	"editor.quickSuggestions": {
-		"strings": "on"
-	}
+  "files.associations": {
+    "*.tsx": "typescriptreact",
+    "*.css": "tailwindcss"
+  },
+  "tailwindCSS.experimental.configFile": "src/app/globals.css",
+  "tailwindcss-intellisense.trace.server": "messages",
+  "editor.quickSuggestions": {
+    "strings": "on"
+  }
 }

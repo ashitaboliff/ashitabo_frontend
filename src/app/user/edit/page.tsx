@@ -1,7 +1,7 @@
-import type { Profile } from '@/features/user/types'
 import { notFound } from 'next/navigation'
-import ProfileEdit from '@/features/user/components/ProfileEdit'
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
+import ProfileEdit from '@/features/user/components/ProfileEdit'
+import type { Profile } from '@/features/user/types'
 import { apiGet } from '@/lib/api/crud'
 
 export async function metadata() {

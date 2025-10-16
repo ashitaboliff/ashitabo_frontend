@@ -1,9 +1,9 @@
 'use client'
 
-import { useRouter } from 'next-nprogress-bar'
 import Image from 'next/image'
-import { nicomoji } from '@/lib/fonts'
+import { useRouter } from 'next-nprogress-bar'
 import { FRONTEND_ORIGIN } from '@/lib/env'
+import { nicomoji } from '@/lib/fonts'
 
 const SigninPage = () => {
 	const router = useRouter()
@@ -19,12 +19,13 @@ const SigninPage = () => {
 					<div className="text-sm">
 						あしたぼの部員、およびOB,OGはこちらから利用登録、もしくはログインを行ってください。
 					</div>
-					<div
-						className={`btn btn-primary`}
+					<button
+						type="button"
+						className="btn btn-primary"
 						onClick={async () => router.push('/auth/padlock')}
 					>
 						LINEで登録
-					</div>
+					</button>
 				</div>
 			</div>
 			<div className="text-error text-center">

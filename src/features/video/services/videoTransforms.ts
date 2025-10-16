@@ -1,4 +1,4 @@
-import { Playlist, Video } from '@/features/video/types'
+import type { Playlist, Video } from '@/features/video/types'
 
 const toDate = (value: string | Date | undefined | null): Date | undefined => {
 	if (!value) return undefined

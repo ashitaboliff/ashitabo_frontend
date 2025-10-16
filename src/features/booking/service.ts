@@ -1,4 +1,8 @@
-import { Booking, BookingLog, BookingResponse } from '@/features/booking/types'
+import type {
+	Booking,
+	BookingLog,
+	BookingResponse,
+} from '@/features/booking/types'
 
 export interface RawBookingData {
 	id: string

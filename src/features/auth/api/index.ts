@@ -1,7 +1,7 @@
-import { ApiResponse, StatusCode } from '@/types/responseTypes'
 import { failure, noContentResponse } from '@/lib/api/helper'
-import { logError } from '@/utils/logger'
+import { type ApiResponse, StatusCode } from '@/types/responseTypes'
 import type { Session } from '@/types/session'
+import { logError } from '@/utils/logger'
 
 const CSRF_ENDPOINT = '/api/auth/csrf'
 const SIGN_OUT_ENDPOINT = '/api/auth/signout'

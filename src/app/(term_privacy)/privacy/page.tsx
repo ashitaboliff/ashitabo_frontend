@@ -1,9 +1,9 @@
-import { LuCalendarSync, LuCalendar } from 'react-icons/lu'
-import { createMetaData } from '@/hooks/useMetaData'
+import fs from 'node:fs/promises'
+import path from 'node:path'
 import { compileMDX } from 'next-mdx-remote/rsc'
+import { LuCalendar, LuCalendarSync } from 'react-icons/lu'
 import rehypeRaw from 'rehype-raw'
-import fs from 'fs/promises'
-import path from 'path'
+import { createMetaData } from '@/hooks/useMetaData'
 
 export async function metadata() {
 	return createMetaData({

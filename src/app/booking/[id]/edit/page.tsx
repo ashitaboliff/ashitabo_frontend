@@ -1,22 +1,22 @@
 'use server'
 
+import { addDays, subDays } from 'date-fns'
+import type { Metadata, ResolvingMetadata } from 'next'
 import { cookies } from 'next/headers'
+import { AuthPage } from '@/features/auth/components/UnifiedAuth'
+import {
+	getBookingByDateAction,
+	getBookingByIdAction,
+} from '@/features/booking/actions'
+import DetailNotFoundPage from '@/features/booking/components/DetailNotFound'
+import BookingEdit from '@/features/booking/components/edit/BookingEdit'
 import {
 	BOOKING_TIME_LIST,
 	BOOKING_VIEW_RANGE_DAYS,
 } from '@/features/booking/constants'
-import {
-	getBookingByIdAction,
-	getBookingByDateAction,
-} from '@/features/booking/actions'
-import { AuthPage } from '@/features/auth/components/UnifiedAuth'
-import BookingEdit from '@/features/booking/components/edit/BookingEdit'
-import DetailNotFoundPage from '@/features/booking/components/DetailNotFound'
-import { logError } from '@/utils/logger'
-import { toDateKey } from '@/utils'
-import { addDays, subDays } from 'date-fns'
 import { createMetaData } from '@/hooks/useMetaData'
-import { Metadata, ResolvingMetadata } from 'next'
+import { toDateKey } from '@/utils'
+import { logError } from '@/utils/logger'
 
 type PageParams = Promise<{ id: string }>
 type PageProps = {
@@ -25,7 +25,7 @@ type PageProps = {
 
 export async function generateMetadata(
 	{ params }: { params: PageParams },
-	parent: ResolvingMetadata,
+	_parent: ResolvingMetadata,
 ): Promise<Metadata> {
 	const { id } = await params
 	const bookingDetailRes = await getBookingByIdAction(id)
@@ -55,7 +55,10 @@ const Page = async ({ params }: PageProps) => {
 	return (
 		<AuthPage requireProfile={true}>
 			{async (authResult) => {
-				const session = authResult.session!
+				const session = authResult.session
+				if (!session) {
+					return null
+				}
 
 				const initialViewDayDate = subDays(new Date(), 1)
 

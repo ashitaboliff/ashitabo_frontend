@@ -1,5 +1,5 @@
+import type { UseFormRegisterReturn } from 'react-hook-form'
 import { MdVisibility, MdVisibilityOff } from 'react-icons/md'
-import { UseFormRegisterReturn } from 'react-hook-form'
 import LabelInputField from '@/components/ui/atoms/LabelInputField'
 
 /**

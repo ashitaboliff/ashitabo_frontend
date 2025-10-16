@@ -12,7 +12,9 @@ const HomePageBar = () => {
 				fill="none"
 				xmlns="http://www.w3.org/2000/svg"
 				className="hidden md:block"
+				role="img"
 			>
+				<title>ホームページ装飾バー（デスクトップ）</title>
 				<rect x="378" y="21" width="13" height="136" fill={lightyellow} />
 				<rect x="396" y="13" width="13" height="145" fill={lightyellow} />
 				<rect x="414" y="47" width="13" height="111" fill={lightBlue} />
@@ -58,7 +60,9 @@ const HomePageBar = () => {
 				fill="none"
 				xmlns="http://www.w3.org/2000/svg"
 				className="md:hidden"
+				role="img"
 			>
+				<title>ホームページ装飾バー（モバイル）</title>
 				<rect x="36" y="31" width="13" height="111" fill={lightyellow} />
 				<rect x="54" y="36" width="13" height="106" fill={lightyellow} />
 				<rect x="72" y="61" width="13" height="81" fill={lightBlue} />

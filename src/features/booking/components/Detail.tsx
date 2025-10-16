@@ -1,16 +1,16 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next-nprogress-bar'
-import { usePathname } from 'next/navigation'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale/ja'
-import { Booking } from '@/features/booking/types'
-import { BOOKING_TIME_LIST } from '@/features/booking/constants'
+import { usePathname } from 'next/navigation'
+import { useRouter } from 'next-nprogress-bar'
+import { useState } from 'react'
 import ShareButton from '@/components/ui/atoms/ShareButton'
 import AddCalendarPopup from '@/components/ui/molecules/AddCalendarPopup'
 import BookingDetailBox from '@/features/booking/components/BookingDetailBox'
 import DetailNotFoundPage from '@/features/booking/components/DetailNotFound'
+import { BOOKING_TIME_LIST } from '@/features/booking/constants'
+import type { Booking } from '@/features/booking/types'
 
 const DetailPage = ({ bookingDetail }: { bookingDetail: Booking }) => {
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
@@ -31,12 +31,14 @@ const DetailPage = ({ bookingDetail }: { bookingDetail: Booking }) => {
 			/>
 			<div className="flex flex-col sm:flex-row justify-center items-center gap-2 w-full max-w-md">
 				<button
+					type="button"
 					className="btn btn-primary w-full sm:w-1/3"
 					onClick={() => router.push(`/booking/${bookingDetail?.id}/edit`)}
 				>
 					編集
 				</button>
 				<button
+					type="button"
 					className="btn btn-accent btn-outline w-full sm:w-1/3"
 					onClick={() => setIsPopupOpen(true)}
 				>
@@ -58,6 +60,7 @@ const DetailPage = ({ bookingDetail }: { bookingDetail: Booking }) => {
 			</div>
 			<div className="mt-4 flex justify-center w-full max-w-md">
 				<button
+					type="button"
 					className="btn btn-ghost w-full sm:w-auto"
 					onClick={() => router.push('/booking')}
 				>

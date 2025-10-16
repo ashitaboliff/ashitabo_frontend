@@ -1,29 +1,26 @@
 'use client'
 
-import { useRef, useState, useEffect, FormEvent, ChangeEvent } from 'react' // useEffect will be modified
 import Image from 'next/image'
+import { type FormEvent, useCallback, useEffect, useRef, useState } from 'react' // useEffect will be modified
+import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa'
 import useSWR from 'swr'
+import InfoMessage from '@/components/ui/atoms/InfoMessage' // Import InfoMessage
 import SelectField from '@/components/ui/atoms/SelectField' // Import SelectField
 import TextInputField from '@/components/ui/atoms/TextInputField' // Import TextInputField
-import InfoMessage from '@/components/ui/atoms/InfoMessage' // Import InfoMessage
-import {
-	addBandMemberAction,
-	updateBandMemberAction,
-	removeBandMemberAction,
-	searchUsersForBandAction,
-	getAvailablePartsAction,
-	getBandDetailsAction,
-} from '../actions'
 import type {
 	BandDetails,
-	UserWithProfile,
-	Part,
 	BandMemberDetails,
-	AddBandMemberResponse,
-	UpdateBandMemberResponse,
-	RemoveBandMemberResponse,
+	Part,
+	UserWithProfile,
 } from '@/features/band/types'
-import { FaTrash, FaEdit, FaPlus } from 'react-icons/fa'
+import {
+	addBandMemberAction,
+	getAvailablePartsAction,
+	getBandDetailsAction,
+	removeBandMemberAction,
+	searchUsersForBandAction,
+	updateBandMemberAction,
+} from '../actions'
 
 interface MemberManagementModalProps {
 	isOpen: boolean
@@ -105,6 +102,17 @@ export default function MemberManagementModal({
 	// 	setCurrentBandDetails(band)
 	// }, [band])
 
+	const resetFormState = useCallback(() => {
+		setSearchQuery('')
+		setSelectedSearchPart('')
+		setSearchResults([])
+		setSelectedUserForAdd(null)
+		setPartForNewMember('')
+		setEditingMember(null)
+		setPartForEditingMember('')
+		setMessage(null)
+	}, [])
+
 	useEffect(() => {
 		if (isOpen) {
 			modalRef.current?.showModal()
@@ -116,18 +124,7 @@ export default function MemberManagementModal({
 			modalRef.current?.close()
 			resetFormState()
 		}
-	}, [isOpen, initialBand, mutateBandDetails])
-
-	const resetFormState = () => {
-		setSearchQuery('')
-		setSelectedSearchPart('')
-		setSearchResults([])
-		setSelectedUserForAdd(null)
-		setPartForNewMember('')
-		setEditingMember(null)
-		setPartForEditingMember('')
-		setMessage(null)
-	}
+	}, [isOpen, initialBand, mutateBandDetails, resetFormState])
 
 	// const fetchAvailableParts = async () => { // Replaced by SWR
 	// 	const result = await getAvailablePartsAction()
@@ -354,15 +351,16 @@ export default function MemberManagementModal({
 						<div className="max-h-60 overflow-y-auto mb-3">
 							<ul className="menu bg-base-200 rounded-box">
 								{searchResults.map((user) => (
-									<li
-										key={user.id}
-										onClick={() => {
-											setSelectedUserForAdd(user)
-											setSearchResults([])
-											setSearchQuery(user.name || user.userId || '')
-										}}
-									>
-										<a>
+									<li key={user.id}>
+										<button
+											type="button"
+											onClick={() => {
+												setSelectedUserForAdd(user)
+												setSearchResults([])
+												setSearchQuery(user.name || user.userId || '')
+											}}
+											className="flex items-center gap-2 w-full text-left hover:bg-base-300 rounded-md p-2"
+										>
 											<div className="flex items-center gap-2">
 												<Image
 													src={user.image || '/utils/default-avatar.png'}
@@ -376,11 +374,9 @@ export default function MemberManagementModal({
 													<span className="text-xs opacity-70">
 														({user.profile.part.join(', ')})
 													</span>
-												) : (
-													''
-												)}
+												) : null}
 											</div>
-										</a>
+										</button>
 									</li>
 								))}
 							</ul>
@@ -390,12 +386,12 @@ export default function MemberManagementModal({
 					{selectedUserForAdd && (
 						<div className="flex items-end gap-2">
 							<div className="flex-grow">
-								<label className="label">
+								<div className="label">
 									<span className="label-text">
 										選択中:{' '}
 										{selectedUserForAdd.name || selectedUserForAdd.userId}
 									</span>
-								</label>
+								</div>
 								<SelectField
 									name="newMemberPart"
 									options={
@@ -420,6 +416,7 @@ export default function MemberManagementModal({
 								onClick={handleAddMember}
 								className="btn btn-success"
 								disabled={!partForNewMember || isLoadingAction}
+								type="button"
 							>
 								{isLoadingAction ? (
 									<span className="loading loading-spinner"></span>
@@ -488,6 +485,7 @@ export default function MemberManagementModal({
 													onClick={() => handleUpdateMemberPart(member.id)}
 													className="btn btn-sm btn-success"
 													disabled={!partForEditingMember || isLoadingAction}
+													type="button"
 												>
 													{isLoadingAction ? (
 														<span className="loading loading-spinner-xs"></span>
@@ -502,6 +500,7 @@ export default function MemberManagementModal({
 													}}
 													className="btn btn-sm btn-ghost"
 													disabled={isLoadingAction}
+													type="button"
 												>
 													取消
 												</button>
@@ -514,6 +513,7 @@ export default function MemberManagementModal({
 												}}
 												className="btn btn-sm btn-outline btn-info"
 												disabled={isLoadingAction}
+												type="button"
 											>
 												<FaEdit /> パート変更
 											</button>
@@ -527,6 +527,7 @@ export default function MemberManagementModal({
 											}
 											className="btn btn-sm btn-outline btn-error"
 											disabled={isLoadingAction}
+											type="button"
 										>
 											<FaTrash /> 削除
 										</button>

@@ -1,11 +1,11 @@
 'use client'
 
 import Image from 'next/image'
-import { getImageUrl } from '@/lib/r2'
-import PadlockLoading from '@/features/auth/components/PadlockLoading'
-import PadlockForm from '@/features/auth/components/PadlockForm'
 import PadlockErrorDisplay from '@/features/auth/components/PadlockErrorDisplay'
+import PadlockForm from '@/features/auth/components/PadlockForm'
+import PadlockLoading from '@/features/auth/components/PadlockLoading'
 import { useAuthPadlock } from '@/features/auth/hooks/useAuthPadlock'
+import { getImageUrl } from '@/lib/r2'
 
 export type AuthPadLockProps = {
 	csrfToken?: string | null

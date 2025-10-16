@@ -1,6 +1,6 @@
+import type { AuthDetails, AuthIssue, AuthStatus } from '@/features/auth/types'
 import type { AccountRole } from '@/features/user/types'
 import type { Session } from '@/types/session'
-import type { AuthDetails, AuthIssue, AuthStatus } from '@/features/auth/types'
 
 const isRole = (value: unknown): value is AccountRole =>
 	value === 'USER' || value === 'ADMIN' || value === 'TOPADMIN'

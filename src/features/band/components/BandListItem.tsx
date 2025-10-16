@@ -1,8 +1,8 @@
 'use client'
 
 import Image from 'next/image'
+import { FaEdit, FaTrashAlt, FaUsers } from 'react-icons/fa'
 import type { BandDetails, BandMemberDetails } from '@/features/band/types'
-import { FaEdit, FaUsers, FaTrashAlt } from 'react-icons/fa'
 
 interface BandListItemProps {
 	band: BandDetails
@@ -22,22 +22,27 @@ export default function BandListItem({
 	const MAX_DISPLAY_MEMBERS = 5 // Show first 5 members, then "+X more"
 	const displayMembers = band.members.slice(0, MAX_DISPLAY_MEMBERS)
 	const remainingMembersCount = band.members.length - displayMembers.length
+	const isCurrentUserMember =
+		currentUserId != null &&
+		band.members.some((member) => member.userId === currentUserId)
 
 	// A simple way to check if the current user is a member, for potential UI differences
-	// const isCurrentUserMember = currentUserId && band.members.some(member => member.userId === currentUserId);
-
 	return (
 		<div className="card bg-base-100 shadow-xl mb-4">
 			<div className="card-body">
 				<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3">
 					<h2 className="card-title text-xl font-semibold mb-2 sm:mb-0">
 						{band.name}
+						{isCurrentUserMember && (
+							<span className="badge badge-primary badge-sm ml-2">所属中</span>
+						)}
 					</h2>
 					<div className="flex gap-2 flex-wrap">
 						<button
 							onClick={() => onEditBand(band)}
 							className="btn btn-sm btn-outline btn-info"
 							aria-label={`Edit band ${band.name}`}
+							type="button"
 						>
 							<FaEdit /> バンド名編集
 						</button>
@@ -45,6 +50,7 @@ export default function BandListItem({
 							onClick={() => onManageMembers(band)}
 							className="btn btn-sm btn-outline btn-primary"
 							aria-label={`Manage members for ${band.name}`}
+							type="button"
 						>
 							<FaUsers /> メンバー管理
 						</button>
@@ -52,6 +58,7 @@ export default function BandListItem({
 							onClick={() => onDeleteBand(band.id, band.name)}
 							className="btn btn-sm btn-outline btn-error"
 							aria-label={`Delete band ${band.name}`}
+							type="button"
 						>
 							<FaTrashAlt /> 削除
 						</button>

@@ -1,18 +1,18 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { Booking } from '@/features/booking/types'
-import { BOOKING_TIME_LIST } from '@/features/booking/constants'
+import { useEffect, useState } from 'react'
 import Pagination from '@/components/ui/atoms/Pagination'
-import SelectField from '@/components/ui/atoms/SelectField'
-import Popup from '@/components/ui/molecules/Popup'
-import AddCalendarPopup from '@/components/ui/molecules/AddCalendarPopup'
 import RadioSortGroup from '@/components/ui/atoms/RadioSortGroup'
-import BookingLogList from './BookingLogList'
-import type { Session } from '@/types/session'
+import SelectField from '@/components/ui/atoms/SelectField'
+import AddCalendarPopup from '@/components/ui/molecules/AddCalendarPopup'
+import Popup from '@/components/ui/molecules/Popup'
+import { BOOKING_TIME_LIST } from '@/features/booking/constants'
+import type { Booking } from '@/features/booking/types'
 import { usePagedResource } from '@/hooks/usePagedResource'
+import type { Session } from '@/types/session'
+import BookingLogList from './BookingLogList'
 
 interface UserBookingLogsProps {
 	session: Session
@@ -165,6 +165,7 @@ const UserBookingLogs = ({ session, initialData }: UserBookingLogsProps) => {
 									カレンダーに追加
 								</button>
 								<button
+									type="button"
 									className="btn btn-outline btn-sm"
 									onClick={() => {
 										setIsPopupOpen(false)

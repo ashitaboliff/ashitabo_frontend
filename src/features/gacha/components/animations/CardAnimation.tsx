@@ -1,15 +1,16 @@
 'use client'
 
-import { useRef, useState, useMemo } from 'react'
-import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
-import { RarityType } from '@/features/gacha/types'
-import { getImageUrl } from '@/lib/r2'
-import Sparkle from '@/features/gacha/components/effects/Sparkle'
+import gsap from 'gsap'
+import Image from 'next/image'
+import { type CSSProperties, useId, useMemo, useRef, useState } from 'react'
 import {
-	AnimationContext,
+	type AnimationContext,
 	rarityAnimations,
 } from '@/features/gacha/components/animations/rarityAnimations'
+import Sparkle from '@/features/gacha/components/effects/Sparkle'
+import type { RarityType } from '@/features/gacha/types'
+import { getImageUrl } from '@/lib/r2'
 
 gsap.registerPlugin(useGSAP)
 
@@ -28,6 +29,7 @@ export const CardAnimation = ({
 	const effectContainerRef = useRef<HTMLDivElement>(null)
 	const [imagesLoaded, setImagesLoaded] = useState<number>(0)
 	const backImage = getImageUrl('/gacha/backimage.png')
+	const id = useId()
 
 	const handleImageLoad = () => {
 		setImagesLoaded((prev) => prev + 1)
@@ -90,7 +92,7 @@ export const CardAnimation = ({
 	const starColor = rarity === 'SECRET_RARE' ? '#000' : '#FFD700'
 
 	const fixedStarPositions = useMemo(() => {
-		const positions = []
+		const positions: Array<{ style: CSSProperties; id: string }> = []
 		const numStars =
 			rarity === 'ULTRA_RARE' || rarity === 'SECRET_RARE'
 				? 60
@@ -99,15 +101,18 @@ export const CardAnimation = ({
 					: 40
 		for (let i = 0; i < numStars; i++) {
 			const side = Math.floor(Math.random() * 4)
-			let pos: React.CSSProperties = {}
+			let style: CSSProperties = {}
 			const offset = `${Math.random() * 25}%`
 			const mainPos = `${Math.random() * 100}%`
 
-			if (side === 0) pos = { top: offset, left: mainPos }
-			else if (side === 1) pos = { bottom: offset, left: mainPos }
-			else if (side === 2) pos = { left: offset, top: mainPos }
-			else pos = { right: offset, top: mainPos }
-			positions.push(pos)
+			if (side === 0) style = { top: offset, left: mainPos }
+			else if (side === 1) style = { bottom: offset, left: mainPos }
+			else if (side === 2) style = { left: offset, top: mainPos }
+			else style = { right: offset, top: mainPos }
+			positions.push({
+				style,
+				id: `${side}-${offset}-${mainPos}-${Math.random().toString(36).slice(2)}`,
+			})
 		}
 		return positions
 	}, [rarity])
@@ -124,22 +129,24 @@ export const CardAnimation = ({
 				className="absolute inset-0 pointer-events-none z-10 overflow-hidden"
 			/>
 			<div ref={cardRef} className="w-full h-full transform-style-3d relative">
-				<div className="absolute w-full h-full backface-hidden rounded-lg overflow-hidden">
-					<img
+				<div className="absolute w-full h-full backface-hidden rounded-lg overflow-hidden relative">
+					<Image
 						src={frontImageSignedUrl}
 						alt="Card Front"
-						className="w-full h-full object-cover"
-						onLoad={handleImageLoad}
-						decoding="auto"
+						fill
+						className="object-cover"
+						onLoad={() => handleImageLoad()}
+						sizes="(max-width: 768px) 300px, 400px"
 					/>
 				</div>
-				<div className="absolute w-full h-full backface-hidden rotateY-180 rounded-lg overflow-hidden">
-					<img
+				<div className="absolute w-full h-full backface-hidden rotateY-180 rounded-lg overflow-hidden relative">
+					<Image
 						src={backImage}
 						alt="Card Back"
-						className="w-full h-full object-cover"
-						onLoad={handleImageLoad}
-						decoding="auto"
+						fill
+						className="object-cover"
+						onLoad={() => handleImageLoad()}
+						sizes="(max-width: 768px) 300px, 400px"
 					/>
 				</div>
 			</div>
@@ -149,15 +156,10 @@ export const CardAnimation = ({
 			) && (
 				<div className="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
 					{rarity !== 'SECRET_RARE' && (
-						<svg width="0" height="0">
+						<svg width="0" height="0" aria-hidden="true" focusable="false">
+							<title>Rare card gradient definition</title>
 							<defs>
-								<linearGradient
-									id="goldGradient"
-									x1="0%"
-									y1="0%"
-									x2="100%"
-									y2="0%"
-								>
+								<linearGradient id={id} x1="0%" y1="0%" x2="100%" y2="0%">
 									<stop
 										offset="0%"
 										style={{ stopColor: '#FFD700', stopOpacity: 1 }}
@@ -170,20 +172,26 @@ export const CardAnimation = ({
 							</defs>
 						</svg>
 					)}
-					{fixedStarPositions.map((pos, index) => {
-						const currentSize =
-							starBaseSize + sizeVariations[index % sizeVariations.length]
-						return (
-							<Sparkle
-								key={index}
-								size={currentSize}
-								color={starColor}
-								style={{ position: 'absolute', ...pos, opacity: 0 }}
-								className="sparkle-star"
-								rarity={rarity}
-							/>
-						)
-					})}
+					{fixedStarPositions.map(
+						({ style: positionStyle, id: starId }, index) => {
+							const currentSize =
+								starBaseSize + sizeVariations[index % sizeVariations.length]
+							return (
+								<Sparkle
+									key={starId}
+									size={currentSize}
+									color={starColor}
+									style={{
+										position: 'absolute',
+										...positionStyle,
+										opacity: 0,
+									}}
+									className="sparkle-star"
+									rarity={rarity}
+								/>
+							)
+						},
+					)}
 				</div>
 			)}
 		</div>

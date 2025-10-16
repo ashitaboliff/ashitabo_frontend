@@ -1,10 +1,10 @@
 'use client'
 
-import { FormEventHandler } from 'react'
-import { FieldErrors, UseFormRegister } from 'react-hook-form'
+import type { FormEventHandler } from 'react'
+import type { FieldErrors, UseFormRegister } from 'react-hook-form'
 import {
-	PadlockDigits,
 	DIGIT_FIELDS,
+	type PadlockDigits,
 } from '@/features/auth/hooks/usePasswordForm'
 
 const inputClass = 'input w-16 h-16 text-center text-2xl'

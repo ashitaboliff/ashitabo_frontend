@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 
 export const config = {
 	matcher: [
@@ -32,7 +32,7 @@ const PUBLIC_ROUTES = [
 	'/not-found',
 ]
 
-const AUTH_FLOW_ROUTES = ['/auth/padlock', '/auth/signin']
+const _AUTH_FLOW_ROUTES = ['/auth/padlock', '/auth/signin']
 
 const AUTH_COOKIE_NAMES = [
 	'authjs.session-token',

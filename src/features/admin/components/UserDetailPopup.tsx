@@ -4,15 +4,15 @@ import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import Popup from '@/components/ui/molecules/Popup'
-import {
-	UserDetail,
-	RoleMap,
-	PartMap,
-	AccountRoleMap,
-	AccountRole,
-} from '@/features/user/types'
 import { useSession } from '@/features/auth/hooks/useSession'
-import { ApiError } from '@/types/responseTypes'
+import {
+	type AccountRole,
+	AccountRoleMap,
+	PartMap,
+	RoleMap,
+	type UserDetail,
+} from '@/features/user/types'
+import type { ApiError } from '@/types/responseTypes'
 
 interface UserDetailPopupProps {
 	open: boolean
@@ -95,6 +95,7 @@ const UserDetailPopup = ({
 					</div>
 					<div className="flex flex-row justify-center gap-x-2">
 						<button
+							type="button"
 							className="btn btn-primary"
 							disabled={
 								actionLoading ||
@@ -106,6 +107,7 @@ const UserDetailPopup = ({
 							{actionLoading ? '処理中...' : '三役に任命'}
 						</button>
 						<button
+							type="button"
 							className="btn btn-error"
 							disabled={actionLoading || session?.user.id === selectedUser.id}
 							onClick={() => {
@@ -115,7 +117,7 @@ const UserDetailPopup = ({
 						>
 							削除
 						</button>
-						<button className="btn btn-outline" onClick={onClose}>
+						<button type="button" className="btn btn-outline" onClick={onClose}>
 							閉じる
 						</button>
 					</div>

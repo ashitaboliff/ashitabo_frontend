@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
-import LogsPage from '@/features/booking/components/Logs' // インポート名とパスを変更
 import { getAllBookingAction } from '@/features/booking/actions'
+import LogsPage from '@/features/booking/components/Logs' // インポート名とパスを変更
 import { createMetaData } from '@/hooks/useMetaData'
 
 export async function metadata() {

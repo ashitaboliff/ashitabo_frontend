@@ -1,12 +1,12 @@
 import LinkWithArrow from '@/components/ui/atoms/LinkWithArrow'
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
-import { gkktt } from '@/lib/fonts'
 import MemberRecruitmentForm from '@/features/band/components/MemberRecruitmentForm'
+import { gkktt } from '@/lib/fonts'
 
 const Page = async () => {
 	return (
 		<AuthPage requireProfile={true}>
-			{async (authResult) => {
+			{async (_authResult) => {
 				return (
 					<div className="flex flex-col items-center min-h-screen p-4">
 						<div className="flex flex-col items-center justify-center bg-white shadow-lg p-6 rounded-lg w-full">

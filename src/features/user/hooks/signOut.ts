@@ -1,8 +1,8 @@
 import { mutate } from 'swr'
+import { signOut as signOutRequest } from '@/features/auth/api'
+import { AUTH_DETAILS_SWR_KEY } from '@/features/auth/hooks/useSession'
 import type { ApiResponse } from '@/types/responseTypes'
 import { logError } from '@/utils/logger'
-import { AUTH_DETAILS_SWR_KEY } from '@/features/auth/hooks/useSession'
-import { signOut as signOutRequest } from '@/features/auth/api'
 
 export const signOutUser = async (): Promise<ApiResponse<null>> => {
 	const result = await signOutRequest()

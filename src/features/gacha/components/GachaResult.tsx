@@ -2,14 +2,14 @@
 
 import { useEffect, useRef, useState } from 'react'
 import useSWR from 'swr'
-import Gacha, { GachaItem } from '@/features/gacha/components/GachaList'
-import { RarityType } from '@/features/gacha/types'
 import {
 	createUserGachaResultAction,
 	getSignedUrlForGachaImageAction,
 } from '@/features/gacha/actions'
-import { ApiResponse } from '@/types/responseTypes'
 import CardAnimation from '@/features/gacha/components/animations/CardAnimation'
+import Gacha, { type GachaItem } from '@/features/gacha/components/GachaList'
+import type { RarityType } from '@/features/gacha/types'
+import type { ApiResponse } from '@/types/responseTypes'
 
 interface GachaResultProps {
 	version: string

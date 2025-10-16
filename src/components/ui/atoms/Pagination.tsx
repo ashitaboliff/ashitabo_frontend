@@ -68,10 +68,11 @@ const Pagination = ({
 
 	return (
 		<div className="join justify-center">
-			{items.map((item, index) => {
+			{items.map((item) => {
 				if (typeof item === 'number') {
 					return (
 						<button
+							type="button"
 							key={item}
 							className={`join-item btn ${
 								currentPage === item ? 'btn-primary' : 'btn-outline'
@@ -85,10 +86,10 @@ const Pagination = ({
 
 				return (
 					<button
-						key={`${item}-${index}`}
+						type="button"
+						key={item}
 						className="join-item btn btn-disabled"
 						disabled
-						aria-hidden="true"
 					>
 						…
 					</button>

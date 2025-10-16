@@ -1,6 +1,6 @@
 'use client'
 
-import { type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 
 interface GenericTableBodyProps<T extends object> {
 	isLoading: boolean

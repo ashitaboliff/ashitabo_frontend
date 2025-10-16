@@ -1,15 +1,14 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { SubmitHandler, useForm } from 'react-hook-form'
-import * as zod from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
-import TextInputField from '@/components/ui/atoms/TextInputField'
+import { useEffect, useState } from 'react'
+import { type SubmitHandler, useForm } from 'react-hook-form'
+import * as zod from 'zod'
 import TextareaInputField from '@/components/ui/atoms/TextareaInputField'
+import TextInputField from '@/components/ui/atoms/TextInputField'
 import MultiSelectField from '@/components/ui/molecules/MultiSelectField'
-import Popup from '@/components/ui/molecules/Popup'
-import { PartOptions, Part } from '@/features/user/types'
+import { type Part, PartOptions } from '@/features/user/types'
 import { logError } from '@/utils/logger'
 
 // import { createMemberRecruitmentAction } from './actions'
@@ -36,10 +35,10 @@ const memberRecruitmentSchema = zod.object({
 type MemberRecruitmentFormValues = zod.infer<typeof memberRecruitmentSchema>
 
 const MemberRecruitmentForm = () => {
-	const router = useRouter()
+	const _router = useRouter()
 	const [loading, setLoading] = useState<boolean>(false)
 	const [error, setError] = useState<string | null>(null)
-	const [popupOpen, setPopupOpen] = useState<boolean>(false)
+	const [_popupOpen, setPopupOpen] = useState<boolean>(false)
 
 	const {
 		register,
@@ -62,7 +61,9 @@ const MemberRecruitmentForm = () => {
 		register('part')
 	}, [register])
 
-	const onSubmit: SubmitHandler<MemberRecruitmentFormValues> = async (data) => {
+	const onSubmit: SubmitHandler<MemberRecruitmentFormValues> = async (
+		_data,
+	) => {
 		setLoading(true)
 		setError(null)
 

@@ -1,7 +1,7 @@
-import { getUserIdWithNames } from '@/features/schedule/actions'
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
-import { createMetaData } from '@/hooks/useMetaData'
+import { getUserIdWithNames } from '@/features/schedule/actions'
 import ScheduleCreatePage from '@/features/schedule/components/CreatePage'
+import { createMetaData } from '@/hooks/useMetaData'
 import { logError } from '@/utils/logger'
 
 export async function metadata() {
@@ -15,7 +15,10 @@ const Page = async () => {
 	return (
 		<AuthPage requireProfile={true}>
 			{async (authResult) => {
-				const session = authResult.session!
+				const session = authResult.session
+				if (!session) {
+					return null
+				}
 
 				const usersRes = await getUserIdWithNames()
 				let initialUsers: Record<string, string> = {}

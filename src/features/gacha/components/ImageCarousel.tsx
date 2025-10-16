@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { CarouselPackDataItem } from '@/features/gacha/context/GachaDataContext'
+import { useEffect, useState } from 'react'
+import type { CarouselPackDataItem } from '@/features/gacha/context/GachaDataContext'
 
 interface ImageCarouselProps {
 	onPackSelect: (version: string) => void
@@ -40,7 +40,7 @@ const ImageCarousel = ({
 		} else {
 			setPackViewed(false)
 		}
-	}, [currentIndex, packs])
+	}, [packs])
 
 	const updateIndex = (direction: 'next' | 'prev') => {
 		if (!packs || packs.length === 0) return
@@ -85,6 +85,7 @@ const ImageCarousel = ({
 	return (
 		<div className="relative flex items-center justify-center w-full h-[600px] overflow-hidden select-none">
 			<button
+				type="button"
 				className="absolute left-0 z-30 btn btn-soft btn-secondary font-black text-xl"
 				onClick={() => updateIndex('prev')}
 				disabled={currentIndex === 0 || packs.length === 0}
@@ -94,8 +95,9 @@ const ImageCarousel = ({
 
 			{packViewed && currentPack ? (
 				<div className="relative flex items-center justify-center w-full">
-					{prevPack && prevPack.signedPackImageUrl ? (
-						<div
+					{prevPack?.signedPackImageUrl ? (
+						<button
+							type="button"
 							className="absolute left-0 z-10 transform transition-transform cursor-pointer"
 							onClick={() => updateIndex('prev')}
 						>
@@ -107,7 +109,7 @@ const ImageCarousel = ({
 								decoding="auto"
 								priority={false}
 							/>
-						</div>
+						</button>
 					) : (
 						<div className="absolute left-0 w-[110px] h-[200px] z-10 flex items-center justify-center">
 							{prevPack && <div className="text-xs">画像なし</div>}
@@ -125,12 +127,13 @@ const ImageCarousel = ({
 								decoding="auto"
 								priority={true}
 							/>
-							<div
+							<button
+								type="button"
 								className="pack-text absolute left-0 w-full text-2xl font-bold bg-base-content/50 text-white text-center py-1 -translate-y-80 z-30"
 								onClick={handlePackClick}
 							>
 								このパックを引く
-							</div>
+							</button>
 						</div>
 					) : (
 						<div className="relative z-20 flex flex-col items-center justify-center w-[250px] h-[400px] bg-base-200 rounded-lg">
@@ -141,8 +144,9 @@ const ImageCarousel = ({
 						</div>
 					)}
 
-					{nextPack && nextPack.signedPackImageUrl ? (
-						<div
+					{nextPack?.signedPackImageUrl ? (
+						<button
+							type="button"
 							className="absolute right-0 z-10 transform transition-transform cursor-pointer"
 							onClick={() => updateIndex('next')}
 						>
@@ -154,7 +158,7 @@ const ImageCarousel = ({
 								decoding="auto"
 								priority={false}
 							/>
-						</div>
+						</button>
 					) : (
 						<div className="absolute right-0 w-[110px] h-[200px] z-10 flex items-center justify-center">
 							{nextPack && <div className="text-xs">画像なし</div>}
@@ -168,6 +172,7 @@ const ImageCarousel = ({
 			)}
 
 			<button
+				type="button"
 				className="absolute right-0 z-30 btn btn-soft btn-secondary font-black text-xl"
 				onClick={() => updateIndex('next')}
 				disabled={currentIndex === packs.length - 1 || packs.length === 0}

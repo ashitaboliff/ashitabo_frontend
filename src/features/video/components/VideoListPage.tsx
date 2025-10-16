@@ -1,15 +1,16 @@
 'use client'
 
-import { gkktt } from '@/lib/fonts'
-import { useSession } from '@/features/auth/hooks/useSession'
-import { YoutubeDetail, YoutubeSearchQuery } from '@/features/video/types'
-import { ApiError } from '@/types/responseTypes'
-import SelectField from '@/components/ui/atoms/SelectField'
+import { useMemo } from 'react'
+import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import Pagination from '@/components/ui/atoms/Pagination'
+import SelectField from '@/components/ui/atoms/SelectField'
+import { useSession } from '@/features/auth/hooks/useSession'
 import VideoItem from '@/features/video/components/VideoItem'
 import VideoSearchForm from '@/features/video/components/VideoSearchForm'
-import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import { useYoutubeSearchQuery } from '@/features/video/hooks/useYoutubeSearchQuery'
+import type { YoutubeDetail, YoutubeSearchQuery } from '@/features/video/types'
+import { gkktt } from '@/lib/fonts'
+import type { ApiError } from '@/types/responseTypes'
 
 const defaultSearchQuery: YoutubeSearchQuery = {
 	liveOrBand: 'band',
@@ -41,6 +42,15 @@ const VideoListPage = ({
 		updateQuery,
 		isPending,
 	} = useYoutubeSearchQuery(defaultSearchQuery)
+
+	const skeletonKeys = useMemo(
+		() =>
+			Array.from(
+				{ length: currentQuery.videoPerPage },
+				(_, idx) => `placeholder-${idx + 1}`,
+			),
+		[currentQuery.videoPerPage],
+	)
 
 	const handleSearch = (searchQuery: Partial<YoutubeSearchQuery>) => {
 		updateQuery({ ...searchQuery, page: 1 })
@@ -112,9 +122,9 @@ const VideoListPage = ({
 
 				{isLoading ? (
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-						{[...Array(currentQuery.videoPerPage)].map((_, i) => (
+						{skeletonKeys.map((placeholderKey) => (
 							<div
-								key={i}
+								key={placeholderKey}
 								className="flex flex-col items-center p-4 border rounded-lg shadow-sm w-full"
 							>
 								<div className="skeleton h-48 w-full mb-2"></div>

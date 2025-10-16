@@ -1,13 +1,12 @@
 import { Inter } from 'next/font/google'
-import { nicomoji } from '@/lib/fonts'
-import Script from 'next/script'
 import Link from 'next/link'
+import Script from 'next/script'
+import { nicomoji } from '@/lib/fonts'
 import './globals.css'
-import ProgressBarProvider from '@/components/ui/atoms/ProgressBarProvider'
-import Header from '@/components/home/Header'
 import Footer from '@/components/home/Footer'
+import Header from '@/components/home/Header'
+import ProgressBarProvider from '@/components/ui/atoms/ProgressBarProvider'
 import { createMetaData } from '@/hooks/useMetaData'
-import { getAuthDetails } from '@/features/auth/actions'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -24,15 +23,11 @@ export default async function RootLayout({
 	return (
 		<html lang="ja">
 			<body className={inter.className}>
-				<script
-					dangerouslySetInnerHTML={{
-						__html: `
-					console.log('%c拙い知識で作ったやつなので、可読性めっちゃ低くて申し訳ないけど頑張ってね！！！ watabegg', 'color: #000000; font-size: 20px; padding: 10px; font-weight: bold;');
-					console.log('%cRespect for 変態糞学生', 'color: #ff0000; font-size: 20px; padding: 5px; font-weight: bold; font-style: italic;');
-					console.log('%chttps://www.github.com/ashitaboliff/', 'color: #000000; font-size: 14px; padding: 5px; text-decoration: underline;');
-				`,
-					}}
-				/>
+				<Script strategy="afterInteractive">
+					{`console.log('%c拙い知識で作ったやつなので、可読性めっちゃ低くて申し訳ないけど頑張ってね！！！ watabegg', 'color: #000000; font-size: 20px; padding: 10px; font-weight: bold;');
+console.log('%cRespect for 変態糞学生', 'color: #ff0000; font-size: 20px; padding: 5px; font-weight: bold; font-style: italic;');
+console.log('%chttps://www.github.com/ashitaboliff/', 'color: #000000; font-size: 14px; padding: 5px; text-decoration: underline;');`}
+				</Script>
 				<ProgressBarProvider>
 					<Header className={nicomoji.className} />
 					<Link

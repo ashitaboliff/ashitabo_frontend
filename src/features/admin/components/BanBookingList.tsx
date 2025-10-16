@@ -1,15 +1,15 @@
 'use client'
 
-import useSWR from 'swr'
-import GenericTableBody from '@/components/ui/molecules/GenericTableBody'
-import { getBanBookingAction } from '../action'
-import { BanBooking } from '@/features/booking/types'
-import { BOOKING_TIME_LIST } from '@/features/booking/constants'
-import { TiDeleteOutline } from 'react-icons/ti'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { BanBookingSort } from '../types'
+import { TiDeleteOutline } from 'react-icons/ti'
+import useSWR from 'swr'
+import GenericTableBody from '@/components/ui/molecules/GenericTableBody'
+import { BOOKING_TIME_LIST } from '@/features/booking/constants'
+import type { BanBooking } from '@/features/booking/types'
 import { getCurrentJSTDateString } from '@/utils'
+import { getBanBookingAction } from '../action'
+import type { BanBookingSort } from '../types'
 
 interface BanBookingListProps {
 	currentPage: number

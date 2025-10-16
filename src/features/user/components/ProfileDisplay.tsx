@@ -1,8 +1,8 @@
 'use client'
 
 import Image from 'next/image'
-import { RoleMap, Profile } from '@/features/user/types'
 import InstIcon from '@/components/ui/atoms/InstIcon'
+import { type Profile, RoleMap } from '@/features/user/types'
 import type { Session } from '@/types/session'
 
 const ProfileDisplay = ({

@@ -1,7 +1,7 @@
 import { Inter } from 'next/font/google'
 import HomePageHeader from '@/components/shared/HomePageHeader'
 
-const inter = Inter({ subsets: ['latin'] })
+const _inter = Inter({ subsets: ['latin'] })
 
 export default function RootLayout({
 	children,

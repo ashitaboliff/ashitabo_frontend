@@ -1,11 +1,11 @@
-import React, {
+import {
+	Children,
+	isValidElement,
+	type ReactElement,
+	type ReactNode,
 	useEffect,
 	useMemo,
 	useState,
-	isValidElement,
-	Children,
-	type ReactNode,
-	type ReactElement,
 } from 'react'
 
 interface TabProps {
@@ -52,7 +52,8 @@ export const Tabs = ({ children }: TabsProps) => {
 					const isActive = index === activeIndex
 					return (
 						<button
-							key={`${child.key}${index}`}
+							type="button"
+							key={`${child.key ?? 'tab'}-${index}`}
 							className={`py-2 px-4 text-lg ${
 								isActive
 									? 'border-b-2 text-accent'

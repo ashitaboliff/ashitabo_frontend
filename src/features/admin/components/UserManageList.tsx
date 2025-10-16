@@ -1,8 +1,8 @@
 'use client'
 
 import useSWR from 'swr'
-import { UserDetail, RoleMap, AccountRoleMap } from '@/features/user/types'
 import GenericTableBody from '@/components/ui/molecules/GenericTableBody'
+import { AccountRoleMap, RoleMap, type UserDetail } from '@/features/user/types'
 import { getAllUserDetailsAction } from '../action'
 
 interface UserManageListProps {

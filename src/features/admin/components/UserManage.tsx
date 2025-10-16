@@ -1,21 +1,21 @@
 'use client'
 
-import { useState } from 'react'
 import { useRouter } from 'next-nprogress-bar'
+import { useState } from 'react'
+import Pagination from '@/components/ui/atoms/Pagination'
+import RadioSortGroup from '@/components/ui/atoms/RadioSortGroup'
+import SelectField from '@/components/ui/atoms/SelectField'
+import type { AccountRole, UserDetail } from '@/features/user/types'
+import type { ApiError } from '@/types/responseTypes'
+import { logError } from '@/utils/logger'
 import {
 	adminRevalidateTagAction,
 	deleteUserAction,
 	updateUserRoleAction,
 } from '../action'
-import { UserDetail, AccountRole } from '@/features/user/types'
-import { ApiError } from '@/types/responseTypes'
-import Pagination from '@/components/ui/atoms/Pagination'
-import SelectField from '@/components/ui/atoms/SelectField'
-import RadioSortGroup from '@/components/ui/atoms/RadioSortGroup'
-import UserManageList from './UserManageList'
-import UserDetailPopup from './UserDetailPopup'
 import UserDeleteConfirmPopup from './UserDeleteConfirmPopup'
-import { logError } from '@/utils/logger'
+import UserDetailPopup from './UserDetailPopup'
+import UserManageList from './UserManageList'
 
 const AdminUserPage = () => {
 	const router = useRouter()
@@ -115,7 +115,11 @@ const AdminUserPage = () => {
 					<br />
 					また、三役権限の追加もむやみに行わないでください。大いなる責任が伴います。お前らを信用しています。
 				</p>
-				<button className="btn btn-primary btn-md" onClick={handleRefresh}>
+				<button
+					type="button"
+					className="btn btn-primary btn-md"
+					onClick={handleRefresh}
+				>
 					ユーザ情報を更新
 				</button>
 				<div className="overflow-x-auto w-full flex flex-col justify-center gap-y-2">
@@ -173,6 +177,7 @@ const AdminUserPage = () => {
 
 				<div className="flex flex-row justify-center mt-2">
 					<button
+						type="button"
 						className="btn btn-outline"
 						onClick={() => router.push('/admin')}
 					>

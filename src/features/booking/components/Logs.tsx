@@ -1,15 +1,14 @@
 'use client'
 
-import { useState } from 'react'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { BookingLog } from '@/features/booking/types'
-import { BOOKING_TIME_LIST } from '@/features/booking/constants'
-import Popup from '@/components/ui/molecules/Popup'
+import { useState } from 'react'
+import { TiDeleteOutline } from 'react-icons/ti'
 import Pagination from '@/components/ui/atoms/Pagination'
 import SelectField from '@/components/ui/atoms/SelectField'
-
-import { TiDeleteOutline } from 'react-icons/ti'
+import Popup from '@/components/ui/molecules/Popup'
+import { BOOKING_TIME_LIST } from '@/features/booking/constants'
+import type { BookingLog } from '@/features/booking/types'
 
 const LogsPage = ({
 	bookingLog,
@@ -168,10 +167,10 @@ const LogsPage = ({
 										locale: ja,
 									}),
 							},
-						].map((item, index) =>
+						].map((item) =>
 							item.value ? (
 								<div
-									key={index}
+									key={item.label}
 									className="grid grid-cols-1 sm:grid-cols-3 gap-1 py-2 border-b border-base-300 last:border-b-0"
 								>
 									<dt className="font-semibold text-base-content/80 sm:col-span-1">
@@ -188,6 +187,7 @@ const LogsPage = ({
 					</dl>
 					<div className="mt-6 flex justify-end">
 						<button
+							type="button"
 							className="btn btn-ghost"
 							onClick={() => {
 								setIsPopupOpen(false)

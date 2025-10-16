@@ -1,4 +1,4 @@
-import { MetadataRoute } from 'next'
+import type { MetadataRoute } from 'next'
 import { getBookingIds } from '@/features/booking/actions'
 import { getYoutubeIds } from '@/features/video/actions'
 import { FRONTEND_ORIGIN } from '@/lib/env'

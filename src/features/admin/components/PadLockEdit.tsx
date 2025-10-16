@@ -1,24 +1,21 @@
 'use client'
 
-import { useCallback, useState } from 'react'
-import { SubmitHandler, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import * as zod from 'zod'
-import { useRouter } from 'next-nprogress-bar'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { createPadLockAction, deletePadLockAction } from '../action'
-import { PadLock } from '@/features/admin/types'
-import { ApiError } from '@/types/responseTypes'
-import Pagination from '@/components/ui/atoms/Pagination'
-import TextInputField from '@/components/ui/atoms/TextInputField'
-import SelectField from '@/components/ui/atoms/SelectField'
-import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
-import Popup from '@/components/ui/molecules/Popup'
-
+import { useRouter } from 'next-nprogress-bar'
+import { useCallback, useId, useState } from 'react'
+import { type SubmitHandler, useForm } from 'react-hook-form'
 import { TiDeleteOutline } from 'react-icons/ti'
-import type { Session } from '@/types/session'
-import { logError } from '@/utils/logger'
+import * as zod from 'zod'
+import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
+import Pagination from '@/components/ui/atoms/Pagination'
+import SelectField from '@/components/ui/atoms/SelectField'
+import TextInputField from '@/components/ui/atoms/TextInputField'
+import Popup from '@/components/ui/molecules/Popup'
+import type { PadLock } from '@/features/admin/types'
+import type { ApiError } from '@/types/responseTypes'
+import { createPadLockAction, deletePadLockAction } from '../action'
 
 const padLockFormSchema = zod.object({
 	name: zod
@@ -33,13 +30,7 @@ const padLockFormSchema = zod.object({
 
 type PadLockFormValues = zod.infer<typeof padLockFormSchema>
 
-const PadLockEdit = ({
-	padLocks,
-	session,
-}: {
-	padLocks: PadLock[]
-	session: Session
-}) => {
+const PadLockEdit = ({ padLocks }: { padLocks: PadLock[] }) => {
 	const router = useRouter()
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [padLocksPerPage, setPadLocksPerPage] = useState(10)
@@ -49,6 +40,9 @@ const PadLockEdit = ({
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 	const [isCreatePopupOpen, setIsCreatePopupOpen] = useState<boolean>(false)
 	const [isDeletePopupOpen, setIsDeletePopupOpen] = useState<boolean>(false)
+	const popupId = useId()
+	const deletePopupId = useId()
+	const createPopupId = useId()
 
 	const [error, setError] = useState<ApiError>()
 
@@ -108,6 +102,7 @@ const PadLockEdit = ({
 				基本的には部室の4桁のパスワードを年間で管理しますが、OB、OG用のパスワードを発行することも可能です。
 			</p>
 			<button
+				type="button"
 				className="btn btn-primary btn-outline btn-md"
 				onClick={() => setIsCreatePopupOpen(true)}
 			>
@@ -168,7 +163,7 @@ const PadLockEdit = ({
 				</table>
 			</div>
 			<Popup
-				id="padlock-popup"
+				id={popupId}
 				title="パスワード詳細"
 				open={isPopupOpen}
 				onClose={() => setIsPopupOpen(false)}
@@ -197,12 +192,14 @@ const PadLockEdit = ({
 					</div>
 					<div className="flex flex-row gap-x-2">
 						<button
+							type="button"
 							className="btn btn-error"
 							onClick={() => setIsDeletePopupOpen(true)}
 						>
 							削除
 						</button>
 						<button
+							type="button"
 							className="btn btn-outline"
 							onClick={() => setIsPopupOpen(false)}
 						>
@@ -212,7 +209,7 @@ const PadLockEdit = ({
 				</div>
 			</Popup>
 			<Popup
-				id="padlock-delete-popup"
+				id={deletePopupId}
 				title="パスワード削除"
 				open={isDeletePopupOpen}
 				onClose={() => setIsDeletePopupOpen(false)}
@@ -220,6 +217,7 @@ const PadLockEdit = ({
 				<div className="flex flex-col gap-y-2">
 					<p>本当に削除しますか?</p>
 					<button
+						type="button"
 						className="btn btn-error"
 						onClick={async () => {
 							if (popupData?.id) {
@@ -233,7 +231,7 @@ const PadLockEdit = ({
 				<ErrorMessage error={error} />
 			</Popup>
 			<Popup
-				id="padlock-create-popup"
+				id={createPopupId}
 				title="パスワード作成"
 				open={isCreatePopupOpen}
 				onClose={() => setIsCreatePopupOpen(false)}
@@ -259,6 +257,7 @@ const PadLockEdit = ({
 							作成
 						</button>
 						<button
+							type="button"
 							className="btn btn-outline"
 							onClick={() => setIsCreatePopupOpen(false)}
 						>
@@ -273,7 +272,11 @@ const PadLockEdit = ({
 				totalPages={pageMax}
 				onPageChange={(page) => setCurrentPage(page)}
 			/>
-			<button className="btn btn-outline" onClick={() => router.push('/admin')}>
+			<button
+				type="button"
+				className="btn btn-outline"
+				onClick={() => router.push('/admin')}
+			>
 				戻る
 			</button>
 		</div>

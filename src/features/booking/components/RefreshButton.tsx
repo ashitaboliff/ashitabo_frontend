@@ -16,6 +16,7 @@ const RefreshButton = () => {
 
 	return (
 		<button
+			type="button"
 			className="btn btn-info text-white"
 			onClick={handleClick}
 			disabled={isPending}

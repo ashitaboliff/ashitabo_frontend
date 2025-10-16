@@ -1,15 +1,15 @@
 'use client'
 
-import { useState, type ReactNode } from 'react'
-import { Tabs, Tab } from '@/components/ui/atoms/Tabs'
-import BookingLogs from '@/features/user/components/BookingLogs'
-import GachaLogs from '@/features/user/components/GachaLogs'
+import { type ReactNode, useState } from 'react'
 import { GiCardRandom, GiGuitarHead } from 'react-icons/gi'
 import { MdOutlineEditCalendar } from 'react-icons/md'
-import RatioPopup from '@/features/gacha/components/RatioPopup'
-import { gkktt } from '@/lib/fonts'
-import { useGachaPlayManager } from '@/features/gacha/hooks/useGachaPlayManager'
+import { Tab, Tabs } from '@/components/ui/atoms/Tabs'
 import GachaMainPopup from '@/features/gacha/components/GachaMainPopup'
+import RatioPopup from '@/features/gacha/components/RatioPopup'
+import { useGachaPlayManager } from '@/features/gacha/hooks/useGachaPlayManager'
+import BookingLogs from '@/features/user/components/BookingLogs'
+import GachaLogs from '@/features/user/components/GachaLogs'
+import { gkktt } from '@/lib/fonts'
 import type { Session } from '@/types/session'
 
 interface UserPageTabsProps {
@@ -46,6 +46,7 @@ const UserPageTabs = ({ session }: UserPageTabsProps) => {
 				<div className="flex flex-col gap-4">
 					<div className="flex flex-col sm:flex-row justify-center gap-2 w-full items-center">
 						<button
+							type="button"
 							className="btn btn-primary w-full sm:w-auto"
 							onClick={handleOpenGachaPopup}
 							disabled={!canPlayGacha}

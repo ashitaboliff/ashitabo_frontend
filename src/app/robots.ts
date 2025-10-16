@@ -1,4 +1,4 @@
-import { MetadataRoute } from 'next'
+import type { MetadataRoute } from 'next'
 import { FRONTEND_ORIGIN } from '@/lib/env'
 
 export default function robots(): MetadataRoute.Robots {

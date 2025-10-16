@@ -1,5 +1,5 @@
-import CreatePage from '@/features/booking/components/Create'
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
+import CreatePage from '@/features/booking/components/Create'
 import { createMetaData } from '@/hooks/useMetaData'
 
 export async function metadata() {
@@ -17,7 +17,10 @@ const Page = async ({ searchParams }: PageProps) => {
 	return (
 		<AuthPage requireProfile={true}>
 			{async (authResult) => {
-				const session = authResult.session!
+				const session = authResult.session
+				if (!session) {
+					return null
+				}
 				const { date, time } = await searchParams
 
 				const dateParam = typeof date === 'string' ? date : undefined

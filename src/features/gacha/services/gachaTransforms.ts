@@ -1,4 +1,4 @@
-import { GachaData, RarityType } from '@/features/gacha/types'
+import type { GachaData, RarityType } from '@/features/gacha/types'
 
 export interface RawGachaData {
 	userId: string

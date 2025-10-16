@@ -1,14 +1,14 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
-import { SubmitHandler, useForm } from 'react-hook-form'
-import * as zod from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useCallback, useEffect, useId, useState } from 'react'
+import { type SubmitHandler, useForm } from 'react-hook-form'
+import * as zod from 'zod'
+import UserSelectPopup from '@/components/interactive/UserSelectPopup'
 import TextInputField from '@/components/ui/atoms/TextInputField'
 import MultiSelectField from '@/components/ui/molecules/MultiSelectField'
 import Popup from '@/components/ui/molecules/Popup'
-import UserSelectPopup from '@/components/interactive/UserSelectPopup'
-import { PartOptions, Part } from '@/features/user/types'
+import { type Part, PartOptions } from '@/features/user/types'
 
 // import { createBandAction } from './actions'
 
@@ -34,6 +34,7 @@ const bandAddFormSchema = zod.object({
 type BandAddFormValues = zod.infer<typeof bandAddFormSchema>
 
 const BandAddForm = () => {
+	const popupId = useId()
 	const [loading, setLoading] = useState<boolean>(false)
 	const [error, setError] = useState<string | null>(null)
 	const [popupOpen, setPopupOpen] = useState<boolean>(false)
@@ -65,7 +66,7 @@ const BandAddForm = () => {
 		setSelectedUsers(userIds)
 	}, [])
 
-	const onSubmit: SubmitHandler<BandAddFormValues> = async (data) => {
+	const onSubmit: SubmitHandler<BandAddFormValues> = async (_data) => {
 		setLoading(true)
 		setError(null)
 
@@ -74,7 +75,7 @@ const BandAddForm = () => {
 			// 成功時の処理
 			setPopupOpen(true)
 			// router.push('/band/board') // バンド作成後のリダイレクト
-		} catch (err) {
+		} catch (_err) {
 			setError('バンドの作成に失敗しました。もう一度お試しください。')
 		} finally {
 			setLoading(false)
@@ -115,7 +116,7 @@ const BandAddForm = () => {
 			</button>
 			{error && <p className="text-red-500">{error}</p>}
 			<Popup
-				id="band-add-popup"
+				id={popupId}
 				open={popupOpen}
 				onClose={() => setPopupOpen(false)}
 				title="バンド作成完了"
@@ -123,6 +124,7 @@ const BandAddForm = () => {
 			>
 				<p>バンドが作成されました！</p>
 				<button
+					type="button"
 					className="btn btn-primary mt-4"
 					onClick={() => setPopupOpen(false)}
 				>

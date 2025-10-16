@@ -1,10 +1,10 @@
 import {
-	ApiError,
-	ApiResponse,
-	ApiSuccess,
-	ErrorStatus,
+	type ApiError,
+	type ApiResponse,
+	type ApiSuccess,
+	type ErrorStatus,
 	StatusCode,
-	SuccessStatus,
+	type SuccessStatus,
 } from '@/types/responseTypes'
 
 const ensureMessage = (res: ApiError, fallback?: string): ApiError => ({

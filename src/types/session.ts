@@ -1,4 +1,4 @@
-import { AccountRole } from '@/features/user/types'
+import type { AccountRole } from '@/features/user/types'
 
 export interface SessionUser {
 	id: string

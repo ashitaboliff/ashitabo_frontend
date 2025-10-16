@@ -1,5 +1,5 @@
-import { apiRequest } from '@/lib/api'
 import type { ApiClientOptions } from '@/lib/api'
+import { apiRequest } from '@/lib/api'
 
 const withMethod =
 	(method: ApiClientOptions['method']) =>

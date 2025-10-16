@@ -1,16 +1,15 @@
 'use client'
 
 import Image from 'next/image'
-import React, { useRef, useState } from 'react'
+import React, { useId, useState } from 'react'
+import { Tab, Tabs } from '@/components/ui/atoms/Tabs'
 import Popup from '@/components/ui/molecules/Popup'
-import { Tabs, Tab } from '@/components/ui/atoms/Tabs'
-import { getImageUrl } from '@/lib/r2'
 import {
+	type GachaCategoryConfig,
 	gachaConfigs,
-	GachaCategoryConfig,
-	GachaVersionConfig,
 } from '@/features/gacha/components/config/gachaConfig'
-import { RarityType } from '@/features/gacha/types'
+import type { RarityType } from '@/features/gacha/types'
+import { getImageUrl } from '@/lib/r2'
 
 const rarityDisplayNameMap: Record<RarityType, string> = {
 	COMMON: 'COMMON',
@@ -63,9 +62,12 @@ const RatioPopup = ({ gkktt }: { gkktt: { className: string } }) => {
 
 	const versionEntries = Object.entries(gachaConfigs)
 
+	const popupId = useId()
+
 	return (
 		<>
 			<button
+				type="button"
 				className="btn btn-outline w-full sm:w-auto"
 				onClick={() => setIsPopupOpen(true)}
 			>
@@ -73,7 +75,7 @@ const RatioPopup = ({ gkktt }: { gkktt: { className: string } }) => {
 			</button>
 
 			<Popup
-				id="prov-ratio-popup"
+				id={popupId}
 				title="提供割合"
 				open={isPopupOpen}
 				onClose={() => setIsPopupOpen(false)}
@@ -143,6 +145,7 @@ const RatioPopup = ({ gkktt }: { gkktt: { className: string } }) => {
 				</Tabs>
 				<div className="flex flex-row justify-center gap-x-4 mt-4">
 					<button
+						type="button"
 						className="btn btn-outline"
 						onClick={() => setIsPopupOpen(false)}
 					>

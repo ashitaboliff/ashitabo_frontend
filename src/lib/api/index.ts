@@ -1,13 +1,13 @@
 'use server'
 
 import { cookies } from 'next/headers'
-import {
-	ApiResponse,
-	ErrorStatus,
-	StatusCode,
-	SuccessStatus,
-} from '@/types/responseTypes'
 import { FRONTEND_ORIGIN } from '@/lib/env'
+import {
+	type ApiResponse,
+	type ErrorStatus,
+	StatusCode,
+	type SuccessStatus,
+} from '@/types/responseTypes'
 
 export type QueryValue =
 	| string

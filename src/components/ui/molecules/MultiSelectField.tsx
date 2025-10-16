@@ -1,12 +1,14 @@
-import React, { useCallback, useMemo } from 'react'
-import { UseFormSetValue } from 'react-hook-form'
-import { createSyntheticEvent, useDropdown } from '@/hooks/useSelectField'
-import { type BaseSelectFieldProps } from '@/components/ui/atoms/SelectField'
-import LabelInputField from '@/components/ui/atoms/LabelInputField'
+import type React from 'react'
+import { useCallback, useMemo } from 'react'
+import type { UseFormSetValue } from 'react-hook-form'
 import InputFieldError from '@/components/ui/atoms/InputFieldError'
+import LabelInputField from '@/components/ui/atoms/LabelInputField'
+import type { BaseSelectFieldProps } from '@/components/ui/atoms/SelectField'
+import { createSyntheticEvent, useDropdown } from '@/hooks/useSelectField'
 
 interface MultiSelectFieldProps<TValue extends string | number>
 	extends BaseSelectFieldProps<TValue> {
+	// biome-ignore lint/suspicious/noExplicitAny: react-hook-form setter uses form-specific generics
 	setValue?: UseFormSetValue<any>
 	watchValue?: TValue[]
 	value?: TValue[]
@@ -30,7 +32,7 @@ const MultiSelectField = <TValue extends string | number = string>({
 	onChange: controlledOnChange,
 	className,
 }: MultiSelectFieldProps<TValue>) => {
-	const { isOpen, toggle, close, dropdownRef } = useDropdown()
+	const { isOpen, toggle, dropdownRef } = useDropdown()
 
 	const selectedValues = useMemo<TValue[]>(() => {
 		if (setValue && watchValue) {
@@ -93,18 +95,15 @@ const MultiSelectField = <TValue extends string | number = string>({
 				className={`dropdown w-full ${isOpen ? 'dropdown-open' : ''}`}
 				id={labelId}
 			>
-				<div
-					tabIndex={0}
-					role="button"
-					className={`select bg-white w-full ${className ?? ''}`}
+				<button
+					type="button"
+					className={`select bg-white w-full text-left ${className ?? ''}`}
 					onClick={toggle}
+					aria-expanded={isOpen}
 				>
 					{displaySelected}
-				</div>
-				<div
-					tabIndex={0}
-					className="dropdown-content menu bg-white rounded-box z-[20] min-w-[210px] w-1/2 p-2 shadow relative"
-				>
+				</button>
+				<div className="dropdown-content menu bg-white rounded-box z-[20] min-w-[210px] w-1/2 p-2 shadow relative">
 					<ul className="space-y-2 max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 pb-4">
 						{Object.entries(options).map(([optionLabel, optionValue]) => (
 							<li key={`li-${String(optionValue)}`}>

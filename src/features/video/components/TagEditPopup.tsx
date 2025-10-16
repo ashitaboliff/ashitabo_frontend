@@ -1,16 +1,16 @@
 'use client'
 
+import { useRouter } from 'next-nprogress-bar'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useRouter } from 'next-nprogress-bar'
-import { liveOrBand } from '@/features/video/types'
-import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
-import TagInputField from '@/components/ui/molecules/TagsInputField'
-import Popup from '@/components/ui/molecules/Popup'
-import { updateTagsAction } from '../actions'
 import { TbEdit } from 'react-icons/tb'
-import type { Session } from '@/types/session'
+import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
+import Popup from '@/components/ui/molecules/Popup'
+import TagInputField from '@/components/ui/molecules/TagsInputField'
+import type { liveOrBand } from '@/features/video/types'
 import { useFeedback } from '@/hooks/useFeedback'
+import type { Session } from '@/types/session'
+import { updateTagsAction } from '../actions'
 
 type Props = {
 	session: Session | null
@@ -51,8 +51,13 @@ const TagEditPopup = ({
 
 	const onSubmit = async (data: { tags: string[] }) => {
 		tagFeedback.clearFeedback()
+		if (!session) {
+			tagFeedback.showError('ログインが必要です。')
+			setIsSessionPopupOpen(true)
+			return
+		}
 		const res = await updateTagsAction({
-			userId: session?.user.id!,
+			userId: session.user.id,
 			id,
 			tags: data.tags,
 			liveOrBand,
@@ -80,6 +85,7 @@ const TagEditPopup = ({
 			<button
 				className="btn btn-outline btn-primary btn-sm text-xs-custom xl:text-sm"
 				onClick={handleOpenEditPopup}
+				type="button"
 			>
 				<TbEdit size={15} />
 				{isFullButton ? ' タグを編集' : ''}

@@ -24,12 +24,8 @@ export const useCsrfToken = (initialToken?: string | null) => {
 	)
 
 	const refreshCsrf = useCallback(async () => {
-		try {
-			const token = (await mutate()) ?? null
-			return token
-		} catch (error) {
-			throw error
-		}
+		const token = (await mutate()) ?? null
+		return token
 	}, [mutate])
 
 	const ensureCsrfToken = useCallback(async () => {

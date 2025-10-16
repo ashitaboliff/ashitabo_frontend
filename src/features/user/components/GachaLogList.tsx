@@ -1,10 +1,10 @@
 'use client'
 
-import { useEffect } from 'react'
 import Image from 'next/image'
+import { useEffect } from 'react'
 import useSWR from 'swr'
-import { GachaSort, GachaData } from '@/features/gacha/types'
 import { getGachaByUserIdAction } from '@/features/gacha/actions'
+import type { GachaData, GachaSort } from '@/features/gacha/types'
 import GachaLogsSkeleton from './GachaLogsSkeleton'
 
 interface GachaLogListProps {

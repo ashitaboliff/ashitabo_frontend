@@ -1,24 +1,23 @@
 'use client'
 
-import { useReducer, useState } from 'react'
 import { useRouter } from 'next-nprogress-bar'
+import { useId, useReducer, useState } from 'react'
 import { useSWRConfig } from 'swr'
-import { deleteBookingAction } from '../../actions'
-import { Booking, BookingResponse } from '@/features/booking/types'
-import type { Session } from '@/types/session'
-import BookingDetailBox from '@/features/booking/components/BookingDetailBox'
-import DetailNotFoundPage from '@/features/booking/components/DetailNotFound'
 import Popup from '@/components/ui/molecules/Popup'
-import BookingEditForm from '@/features/booking/components/edit/BookingEditForm'
-import BookingEditAuthForm from '@/features/booking/components/edit/BookingEditAuth'
 import {
 	BookingErrorMessage,
 	BookingSuccessMessage,
 } from '@/features/booking/components/BookingActionFeedback'
+import BookingDetailBox from '@/features/booking/components/BookingDetailBox'
+import BookingEditAuthForm from '@/features/booking/components/edit/BookingEditAuth'
+import BookingEditForm from '@/features/booking/components/edit/BookingEditForm'
+import type { Booking, BookingResponse } from '@/features/booking/types'
 import { useFeedback } from '@/hooks/useFeedback'
-import { logError } from '@/utils/logger'
-import { mutateBookingCalendarsForDate } from '@/utils/calendarCache'
+import type { Session } from '@/types/session'
 import { toDateKey } from '@/utils'
+import { mutateBookingCalendarsForDate } from '@/utils/calendarCache'
+import { logError } from '@/utils/logger'
+import { deleteBookingAction } from '../../actions'
 
 type ViewMode = 'auth' | 'summary' | 'editing' | 'editSuccess'
 
@@ -68,6 +67,7 @@ const BookingEdit = ({
 	const [flashMessage, setFlashMessage] = useState<string | null>(null)
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 	const [isDeleting, setIsDeleting] = useState(false)
+	const deletePopupId = useId()
 
 	const isOwner = bookingDetail.userId === session.user.id
 	const mode = isOwner ? 'summary' : 'auth'
@@ -134,6 +134,7 @@ const BookingEdit = ({
 			)}
 			<div className="flex flex-col sm:flex-row justify-center gap-2 w-full max-w-md">
 				<button
+					type="button"
 					className="btn btn-primary w-full sm:w-1/2"
 					onClick={() => {
 						setFlashMessage(null)
@@ -143,6 +144,7 @@ const BookingEdit = ({
 					予約を編集
 				</button>
 				<button
+					type="button"
 					className="btn btn-secondary btn-outline w-full sm:w-1/2"
 					onClick={() => {
 						deleteFeedback.clearFeedback()
@@ -154,6 +156,7 @@ const BookingEdit = ({
 			</div>
 			<div className="mt-2 flex justify-center w-full max-w-md">
 				<button
+					type="button"
 					className="btn btn-ghost w-full sm:w-auto"
 					onClick={() => router.back()}
 				>
@@ -210,7 +213,7 @@ const BookingEdit = ({
 			{state.mode === 'editSuccess' && editSuccessView}
 
 			<Popup
-				id="booking-delete-popup"
+				id={deletePopupId}
 				title="予約削除"
 				maxWidth="sm"
 				open={deleteDialogOpen}
@@ -223,6 +226,7 @@ const BookingEdit = ({
 					<p className="text-center">予約を削除しますか？</p>
 					<div className="flex justify-center gap-4 my-4">
 						<button
+							type="button"
 							className="btn btn-secondary"
 							onClick={handleDelete}
 							disabled={isDeleting}
@@ -230,6 +234,7 @@ const BookingEdit = ({
 							{isDeleting ? '削除中…' : '削除'}
 						</button>
 						<button
+							type="button"
 							className="btn btn-outline"
 							onClick={() => {
 								setDeleteDialogOpen(false)

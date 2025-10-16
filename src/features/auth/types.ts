@@ -1,5 +1,5 @@
-import type { Session } from '@/types/session'
 import type { AccountRole } from '@/features/user/types'
+import type { Session } from '@/types/session'
 
 export type AuthStatus = 'guest' | 'invalid' | 'needs-profile' | 'signed-in'
 

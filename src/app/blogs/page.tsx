@@ -1,10 +1,10 @@
-import fs from 'fs'
-import path from 'path'
-import Link from 'next/link'
+import fs from 'node:fs'
+import path from 'node:path'
 import { Inter } from 'next/font/google'
-import { createMetaData } from '@/hooks/useMetaData'
-import HomePageHeader from '@/components/shared/HomePageHeader'
+import Link from 'next/link'
 import { compileMDX } from 'next-mdx-remote/rsc' // Required for frontmatter parsing
+import HomePageHeader from '@/components/shared/HomePageHeader'
+import { createMetaData } from '@/hooks/useMetaData'
 import { logError } from '@/utils/logger'
 
 const inter = Inter({ subsets: ['latin'] })

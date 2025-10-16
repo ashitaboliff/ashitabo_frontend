@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode, useState } from 'react'
+import { type ReactNode, useState } from 'react'
 import Popup from '@/components/ui/molecules/Popup'
 
 interface ModalProps {
@@ -22,7 +22,7 @@ const Modal = ({
 }: ModalProps) => {
 	const [open, setOpen] = useState(false)
 	const dialogTitle =
-		title && title.trim().length > 0 ? title : btnText ?? '情報'
+		title && title.trim().length > 0 ? title : (btnText ?? '情報')
 
 	return (
 		<>

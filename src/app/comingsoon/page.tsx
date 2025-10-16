@@ -12,7 +12,9 @@ const GearIcon = ({ className }: { className?: string }) => (
 		strokeLinecap="round"
 		strokeLinejoin="round"
 		className={className}
+		role="img"
 	>
+		<title>歯車のアイコン</title>
 		<path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z" />
 		<path d="M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
 		<path d="M12 2v2" />

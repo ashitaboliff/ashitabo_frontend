@@ -1,12 +1,12 @@
-import { useCallback, useMemo, useState } from 'react'
-import useSWR, { SWRConfiguration, SWRResponse } from 'swr'
 import { addDays, subDays } from 'date-fns'
+import { useCallback, useMemo, useState } from 'react'
+import useSWR, { type SWRConfiguration, type SWRResponse } from 'swr'
 import {
-	BOOKING_VIEW_RANGE_DAYS,
 	BOOKING_VIEW_MAX_OFFSET_DAYS,
 	BOOKING_VIEW_MIN_OFFSET_DAYS,
+	BOOKING_VIEW_RANGE_DAYS,
 } from './constants'
-import { buildBookingRangeKey, bookingRangeFetcher } from './fetcher'
+import { bookingRangeFetcher, buildBookingRangeKey } from './fetcher'
 import type { BookingResponse } from './types'
 
 type BookingWeekNavigationOptions = {

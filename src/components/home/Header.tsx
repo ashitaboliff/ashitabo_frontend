@@ -1,11 +1,10 @@
 import Link from 'next/link'
-import HeaderIcon from './HeaderIcon'
-
-import { LuMenu } from 'react-icons/lu'
 import { FaRegUserCircle } from 'react-icons/fa'
-import { RxCountdownTimer } from 'react-icons/rx'
-import { MdOutlineEditCalendar } from 'react-icons/md'
 import { IoHomeOutline } from 'react-icons/io5'
+import { LuMenu } from 'react-icons/lu'
+import { MdOutlineEditCalendar } from 'react-icons/md'
+import { RxCountdownTimer } from 'react-icons/rx'
+import HeaderIcon from './HeaderIcon'
 
 const Layout = async ({ className }: { className?: string }) => {
 	const drawerId = 'main-menu-drawer'

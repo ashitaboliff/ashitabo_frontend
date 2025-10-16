@@ -1,17 +1,17 @@
 'use client'
 
-import { useCallback, useEffect } from 'react'
 import { addDays } from 'date-fns'
-import Popup from '@/components/ui/molecules/Popup'
-import BookingEditCalendar from '@/features/booking/components/edit/BookingEditCalendar'
-import { BookingErrorMessage } from '@/features/booking/components/BookingActionFeedback'
-import type { BookingResponse } from '@/features/booking/types'
+import { useCallback, useEffect, useId } from 'react'
 import type { UseFormSetValue } from 'react-hook-form'
-import { BookingEditFormValues } from '@/features/booking/schema'
+import Popup from '@/components/ui/molecules/Popup'
+import { BookingErrorMessage } from '@/features/booking/components/BookingActionFeedback'
+import BookingEditCalendar from '@/features/booking/components/edit/BookingEditCalendar'
 import {
 	useBookingCalendarData,
 	useBookingWeekNavigation,
 } from '@/features/booking/hooks'
+import type { BookingEditFormValues } from '@/features/booking/schema'
+import type { BookingResponse } from '@/features/booking/types'
 import { useFeedback } from '@/hooks/useFeedback'
 import type { ApiError } from '@/types/responseTypes'
 
@@ -66,6 +66,7 @@ const BookingEditCalendarPopup = ({
 	})
 
 	const bookingResponse = bookingCalendarData ?? null
+	const popupId = useId()
 
 	useEffect(() => {
 		if (bookingResponse) {
@@ -79,15 +80,16 @@ const BookingEditCalendarPopup = ({
 
 	return (
 		<Popup
-			id="booking-edit-calendar-popup"
+			id={popupId}
 			title="カレンダー"
 			maxWidth="lg"
 			open={open}
 			onClose={onClose}
 		>
 			<div className="flex flex-col gap-y-2 items-center justify-center">
-				<div className="flex flex-row justify-center space-x-2">
+				<div className="flex flex-row justify中心 space-x-2">
 					<button
+						type="button"
 						className="btn btn-outline"
 						onClick={goPrevWeek}
 						disabled={!canGoPrevWeek || isLoading}
@@ -99,6 +101,7 @@ const BookingEditCalendarPopup = ({
 						{addDays(viewDate, viewRangeDays - 1).toLocaleDateString()}
 					</div>
 					<button
+						type="button"
 						className="btn btn-outline"
 						onClick={goNextWeek}
 						disabled={!canGoNextWeek || isLoading}

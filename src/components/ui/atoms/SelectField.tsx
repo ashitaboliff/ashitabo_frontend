@@ -1,10 +1,10 @@
 'use client'
 
-import React, { useCallback, useMemo, type ReactNode } from 'react'
-import { UseFormRegisterReturn } from 'react-hook-form'
-import { createSyntheticEvent } from '@/hooks/useSelectField'
-import LabelInputField from '@/components/ui/atoms/LabelInputField'
+import React, { type ReactNode, useCallback, useMemo } from 'react'
+import type { UseFormRegisterReturn } from 'react-hook-form'
 import InputFieldError from '@/components/ui/atoms/InputFieldError'
+import LabelInputField from '@/components/ui/atoms/LabelInputField'
+import { createSyntheticEvent } from '@/hooks/useSelectField'
 
 export type SelectOptions<TValue extends string | number> = Record<
 	string,

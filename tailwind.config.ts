@@ -1,6 +1,6 @@
 import type { Config } from 'tailwindcss'
 
-const screens = {
+const _screens = {
 	sm: '620px',
 	md: '768px',
 	lg: '900px',

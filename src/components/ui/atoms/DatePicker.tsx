@@ -1,12 +1,12 @@
 'use client'
 
+import { useId } from 'react'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
+import { ja } from 'date-fns/locale'
+import { registerLocale } from 'react-datepicker'
 import CustomHeader from '@/components/ui/atoms/DatePickerCustumHeader'
 import InputFieldError from '@/components/ui/atoms/InputFieldError'
-
-import { registerLocale } from 'react-datepicker'
-import { ja } from 'date-fns/locale'
 
 registerLocale('ja', ja)
 
@@ -23,10 +23,17 @@ const CustomDatePicker = ({
 	minDate?: Date
 	errorMessage?: string
 }) => {
+	const inputId = useId()
+
 	return (
 		<div className="flex flex-col w-full">
-			{label && <label className="label">{label}</label>}
+			{label && (
+				<label className="label" htmlFor={inputId}>
+					{label}
+				</label>
+			)}
 			<DatePicker
+				id={inputId}
 				selected={selectedDate}
 				onChange={onChange}
 				locale="ja"

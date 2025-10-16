@@ -1,6 +1,6 @@
-import { PadLock } from '@/features/admin/types'
-import { AccountRole, Part, Role, UserDetail } from '@/features/user/types'
-import { BanBooking } from '@/features/booking/types'
+import type { PadLock } from '@/features/admin/types'
+import type { BanBooking } from '@/features/booking/types'
+import type { AccountRole, Part, Role, UserDetail } from '@/features/user/types'
 
 const toDate = (value: string | Date): Date =>
 	value instanceof Date ? value : new Date(value)

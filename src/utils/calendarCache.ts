@@ -1,5 +1,5 @@
-import { useSWRConfig } from 'swr'
 import { addDays, format, isWithinInterval, parseISO } from 'date-fns'
+import type { useSWRConfig } from 'swr'
 import {
 	BOOKING_CALENDAR_SWR_KEY,
 	BOOKING_CALENDAR_TAG,

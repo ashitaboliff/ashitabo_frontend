@@ -1,17 +1,16 @@
 'use client'
 
-import { useRouter } from 'next-nprogress-bar'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { gkktt } from '@/lib/fonts'
-import YouTube from 'react-youtube'
-import { liveOrBand, Playlist, Video } from '@/features/video/types'
-import Tags from '@/components/ui/atoms/Tags'
-import TagEditPopup from './TagEditPopup'
-import { useWindowOpen } from '@/hooks/useBrowserApis'
-
+import { useRouter } from 'next-nprogress-bar'
 import { HiOutlineExternalLink } from 'react-icons/hi'
+import YouTube from 'react-youtube'
+import Tags from '@/components/ui/atoms/Tags'
+import type { liveOrBand, Playlist, Video } from '@/features/video/types'
+import { useWindowOpen } from '@/hooks/useBrowserApis'
+import { gkktt } from '@/lib/fonts'
 import type { Session } from '@/types/session'
+import TagEditPopup from './TagEditPopup'
 
 type Props = {
 	session: Session | null
@@ -85,6 +84,7 @@ const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 							/>
 						</div>
 						<button
+							type="button"
 							className="btn btn-secondary w-auto sm:w-44 mt-4 self-start"
 							onClick={() => {
 								if (videoId) {
@@ -99,7 +99,8 @@ const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 							YouTubeで見る <HiOutlineExternalLink size={20} className="ml-1" />
 						</button>
 					</div>
-					<div
+					<button
+						type="button"
 						className="flex flex-col items-center gap-y-2 mt-6 p-3 border rounded-lg shadow-sm w-full max-w-xl md:max-w-2xl lg:max-w-3xl cursor-pointer hover:bg-base-200 transition"
 						onClick={() => {
 							if (currentPlaylist.playlistId) {
@@ -137,8 +138,9 @@ const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 								</div>
 							</div>
 						</div>
-					</div>
+					</button>
 					<button
+						type="button"
 						className="btn btn-outline mt-6 w-full max-w-xs sm:max-w-sm"
 						onClick={() => router.back()}
 					>
@@ -197,6 +199,7 @@ const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 							/>
 						</div>
 						<button
+							type="button"
 							className="btn btn-secondary w-auto sm:w-44 mt-4 self-start"
 							onClick={() => {
 								openWindow(
@@ -213,14 +216,16 @@ const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 						{detail.videos && detail.videos.length > 0 ? (
 							<ul className="space-y-2">
 								{detail.videos.map((video) => (
-									<li
-										key={video.videoId}
-										className="p-2 sm:p-3 border rounded-md hover:bg-base-200 cursor-pointer transition"
-										onClick={() => router.push(`/video/${video.videoId}`)}
-									>
-										<div className="text-sm sm:text-base font-medium">
-											{video.title.split('(')[0]}
-										</div>
+									<li key={video.videoId}>
+										<button
+											type="button"
+											className="p-2 sm:p-3 border rounded-md hover:bg-base-200 cursor-pointer transition"
+											onClick={() => router.push(`/video/${video.videoId}`)}
+										>
+											<div className="text-sm sm:text-base font-medium">
+												{video.title.split('(')[0]}
+											</div>
+										</button>
 									</li>
 								))}
 							</ul>
@@ -231,6 +236,7 @@ const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 						)}
 					</div>
 					<button
+						type="button"
 						className="btn btn-outline mt-6 w-full max-w-xs sm:max-w-sm"
 						onClick={() => router.back()}
 					>

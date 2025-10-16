@@ -1,9 +1,9 @@
-import { LuCalendarSync, LuCalendar } from 'react-icons/lu'
-import { AuthPage } from '@/features/auth/components/UnifiedAuth'
+import fs from 'node:fs/promises'
+import path from 'node:path'
 import { compileMDX } from 'next-mdx-remote/rsc'
+import { LuCalendar, LuCalendarSync } from 'react-icons/lu'
 import rehypeRaw from 'rehype-raw'
-import fs from 'fs/promises'
-import path from 'path'
+import { AuthPage } from '@/features/auth/components/UnifiedAuth'
 
 const UsagePage = async () => {
 	const filePath = path.join(

@@ -1,15 +1,15 @@
 'use client'
 
-import { useEffect, type ChangeEvent } from 'react'
-import { GachaSort, type GachaData } from '@/features/gacha/types'
+import { type ChangeEvent, useEffect } from 'react'
 import Pagination from '@/components/ui/atoms/Pagination'
+import RadioSortGroup from '@/components/ui/atoms/RadioSortGroup'
 import SelectField from '@/components/ui/atoms/SelectField'
 import GachaPreviewPopup from '@/features/gacha/components/GachaPreviewPopup'
 import { useGachaPreview } from '@/features/gacha/hooks/useGachaPreview'
-import RadioSortGroup from '@/components/ui/atoms/RadioSortGroup'
-import GachaLogList from './GachaLogList'
-import type { Session } from '@/types/session'
+import type { GachaData, GachaSort } from '@/features/gacha/types'
 import { usePagedResource } from '@/hooks/usePagedResource'
+import type { Session } from '@/types/session'
+import GachaLogList from './GachaLogList'
 
 interface UserGachaLogsProps {
 	session: Session
@@ -107,7 +107,7 @@ const UserGachaLogs = ({ session, initialData }: UserGachaLogsProps) => {
 					</div>
 				)}
 			</div>
-			{popupData && popupData.gacha && !isPopupLoading && (
+			{popupData?.gacha && !isPopupLoading && (
 				<GachaPreviewPopup
 					gachaItem={popupData.gacha}
 					count={popupData.totalCount}

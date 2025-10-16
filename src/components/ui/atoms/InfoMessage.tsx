@@ -1,5 +1,5 @@
+import type { ReactNode } from 'react'
 import IconFactory from '@/utils/IconFactory'
-import { ReactNode } from 'react'
 
 type Message = {
 	messageType: 'info' | 'success' | 'error' | 'warning'

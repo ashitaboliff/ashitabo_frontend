@@ -1,21 +1,21 @@
 'use client'
 
-import { useCallback, useState } from 'react'
-import { useRouter } from 'next-nprogress-bar'
-import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import * as zod from 'zod'
 import { eachDayOfInterval, getDay } from 'date-fns'
-import { BOOKING_TIME_LIST } from '@/features/booking/constants'
-import { DateToDayISOstring } from '@/utils'
-import { createBookingBanDateAction } from '../action'
-import { ApiError } from '@/types/responseTypes'
+import { useRouter } from 'next-nprogress-bar'
+import { useCallback, useId, useState } from 'react'
+import { Controller, type SubmitHandler, useForm } from 'react-hook-form'
+import * as zod from 'zod'
 import CustomDatePicker from '@/components/ui/atoms/DatePicker'
-import TextInputField from '@/components/ui/atoms/TextInputField'
-import SelectField from '@/components/ui/atoms/SelectField'
 import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
+import SelectField from '@/components/ui/atoms/SelectField'
+import TextInputField from '@/components/ui/atoms/TextInputField'
 import Popup from '@/components/ui/molecules/Popup'
+import { BOOKING_TIME_LIST } from '@/features/booking/constants'
+import type { ApiError } from '@/types/responseTypes'
+import { DateToDayISOstring } from '@/utils'
 import { logError } from '@/utils/logger'
+import { createBookingBanDateAction } from '../action'
 
 type BanTypeValue = 'single' | 'period' | 'regular'
 
@@ -93,6 +93,7 @@ const defaultFormValues: Partial<BanBookingFormInput> = {
 
 const BanBookingCreate = () => {
 	const router = useRouter()
+	const popupId = useId()
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 	const [error, setError] = useState<ApiError>()
 
@@ -154,7 +155,7 @@ const BanBookingCreate = () => {
 
 			const allDates = eachDayOfInterval({
 				start: data.startDate,
-				end: data.endDate!,
+				end: data.endDate ?? data.startDate,
 			})
 			const dates = allDates
 				.filter((date) => getDay(date) === Number(data.dayOfWeek))
@@ -277,7 +278,7 @@ const BanBookingCreate = () => {
 				)}
 				{type === 'regular' && (
 					<div className="w-full">
-						<label className="label">繰り返し</label>
+						<span className="label-text font-semibold">繰り返し</span>
 						<div className="flex flex-row items-center justify-between space-x-2">
 							<div className="whitespace-nowrap text-sm">毎週</div>
 							<SelectField
@@ -317,7 +318,7 @@ const BanBookingCreate = () => {
 			</form>
 			<ErrorMessage error={error} />
 			<Popup
-				id="forbidden-booking-create-popup"
+				id={popupId}
 				title="予約禁止日追加"
 				open={isPopupOpen}
 				onClose={() => setIsPopupOpen(false)}
@@ -327,6 +328,7 @@ const BanBookingCreate = () => {
 						予約禁止日を追加しました
 					</p>
 					<button
+						type="button"
 						className="btn btn-outline"
 						onClick={() => router.push('/admin/forbidden')}
 					>

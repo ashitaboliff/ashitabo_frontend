@@ -3,14 +3,14 @@
 import { useRouter } from 'next-nprogress-bar'
 import { useState } from 'react'
 import { LuClockAlert } from 'react-icons/lu'
+import AuthIssueLayout from '@/features/auth/components/AuthIssueLayout'
 import { useSession } from '@/features/auth/hooks/useSession'
 import { signOutUser } from '@/features/user/hooks/signOut'
 import { logError } from '@/utils/logger'
-import AuthIssueLayout from '@/features/auth/components/AuthIssueLayout'
 
 const SessionExpiredClient = () => {
 	const router = useRouter()
-	const { data: session, status, update } = useSession()
+	const { status, update } = useSession()
 	const [isLoading, setIsLoading] = useState(false)
 
 	const handleLogout = async () => {
@@ -51,6 +51,7 @@ const SessionExpiredClient = () => {
 			actions={
 				<>
 					<button
+						type="button"
 						onClick={handleLogout}
 						className={`btn btn-outline btn-error w-full sm:w-auto ${
 							isLoading ? 'loading' : ''
@@ -60,6 +61,7 @@ const SessionExpiredClient = () => {
 						{isLoading ? '' : 'ログアウト'}
 					</button>
 					<button
+						type="button"
 						onClick={handleReLogin}
 						className={`btn btn-primary w-full sm:w-auto ${
 							isLoading ? 'loading' : ''

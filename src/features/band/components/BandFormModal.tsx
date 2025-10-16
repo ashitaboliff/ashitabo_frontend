@@ -1,18 +1,18 @@
 'use client'
 
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useMemo, useRef } from 'react'
 import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import TextInputField from '@/components/ui/atoms/TextInputField'
 import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
-import { createBandAction, updateBandAction } from '../actions'
+import TextInputField from '@/components/ui/atoms/TextInputField'
+import {
+	type BandFormValues,
+	bandFormSchema,
+} from '@/features/band/schemas/bandSchema'
 import type { BandDetails } from '@/features/band/types'
 import { useFeedback } from '@/hooks/useFeedback'
-import {
-	bandFormSchema,
-	BandFormValues,
-} from '@/features/band/schemas/bandSchema'
 import { logError } from '@/utils/logger'
+import { createBandAction, updateBandAction } from '../actions'
 
 interface BandFormModalProps {
 	isOpen: boolean

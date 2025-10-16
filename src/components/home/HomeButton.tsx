@@ -16,7 +16,9 @@ const HomeButton = async () => {
 						width="370"
 						height="144"
 						viewBox="0 0 370 144"
+						role="img"
 					>
+						<title>ホームボタン背景（上段）</title>
 						<rect x="97" y="0" width="13" height="71" fill={lightred} />
 						<rect x="227" y="0" width="13" height="71" fill={lightBlue} />
 						<rect x="240" y="0" width="117" height="13" fill={lightyellow} />
@@ -55,7 +57,9 @@ const HomeButton = async () => {
 						width="370"
 						height="144"
 						viewBox="0 0 370 144"
+						role="img"
 					>
+						<title>ホームボタン背景（下段）</title>
 						<rect x="0" y="49" width="13" height="80" fill={lightred} />
 						<rect x="13" y="116" width="117" height="13" fill={lightBlue} />
 						<rect x="130" y="49" width="13" height="80" fill={lightred} />

@@ -1,12 +1,12 @@
 'use client'
 
 import {
+	memo,
+	type ReactNode,
 	useCallback,
 	useEffect,
 	useMemo,
 	useRef,
-	memo,
-	type ReactNode,
 } from 'react'
 
 type PopupProps = {

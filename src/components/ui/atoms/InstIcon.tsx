@@ -1,16 +1,17 @@
 'use client'
 
-import { Part, PartMap } from '@/features/user/types'
-
-import { MdPiano as PianoIcon } from 'react-icons/md'
-import { GiGuitarBassHead as BassIcon } from 'react-icons/gi'
-import { GiGuitarHead as GuitarIcon } from 'react-icons/gi'
 import { FaDrum as DrumIcon } from 'react-icons/fa'
+import {
+	GiGuitarBassHead as BassIcon,
+	GiGuitarHead as GuitarIcon,
+} from 'react-icons/gi'
 import { IoMdMicrophone as MicIcon } from 'react-icons/io'
 import { IoEllipsisHorizontalCircleSharp as OtherIcon } from 'react-icons/io5'
+import { MdPiano as PianoIcon } from 'react-icons/md'
+import { type Part, PartMap } from '@/features/user/types'
 
 const InstIcon = ({ part, size }: { part: Part[]; size?: number }) => {
-	const iconSize = size || 20
+	const iconSize = size ?? 20
 
 	const icons = {
 		VOCAL: <MicIcon size={iconSize} color="#000000" />,
@@ -26,15 +27,18 @@ const InstIcon = ({ part, size }: { part: Part[]; size?: number }) => {
 		part.includes(key as Part),
 	)
 
+	const gridColumnsClass = iconSize < 20 ? 'grid-cols-8' : 'grid-cols-4'
+	const buttonSizeClass = iconSize < 20 ? 'btn-xs' : 'btn-sm'
+
 	return (
 		<div className="flex flex-wrap justify-around">
 			<div
-				className={`grid md:flex md:flex-row gap-1 w-full ${size! < 20 ? 'grid-cols-8' : 'grid-cols-4'}`}
+				className={`grid md:flex md:flex-row gap-1 w-full ${gridColumnsClass}`}
 			>
 				{sortedParts.map((p) => (
 					<div key={p} className="tooltip" data-tip={PartMap[p as Part]}>
 						<div
-							className={`btn btn-ghost no-animation btn-circle ${size! < 20 ? `btn-xs` : 'btn-sm'}`}
+							className={`btn btn-ghost no-animation btn-circle ${buttonSizeClass}`}
 						>
 							{icons[p as Part]}
 						</div>

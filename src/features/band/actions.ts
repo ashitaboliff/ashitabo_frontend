@@ -1,23 +1,21 @@
-import { apiGet, apiPost, apiPut, apiDelete } from '@/lib/api/crud'
-import { ApiResponse, StatusCode } from '@/types/responseTypes'
+import type {
+	AddBandMemberResponse,
+	BandDetails,
+	CreateBandResponse,
+	RemoveBandMemberResponse,
+	UpdateBandMemberResponse,
+	UpdateBandResponse,
+	UserWithProfile,
+} from '@/features/band/types'
+import type { Part } from '@/features/user/types'
+import { apiDelete, apiGet, apiPost, apiPut } from '@/lib/api/crud'
 import {
 	createdResponse,
 	noContentResponse,
 	okResponse,
 	withFallbackMessage,
 } from '@/lib/api/helper'
-import {
-	BandDetails,
-	BandMemberDetails,
-	BandMemberUserSummary,
-	CreateBandResponse,
-	UpdateBandResponse,
-	AddBandMemberResponse,
-	UpdateBandMemberResponse,
-	RemoveBandMemberResponse,
-	UserWithProfile,
-} from '@/features/band/types'
-import type { Part } from '@/features/user/types'
+import { type ApiResponse, StatusCode } from '@/types/responseTypes'
 
 export const getBandDetailsAction = async (
 	bandId: string,

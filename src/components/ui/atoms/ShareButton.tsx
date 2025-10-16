@@ -1,8 +1,8 @@
 'use client'
 
 import { useCallback, useMemo } from 'react'
-import { IoShareSocialSharp } from 'react-icons/io5'
 import { CiShare1 } from 'react-icons/ci'
+import { IoShareSocialSharp } from 'react-icons/io5'
 import {
 	useNavigatorShare,
 	useWindowAlert,
@@ -57,7 +57,7 @@ const ShareButton = ({
 
 		try {
 			await navigatorShare(shareData)
-		} catch (error) {
+		} catch (_error) {
 			const fallbackWindow = openWindow(lineShareUrl, '_blank', 'noopener')
 			if (!fallbackWindow) {
 				alertUser(

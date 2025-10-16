@@ -1,12 +1,12 @@
 'use client'
 
-import { UseFormRegister, FieldErrors } from 'react-hook-form'
-import { BookingEditFormValues } from '@/features/booking/schema'
-import TextInputField from '@/components/ui/atoms/TextInputField'
+import type { FieldErrors, UseFormRegister } from 'react-hook-form'
 import { MdOutlineEditCalendar } from 'react-icons/md'
+import TextInputField from '@/components/ui/atoms/TextInputField'
 import { BookingErrorMessage } from '@/features/booking/components/BookingActionFeedback'
-import type { FeedbackMessage } from '@/types/feedback'
 import { BOOKING_TIME_LIST } from '@/features/booking/constants'
+import type { BookingEditFormValues } from '@/features/booking/schema'
+import type { FeedbackMessage } from '@/types/feedback'
 
 type Props = {
 	register: UseFormRegister<BookingEditFormValues>

@@ -1,12 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-
-import { LuLockKeyhole } from 'react-icons/lu'
 import { FaRegUserCircle, FaYoutube } from 'react-icons/fa'
-import { MdOutlineEditCalendar } from 'react-icons/md'
-import { RxCrossCircled } from 'react-icons/rx'
+import { LuLockKeyhole } from 'react-icons/lu'
 import { RiQuestionLine } from 'react-icons/ri'
+import { RxCrossCircled } from 'react-icons/rx'
 
 const AdminMain = () => {
 	return (

@@ -2,10 +2,11 @@
 
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale/ja'
-import { GachaData } from '@/features/gacha/types'
-import { gachaConfigs } from '@/features/gacha/components/config/gachaConfig'
-import CardAnimation from '@/features/gacha/components/animations/CardAnimation'
+import { useId } from 'react'
 import Popup from '@/components/ui/molecules/Popup'
+import CardAnimation from '@/features/gacha/components/animations/CardAnimation'
+import { gachaConfigs } from '@/features/gacha/components/config/gachaConfig'
+import type { GachaData } from '@/features/gacha/types'
 
 interface GachaPreviewPopupProps {
 	gachaItem: GachaData & { signedGachaSrc?: string }
@@ -20,6 +21,7 @@ const GachaPreviewPopup = ({
 	gachaItem,
 	count,
 }: GachaPreviewPopupProps) => {
+	const popupId = useId()
 	const renderCardContent = () => {
 		if (!gachaItem) {
 			return (
@@ -46,7 +48,7 @@ const GachaPreviewPopup = ({
 
 	return (
 		<Popup
-			id="gacha-preview-popup"
+			id={popupId}
 			title=""
 			open={open}
 			onClose={onClose}
@@ -73,7 +75,7 @@ const GachaPreviewPopup = ({
 						</div>
 					</>
 				)}
-				<button className="btn btn-outline" onClick={onClose}>
+				<button type="button" className="btn btn-outline" onClick={onClose}>
 					閉じる
 				</button>
 			</div>

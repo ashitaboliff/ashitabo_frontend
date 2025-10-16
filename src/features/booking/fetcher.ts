@@ -1,7 +1,7 @@
 import { addDays, format } from 'date-fns'
 import { getBookingByDateAction } from '@/features/booking/actions'
-import type { BookingResponse } from '@/features/booking/types'
 import { BOOKING_CALENDAR_SWR_KEY } from '@/features/booking/constants'
+import type { BookingResponse } from '@/features/booking/types'
 
 type BookingRangeKey = [typeof BOOKING_CALENDAR_SWR_KEY, string, string]
 

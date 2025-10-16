@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
 import { format, parseISO } from 'date-fns'
+import { type NextRequest, NextResponse } from 'next/server'
 
 // iCalendarの特殊文字をエスケープする関数
 const escapeICSString = (str: string): string => {

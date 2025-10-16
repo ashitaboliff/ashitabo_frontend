@@ -1,10 +1,10 @@
-import IdPage from '@/features/schedule/components/IdPage'
+import type { Metadata, ResolvingMetadata } from 'next'
+import { notFound } from 'next/navigation'
+import { cache } from 'react'
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
 import { getScheduleByIdAction } from '@/features/schedule/actions'
+import IdPage from '@/features/schedule/components/IdPage'
 import { createMetaData } from '@/hooks/useMetaData'
-import { Metadata, ResolvingMetadata } from 'next'
-import { cache } from 'react'
-import { notFound } from 'next/navigation'
 
 type PageParams = Promise<{ id: string }>
 type PageProps = { params: PageParams }
@@ -19,7 +19,7 @@ const getScheduleDetail = cache(async (id: string) => {
 
 export async function generateMetadata(
 	{ params }: { params: PageParams },
-	parent: ResolvingMetadata,
+	_parent: ResolvingMetadata,
 ): Promise<Metadata> {
 	const { id } = await params
 	const schedule = await getScheduleDetail(id)

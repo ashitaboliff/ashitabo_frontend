@@ -1,5 +1,5 @@
 import gsap from 'gsap'
-import { RarityType } from '@/features/gacha/types'
+import type { RarityType } from '@/features/gacha/types'
 
 export interface AnimationContext {
 	timeline: gsap.core.Timeline
@@ -121,7 +121,10 @@ const animateSSR: RarityAnimation = ({ timeline, card, effectsContainer }) => {
 			duration: 0.5,
 			ease: 'power2.out',
 			stagger: 0.1,
-			onComplete: () => rays.forEach((ray) => ray.remove()),
+			onComplete: () =>
+				rays.forEach((ray) => {
+					ray.remove()
+				}),
 		},
 		'-=1.0',
 	)
@@ -183,7 +186,10 @@ const animateUltraRare: RarityAnimation = ({
 			scale: 0,
 			duration: () => gsap.utils.random(0.8, 1.5),
 			ease: 'power3.out',
-			onComplete: () => particles.forEach((particle) => particle.remove()),
+			onComplete: () =>
+				particles.forEach((particle) => {
+					particle.remove()
+				}),
 		},
 		'-=1.8',
 	)
@@ -290,7 +296,10 @@ const animateSecretRare: RarityAnimation = ({
 			scale: 0,
 			duration: () => gsap.utils.random(1.5, 2.5),
 			ease: 'power2.out',
-			onComplete: () => particles.forEach((particle) => particle.remove()),
+			onComplete: () =>
+				particles.forEach((particle) => {
+					particle.remove()
+				}),
 		},
 		'-=3.5',
 	)

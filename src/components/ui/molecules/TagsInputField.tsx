@@ -1,9 +1,9 @@
 'use client'
 
-import { ReactNode, useState, useEffect, KeyboardEvent } from 'react'
-import { UseFormSetValue, Control, Controller } from 'react-hook-form'
-import LabelInputField from '@/components/ui/atoms/LabelInputField'
+import { type KeyboardEvent, type ReactNode, useEffect, useState } from 'react'
+import { type Control, Controller, type UseFormSetValue } from 'react-hook-form'
 import { HiMiniXMark } from 'react-icons/hi2'
+import LabelInputField from '@/components/ui/atoms/LabelInputField'
 
 type TagInputFieldProps = {
 	name: string
@@ -11,8 +11,10 @@ type TagInputFieldProps = {
 	labelId?: string
 	infoDropdown?: ReactNode
 	placeholder?: string
+	// biome-ignore lint/suspicious/noExplicitAny: react-hook-form control uses form-specific generics
 	control?: Control<any>
 	defaultValue?: string[]
+	// biome-ignore lint/suspicious/noExplicitAny: react-hook-form setter uses form-specific generics
 	setValue?: UseFormSetValue<any> // setValueは直接使用されていないため、将来的な用途がなければ削除も検討
 	onChange?: (tags: string[]) => void
 }
@@ -42,7 +44,7 @@ const TagInputField = ({
 		}
 		// controlがある場合は、field.valueが優先されるため、このuseEffectでの更新は不要
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [defaultValue, control]) // controlを依存配列に追加
+	}, [defaultValue, control, tags]) // controlを依存配列に追加
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setInputValue(e.target.value)

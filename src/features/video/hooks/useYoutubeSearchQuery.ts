@@ -1,5 +1,5 @@
-import { useCallback, useMemo, useTransition } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useCallback, useMemo, useTransition } from 'react'
 import type { YoutubeSearchQuery } from '@/features/video/types'
 
 const parseSearchParams = (
@@ -136,7 +136,7 @@ export const useYoutubeSearchQuery = (defaultQuery: YoutubeSearchQuery) => {
 				router.replace(target)
 			})
 		},
-		[defaultQuery, pathname, query, router, startTransition],
+		[defaultQuery, pathname, query, router],
 	)
 
 	return {

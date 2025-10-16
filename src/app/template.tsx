@@ -1,6 +1,6 @@
 'use server'
 
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 
 function Template({ children }: { children: ReactNode }) {
 	return (

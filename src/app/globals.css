@@ -222,46 +222,46 @@
 
 @layer components {
 	.btn.btn-outline.btn-base {
-		background-color: var(--color-bg-white) !important;
-		color: var(--color-base-content) !important;
-		border-color: var(--color-tetiary-light) !important;
+		background-color: var(--color-bg-white);
+		color: var(--color-base-content);
+		border-color: var(--color-tetiary-light);
 	}
 	.btn.btn-outline.btn-base:hover {
-		border-color: var(--color-accent) !important;
-		color: var(--color-accent) !important;
+		border-color: var(--color-accent);
+		color: var(--color-accent);
 	}
 	input.btn.btn-tetiary:checked {
-		background-color: var(--color-tetiary-light) !important;
-		color: var(--color-bg-white) !important;
-		border-color: var(--color-tetiary-light) !important;
+		background-color: var(--color-tetiary-light);
+		color: var(--color-bg-white);
+		border-color: var(--color-tetiary-light);
 	}
 	input.btn.btn-tetiary:checked:hover {
-		background-color: var(--color-accent) !important;
-		color: var(--color-bg-white) !important;
-		border-color: var(--color-accent) !important;
+		background-color: var(--color-accent);
+		color: var(--color-bg-white);
+		border-color: var(--color-accent);
 	}
 	.btn.btn-tetiary.btn-outline {
-		color: var(--color-accent) !important;
-		background-color: var(--color-bg-white) !important;
-		border-color: var(--color-accent) !important;
+		color: var(--color-accent);
+		background-color: var(--color-bg-white);
+		border-color: var(--color-accent);
 	}
 	.btn.btn-tetiary.btn-outline:hover {
-		color: var(--color-tetiary-light) !important;
-		background-color: var(--color-bg-white) !important;
-		border-color: var(--color-tetiary-light) !important;
+		color: var(--color-tetiary-light);
+		background-color: var(--color-bg-white);
+		border-color: var(--color-tetiary-light);
 	}
 	.btn.btn-secondary-light {
-		background-color: var(--color-secondary-light) !important;
-		color: var(--color-bg-white) !important;
-		border-color: var(--color-secondary-light) !important;
-		background-image: none !important;
-		box-shadow: none !important;
+		background-color: var(--color-secondary-light);
+		color: var(--color-bg-white);
+		border-color: var(--color-secondary-light);
+		background-image: none;
+		box-shadow: none;
 	}
 	.btn.btn-secondary-light:hover {
-		background-color: var(--color-secondary) !important;
-		color: var(--color-bg-white) !important;
-		border-color: var(--color-secondary) !important;
-		background-image: none !important;
+		background-color: var(--color-secondary);
+		color: var(--color-bg-white);
+		border-color: var(--color-secondary);
+		background-image: none;
 	}
 	.aspect-gacha {
 		aspect-ratio: 3 / 4;
@@ -274,28 +274,28 @@
 			in srgb,
 			var(--color-bg-white) 60%,
 			transparent
-		) !important;
-		color: var(--color-base-content) !important;
-		border: none !important;
+		);
+		color: var(--color-base-content);
+		border: none;
 	}
 	.btn.btn-twitter {
-		background-color: #1da1f2 !important; /* Twitter Blue */
-		color: var(--color-bg-white) !important;
-		border: none !important;
-		background-image: none !important;
+		background-color: #1da1f2; /* Twitter Blue */
+		color: var(--color-bg-white);
+		border: none;
+		background-image: none;
 	}
 	.btn.btn-instagram {
-		color: var(--color-bg-white) !important;
-		border: none !important;
+		color: var(--color-bg-white);
+		border: none;
 		background: linear-gradient(
 			45deg,
 			#fed475 0%,
 			#e53d5d 50%,
 			#c23186 70%,
 			#9c38bb 100%
-		) !important;
+		);
 	}
 	.paddingless {
-		padding: 0 !important;
+		padding: 0;
 	}
 }

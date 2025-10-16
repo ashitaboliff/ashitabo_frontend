@@ -1,9 +1,9 @@
 'use server'
 
+import type { UserForSelect } from '@/features/user/types'
 import { apiGet } from '@/lib/api/crud'
 import { failure, okResponse } from '@/lib/api/helper'
 import type { ApiResponse } from '@/types/responseTypes'
-import type { UserForSelect } from '@/features/user/types'
 
 export const getUsersForSelect = async (): Promise<
 	ApiResponse<UserForSelect[]>

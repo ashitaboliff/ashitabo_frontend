@@ -24,6 +24,7 @@ const DetailNotFoundPage = () => {
 					IconColor="bg-white"
 				/>
 				<button
+					type="button"
 					className="btn btn-outline"
 					onClick={() => router.push('/booking')}
 				>

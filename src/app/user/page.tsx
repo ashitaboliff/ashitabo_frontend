@@ -1,15 +1,15 @@
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
+import { getSignedUrlForGachaImageAction } from '@/features/gacha/actions'
+import { gachaConfigs } from '@/features/gacha/components/config/gachaConfig'
+import {
+	type CarouselPackDataItem,
+	GachaDataProvider,
+} from '@/features/gacha/context/GachaDataContext'
 import UserPageLayout from '@/features/user/components/UserPageLayout'
 import UserPageTabs from '@/features/user/components/UserPageTabs'
-import { createMetaData } from '@/hooks/useMetaData'
-import { gachaConfigs } from '@/features/gacha/components/config/gachaConfig'
-import { getSignedUrlForGachaImageAction } from '@/features/gacha/actions'
-import {
-	GachaDataProvider,
-	CarouselPackDataItem,
-} from '@/features/gacha/context/GachaDataContext'
-import { apiGet } from '@/lib/api/crud'
 import type { Profile } from '@/features/user/types'
+import { createMetaData } from '@/hooks/useMetaData'
+import { apiGet } from '@/lib/api/crud'
 import { logError } from '@/utils/logger'
 
 export async function metadata() {
@@ -24,7 +24,10 @@ const UserPageServer = async () => {
 	return (
 		<AuthPage requireProfile={true}>
 			{async (authResult) => {
-				const session = authResult.session!
+				const session = authResult.session
+				if (!session) {
+					return null
+				}
 
 				const [profile, gachaCarouselDataForContext] = await Promise.all([
 					(async (): Promise<Profile | null> => {
@@ -33,7 +36,7 @@ const UserPageServer = async () => {
 							`/users/${session.user.id}/profile`,
 							{ cache: 'no-store' },
 						)
-						return profileRes.ok ? profileRes.data ?? null : null
+						return profileRes.ok ? (profileRes.data ?? null) : null
 					})(),
 					(async (): Promise<CarouselPackDataItem[]> => {
 						const entries = await Promise.all(

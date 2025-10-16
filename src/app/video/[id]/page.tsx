@@ -1,13 +1,13 @@
+import type { Metadata, ResolvingMetadata } from 'next'
 import { notFound } from 'next/navigation'
-import VideoDetailPage from '@/features/video/components/VideoDetailPage' // 修正
+import { cache } from 'react'
+import { getAuthDetails } from '@/features/auth/actions'
 import {
 	getPlaylistByIdAction,
 	getVideoByIdAction,
 } from '@/features/video/actions'
-import { getAuthDetails } from '@/features/auth/actions'
+import VideoDetailPage from '@/features/video/components/VideoDetailPage' // 修正
 import { createMetaData } from '@/hooks/useMetaData'
-import { Metadata, ResolvingMetadata } from 'next'
-import { cache } from 'react'
 
 type PageParams = Promise<{ id: string }>
 type PageProps = { params: PageParams }
@@ -30,7 +30,7 @@ const getVideo = cache(async (id: string) => {
 
 export async function generateMetadata(
 	{ params }: { params: PageParams },
-	parent: ResolvingMetadata,
+	_parent: ResolvingMetadata,
 ): Promise<Metadata> {
 	const { id } = await params
 	const liveOrBand = id.startsWith('PL') && id.length > 12 ? 'live' : 'band'

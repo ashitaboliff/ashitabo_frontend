@@ -11,6 +11,7 @@ const ScheduleMainPage = () => {
 				バンドでの練習日やライブ日、その他あしたぼ内部での日程調整に使ってください
 			</p>
 			<button
+				type="button"
 				className="btn btn-primary mt-4"
 				onClick={() => router.push('/schedule/new')}
 			>

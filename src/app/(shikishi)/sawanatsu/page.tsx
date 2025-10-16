@@ -1,11 +1,12 @@
 'use client'
 
-import Image from 'next/image'
-import { useEffect, useState, useRef } from 'react'
 import { gsap } from 'gsap'
+import Image from 'next/image'
+import { useEffect, useRef, useState } from 'react'
 import { getImageUrl } from '@/lib/r2'
 
 type Petal = {
+	id: string
 	left: number
 	top: number
 	hue: number
@@ -17,7 +18,8 @@ const Page = () => {
 	const textRef = useRef<HTMLDivElement>(null)
 	// 初期レンダリング時にpetalsを生成
 	const [petals] = useState<Petal[]>(() =>
-		Array.from({ length: 20 }).map(() => ({
+		Array.from({ length: 20 }).map((_, index) => ({
+			id: `petal-${index}-${Math.random().toString(36).slice(2, 8)}`,
 			left: Math.random() * 100,
 			top: Math.random() * 100,
 			hue: Math.random() * 360,
@@ -57,7 +59,8 @@ const Page = () => {
 		}
 
 		// 画面四隅の画像のx,y,z軸回転アニメーション
-		gsap.utils.toArray('.corner-image').forEach((el: any) => {
+		const cornerImages = gsap.utils.toArray<HTMLImageElement>('.corner-image')
+		cornerImages.forEach((el) => {
 			gsap.to(el, {
 				rotationX: 360,
 				rotationY: 360,
@@ -69,19 +72,21 @@ const Page = () => {
 		})
 
 		// 花吹雪のSVG要素に対してGSAPアニメーションを設定
-		const petalAnimations = gsap.utils.toArray('.petal').map((el: any) => {
-			return gsap.to(el, {
-				y: '100vh',
-				duration: Math.random() * 7 + 3, // 3〜10秒程度の流れ
-				ease: 'linear',
-				repeat: -1,
-				delay: Math.random() * 2,
-				onRepeat: function () {
-					// 繰り返し毎に上部にリセット
-					gsap.set(el, { y: -50 })
-				},
-			})
-		})
+		const petalAnimations = gsap.utils
+			.toArray<SVGSVGElement>('.petal')
+			.map((el) =>
+				gsap.to(el, {
+					y: '100vh',
+					duration: Math.random() * 7 + 3, // 3〜10秒程度の流れ
+					ease: 'linear',
+					repeat: -1,
+					delay: Math.random() * 2,
+					onRepeat: () => {
+						// 繰り返し毎に上部にリセット
+						gsap.set(el, { y: -50 })
+					},
+				}),
+			)
 
 		// Cleanup function
 		const currentContainerRef = containerRef.current
@@ -92,7 +97,9 @@ const Page = () => {
 			if (currentCenterImgRef) gsap.killTweensOf(currentCenterImgRef)
 			if (currentTextRef) gsap.killTweensOf(currentTextRef)
 			gsap.killTweensOf('.corner-image')
-			petalAnimations.forEach((anim) => anim.kill())
+			petalAnimations.forEach((anim) => {
+				anim.kill()
+			})
 		}
 	}, [])
 
@@ -120,9 +127,9 @@ const Page = () => {
 					pointerEvents: 'none',
 				}}
 			>
-				{petals.map((petal, i) => (
+				{petals.map((petal) => (
 					<svg
-						key={i}
+						key={petal.id}
 						className="petal"
 						width="20"
 						height="20"
@@ -133,6 +140,7 @@ const Page = () => {
 						}}
 						viewBox="0 0 100 100"
 					>
+						<title>{`Petal ${petal.id}`}</title>
 						<circle
 							cx="50"
 							cy="50"

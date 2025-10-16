@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
-import { RarityType } from '@/features/gacha/types'
+import { useEffect, useRef } from 'react'
+import type { RarityType } from '@/features/gacha/types'
 
 interface SparkleProps {
 	size: number
@@ -56,7 +56,10 @@ const Sparkle = ({
 			style={style}
 			className={className}
 			viewBox="0 0 100 100"
+			aria-hidden="true"
+			focusable="false"
 		>
+			<title>Card sparkle effect</title>
 			{color === '#000' ? (
 				<polygon
 					points="50,0 65,40 100,50 65,60 50,100 35,60 0,50 35,40"

@@ -1,5 +1,5 @@
-import { ApiError } from '@/types/responseTypes'
 import type { FeedbackKind, FeedbackMessage } from '@/types/feedback'
+import type { ApiError } from '@/types/responseTypes'
 
 type MessageInput = FeedbackMessage | ApiError | string | null | undefined
 

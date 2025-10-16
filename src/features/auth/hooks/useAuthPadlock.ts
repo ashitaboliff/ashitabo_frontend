@@ -2,10 +2,10 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { padLockAction } from '@/features/auth/actions'
-import { logError } from '@/utils/logger'
 import { useCsrfToken } from '@/features/auth/hooks/useCsrfToken'
 import { usePasswordForm } from '@/features/auth/hooks/usePasswordForm'
 import { useFeedback } from '@/hooks/useFeedback'
+import { logError } from '@/utils/logger'
 
 const DEFAULT_CALLBACK_URL = '/user'
 

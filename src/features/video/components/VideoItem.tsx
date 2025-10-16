@@ -1,12 +1,12 @@
 'use client'
 
-import { useRouter } from 'next-nprogress-bar'
 import { YouTubeEmbed } from '@next/third-parties/google'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { YoutubeDetail, liveOrBand } from '@/features/video/types'
+import { useRouter } from 'next-nprogress-bar'
 import Tags from '@/components/ui/atoms/Tags'
 import TagEditPopup from '@/features/video/components/TagEditPopup'
+import type { liveOrBand, YoutubeDetail } from '@/features/video/types'
 import type { Session } from '@/types/session'
 
 const VideoItem = ({
@@ -30,22 +30,25 @@ const VideoItem = ({
 	return (
 		<div className="flex flex-col xl:flex-row items-start p-3 sm:p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow w-full gap-4">
 			{videoId && (
-				<div
-					className="cursor-pointer w-full xl:w-1/3 flex-shrink-0"
+				<button
+					type="button"
+					className="cursor-pointer w-full xl:w-1/3 flex-shrink-0 text-left"
 					onClick={() => router.push(`/video/${youtubeDetail.id}`)}
+					aria-label={`${displayTitle}の詳細を見る`}
 				>
 					<div className="aspect-video rounded overflow-hidden">
 						<YouTubeEmbed videoid={videoId} />
 					</div>
-				</div>
+				</button>
 			)}
 			<div className="flex flex-col gap-y-2 w-full">
-				<div
-					className="text-lg xl:text-xl font-bold link link-hover"
+				<button
+					type="button"
+					className="text-left text-lg xl:text-xl font-bold link link-hover"
 					onClick={() => router.push(`/video/${youtubeDetail.id}`)}
 				>
 					{displayTitle}
-				</div>
+				</button>
 				{playlistTitle && (
 					<div className="text-sm">ライブ名: {playlistTitle}</div>
 				)}
@@ -61,6 +64,7 @@ const VideoItem = ({
 					<button
 						className="btn btn-outline btn-sm text-xs-custom xl:text-sm whitespace-nowrap"
 						onClick={() => router.push(`/video/${youtubeDetail.id}`)}
+						type="button"
 					>
 						詳細を見る
 					</button>

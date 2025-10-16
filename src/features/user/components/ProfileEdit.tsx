@@ -1,13 +1,13 @@
 'use client'
 
-import TextInputField from '@/components/ui/atoms/TextInputField'
-import SelectField from '@/components/ui/atoms/SelectField'
 import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import Loading from '@/components/ui/atoms/Loading'
+import SelectField from '@/components/ui/atoms/SelectField'
+import TextInputField from '@/components/ui/atoms/TextInputField'
 import MultiSelectField from '@/components/ui/molecules/MultiSelectField'
 import { useProfileForm } from '@/features/user/hooks/useProfileForm'
-import { PartOptions, Profile } from '@/features/user/types'
 import { expectedYearMap } from '@/features/user/schemas/profileSchema'
+import { PartOptions, type Profile } from '@/features/user/types'
 
 const ProfileEdit = ({ profile }: { profile: Profile }) => {
 	const { form, onSubmit, feedback } = useProfileForm({ mode: 'edit', profile })

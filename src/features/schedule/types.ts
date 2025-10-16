@@ -59,7 +59,7 @@ export const generateScheduleTimeExtend = (bookingTimes: string[]) => {
 	}
 
 	// `BookingTime` をそのまま追加
-	bookingTimes.forEach((time, index) => {
+	bookingTimes.forEach((time, _index) => {
 		scheduleTimeExtend.push(time)
 	})
 

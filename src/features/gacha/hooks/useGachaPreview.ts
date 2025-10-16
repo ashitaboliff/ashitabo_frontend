@@ -2,9 +2,9 @@
 
 import { useState } from 'react'
 import useSWR from 'swr'
-import { GachaData } from '@/features/gacha/types'
 import { getGachaByGachaSrcAction } from '@/features/gacha/actions'
-import { ApiResponse, StatusCode } from '@/types/responseTypes'
+import type { GachaData } from '@/features/gacha/types'
+import type { ApiResponse } from '@/types/responseTypes'
 import type { Session } from '@/types/session'
 import { logError } from '@/utils/logger'
 
@@ -43,7 +43,7 @@ export const useGachaPreview = ({ session }: UseGachaPreviewProps) => {
 		isLoading: isPopupLoading,
 	} = useSWR<
 		{ gacha: GachaData | null; totalCount: number } | null,
-		any,
+		Error,
 		FetcherArgs | null
 	>(
 		selectedGachaSrc

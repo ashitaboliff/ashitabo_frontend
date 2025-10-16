@@ -1,27 +1,27 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
-import { useRouter } from 'next-nprogress-bar'
-import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { eachDayOfInterval, format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import TextInputField from '@/components/ui/atoms/TextInputField'
-import TextareaInputField from '@/components/ui/atoms/TextareaInputField'
+import { useRouter } from 'next-nprogress-bar'
+import { useEffect, useMemo, useState } from 'react'
+import { Controller, type SubmitHandler, useForm } from 'react-hook-form'
 import CustomDatePicker from '@/components/ui/atoms/DatePicker'
-import MultiSelectField from '@/components/ui/molecules/MultiSelectField'
-import ShareButton from '@/components/ui/atoms/ShareButton'
 import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
-import { createScheduleAction } from '../actions'
-import { DateToDayISOstring } from '@/utils'
-import type { Session } from '@/types/session'
-import { useFeedback } from '@/hooks/useFeedback'
-import { logError } from '@/utils/logger'
+import ShareButton from '@/components/ui/atoms/ShareButton'
+import TextareaInputField from '@/components/ui/atoms/TextareaInputField'
+import TextInputField from '@/components/ui/atoms/TextInputField'
+import MultiSelectField from '@/components/ui/molecules/MultiSelectField'
 import {
+	type ScheduleCreateFormInput,
+	type ScheduleCreateFormValues,
 	scheduleCreateSchema,
-	ScheduleCreateFormInput,
-	ScheduleCreateFormValues,
 } from '@/features/schedule/schemas/createScheduleSchema'
+import { useFeedback } from '@/hooks/useFeedback'
+import type { Session } from '@/types/session'
+import { DateToDayISOstring } from '@/utils'
+import { logError } from '@/utils/logger'
+import { createScheduleAction } from '../actions'
 
 interface ScheduleCreatePageProps {
 	session: Session
@@ -123,7 +123,7 @@ const ScheduleCreatePage = ({
 				title: data.title,
 				description: data.description,
 				dates,
-				mention: data.isMentionChecked ? data.mention ?? [] : [],
+				mention: data.isMentionChecked ? (data.mention ?? []) : [],
 				timeExtended: data.isTimeExtended,
 				deadline: DateToDayISOstring(data.deadline),
 			})
@@ -133,7 +133,7 @@ const ScheduleCreatePage = ({
 					id: currentScheduleId,
 					title: data.title,
 					description: data.description ?? '',
-					mention: data.isMentionChecked ? data.mention ?? [] : [],
+					mention: data.isMentionChecked ? (data.mention ?? []) : [],
 					startDate: data.startDate,
 					endDate: data.endDate,
 					deadline: data.deadline,

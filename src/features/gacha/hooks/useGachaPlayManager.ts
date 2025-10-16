@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next-nprogress-bar'
+import { useCallback, useEffect, useState } from 'react'
 import { MAX_GACHA_PLAYS_PER_DAY } from '@/features/gacha/components/config/gachaConfig'
 import { getCurrentJSTDateString } from '@/utils'
 
@@ -12,7 +12,7 @@ interface UseGachaPlayManagerOptions {
 export const useGachaPlayManager = (options?: UseGachaPlayManagerOptions) => {
 	const router = useRouter()
 	const [gachaPlayCountToday, setGachaPlayCountToday] = useState<number>(0)
-	const [lastGachaDateString, setLastGachaDateString] = useState<string>('')
+	const [_lastGachaDateString, setLastGachaDateString] = useState<string>('')
 	const [gachaMessage, setGachaMessage] = useState<string>('')
 	const [isGachaSelectPopupOpen, setIsGachaSelectPopupOpen] =
 		useState<boolean>(false)
@@ -45,7 +45,7 @@ export const useGachaPlayManager = (options?: UseGachaPlayManagerOptions) => {
 		} else {
 			setGachaMessage('')
 		}
-	}, [canPlayGacha, gachaPlayCountToday])
+	}, [canPlayGacha])
 
 	const handlePlayGacha = useCallback(() => {
 		const today = getCurrentJSTDateString({})

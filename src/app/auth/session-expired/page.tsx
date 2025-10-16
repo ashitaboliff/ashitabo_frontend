@@ -1,7 +1,7 @@
-import { createMetaData } from '@/hooks/useMetaData'
+import { redirect } from 'next/navigation'
 import SessionExpiredClient from '@/features/auth/components/SessionExpiredClient'
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
-import { redirect } from 'next/navigation'
+import { createMetaData } from '@/hooks/useMetaData'
 
 export async function generateMetadata() {
 	return createMetaData({

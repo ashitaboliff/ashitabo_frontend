@@ -1,6 +1,6 @@
-import { gkktt } from '@/lib/fonts'
 import HomePageHeader from '@/components/shared/HomePageHeader'
 import { createMetaData } from '@/hooks/useMetaData'
+import { gkktt } from '@/lib/fonts'
 
 export const metadata = createMetaData({
 	title: 'ホーム',

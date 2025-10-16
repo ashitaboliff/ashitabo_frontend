@@ -1,12 +1,12 @@
 'use server'
 
 import { cookies } from 'next/headers'
-import { apiGet, apiPost, apiPut } from '@/lib/api/crud'
-import type { Profile } from '@/features/user/types'
-import { ApiResponse } from '@/types/responseTypes'
-import type { Session } from '@/types/session'
 import type { AuthDetails } from '@/features/auth/types'
 import { makeAuthDetails } from '@/features/auth/utils/sessionInfo'
+import type { Profile } from '@/features/user/types'
+import { apiGet, apiPost, apiPut } from '@/lib/api/crud'
+import type { ApiResponse } from '@/types/responseTypes'
+import type { Session } from '@/types/session'
 
 const CSRF_COOKIE_KEYS = [
 	'authjs.csrf-token',
@@ -53,10 +53,10 @@ export const getAuthDetails = async (
 	const sessionRes = await apiGet<Session | null>('/auth/session', {
 		cache: noStore ? 'no-store' : 'default',
 	})
-	const base = makeAuthDetails(sessionRes.ok ? sessionRes.data ?? null : null)
+	const base = makeAuthDetails(sessionRes.ok ? (sessionRes.data ?? null) : null)
 	return {
 		...base,
-		error: sessionRes.ok ? base.error : sessionRes.message ?? base.error,
+		error: sessionRes.ok ? base.error : (sessionRes.message ?? base.error),
 	}
 }
 

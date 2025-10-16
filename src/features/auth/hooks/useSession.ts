@@ -3,9 +3,9 @@
 import { useCallback } from 'react'
 import useSWR from 'swr'
 import { getAuthDetails } from '@/features/auth/actions'
+import { updateSession as requestSessionUpdate } from '@/features/auth/api'
 import type { AuthDetails } from '@/features/auth/types'
 import type { Session } from '@/types/session'
-import { updateSession as requestSessionUpdate } from '@/features/auth/api'
 
 export interface UseSessionResult {
 	data: Session | null
