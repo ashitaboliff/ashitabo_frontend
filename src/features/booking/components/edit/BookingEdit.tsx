@@ -50,7 +50,7 @@ const reducer = (state: State, action: Action): State => {
 }
 
 interface Props {
-	bookingDetail: Booking | null
+	bookingDetail: Booking
 	session: Session
 	initialBookingResponse: BookingResponse | null
 	initialViewDay: Date
@@ -69,13 +69,10 @@ const BookingEdit = ({
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 	const [isDeleting, setIsDeleting] = useState(false)
 
-	if (!bookingDetail) {
-		return <DetailNotFoundPage />
-	}
-
 	const isOwner = bookingDetail.userId === session.user.id
+	const mode = isOwner ? 'summary' : 'auth'
 	const [state, dispatch] = useReducer(reducer, {
-		mode: isOwner ? 'summary' : 'auth',
+		mode,
 		booking: bookingDetail,
 	})
 
