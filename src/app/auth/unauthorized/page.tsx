@@ -1,3 +1,6 @@
+import Link from 'next/link'
+import { LuShieldAlert } from 'react-icons/lu'
+import AuthIssueLayout from '@/features/auth/components/AuthIssueLayout'
 import { createMetaData } from '@/hooks/useMetaData'
 
 export async function generateMetadata() {
@@ -10,19 +13,16 @@ export async function generateMetadata() {
 
 export default function UnauthorizedPage() {
 	return (
-		<div className="min-h-screen flex items-center justify-center">
-			<div className="text-center p-8 bg-white rounded-lg shadow-md max-w-md">
-				<h1 className="text-6xl font-bold text-alert mb-4">403</h1>
-				<h2 className="text-2xl font-semibold text-base-content mb-4">
-					アクセス拒否
-				</h2>
-				<p className="text-base-content mb-6">
-					申し訳ございませんが、このページにアクセスする権限がありません。
-				</p>
-				<a href="/" className="btn btn-primary btn-lg">
+		<AuthIssueLayout
+			title="アクセスが拒否されました"
+			message={'申し訳ございません。このページにアクセスする権限がありません。'}
+			code="403"
+			actions={
+				<Link href="/" className="btn btn-primary w-full sm:w-auto">
 					ホームに戻る
-				</a>
-			</div>
-		</div>
+				</Link>
+			}
+			icon={<LuShieldAlert />}
+		/>
 	)
 }
