@@ -1,11 +1,13 @@
 'use client'
 
-import { type ReactNode, useCallback } from 'react'
+import { type ReactNode, useCallback, useState } from 'react'
 import { useRouter } from 'next-nprogress-bar'
-import { signOutUser as signOutAction } from '@/features/user/actions'
+import { signOutUser as signOutAction } from '@/features/user/hooks/signOut'
 import ProfileDisplay from './ProfileDisplay'
 import type { Session } from '@/types/session'
 import type { Profile } from '@/features/user/types'
+import { useFeedback } from '@/hooks/useFeedback'
+import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 
 interface UserPageLayoutProps {
 	session: Session
@@ -19,6 +21,9 @@ const UserPageLayout = ({
 	children,
 }: UserPageLayoutProps) => {
 	const router = useRouter()
+	const signOutFeedback = useFeedback()
+	const [isSigningOut, setIsSigningOut] = useState(false)
+	const signOutMessage = signOutFeedback.feedback
 
 	const handleEditProfile = useCallback(() => {
 		router.push('/user/edit')
@@ -33,9 +38,24 @@ const UserPageLayout = ({
 	}, [router])
 
 	const handleSignOut = useCallback(async () => {
-		await signOutAction()
-		router.push('/home')
-	}, [router])
+		signOutFeedback.clearFeedback()
+		setIsSigningOut(true)
+		try {
+			const result = await signOutAction()
+			if (result.ok) {
+				router.push('/home')
+				return
+			}
+			signOutFeedback.showApiError(result)
+		} catch (error) {
+			signOutFeedback.showError('サインアウトに失敗しました。', {
+				details: error instanceof Error ? error.message : String(error),
+				code: 500,
+			})
+		} finally {
+			setIsSigningOut(false)
+		}
+	}, [router, signOutFeedback])
 
 	return (
 		<div className="container mx-auto p-4 flex flex-col items-center">
@@ -75,12 +95,19 @@ const UserPageLayout = ({
 
 			<div className="w-full">{children}</div>
 
+			<div className="w-full md:w-1/2 lg:w-1/3 mt-4">
+				<ErrorMessage message={signOutMessage} />
+			</div>
+
 			<div className="flex flex-col sm:flex-row justify-center gap-4 mt-6 w-full md:w-1/2 lg:w-1/3">
 				<button
-					className="btn btn-error btn-outline w-full sm:w-1/2"
+					className={`btn btn-error btn-outline w-full sm:w-1/2 ${
+						isSigningOut ? 'loading' : ''
+					}`.trim()}
 					onClick={handleSignOut}
+					disabled={isSigningOut}
 				>
-					ログアウト
+					{isSigningOut ? 'ログアウト中...' : 'ログアウト'}
 				</button>
 				<button className="btn btn-disabled w-full sm:w-1/2" disabled>
 					アカウントを削除

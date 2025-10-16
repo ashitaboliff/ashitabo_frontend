@@ -15,8 +15,6 @@ const PROFILE_REQUIRED_ROUTES = [
 	'/schedule/[^/]+/edit',
 ]
 
-const SESSION_REQUIRED_ROUTES = ['/auth/signin/setting']
-
 const PUBLIC_ROUTES = [
 	'/',
 	'/home',
@@ -95,6 +93,7 @@ const handleMaintenance = (
 	return null
 }
 
+// ルートパスと認証フロー関連のパスをリダイレクト
 const handleRootRedirects = (request: NextRequest): NextResponse | null => {
 	const { pathname } = request.nextUrl
 
@@ -103,37 +102,17 @@ const handleRootRedirects = (request: NextRequest): NextResponse | null => {
 	}
 
 	if (pathname === '/auth') {
-		return redirect(request, '/auth/padlock')
+		return redirect(request, '/auth/signin', 301)
 	}
 
 	return null
 }
 
-const handleAuthFlow = (request: NextRequest): NextResponse | null => {
-	const { pathname } = request.nextUrl
-
-	if (!matchesRoute(pathname, AUTH_FLOW_ROUTES)) {
-		return null
-	}
-
-	if (!hasAuthCookie(request)) {
-		return redirect(request, '/auth/signin')
-	}
-
-	return redirect(request, '/user')
-}
-
+// プロフィールが必要なルートを保護
 const handleProtectedRoutes = (request: NextRequest): NextResponse | null => {
 	const { pathname } = request.nextUrl
 
 	if (matchesRoute(pathname, PROFILE_REQUIRED_ROUTES)) {
-		if (!hasAuthCookie(request)) {
-			return redirect(request, '/auth/signin')
-		}
-		return NextResponse.next()
-	}
-
-	if (matchesRoute(pathname, SESSION_REQUIRED_ROUTES)) {
 		if (!hasAuthCookie(request)) {
 			return redirect(request, '/auth/signin')
 		}
@@ -159,9 +138,6 @@ export const handleRequest = (request: NextRequest): NextResponse => {
 
 	const rootRedirect = handleRootRedirects(request)
 	if (rootRedirect) return rootRedirect
-
-	const authFlowResponse = handleAuthFlow(request)
-	if (authFlowResponse) return authFlowResponse
 
 	const protectedRouteResponse = handleProtectedRoutes(request)
 	if (protectedRouteResponse) return protectedRouteResponse

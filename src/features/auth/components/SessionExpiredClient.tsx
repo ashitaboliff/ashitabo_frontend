@@ -3,7 +3,7 @@
 import { useRouter } from 'next-nprogress-bar'
 import { useState } from 'react'
 import { useSession } from '@/features/auth/hooks/useSession'
-import { signOutUser } from '@/features/user/actions'
+import { signOutUser } from '@/features/user/hooks/signOut'
 import { logError } from '@/utils/logger'
 
 const SessionExpiredClient = () => {

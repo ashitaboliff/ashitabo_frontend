@@ -9,7 +9,7 @@ import AuthLoadingIndicator from './AuthLoadingIndicator'
 import { useProfileForm } from '@/features/user/hooks/useProfileForm'
 import { PartOptions } from '@/features/user/types'
 import { useFeedback } from '@/hooks/useFeedback'
-import { signOutUser } from '@/features/user/actions'
+import { signOutUser } from '@/features/user/hooks/signOut'
 import { expectedYearMap } from '@/features/user/schemas/profileSchema'
 
 const SigninSetting = () => {

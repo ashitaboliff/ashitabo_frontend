@@ -1,51 +1,9 @@
-import { ApiResponse, StatusCode } from '@/types/responseTypes'
-import { failure, noContentResponse, okResponse } from '@/lib/api/helper'
+'use server'
+
 import { apiGet } from '@/lib/api/crud'
+import { failure, okResponse } from '@/lib/api/helper'
+import type { ApiResponse } from '@/types/responseTypes'
 import type { UserForSelect } from '@/features/user/types'
-
-import { FRONTEND_ORIGIN } from '@/lib/env'
-
-const buildSignOutUrl = () => {
-	if (typeof window !== 'undefined') {
-		return '/api/auth/signout'
-	}
-	return `${FRONTEND_ORIGIN}/api/auth/signout`
-}
-
-export const signOutUser = async (): Promise<ApiResponse<null>> => {
-	try {
-		const response = await fetch(buildSignOutUrl(), {
-			method: 'POST',
-			credentials: 'include',
-			redirect: 'follow',
-		})
-
-		if (response.ok || response.status === 302) {
-			return noContentResponse()
-		}
-
-		const message = await response.text()
-		let status: StatusCode
-		switch (response.status) {
-			case StatusCode.BAD_REQUEST:
-			case StatusCode.UNAUTHORIZED:
-			case StatusCode.FORBIDDEN:
-			case StatusCode.NOT_FOUND:
-			case StatusCode.CONFLICT:
-				status = response.status
-				break
-			default:
-				status = StatusCode.INTERNAL_SERVER_ERROR
-				break
-		}
-		return failure(status, message || 'Failed to sign out')
-	} catch (error) {
-		return failure(
-			StatusCode.INTERNAL_SERVER_ERROR,
-			error instanceof Error ? error.message : 'Sign out error',
-		)
-	}
-}
 
 export const getUsersForSelect = async (): Promise<
 	ApiResponse<UserForSelect[]>
