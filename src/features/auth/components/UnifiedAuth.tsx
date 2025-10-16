@@ -26,7 +26,7 @@ export async function AuthPage({
 	fallback,
 }: AuthPageProps) {
 	const authResult = await getAuthDetails(true)
-	const { status } = authResult
+	const { status, issue } = authResult
 
 	// 認証済みユーザーをリダイレクトする場合（サインインページなど）
 	if (redirectIfAuthenticated) {
@@ -38,28 +38,14 @@ export async function AuthPage({
 	}
 
 	// 認証状態に基づくリダイレクト処理
-	switch (status) {
-		case 'guest':
-			if (!allowUnauthenticated) {
-				redirect('/auth/signin')
-			}
-			break
-
-		case 'invalid':
-			if (!allowUnauthenticated) {
-				redirect('/auth/session-expired')
-			}
-			break
-
-		case 'needs-profile':
-			if (requireProfile) {
-				redirect('/auth/signin/setting')
-			}
-			break
-
-		case 'signed-in':
-			// アクセス許可
-			break
+	if (status === 'guest' && !allowUnauthenticated) {
+		redirect('/auth/signin')
+	}
+	if (issue === 'session-expired' && !allowUnauthenticated) {
+		redirect('/auth/session-expired')
+	}
+	if (issue === 'profile-required' && requireProfile) {
+		redirect('/auth/signin/setting')
 	}
 
 	// ユーザーのロールチェック

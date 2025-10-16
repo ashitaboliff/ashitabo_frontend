@@ -1,6 +1,6 @@
 import type { AccountRole } from '@/features/user/types'
 import type { Session } from '@/types/session'
-import type { AuthDetails, AuthStatus } from '@/features/auth/types'
+import type { AuthDetails, AuthIssue, AuthStatus } from '@/features/auth/types'
 
 const isRole = (value: unknown): value is AccountRole =>
 	value === 'USER' || value === 'ADMIN' || value === 'TOPADMIN'
@@ -37,6 +37,17 @@ export const makeAuthDetails = (session: Session | null): AuthDetails => {
 		status = 'needs-profile'
 	}
 
+	const issue: AuthIssue = (() => {
+		switch (status) {
+			case 'invalid':
+				return 'session-expired'
+			case 'needs-profile':
+				return 'profile-required'
+			default:
+				return null
+		}
+	})()
+
 	return {
 		session: safeSession,
 		status,
@@ -46,6 +57,7 @@ export const makeAuthDetails = (session: Session | null): AuthDetails => {
 		isInvalid: status === 'invalid',
 		userId: safeSession?.user.id ?? null,
 		role: safeSession?.user.role ?? null,
+		issue,
 		error: safeSession?.error,
 	}
 }
