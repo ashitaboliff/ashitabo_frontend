@@ -101,9 +101,7 @@ const UserPageLayout = ({
 
 			<div className="flex flex-col sm:flex-row justify-center gap-4 mt-6 w-full md:w-1/2 lg:w-1/3">
 				<button
-					className={`btn btn-error btn-outline w-full sm:w-1/2 ${
-						isSigningOut ? 'loading' : ''
-					}`.trim()}
+					className="btn btn-error btn-outline w-full sm:w-1/2"
 					onClick={handleSignOut}
 					disabled={isSigningOut}
 				>

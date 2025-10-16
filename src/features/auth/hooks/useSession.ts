@@ -5,7 +5,6 @@ import useSWR from 'swr'
 import { getAuthDetails } from '@/features/auth/actions'
 import type { AuthDetails } from '@/features/auth/types'
 import type { Session } from '@/types/session'
-import { useSessionContext } from '@/features/auth/context/SessionContext'
 import { updateSession as requestSessionUpdate } from '@/features/auth/api'
 
 export interface UseSessionResult {
@@ -28,7 +27,6 @@ const fetchDetails = () => getAuthDetails(true)
  * @returns {UseSessionResult} セッション情報と更新関数など
  */
 export const useSession = (): UseSessionResult => {
-	const initialDetails = useSessionContext()
 	const { data, error, isLoading, mutate } = useSWR<AuthDetails>(
 		AUTH_DETAILS_SWR_KEY,
 		fetchDetails,
@@ -36,12 +34,10 @@ export const useSession = (): UseSessionResult => {
 			revalidateOnFocus: false,
 			revalidateOnReconnect: false,
 			revalidateIfStale: false,
-			fallbackData: initialDetails ?? undefined,
-			revalidateOnMount: !initialDetails,
 		},
 	)
 
-	const session = data?.session ?? initialDetails?.session ?? null
+	const session = data?.session ?? null
 	const status: UseSessionResult['status'] = isLoading
 		? 'loading'
 		: session
@@ -67,6 +63,6 @@ export const useSession = (): UseSessionResult => {
 		error,
 		update,
 		mutate,
-		details: data ?? initialDetails ?? undefined,
+		details: data ?? undefined,
 	}
 }
