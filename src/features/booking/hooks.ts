@@ -1,13 +1,12 @@
 import { useCallback, useMemo, useState } from 'react'
 import useSWR, { SWRConfiguration, SWRResponse } from 'swr'
-import { addDays, format, subDays } from 'date-fns'
+import { addDays, subDays } from 'date-fns'
 import {
-	BOOKING_CALENDAR_SWR_KEY,
 	BOOKING_VIEW_RANGE_DAYS,
 	BOOKING_VIEW_MAX_OFFSET_DAYS,
 	BOOKING_VIEW_MIN_OFFSET_DAYS,
 } from './constants'
-import { getBookingByDateAction } from './actions'
+import { buildBookingRangeKey, bookingRangeFetcher } from './fetcher'
 import type { BookingResponse } from './types'
 
 type BookingWeekNavigationOptions = {
@@ -105,34 +104,6 @@ export const useBookingWeekNavigation = ({
 		viewRangeDays,
 		anchorDate,
 	}
-}
-
-type BookingRangeKey = [typeof BOOKING_CALENDAR_SWR_KEY, string, string]
-
-export const bookingRangeFetcher = async ([
-	cacheKey,
-	startDate,
-	endDate,
-]: BookingRangeKey): Promise<BookingResponse | null> => {
-	if (cacheKey !== BOOKING_CALENDAR_SWR_KEY) {
-		throw new Error('Invalid cache key for booking calendar fetcher')
-	}
-
-	const res = await getBookingByDateAction({ startDate, endDate })
-	if (res.ok) {
-		return res.data
-	}
-
-	throw res
-}
-
-export const buildBookingRangeKey = (
-	viewDate: Date,
-	viewRangeDays: number,
-): BookingRangeKey => {
-	const startDate = format(viewDate, 'yyyy-MM-dd')
-	const endDate = format(addDays(viewDate, viewRangeDays), 'yyyy-MM-dd')
-	return [BOOKING_CALENDAR_SWR_KEY, startDate, endDate]
 }
 
 type BookingCalendarDataOptions = {

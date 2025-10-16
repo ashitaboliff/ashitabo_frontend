@@ -17,8 +17,7 @@ import FlashMessage, {
 } from '@/components/ui/atoms/FlashMessage'
 import { useFeedback } from '@/hooks/useFeedback'
 import {
-	bookingRangeFetcher,
-	buildBookingRangeKey,
+	useBookingCalendarData,
 	useBookingWeekNavigation,
 } from '@/features/booking/hooks'
 import type { ApiError } from '@/types/responseTypes'
@@ -50,16 +49,17 @@ const MainPage = ({ initialViewDate, type, message }: MainPageProps) => {
 
 	const errorFeedback = useFeedback()
 
-	const swrKey = buildBookingRangeKey(viewDate, viewRangeDays)
-
 	const {
 		data: bookingData,
 		isLoading,
 		mutate,
-	} = useSWR<BookingResponse | null>(swrKey, bookingRangeFetcher, {
-		revalidateOnFocus: false,
-		onError: (err) => {
-			errorFeedback.showApiError(err as ApiError)
+	} = useBookingCalendarData({
+		viewDate,
+		viewRangeDays,
+		config: {
+			onError: (err: ApiError) => {
+				errorFeedback.showApiError(err)
+			},
 		},
 	})
 

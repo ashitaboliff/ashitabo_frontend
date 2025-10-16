@@ -61,7 +61,7 @@ const BookingEditCalendarPopup = ({
 		viewRangeDays,
 		fallbackData: initialBookingResponse,
 		config: {
-			onError: (err) => calendarFeedback.showApiError(err as ApiError),
+			onError: (err: ApiError) => calendarFeedback.showApiError(err),
 		},
 	})
 
