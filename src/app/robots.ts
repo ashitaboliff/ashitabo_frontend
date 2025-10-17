@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next'
-import { FRONTEND_ORIGIN } from '@/lib/env'
+import PublicEnv from '@/lib/env/public'
 
 export default function robots(): MetadataRoute.Robots {
 	return {
@@ -21,6 +21,6 @@ export default function robots(): MetadataRoute.Robots {
 				disallow: '/',
 			},
 		],
-		sitemap: `${FRONTEND_ORIGIN}/sitemap.xml`,
+		sitemap: `${PublicEnv.NEXT_PUBLIC_APP_URL}/sitemap.xml`,
 	}
 }

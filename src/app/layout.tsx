@@ -1,6 +1,7 @@
 import { Inter } from 'next/font/google'
 import Link from 'next/link'
 import Script from 'next/script'
+import PublicEnv from '@/lib/env/public'
 import { nicomoji } from '@/lib/fonts'
 import './globals.css'
 import Footer from '@/components/home/Footer'
@@ -40,12 +41,12 @@ console.log('%chttps://www.github.com/ashitaboliff/', 'color: #000000; font-size
 					<Footer />
 				</ProgressBarProvider>
 				<Script
-					src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
+					src={`https://www.googletagmanager.com/gtag/js?id=${PublicEnv.NEXT_PUBLIC_GA_ID}`}
 					strategy="afterInteractive"
 				/>
 				<Script
 					async
-					src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADS_ID}`}
+					src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${PublicEnv.NEXT_PUBLIC_ADS_ID}`}
 					crossOrigin="anonymous"
 					strategy="lazyOnload"
 				/>

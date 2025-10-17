@@ -1,9 +1,9 @@
 import type { MetadataRoute } from 'next'
 import { getBookingIds } from '@/features/booking/actions'
 import { getYoutubeIds } from '@/features/video/actions'
-import { FRONTEND_ORIGIN } from '@/lib/env'
+import PublicEnv from '@/lib/env/public'
 
-const URL = FRONTEND_ORIGIN
+const URL = PublicEnv.NEXT_PUBLIC_APP_URL
 
 const getBookingsMap = async (): Promise<MetadataRoute.Sitemap> => {
 	const bookingIds = await getBookingIds()

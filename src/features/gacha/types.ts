@@ -14,7 +14,7 @@ export type GachaData = {
 	gachaVersion: string
 	gachaRarity: RarityType
 	gachaSrc: string
-	signedGachaSrc: string
+	signedGachaSrc?: string | null
 	createdAt: Date
 	updatedAt: Date
 	isDeleted: boolean

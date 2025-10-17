@@ -9,7 +9,7 @@ import { gachaConfigs } from '@/features/gacha/components/config/gachaConfig'
 import type { GachaData } from '@/features/gacha/types'
 
 interface GachaPreviewPopupProps {
-	gachaItem: GachaData & { signedGachaSrc?: string }
+	gachaItem: GachaData
 	count: number
 	open: boolean
 	onClose: () => void

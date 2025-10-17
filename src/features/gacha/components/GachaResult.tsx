@@ -44,8 +44,9 @@ export const GachaResult = ({
 				throw new Error('Gacha image source is missing.')
 			}
 			const res = await getSignedUrlForGachaImageAction({
-				userId: userId,
-				r2Key: gachaData.data.src,
+				r2Key: gachaData.data.src
+					.replace('/gacha/', '')
+					.replace('.png', '.webp'),
 			})
 			if (res.ok) {
 				return res.data

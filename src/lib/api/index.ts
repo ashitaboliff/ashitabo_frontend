@@ -1,7 +1,7 @@
 'use server'
 
 import { cookies } from 'next/headers'
-import { FRONTEND_ORIGIN } from '@/lib/env'
+import env from '@/lib/env'
 import {
 	type ApiResponse,
 	type ErrorStatus,
@@ -22,7 +22,7 @@ const buildUrl = (path: string, searchParams?: Record<string, QueryValue>) => {
 		? path
 		: `/api${path.startsWith('/') ? path : `/${path}`}`
 
-	const url = new URL(normalizedPath, FRONTEND_ORIGIN)
+	const url = new URL(normalizedPath, env.NEXT_PUBLIC_APP_URL)
 	appendSearchParams(url, searchParams)
 	return url.toString()
 }

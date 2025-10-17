@@ -10,7 +10,6 @@ import {
 } from '@/features/gacha/components/animations/rarityAnimations'
 import Sparkle from '@/features/gacha/components/effects/Sparkle'
 import type { RarityType } from '@/features/gacha/types'
-import { getImageUrl } from '@/lib/r2'
 
 gsap.registerPlugin(useGSAP)
 
@@ -28,7 +27,6 @@ export const CardAnimation = ({
 	const cardRef = useRef<HTMLDivElement>(null)
 	const effectContainerRef = useRef<HTMLDivElement>(null)
 	const [imagesLoaded, setImagesLoaded] = useState<number>(0)
-	const backImage = getImageUrl('/gacha/backimage.png')
 	const id = useId()
 
 	const handleImageLoad = () => {
@@ -141,7 +139,7 @@ export const CardAnimation = ({
 				</div>
 				<div className="absolute w-full h-full backface-hidden rotateY-180 rounded-lg overflow-hidden relative">
 					<Image
-						src={backImage}
+						src="/backimage.webp"
 						alt="Card Back"
 						fill
 						className="object-cover"

@@ -98,9 +98,6 @@ const RatioPopup = ({ gkktt }: { gkktt: { className: string } }) => {
 											category.name
 										const imageName =
 											rarityImageMap[category.name as RarityType] || 'Common' // Fallback image
-										const imageUrl = getImageUrl(
-											`/gacha/preset/${imageName}.png`,
-										)
 										const titleClassName = `bg-white px-4 rounded-lg shadow-md w-full text-2xl ${gkktt.className} ${catIndex > 0 ? 'mt-4' : ''}`
 										const detailsGapClass =
 											category.name === 'COMMON' || category.name === 'RARE'
@@ -112,7 +109,7 @@ const RatioPopup = ({ gkktt }: { gkktt: { className: string } }) => {
 												<div className={titleClassName}>{displayName}</div>
 												<div className="flex flex-row my-2 w-full">
 													<Image
-														src={imageUrl}
+														src={'/backimage.webp'}
 														width={72}
 														height={104}
 														alt={displayName}

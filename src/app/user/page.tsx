@@ -44,14 +44,14 @@ const UserPageServer = async () => {
 								if (!config.packKey) return null
 								try {
 									const res = await getSignedUrlForGachaImageAction({
-										userId: session.user.id,
 										r2Key: config.packKey,
 									})
+									const signedPackImageUrl =
+										res.ok && typeof res.data === 'string' ? res.data : ''
 									return {
 										version,
 										r2Key: config.packKey,
-										signedPackImageUrl:
-											res.ok && typeof res.data === 'string' ? res.data : '',
+										signedPackImageUrl,
 									}
 								} catch (error) {
 									logError(

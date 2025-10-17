@@ -2,7 +2,11 @@
 
 import { useState } from 'react'
 import useSWR from 'swr'
-import { getGachaByGachaSrcAction } from '@/features/gacha/actions'
+import {
+	getGachaByGachaSrcAction,
+	getSignedUrlForGachaImageAction,
+} from '@/features/gacha/actions'
+import { toSignedImageKey } from '@/features/gacha/services/gachaTransforms'
 import type { GachaData } from '@/features/gacha/types'
 import type { ApiResponse } from '@/types/responseTypes'
 import type { Session } from '@/types/session'
@@ -27,7 +31,33 @@ const fetcher = async ({
 	const res: ApiResponse<{ gacha: GachaData | null; totalCount: number }> =
 		await getGachaByGachaSrcAction({ userId, gachaSrc })
 	if (res.ok) {
-		return res.data
+		const baseData = res.data
+		if (!baseData.gacha || baseData.gacha.signedGachaSrc) {
+			return baseData
+		}
+		const r2Key = toSignedImageKey(baseData.gacha.gachaSrc)
+		if (!r2Key) {
+			logError('Failed to derive R2 key for gacha preview image', {
+				gachaSrc,
+			})
+			return baseData
+		}
+		const signedUrlResponse = await getSignedUrlForGachaImageAction({ r2Key })
+		if (!signedUrlResponse.ok) {
+			logError('Failed to fetch signed URL for gacha preview', {
+				gachaSrc,
+				r2Key,
+				error: signedUrlResponse.message,
+			})
+			return baseData
+		}
+		return {
+			...baseData,
+			gacha: {
+				...baseData.gacha,
+				signedGachaSrc: signedUrlResponse.data,
+			},
+		}
 	}
 	logError('Failed to fetch gacha preview data', res)
 	return null
