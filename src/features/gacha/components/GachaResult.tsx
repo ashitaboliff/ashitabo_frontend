@@ -6,9 +6,9 @@ import {
 	createUserGachaResultAction,
 	getSignedUrlForGachaImageAction,
 } from '@/features/gacha/actions'
-import { invalidateGachaPreviewCache } from '@/features/gacha/hooks/useGachaPreview'
 import CardAnimation from '@/features/gacha/components/animations/CardAnimation'
 import Gacha, { type GachaItem } from '@/features/gacha/components/GachaList'
+import { invalidateGachaPreviewCache } from '@/features/gacha/hooks/useGachaPreview'
 import type { RarityType } from '@/features/gacha/types'
 import type { ApiResponse } from '@/types/responseTypes'
 

@@ -7,10 +7,10 @@ import { Tab, Tabs } from '@/components/ui/atoms/Tabs'
 import GachaMainPopup from '@/features/gacha/components/GachaMainPopup'
 import RatioPopup from '@/features/gacha/components/RatioPopup'
 import { useGachaPlayManager } from '@/features/gacha/hooks/useGachaPlayManager'
+import type { CarouselPackDataItem } from '@/features/gacha/types'
 import BookingLogs from '@/features/user/components/BookingLogs'
 import GachaLogs from '@/features/user/components/GachaLogs'
 import { gkktt } from '@/lib/fonts'
-import type { CarouselPackDataItem } from '@/features/gacha/types'
 import type { Session } from '@/types/session'
 
 interface UserPageTabsProps {

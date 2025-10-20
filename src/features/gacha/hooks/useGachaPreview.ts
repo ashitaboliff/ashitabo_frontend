@@ -3,6 +3,13 @@
 import { useMemo, useState } from 'react'
 import useSWR, { mutate as mutateGlobal } from 'swr'
 import { getGachaByGachaSrcAction } from '@/features/gacha/actions'
+import {
+	clearPreviewCacheEntry,
+	getPreviewCacheEntry,
+	isPreviewEntryValid,
+	PREVIEW_CACHE_TTL_MS,
+	setPreviewCacheEntry,
+} from '@/features/gacha/services/gachaPreviewCache'
 import { toSignedImageKey } from '@/features/gacha/services/gachaTransforms'
 import {
 	ensureSignedResourceUrls,
@@ -11,13 +18,6 @@ import {
 	setSignedResourceEntry,
 	shouldRefreshSignedResource,
 } from '@/features/gacha/services/signedGachaResourceCache'
-import {
-	PREVIEW_CACHE_TTL_MS,
-	clearPreviewCacheEntry,
-	getPreviewCacheEntry,
-	isPreviewEntryValid,
-	setPreviewCacheEntry,
-} from '@/features/gacha/services/gachaPreviewCache'
 import type { GachaData } from '@/features/gacha/types'
 import type { Session } from '@/types/session'
 import { logError } from '@/utils/logger'
@@ -99,12 +99,12 @@ const loadGachaPreview = async ({
  * 指定したユーザーとガチャソースに紐づくプレビューキャッシュを破棄し、SWRの手動キャッシュも同期的に無効化する。
  */
 export const invalidateGachaPreviewCache = (
- userId: string,
- gachaSrc: string,
+	userId: string,
+	gachaSrc: string,
 ) => {
- clearPreviewCacheEntry(gachaSrc)
- const key = createPreviewKey(userId, gachaSrc)
- void mutateGlobal(key, undefined, { revalidate: false })
+	clearPreviewCacheEntry(gachaSrc)
+	const key = createPreviewKey(userId, gachaSrc)
+	void mutateGlobal(key, undefined, { revalidate: false })
 }
 
 /**

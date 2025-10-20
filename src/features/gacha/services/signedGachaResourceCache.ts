@@ -231,8 +231,7 @@ export const ensureSignedResourceUrls = async (keys: readonly string[]) => {
 	for (const key of uniqueKeys) {
 		const entry = cache.get(key)
 		if (
-			entry &&
-			entry.url &&
+			entry?.url &&
 			entry.expiresAt !== null &&
 			entry.expiresAt > resolvedNow
 		) {

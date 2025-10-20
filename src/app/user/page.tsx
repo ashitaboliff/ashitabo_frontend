@@ -1,7 +1,7 @@
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
 import { gachaConfigs } from '@/features/gacha/config'
-import type { CarouselPackDataItem } from '@/features/gacha/types'
 import { ensureSignedResourceUrls } from '@/features/gacha/services/signedGachaResourceCache'
+import type { CarouselPackDataItem } from '@/features/gacha/types'
 import UserPageLayout from '@/features/user/components/UserPageLayout'
 import UserPageTabs from '@/features/user/components/UserPageTabs'
 import type { Profile } from '@/features/user/types'
