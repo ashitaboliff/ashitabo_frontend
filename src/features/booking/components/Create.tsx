@@ -98,7 +98,7 @@ const CreatePage = ({
 	})
 
 	const { onGachaPlayedSuccessfully, gachaPlayCountToday } =
-		useGachaPlayManager()
+		useGachaPlayManager({ userId: session.user.id })
 
 	const shareUrl = useMemo(() => {
 		if (typeof window === 'undefined' || !createdBooking) {

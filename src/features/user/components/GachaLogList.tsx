@@ -31,8 +31,7 @@ const fetchGachas = async ([userId, page, perPage, sort]: [
 	if (res.ok) {
 		return res.data
 	}
-	const errorMessage = res.message || 'Failed to fetch gacha logs'
-	throw new Error(errorMessage)
+	throw res
 }
 
 const GachaLogList = ({
@@ -44,7 +43,7 @@ const GachaLogList = ({
 	onDataLoaded,
 	initialData,
 }: GachaLogListProps) => {
-	const swrKey = userId ? [userId, currentPage, logsPerPage, sort] : null
+	const swrKey = [userId, currentPage, logsPerPage, sort]
 	const { data, error, isLoading } = useSWR(swrKey, fetchGachas, {
 		fallbackData: currentPage === 1 ? initialData : undefined,
 		revalidateOnFocus: false,

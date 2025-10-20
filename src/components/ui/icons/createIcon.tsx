@@ -40,13 +40,12 @@ export const createIcon = (icon: IconTree) =>
 		const { attr = {}, child } = icon
 		const rawAttr = { ...attr } as Record<string, unknown>
 		const attrClassName =
-			typeof rawAttr['className'] === 'string'
-				? (rawAttr['className'] as string)
+			typeof rawAttr.className === 'string'
+				? (rawAttr.className as string)
 				: undefined
-		const attrStyle =
-			(rawAttr['style'] as CSSProperties | undefined) ?? undefined
-		delete rawAttr['className']
-		delete rawAttr['style']
+		const attrStyle = (rawAttr.style as CSSProperties | undefined) ?? undefined
+		delete rawAttr.className
+		delete rawAttr.style
 
 		const restProps = { ...rest } as Record<string, unknown>
 		delete restProps.width

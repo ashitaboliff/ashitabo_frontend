@@ -1,12 +1,13 @@
 'use client'
 
-import { useRouter } from 'next-nprogress-bar'
 import { useCallback, useEffect, useState } from 'react'
+import { useSWRConfig } from 'swr'
 import { MAX_GACHA_PLAYS_PER_DAY } from '@/features/gacha/config'
 import { getCurrentJSTDateString } from '@/utils'
 
 interface UseGachaPlayManagerOptions {
 	onGachaPlayed?: () => void
+	userId?: string
 }
 
 /**
@@ -14,7 +15,7 @@ interface UseGachaPlayManagerOptions {
  * 成功時に任意のコールバックやルーターの再検証も行う。
  */
 export const useGachaPlayManager = (options?: UseGachaPlayManagerOptions) => {
-	const router = useRouter()
+	const { mutate } = useSWRConfig()
 	const [gachaPlayCountToday, setGachaPlayCountToday] = useState<number>(0)
 	const [_lastGachaDateString, setLastGachaDateString] = useState<string>('')
 	const [gachaMessage, setGachaMessage] = useState<string>('')
@@ -53,7 +54,7 @@ export const useGachaPlayManager = (options?: UseGachaPlayManagerOptions) => {
 
 	const handlePlayGacha = useCallback(() => {
 		const today = getCurrentJSTDateString({})
-		let currentCount = 0 // Initialize with 0
+		let currentCount = 0
 		// localStorageから最新情報を取得して再チェック
 		const storedDate = localStorage.getItem('gachaLastPlayedDate')
 		const storedCount = parseInt(
@@ -73,12 +74,12 @@ export const useGachaPlayManager = (options?: UseGachaPlayManagerOptions) => {
 
 		if (currentCount < MAX_GACHA_PLAYS_PER_DAY) {
 			setIsGachaSelectPopupOpen(true)
-			setGachaMessage('') // Clear any previous messages
+			setGachaMessage('')
 		} else {
 			setGachaMessage(
 				`本日は既にガチャを${MAX_GACHA_PLAYS_PER_DAY}回引いているため、これ以上引くことはできません。`,
 			)
-			setIsGachaSelectPopupOpen(false) // Ensure popup is closed if limit reached
+			setIsGachaSelectPopupOpen(false)
 		}
 	}, [])
 
@@ -94,8 +95,15 @@ export const useGachaPlayManager = (options?: UseGachaPlayManagerOptions) => {
 		if (options?.onGachaPlayed) {
 			options.onGachaPlayed()
 		}
-		router.refresh() // Refresh data, e.g., gacha logs
-	}, [options, router])
+		if (options?.userId) {
+			void mutate(
+				(key) =>
+					Array.isArray(key) && key.length === 4 && key[1] === options.userId,
+				undefined,
+				{ revalidate: true },
+			)
+		}
+	}, [mutate, options])
 
 	const closeGachaSelectPopup = () => {
 		setIsGachaSelectPopupOpen(false)

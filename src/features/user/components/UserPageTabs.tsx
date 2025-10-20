@@ -49,7 +49,7 @@ const UserPageTabs = ({ session, gachaCarouselData }: UserPageTabsProps) => {
 		gachaMessage,
 		onGachaPlayedSuccessfully,
 		MAX_GACHA_PLAYS_PER_DAY,
-	} = useGachaPlayManager()
+	} = useGachaPlayManager({ userId: session.user.id })
 
 	const handleOpenGachaPopup = useCallback(() => {
 		if (!canPlayGacha) {
@@ -115,7 +115,6 @@ const UserPageTabs = ({ session, gachaCarouselData }: UserPageTabsProps) => {
 				gachaPlayCountToday={gachaPlayCountToday}
 				onGachaPlayedSuccessfully={() => {
 					onGachaPlayedSuccessfully()
-					setIsGachaPopupOpen(false)
 				}}
 				open={isGachaPopupOpen}
 				onClose={() => setIsGachaPopupOpen(false)}
