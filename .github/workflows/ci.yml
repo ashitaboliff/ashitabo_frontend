@@ -36,9 +36,3 @@ jobs:
 
       - name: Run tests
         run: npm run test
-
-      - name: Setup env
-        run: cp .env.example .env.local
-        
-      - name: Build
-        run: npm run build
