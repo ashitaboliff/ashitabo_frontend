@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next-nprogress-bar'
 import { useCallback, useEffect, useState } from 'react'
-import { MAX_GACHA_PLAYS_PER_DAY } from '@/features/gacha/components/config/gachaConfig'
+import { MAX_GACHA_PLAYS_PER_DAY } from '@/features/gacha/config'
 import { getCurrentJSTDateString } from '@/utils'
 
 interface UseGachaPlayManagerOptions {

@@ -4,10 +4,7 @@ import Image from 'next/image'
 import React, { useId, useState } from 'react'
 import { Tab, Tabs } from '@/components/ui/atoms/Tabs'
 import Popup from '@/components/ui/molecules/Popup'
-import {
-	type GachaCategoryConfig,
-	gachaConfigs,
-} from '@/features/gacha/components/config/gachaConfig'
+import { type GachaCategoryConfig, gachaConfigs } from '@/features/gacha/config'
 import type { RarityType } from '@/features/gacha/types'
 import { getImageUrl } from '@/lib/r2'
 
@@ -96,7 +93,7 @@ const RatioPopup = ({ gkktt }: { gkktt: { className: string } }) => {
 										const displayName =
 											rarityDisplayNameMap[category.name as RarityType] ||
 											category.name
-										const imageName =
+										const _imageName =
 											rarityImageMap[category.name as RarityType] || 'Common' // Fallback image
 										const titleClassName = `bg-white px-4 rounded-lg shadow-md w-full text-2xl ${gkktt.className} ${catIndex > 0 ? 'mt-4' : ''}`
 										const detailsGapClass =

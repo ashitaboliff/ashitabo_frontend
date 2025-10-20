@@ -4,15 +4,12 @@ import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import type { CarouselPackDataItem } from '@/features/gacha/context/GachaDataContext'
 
-interface ImageCarouselProps {
+interface Props {
 	onPackSelect: (version: string) => void
 	carouselPackData: CarouselPackDataItem[]
 }
 
-const ImageCarousel = ({
-	onPackSelect,
-	carouselPackData,
-}: ImageCarouselProps) => {
+const GachaPackCarousel = ({ onPackSelect, carouselPackData }: Props) => {
 	const [packs, setPacks] = useState<CarouselPackDataItem[]>(
 		carouselPackData || [],
 	)
@@ -183,4 +180,4 @@ const ImageCarousel = ({
 	)
 }
 
-export default ImageCarousel
+export default GachaPackCarousel

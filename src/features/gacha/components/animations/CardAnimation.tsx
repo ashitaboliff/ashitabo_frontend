@@ -2,13 +2,13 @@
 
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
-import Image from 'next/image'
 import { type CSSProperties, useId, useMemo, useRef, useState } from 'react'
 import {
 	type AnimationContext,
 	rarityAnimations,
 } from '@/features/gacha/components/animations/rarityAnimations'
 import Sparkle from '@/features/gacha/components/effects/Sparkle'
+import { GachaRarityMap } from '@/features/gacha/config'
 import type { RarityType } from '@/features/gacha/types'
 
 gsap.registerPlugin(useGSAP)
@@ -33,7 +33,6 @@ export const CardAnimation = ({
 		setImagesLoaded((prev) => prev + 1)
 	}
 
-	// Define cleanupEffects here so it can be used by useGSAP's cleanup
 	const cleanupEffects = () => {
 		if (cardRef.current) {
 			gsap.killTweensOf(cardRef.current)
@@ -127,24 +126,22 @@ export const CardAnimation = ({
 				className="absolute inset-0 pointer-events-none z-10 overflow-hidden"
 			/>
 			<div ref={cardRef} className="w-full h-full transform-style-3d relative">
-				<div className="absolute w-full h-full backface-hidden rounded-lg overflow-hidden relative">
-					<Image
+				<div className="absolute w-full h-full backface-hidden rounded-lg overflow-hidden">
+					<img
 						src={frontImageSignedUrl}
-						alt="Card Front"
-						fill
-						className="object-cover"
+						alt={`ガチャ結果-${GachaRarityMap[rarity]}-おもて面`}
+						className="w-full h-full object-cover"
 						onLoad={() => handleImageLoad()}
-						sizes="(max-width: 768px) 300px, 400px"
+						decoding="auto"
 					/>
 				</div>
-				<div className="absolute w-full h-full backface-hidden rotateY-180 rounded-lg overflow-hidden relative">
-					<Image
+				<div className="absolute w-full h-full backface-hidden rotateY-180 rounded-lg overflow-hidden">
+					<img
 						src="/backimage.webp"
-						alt="Card Back"
-						fill
-						className="object-cover"
+						alt={`ガチャ結果-${GachaRarityMap[rarity]}-うら面`}
+						className="w-full h-full object-cover"
 						onLoad={() => handleImageLoad()}
-						sizes="(max-width: 768px) 300px, 400px"
+						decoding="auto"
 					/>
 				</div>
 			</div>

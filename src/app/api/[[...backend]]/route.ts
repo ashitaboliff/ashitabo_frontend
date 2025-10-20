@@ -4,7 +4,7 @@ import env from '@/lib/env'
 const DEFAULT_BACKEND_BASE_URL = 'http://localhost:8787'
 
 const resolveBackendBaseUrl = () => {
-	const envValue = env.API_URL?.trim()
+	const envValue = env.NEXT_PUBLIC_API_URL?.trim()
 	if (envValue && envValue.length > 0) {
 		return envValue.endsWith('/') ? envValue.slice(0, -1) : envValue
 	}

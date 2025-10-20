@@ -2,11 +2,11 @@
 
 import { useId, useState } from 'react'
 import Popup from '@/components/ui/molecules/Popup'
-import { MAX_GACHA_PLAYS_PER_DAY } from '@/features/gacha/components/config/gachaConfig'
+import { MAX_GACHA_PLAYS_PER_DAY } from '@/features/gacha/config'
 import { useGachaData } from '@/features/gacha/context/GachaDataContext'
 import type { Session } from '@/types/session'
+import GachaPackCarousel from './GachaPackCarousel'
 import GachaResult from './GachaResult'
-import ImageCarousel from './ImageCarousel'
 
 interface GachaMainPopupProps {
 	session: Session
@@ -75,7 +75,7 @@ const GachaMainPopup = ({
 		>
 			<div className="flex flex-col gap-y-4 justify-center">
 				{currentStep === 'select' && (
-					<ImageCarousel
+					<GachaPackCarousel
 						onPackSelect={handlePackSelected}
 						carouselPackData={gachaCarouselData}
 					/>

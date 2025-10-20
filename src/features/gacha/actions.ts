@@ -1,5 +1,3 @@
-import { getAuthDetails } from '@/features/auth/actions'
-import { buildImageProxyUrl } from '@/features/gacha/services/gachaImageProxy'
 import {
 	mapRawGacha,
 	mapRawGachaList,
@@ -114,11 +112,20 @@ export const getSignedUrlForGachaImageAction = async ({
 }: {
 	r2Key: string
 }): Promise<ApiResponse<string>> => {
-	const auth = await getAuthDetails(true)
-	if (!auth.hasProfile) {
-		return failure(403, '許可されていません。')
+	const res = await apiPost<{ urls: Record<string, string> }>(
+		'/gacha/images/proxy',
+		{
+			body: { keys: [r2Key] },
+		},
+	)
+	if (!res.ok) {
+		return withFallbackMessage(res, '画像URLの生成に失敗しました。')
 	}
-	return okResponse(await buildImageProxyUrl(r2Key))
+	const url = res.data.urls[r2Key]
+	if (!url) {
+		return failure(404, '画像URLの生成に失敗しました。')
+	}
+	return okResponse(url)
 }
 
 export const getSignedUrlsForGachaImagesAction = async ({
@@ -126,17 +133,25 @@ export const getSignedUrlsForGachaImagesAction = async ({
 }: {
 	r2Keys: string[]
 }): Promise<ApiResponse<Record<string, string>>> => {
-	const auth = await getAuthDetails(true)
-	if (!auth.hasProfile) {
-		return failure(403, '許可されていません。')
-	}
 	const uniqueKeys = Array.from(new Set(r2Keys.filter(Boolean)))
 	if (uniqueKeys.length === 0) {
 		return okResponse({})
 	}
+	const res = await apiPost<{ urls: Record<string, string> }>(
+		'/gacha/images/proxy',
+		{
+			body: { keys: uniqueKeys },
+		},
+	)
+	if (!res.ok) {
+		return withFallbackMessage(res, '画像URLの生成に失敗しました。')
+	}
 	const payload: Record<string, string> = {}
 	for (const key of uniqueKeys) {
-		payload[key] = await buildImageProxyUrl(key)
+		const value = res.data.urls[key]
+		if (value) {
+			payload[key] = value
+		}
 	}
 	return okResponse(payload)
 }

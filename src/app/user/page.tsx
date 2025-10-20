@@ -1,6 +1,6 @@
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
 import { getSignedUrlForGachaImageAction } from '@/features/gacha/actions'
-import { gachaConfigs } from '@/features/gacha/components/config/gachaConfig'
+import { gachaConfigs } from '@/features/gacha/config'
 import {
 	type CarouselPackDataItem,
 	GachaDataProvider,

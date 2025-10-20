@@ -2,6 +2,15 @@ import type { RarityType } from '@/features/gacha/types'
 
 export const MAX_GACHA_PLAYS_PER_DAY = 3
 
+export const GachaRarityMap: { [key in RarityType]: string } = {
+	COMMON: 'コモン',
+	RARE: 'レア',
+	SUPER_RARE: 'スーパーレア',
+	SS_RARE: 'ダブルスーパーレア',
+	ULTRA_RARE: 'ウルトラレア',
+	SECRET_RARE: 'シークレットレア',
+}
+
 export interface GachaCategoryConfig {
 	name: RarityType
 	probability: number
@@ -12,7 +21,7 @@ export interface GachaCategoryConfig {
 export interface GachaVersionConfig {
 	categories: GachaCategoryConfig[]
 	title: string
-	packKey?: string // Changed from packImage to store the R2 key directly
+	packKey: string
 }
 
 export const gachaConfigs: { [version: string]: GachaVersionConfig } = {

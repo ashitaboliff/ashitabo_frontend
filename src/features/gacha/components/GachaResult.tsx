@@ -38,7 +38,7 @@ export const GachaResult = ({
 		error: signedUrlError,
 		isLoading: isLoadingSignedUrl,
 	} = useSWR(
-		gachaData.data.src ? `signedUrl/gachaCard/${gachaData.data.src}` : null,
+		gachaData.data.src,
 		async () => {
 			if (!gachaData.data.src) {
 				throw new Error('Gacha image source is missing.')
