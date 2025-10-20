@@ -8,6 +8,8 @@ import {
 } from '@/features/gacha/actions'
 import CardAnimation from '@/features/gacha/components/animations/CardAnimation'
 import Gacha, { type GachaItem } from '@/features/gacha/components/GachaList'
+import { invalidateGachaPreviewCache } from '@/features/gacha/hooks/useGachaPreview'
+import { toSignedImageKey } from '@/features/gacha/services/gachaTransforms'
 import type { RarityType } from '@/features/gacha/types'
 import type { ApiResponse } from '@/types/responseTypes'
 
@@ -38,14 +40,13 @@ export const GachaResult = ({
 		error: signedUrlError,
 		isLoading: isLoadingSignedUrl,
 	} = useSWR(
-		gachaData.data.src ? `signedUrl/gachaCard/${gachaData.data.src}` : null,
+		gachaData.data.src,
 		async () => {
 			if (!gachaData.data.src) {
 				throw new Error('Gacha image source is missing.')
 			}
 			const res = await getSignedUrlForGachaImageAction({
-				userId: userId,
-				r2Key: gachaData.data.src,
+				r2Key: toSignedImageKey(gachaData.data.src),
 			})
 			if (res.ok) {
 				return res.data
@@ -73,6 +74,7 @@ export const GachaResult = ({
 			})
 			setCreateUserRes(result)
 			if (result.ok && onGachaSuccess) {
+				invalidateGachaPreviewCache(userId, gachaData.data.src)
 				onGachaSuccess()
 			}
 		})()

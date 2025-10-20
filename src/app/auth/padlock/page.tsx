@@ -18,7 +18,11 @@ const Page = async () => {
 	const csrfToken = await getPadlockCsrfToken()
 	const callbackUrl = await getPadlockCallbackUrl()
 	return (
-		<AuthPage allowUnauthenticated={true} redirectIfAuthenticated={true}>
+		<AuthPage
+			requireProfile={false}
+			allowUnauthenticated={true}
+			redirectIfAuthenticated={true}
+		>
 			{() => <AuthPadLock csrfToken={csrfToken} callbackUrl={callbackUrl} />}
 		</AuthPage>
 	)

@@ -1,10 +1,7 @@
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
-import { getSignedUrlForGachaImageAction } from '@/features/gacha/actions'
-import { gachaConfigs } from '@/features/gacha/components/config/gachaConfig'
-import {
-	type CarouselPackDataItem,
-	GachaDataProvider,
-} from '@/features/gacha/context/GachaDataContext'
+import { gachaConfigs } from '@/features/gacha/config'
+import { ensureSignedResourceUrls } from '@/features/gacha/services/signedGachaResourceCache'
+import type { CarouselPackDataItem } from '@/features/gacha/types'
 import UserPageLayout from '@/features/user/components/UserPageLayout'
 import UserPageTabs from '@/features/user/components/UserPageTabs'
 import type { Profile } from '@/features/user/types'
@@ -29,7 +26,7 @@ const UserPageServer = async () => {
 					return null
 				}
 
-				const [profile, gachaCarouselDataForContext] = await Promise.all([
+				const [profile, gachaCarouselData] = await Promise.all([
 					(async (): Promise<Profile | null> => {
 						if (!session.user.hasProfile) return null
 						const profileRes = await apiGet<Profile>(
@@ -39,45 +36,45 @@ const UserPageServer = async () => {
 						return profileRes.ok ? (profileRes.data ?? null) : null
 					})(),
 					(async (): Promise<CarouselPackDataItem[]> => {
-						const entries = await Promise.all(
-							Object.entries(gachaConfigs).map(async ([version, config]) => {
-								if (!config.packKey) return null
-								try {
-									const res = await getSignedUrlForGachaImageAction({
-										userId: session.user.id,
-										r2Key: config.packKey,
-									})
-									return {
-										version,
-										r2Key: config.packKey,
-										signedPackImageUrl:
-											res.ok && typeof res.data === 'string' ? res.data : '',
-									}
-								} catch (error) {
-									logError(
-										`Failed to get signed URL for packKey ${config.packKey} in UserPageContent`,
-										error,
-									)
-									return {
-										version,
-										r2Key: config.packKey,
-										signedPackImageUrl: '',
-									}
-								}
-							}),
+						const entries = Object.entries(gachaConfigs).filter(([, config]) =>
+							Boolean(config.packKey),
 						)
-						return entries
-							.filter((entry): entry is CarouselPackDataItem => entry !== null)
-							.sort((a, b) => a.version.localeCompare(b.version))
+						if (entries.length === 0) {
+							return []
+						}
+						const packKeys = entries.map(([, config]) => config.packKey)
+						try {
+							const signedUrls = await ensureSignedResourceUrls(packKeys)
+							return entries
+								.map(([version, config]) => ({
+									version,
+									r2Key: config.packKey,
+									signedPackImageUrl: signedUrls[config.packKey] ?? '',
+								}))
+								.sort((a, b) => a.version.localeCompare(b.version))
+						} catch (error) {
+							logError(
+								'Failed to resolve signed URLs for gacha pack images',
+								error,
+							)
+							return entries
+								.map(([version, config]) => ({
+									version,
+									r2Key: config.packKey,
+									signedPackImageUrl: '',
+								}))
+								.sort((a, b) => a.version.localeCompare(b.version))
+						}
 					})(),
 				])
 
 				return (
-					<GachaDataProvider gachaCarouselData={gachaCarouselDataForContext}>
-						<UserPageLayout session={session} profile={profile}>
-							<UserPageTabs session={session} />
-						</UserPageLayout>
-					</GachaDataProvider>
+					<UserPageLayout session={session} profile={profile}>
+						<UserPageTabs
+							session={session}
+							gachaCarouselData={gachaCarouselData}
+						/>
+					</UserPageLayout>
 				)
 			}}
 		</AuthPage>

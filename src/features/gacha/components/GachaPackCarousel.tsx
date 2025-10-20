@@ -1,49 +1,34 @@
 'use client'
 
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
-import type { CarouselPackDataItem } from '@/features/gacha/context/GachaDataContext'
+import { useEffect, useMemo, useState } from 'react'
+import type { CarouselPackDataItem } from '@/features/gacha/types'
 
-interface ImageCarouselProps {
+interface Props {
 	onPackSelect: (version: string) => void
 	carouselPackData: CarouselPackDataItem[]
 }
 
-const ImageCarousel = ({
-	onPackSelect,
-	carouselPackData,
-}: ImageCarouselProps) => {
-	const [packs, setPacks] = useState<CarouselPackDataItem[]>(
-		carouselPackData || [],
+const GachaPackCarousel = ({ onPackSelect, carouselPackData }: Props) => {
+	const packs = useMemo(
+		() => carouselPackData.filter(Boolean),
+		[carouselPackData],
 	)
-	const [currentIndex, setCurrentIndex] = useState<number>(
-		(carouselPackData?.length || 0) > 0 ? carouselPackData.length - 1 : 0,
+	const [currentIndex, setCurrentIndex] = useState<number>(() =>
+		packs.length > 0 ? packs.length - 1 : 0,
 	)
-	const [packViewed, setPackViewed] = useState<boolean>(false)
 
 	useEffect(() => {
-		setPacks(carouselPackData || [])
-		setCurrentIndex(
-			(carouselPackData?.length || 0) > 0
-				? Math.min(currentIndex, carouselPackData.length - 1)
-				: 0,
-		)
-	}, [carouselPackData, currentIndex])
-
-	useEffect(() => {
-		if (packs && packs.length > 0) {
-			setPackViewed(false)
-			const timer = setTimeout(() => {
-				setPackViewed(true)
-			}, 50)
-			return () => clearTimeout(timer)
-		} else {
-			setPackViewed(false)
-		}
-	}, [packs])
+		setCurrentIndex((prev) => {
+			if (packs.length === 0) {
+				return 0
+			}
+			return Math.min(prev, packs.length - 1)
+		})
+	}, [packs.length])
 
 	const updateIndex = (direction: 'next' | 'prev') => {
-		if (!packs || packs.length === 0) return
+		if (packs.length === 0) return
 
 		if (direction === 'next' && currentIndex < packs.length - 1) {
 			setCurrentIndex((prev) => prev + 1)
@@ -53,20 +38,11 @@ const ImageCarousel = ({
 	}
 
 	const handlePackClick = () => {
-		if (!packs || packs.length === 0 || !packs[currentIndex]) return
+		if (packs.length === 0 || !packs[currentIndex]) return
 		const selectedVersion = packs[currentIndex].version
 		if (onPackSelect) {
 			onPackSelect(selectedVersion)
 		}
-	}
-
-	if (!carouselPackData) {
-		return (
-			<div className="relative flex items-center justify-center w-full h-[600px] overflow-hidden select-none">
-				<div className="loading loading-spinner loading-lg my-auto"></div>
-				<p className="mt-2">ガチャパック情報を読み込み中...</p>
-			</div>
-		)
 	}
 
 	if (packs.length === 0) {
@@ -93,7 +69,7 @@ const ImageCarousel = ({
 				{'<'}
 			</button>
 
-			{packViewed && currentPack ? (
+			{currentPack ? (
 				<div className="relative flex items-center justify-center w-full">
 					{prevPack?.signedPackImageUrl ? (
 						<button
@@ -106,8 +82,8 @@ const ImageCarousel = ({
 								alt={`${prevPack.version} pack`}
 								width={110}
 								height={200}
-								decoding="auto"
-								priority={false}
+								decoding="async"
+								loading="lazy"
 							/>
 						</button>
 					) : (
@@ -124,7 +100,7 @@ const ImageCarousel = ({
 								width={250}
 								height={400}
 								onClick={handlePackClick}
-								decoding="auto"
+								decoding="async"
 								priority={true}
 							/>
 							<button
@@ -155,8 +131,8 @@ const ImageCarousel = ({
 								alt={`${nextPack.version} pack`}
 								width={110}
 								height={200}
-								decoding="auto"
-								priority={false}
+								decoding="async"
+								loading="lazy"
 							/>
 						</button>
 					) : (
@@ -183,4 +159,4 @@ const ImageCarousel = ({
 	)
 }
 
-export default ImageCarousel
+export default GachaPackCarousel

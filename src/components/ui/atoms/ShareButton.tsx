@@ -8,7 +8,7 @@ import {
 	useWindowAlert,
 	useWindowOpen,
 } from '@/hooks/useBrowserApis'
-import { FRONTEND_ORIGIN } from '@/lib/env'
+import PublicEnv from '@/lib/env/public'
 
 type ShareButtonProps = {
 	url: string
@@ -32,7 +32,7 @@ const ShareButton = ({
 	const alertUser = useWindowAlert()
 
 	const lineShareUrl = useMemo(() => {
-		return `https://social-plugins.line.me/lineit/share?url=${FRONTEND_ORIGIN}${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`
+		return `https://social-plugins.line.me/lineit/share?url=${PublicEnv.NEXT_PUBLIC_APP_URL}${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`
 	}, [text, url])
 
 	const shareData = useMemo(

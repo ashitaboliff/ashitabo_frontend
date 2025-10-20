@@ -7,6 +7,7 @@ import { Tab, Tabs } from '@/components/ui/atoms/Tabs'
 import GachaMainPopup from '@/features/gacha/components/GachaMainPopup'
 import RatioPopup from '@/features/gacha/components/RatioPopup'
 import { useGachaPlayManager } from '@/features/gacha/hooks/useGachaPlayManager'
+import type { CarouselPackDataItem } from '@/features/gacha/types'
 import BookingLogs from '@/features/user/components/BookingLogs'
 import GachaLogs from '@/features/user/components/GachaLogs'
 import { gkktt } from '@/lib/fonts'
@@ -14,9 +15,10 @@ import type { Session } from '@/types/session'
 
 interface UserPageTabsProps {
 	session: Session
+	gachaCarouselData: CarouselPackDataItem[]
 }
 
-const UserPageTabs = ({ session }: UserPageTabsProps) => {
+const UserPageTabs = ({ session, gachaCarouselData }: UserPageTabsProps) => {
 	const [isGachaPopupOpen, setIsGachaPopupOpen] = useState(false)
 
 	const {
@@ -93,6 +95,7 @@ const UserPageTabs = ({ session }: UserPageTabsProps) => {
 				}}
 				open={isGachaPopupOpen}
 				onClose={() => setIsGachaPopupOpen(false)}
+				carouselPackData={gachaCarouselData}
 			/>
 		</>
 	)

@@ -2,11 +2,11 @@
 
 import { useId, useState } from 'react'
 import Popup from '@/components/ui/molecules/Popup'
-import { MAX_GACHA_PLAYS_PER_DAY } from '@/features/gacha/components/config/gachaConfig'
-import { useGachaData } from '@/features/gacha/context/GachaDataContext'
+import { MAX_GACHA_PLAYS_PER_DAY } from '@/features/gacha/config'
+import type { CarouselPackDataItem } from '@/features/gacha/types'
 import type { Session } from '@/types/session'
+import GachaPackCarousel from './GachaPackCarousel'
 import GachaResult from './GachaResult'
-import ImageCarousel from './ImageCarousel'
 
 interface GachaMainPopupProps {
 	session: Session
@@ -14,6 +14,7 @@ interface GachaMainPopupProps {
 	onGachaPlayedSuccessfully: () => void
 	open: boolean
 	onClose: () => void
+	carouselPackData: CarouselPackDataItem[]
 }
 
 type GachaStep = 'select' | 'pending' | 'result'
@@ -24,8 +25,8 @@ const GachaMainPopup = ({
 	onGachaPlayedSuccessfully,
 	open,
 	onClose,
+	carouselPackData,
 }: GachaMainPopupProps) => {
-	const { gachaCarouselData } = useGachaData()
 	const [currentStep, setCurrentStep] = useState<GachaStep>('select')
 	const [selectedVersion, setSelectedVersion] = useState<string | null>(null)
 	const popupId = useId()
@@ -75,9 +76,9 @@ const GachaMainPopup = ({
 		>
 			<div className="flex flex-col gap-y-4 justify-center">
 				{currentStep === 'select' && (
-					<ImageCarousel
+					<GachaPackCarousel
 						onPackSelect={handlePackSelected}
-						carouselPackData={gachaCarouselData}
+						carouselPackData={carouselPackData}
 					/>
 				)}
 

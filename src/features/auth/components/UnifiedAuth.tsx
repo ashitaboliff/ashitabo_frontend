@@ -15,6 +15,11 @@ interface AuthPageProps {
 /**
  * 統一されたページレベル認証コンポーネント
  * セッション情報を子コンポーネントに渡すことで重複取得を避ける
+ * @param children 認証情報を受け取る子コンポーネント
+ * @param requireProfile プロフィール情報が必要かどうか（デフォルト: true）
+ * @param allowUnauthenticated 未認証ユーザーを許可するかどうか（デフォルト: false）
+ * @param redirectIfAuthenticated 認証済みユーザーをリダイレクトするかどうか（デフォルト: false）
+ * @param requireRole 必要なアカウントロール（デフォルト: 'USER'）
  */
 export async function AuthPage({
 	children,

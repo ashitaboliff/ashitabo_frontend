@@ -7,11 +7,11 @@ import type { GachaData, GachaSort, RarityType } from '@/features/gacha/types'
 import { apiGet, apiPost } from '@/lib/api/crud'
 import {
 	createdResponse,
+	failure,
 	mapSuccess,
 	okResponse,
 	withFallbackMessage,
 } from '@/lib/api/helper'
-import { getImageUrl } from '@/lib/r2'
 import type { ApiResponse } from '@/types/responseTypes'
 
 export const getGachaByUserIdAction = async ({
@@ -110,8 +110,48 @@ export const createUserGachaResultAction = async ({
 export const getSignedUrlForGachaImageAction = async ({
 	r2Key,
 }: {
-	userId: string
 	r2Key: string
 }): Promise<ApiResponse<string>> => {
-	return okResponse(getImageUrl(r2Key))
+	const res = await apiPost<{ urls: Record<string, string> }>(
+		'/gacha/images/proxy',
+		{
+			body: { keys: [r2Key] },
+		},
+	)
+	if (!res.ok) {
+		return withFallbackMessage(res, '画像URLの生成に失敗しました。')
+	}
+	const url = res.data.urls[r2Key]
+	if (!url) {
+		return failure(404, '画像URLの生成に失敗しました。')
+	}
+	return okResponse(url)
+}
+
+export const getSignedUrlsForGachaImagesAction = async ({
+	r2Keys,
+}: {
+	r2Keys: string[]
+}): Promise<ApiResponse<Record<string, string>>> => {
+	const uniqueKeys = Array.from(new Set(r2Keys.filter(Boolean)))
+	if (uniqueKeys.length === 0) {
+		return okResponse({})
+	}
+	const res = await apiPost<{ urls: Record<string, string> }>(
+		'/gacha/images/proxy',
+		{
+			body: { keys: uniqueKeys },
+		},
+	)
+	if (!res.ok) {
+		return withFallbackMessage(res, '画像URLの生成に失敗しました。')
+	}
+	const payload: Record<string, string> = {}
+	for (const key of uniqueKeys) {
+		const value = res.data.urls[key]
+		if (value) {
+			payload[key] = value
+		}
+	}
+	return okResponse(payload)
 }

@@ -1,9 +1,10 @@
 'use client'
 
 import Image from 'next/image'
-import { useEffect } from 'react'
+import { useMemo } from 'react'
 import useSWR from 'swr'
 import { getGachaByUserIdAction } from '@/features/gacha/actions'
+import { useSignedGachaImages } from '@/features/gacha/hooks/useSignedGachaImages'
 import type { GachaData, GachaSort } from '@/features/gacha/types'
 import GachaLogsSkeleton from './GachaLogsSkeleton'
 
@@ -58,13 +59,24 @@ const GachaLogList = ({
 		},
 	})
 
-	useEffect(() => {
-		if (initialData && currentPage === 1) {
-			onDataLoaded(initialData.totalCount)
-		}
-	}, [currentPage, initialData, onDataLoaded])
-
 	const displayGachaData = data?.gacha
+	const { getSignedSrc } = useSignedGachaImages(displayGachaData)
+
+	const gachaItems = useMemo(() => {
+		if (!displayGachaData) {
+			return []
+		}
+		return displayGachaData.map((item) => {
+			const signedGachaSrc = getSignedSrc(item.gachaSrc, item.signedGachaSrc)
+			if (signedGachaSrc === item.signedGachaSrc) {
+				return item
+			}
+			return {
+				...item,
+				signedGachaSrc,
+			}
+		})
+	}, [displayGachaData, getSignedSrc])
 
 	if (isLoading && !displayGachaData) {
 		return <GachaLogsSkeleton logsPerPage={logsPerPage} />
@@ -78,7 +90,7 @@ const GachaLogList = ({
 		)
 	}
 
-	if (!displayGachaData || displayGachaData.length === 0) {
+	if (!gachaItems.length) {
 		return <div className="text-center py-10">ガチャ履歴はありません。</div>
 	}
 
@@ -86,18 +98,32 @@ const GachaLogList = ({
 		<div
 			className={`grid ${logsPerPage % 3 === 0 ? 'grid-cols-3' : 'grid-cols-5'} gap-2`}
 		>
-			{displayGachaData.map((gachaItem) => (
-				<Image
-					key={gachaItem.id}
-					src={gachaItem.signedGachaSrc}
-					alt="Gacha Item"
-					className="w-full h-auto object-cover rounded cursor-pointer"
-					decoding="auto"
-					width={180}
-					height={240}
-					onClick={() => onGachaItemClick(gachaItem.gachaSrc)}
-				/>
-			))}
+			{gachaItems.map((gachaItem) => {
+				const signedSrc = gachaItem.signedGachaSrc
+				if (!signedSrc) {
+					return (
+						<button
+							type="button"
+							key={gachaItem.id}
+							className="w-full aspect-[3/4] rounded bg-base-200 animate-pulse"
+							onClick={() => onGachaItemClick(gachaItem.gachaSrc)}
+							aria-label={`ガチャ画像プレビュー-${gachaItem.gachaSrc}`}
+						/>
+					)
+				}
+				return (
+					<Image
+						key={gachaItem.id}
+						src={signedSrc}
+						alt={`ガチャ画像プレビュー-${gachaItem.gachaSrc}`}
+						className="w-full h-auto object-cover rounded cursor-pointer"
+						decoding="auto"
+						width={180}
+						height={240}
+						onClick={() => onGachaItemClick(gachaItem.gachaSrc)}
+					/>
+				)
+			})}
 		</div>
 	)
 }

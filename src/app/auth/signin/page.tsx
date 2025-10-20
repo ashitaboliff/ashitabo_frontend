@@ -16,7 +16,11 @@ export async function metadata() {
  */
 const Signin = async () => {
 	return (
-		<AuthPage allowUnauthenticated={true} redirectIfAuthenticated={true}>
+		<AuthPage
+			requireProfile={false}
+			allowUnauthenticated={true}
+			redirectIfAuthenticated={true}
+		>
 			{() => <SigninPage />}
 		</AuthPage>
 	)

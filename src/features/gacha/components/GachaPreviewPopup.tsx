@@ -5,11 +5,11 @@ import { ja } from 'date-fns/locale/ja'
 import { useId } from 'react'
 import Popup from '@/components/ui/molecules/Popup'
 import CardAnimation from '@/features/gacha/components/animations/CardAnimation'
-import { gachaConfigs } from '@/features/gacha/components/config/gachaConfig'
+import { gachaConfigs } from '@/features/gacha/config'
 import type { GachaData } from '@/features/gacha/types'
 
 interface GachaPreviewPopupProps {
-	gachaItem: GachaData & { signedGachaSrc?: string }
+	gachaItem: GachaData
 	count: number
 	open: boolean
 	onClose: () => void

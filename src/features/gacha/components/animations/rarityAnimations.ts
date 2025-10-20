@@ -10,6 +10,10 @@ export interface AnimationContext {
 
 type RarityAnimation = (context: AnimationContext) => void
 
+/**
+ * コモン用アニメーション
+ * カードに対して軽いズームイン・ズームアウトと光のエフェクトを適用する
+ */
 const animateCommon: RarityAnimation = ({ timeline, card }) => {
 	timeline.to(
 		card,

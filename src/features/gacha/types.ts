@@ -14,7 +14,7 @@ export type GachaData = {
 	gachaVersion: string
 	gachaRarity: RarityType
 	gachaSrc: string
-	signedGachaSrc: string
+	signedGachaSrc?: string | null
 	createdAt: Date
 	updatedAt: Date
 	isDeleted: boolean
@@ -22,6 +22,8 @@ export type GachaData = {
 
 export type GachaCreateType = 'booking' | 'user'
 
-export const GachaPackVersion: Record<string, string> = {
-	version1: 'OBのいる島',
+export interface CarouselPackDataItem {
+	version: string
+	r2Key: string
+	signedPackImageUrl: string
 }

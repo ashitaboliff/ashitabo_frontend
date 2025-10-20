@@ -2,6 +2,15 @@ import type { RarityType } from '@/features/gacha/types'
 
 export const MAX_GACHA_PLAYS_PER_DAY = 3
 
+export const GachaRarityMap: { [key in RarityType]: string } = {
+	COMMON: 'コモン',
+	RARE: 'レア',
+	SUPER_RARE: 'スーパーレア',
+	SS_RARE: 'ダブルスーパーレア',
+	ULTRA_RARE: 'ウルトラレア',
+	SECRET_RARE: 'シークレットレア',
+}
+
 export interface GachaCategoryConfig {
 	name: RarityType
 	probability: number
@@ -12,7 +21,7 @@ export interface GachaCategoryConfig {
 export interface GachaVersionConfig {
 	categories: GachaCategoryConfig[]
 	title: string
-	packKey?: string // Changed from packImage to store the R2 key directly
+	packKey: string
 }
 
 export const gachaConfigs: { [version: string]: GachaVersionConfig } = {
@@ -26,7 +35,7 @@ export const gachaConfigs: { [version: string]: GachaVersionConfig } = {
 			{ name: 'SECRET_RARE', probability: 1, count: 1, prefix: 'SECRET' },
 		],
 		title: 'OBのいる島',
-		packKey: 'gacha/version1/pack.png', // Store the R2 key directly
+		packKey: 'pack/version1.webp',
 	},
 	version2: {
 		categories: [
@@ -37,7 +46,7 @@ export const gachaConfigs: { [version: string]: GachaVersionConfig } = {
 			{ name: 'ULTRA_RARE', probability: 100, count: 1, prefix: 'UR' },
 		],
 		title: '卒業生の暴獣',
-		packKey: 'gacha/version2/pack.png', // Store the R2 key directly
+		packKey: 'pack/version2.webp',
 	},
 	version3: {
 		categories: [
@@ -48,6 +57,6 @@ export const gachaConfigs: { [version: string]: GachaVersionConfig } = {
 			{ name: 'ULTRA_RARE', probability: 8, count: 1, prefix: 'UR' },
 		],
 		title: 'コスプレガーデン',
-		packKey: 'gacha/version3/pack.png', // Store the R2 key directly
+		packKey: 'pack/version3.webp',
 	},
 }

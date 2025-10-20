@@ -85,11 +85,16 @@ src/features/booking/
    ```bash
    npm install
    ```
-3. 開発サーバー起動:
+3. 環境変数の設定:
+   ```
+   cp .env.example .env.local
+   ```
+   `.env.local` に API_URL や API_KEY などを設定。
+4. 開発サーバー起動:
    ```bash
    npm run dev
    ```
-4. 必要に応じて環境変数 `NEXT_PUBLIC_APP_URL` を設定（デフォルトは `http://localhost:3000`）。
+5. 必要に応じて環境変数 `NEXT_PUBLIC_APP_URL` を設定（デフォルトは `http://localhost:3000`）。
 
 ### よく使うスクリプト
 

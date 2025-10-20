@@ -46,20 +46,8 @@ const UserGachaLogs = ({ session, initialData }: UserGachaLogsProps) => {
 		}
 	}, [initialData, setTotalCount, totalCount])
 
-	const handlePageChange = (nextPage: number) => {
-		setPage(nextPage)
-	}
-
 	const handleLogsPerPageChange = (event: ChangeEvent<HTMLSelectElement>) => {
 		setPerPage(Number(event.target.value))
-	}
-
-	const handleSortChange = (newSort: GachaSort) => {
-		setSort(newSort)
-	}
-
-	const handleDataLoaded = (count: number) => {
-		setTotalCount(count)
 	}
 
 	return (
@@ -84,7 +72,7 @@ const UserGachaLogs = ({ session, initialData }: UserGachaLogsProps) => {
 							{ value: 'notrare', label: 'コモン順' },
 						]}
 						currentSort={sort}
-						onSortChange={handleSortChange}
+						onSortChange={setSort}
 						buttonClassName="btn-outline"
 					/>
 				</div>
@@ -94,7 +82,7 @@ const UserGachaLogs = ({ session, initialData }: UserGachaLogsProps) => {
 					logsPerPage={perPage}
 					sort={sort}
 					onGachaItemClick={openGachaPreview}
-					onDataLoaded={handleDataLoaded}
+					onDataLoaded={setTotalCount}
 					initialData={page === 1 ? initialData : undefined}
 				/>
 				{pageCount > 1 && totalCount > 0 && (
@@ -102,7 +90,7 @@ const UserGachaLogs = ({ session, initialData }: UserGachaLogsProps) => {
 						<Pagination
 							currentPage={page}
 							totalPages={pageCount}
-							onPageChange={handlePageChange}
+							onPageChange={setPage}
 						/>
 					</div>
 				)}
