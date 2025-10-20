@@ -21,3 +21,9 @@ export type GachaData = {
 }
 
 export type GachaCreateType = 'booking' | 'user'
+
+export interface CarouselPackDataItem {
+	version: string
+	r2Key: string
+	signedPackImageUrl: string
+}

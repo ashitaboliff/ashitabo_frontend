@@ -9,6 +9,10 @@ interface UseGachaPlayManagerOptions {
 	onGachaPlayed?: () => void
 }
 
+/**
+ * ユーザーのガチャ実行回数と制限を管理し、ローカルストレージとUI状態の同期を担うフック。
+ * 成功時に任意のコールバックやルーターの再検証も行う。
+ */
 export const useGachaPlayManager = (options?: UseGachaPlayManagerOptions) => {
 	const router = useRouter()
 	const [gachaPlayCountToday, setGachaPlayCountToday] = useState<number>(0)

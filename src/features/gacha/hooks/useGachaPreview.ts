@@ -1,14 +1,24 @@
 'use client'
 
-import { useState } from 'react'
-import useSWR from 'swr'
-import {
-	getGachaByGachaSrcAction,
-	getSignedUrlForGachaImageAction,
-} from '@/features/gacha/actions'
+import { useMemo, useState } from 'react'
+import useSWR, { mutate as mutateGlobal } from 'swr'
+import { getGachaByGachaSrcAction } from '@/features/gacha/actions'
 import { toSignedImageKey } from '@/features/gacha/services/gachaTransforms'
+import {
+	ensureSignedResourceUrls,
+	getSignedResourceEntry,
+	getSignedResourceUrl,
+	setSignedResourceEntry,
+	shouldRefreshSignedResource,
+} from '@/features/gacha/services/signedGachaResourceCache'
+import {
+	PREVIEW_CACHE_TTL_MS,
+	clearPreviewCacheEntry,
+	getPreviewCacheEntry,
+	isPreviewEntryValid,
+	setPreviewCacheEntry,
+} from '@/features/gacha/services/gachaPreviewCache'
 import type { GachaData } from '@/features/gacha/types'
-import type { ApiResponse } from '@/types/responseTypes'
 import type { Session } from '@/types/session'
 import { logError } from '@/utils/logger'
 
@@ -16,77 +26,139 @@ interface UseGachaPreviewProps {
 	session: Session
 }
 
+type PreviewPayload = { gacha: GachaData | null; totalCount: number } | null
+
+type PreviewKey = readonly ['gacha-preview', string, string]
+
+const createPreviewKey = (userId: string, gachaSrc: string): PreviewKey => [
+	'gacha-preview',
+	userId,
+	gachaSrc,
+]
+
 interface FetcherArgs {
 	userId: string
 	gachaSrc: string
 }
 
-const fetcher = async ({
+const loadGachaPreview = async ({
 	userId,
 	gachaSrc,
-}: FetcherArgs): Promise<{
-	gacha: GachaData | null
-	totalCount: number
-} | null> => {
-	const res: ApiResponse<{ gacha: GachaData | null; totalCount: number }> =
-		await getGachaByGachaSrcAction({ userId, gachaSrc })
-	if (res.ok) {
-		const baseData = res.data
-		if (!baseData.gacha || baseData.gacha.signedGachaSrc) {
-			return baseData
-		}
+}: FetcherArgs): Promise<PreviewPayload> => {
+	const cachedEntry = getPreviewCacheEntry(gachaSrc)
+	if (isPreviewEntryValid(cachedEntry)) {
+		return cachedEntry.data
+	}
+
+	const response = await getGachaByGachaSrcAction({ userId, gachaSrc })
+	if (!response.ok) {
+		logError('Failed to fetch gacha preview data', response)
+		throw new Error(response.message ?? 'Failed to fetch gacha preview data')
+	}
+
+	const baseData = response.data
+	if (baseData?.gacha) {
 		const r2Key = toSignedImageKey(baseData.gacha.gachaSrc)
 		if (!r2Key) {
 			logError('Failed to derive R2 key for gacha preview image', {
-				gachaSrc,
+				gachaSrc: baseData.gacha.gachaSrc,
 			})
-			return baseData
-		}
-		const signedUrlResponse = await getSignedUrlForGachaImageAction({ r2Key })
-		if (!signedUrlResponse.ok) {
-			logError('Failed to fetch signed URL for gacha preview', {
-				gachaSrc,
-				r2Key,
-				error: signedUrlResponse.message,
-			})
-			return baseData
-		}
-		return {
-			...baseData,
-			gacha: {
-				...baseData.gacha,
-				signedGachaSrc: signedUrlResponse.data,
-			},
+		} else {
+			let signedUrl = baseData.gacha.signedGachaSrc ?? null
+			if (signedUrl) {
+				setSignedResourceEntry(r2Key, signedUrl)
+			}
+			const existingEntry = getSignedResourceEntry(r2Key)
+			const shouldRefresh = shouldRefreshSignedResource(existingEntry)
+			if (!signedUrl) {
+				const cachedSignedUrl = getSignedResourceUrl(r2Key)
+				if (cachedSignedUrl) {
+					signedUrl = cachedSignedUrl
+				}
+			}
+			if (!signedUrl || shouldRefresh) {
+				const ensured = await ensureSignedResourceUrls([r2Key])
+				if (ensured[r2Key] !== undefined) {
+					signedUrl = ensured[r2Key]
+				}
+			}
+			if (signedUrl !== baseData.gacha.signedGachaSrc) {
+				baseData.gacha = {
+					...baseData.gacha,
+					signedGachaSrc: signedUrl ?? null,
+				}
+			}
 		}
 	}
-	logError('Failed to fetch gacha preview data', res)
-	return null
+
+	const entry = setPreviewCacheEntry(gachaSrc, baseData)
+	return entry.data
 }
 
+/**
+ * 指定したユーザーとガチャソースに紐づくプレビューキャッシュを破棄し、SWRの手動キャッシュも同期的に無効化する。
+ */
+export const invalidateGachaPreviewCache = (
+ userId: string,
+ gachaSrc: string,
+) => {
+ clearPreviewCacheEntry(gachaSrc)
+ const key = createPreviewKey(userId, gachaSrc)
+ void mutateGlobal(key, undefined, { revalidate: false })
+}
+
+/**
+ * ガチャプレビューポップアップの開閉状態とデータ取得を管理し、1時間キャッシュと署名URLキャッシュを連携させるフック。
+ */
 export const useGachaPreview = ({ session }: UseGachaPreviewProps) => {
 	const [selectedGachaSrc, setSelectedGachaSrc] = useState<string | null>(null)
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 
+	const swrKey = useMemo(() => {
+		if (!selectedGachaSrc) {
+			return null
+		}
+		return createPreviewKey(session.user.id, selectedGachaSrc)
+	}, [selectedGachaSrc, session.user.id])
+
+	const fallbackData = useMemo<PreviewPayload | undefined>(() => {
+		if (!selectedGachaSrc) {
+			return undefined
+		}
+		const entry = getPreviewCacheEntry(selectedGachaSrc)
+		if (isPreviewEntryValid(entry)) {
+			return entry?.data
+		}
+		return undefined
+	}, [selectedGachaSrc])
+
 	const {
 		data: popupData,
 		error,
-		isLoading: isPopupLoading,
-	} = useSWR<
-		{ gacha: GachaData | null; totalCount: number } | null,
-		Error,
-		FetcherArgs | null
-	>(
-		selectedGachaSrc
-			? { userId: session.user.id, gachaSrc: selectedGachaSrc }
-			: null,
-		fetcher,
+		isLoading,
+		mutate,
+	} = useSWR<PreviewPayload, Error, PreviewKey | null>(
+		swrKey,
+		(key) =>
+			loadGachaPreview({
+				userId: key[1],
+				gachaSrc: key[2],
+			}),
 		{
 			shouldRetryOnError: false,
 			revalidateOnFocus: false,
+			revalidateIfStale: false,
+			fallbackData,
+			dedupingInterval: PREVIEW_CACHE_TTL_MS,
+			revalidateOnMount: fallbackData === undefined,
 		},
 	)
 
 	const openGachaPreview = (gachaSrc: string) => {
+		if (gachaSrc === selectedGachaSrc) {
+			setIsPopupOpen(true)
+			return
+		}
 		setSelectedGachaSrc(gachaSrc)
 		setIsPopupOpen(true)
 	}
@@ -96,12 +168,20 @@ export const useGachaPreview = ({ session }: UseGachaPreviewProps) => {
 		setSelectedGachaSrc(null)
 	}
 
+	const invalidateSelectedPreview = (gachaSrc: string) => {
+		invalidateGachaPreviewCache(session.user.id, gachaSrc)
+		if (swrKey && swrKey[2] === gachaSrc) {
+			void mutate(undefined, { revalidate: false })
+		}
+	}
+
 	return {
 		isPopupOpen,
-		isPopupLoading,
+		isPopupLoading: isLoading,
 		popupData,
 		openGachaPreview,
 		closeGachaPreview,
 		error,
+		invalidatePreview: invalidateSelectedPreview,
 	}
 }

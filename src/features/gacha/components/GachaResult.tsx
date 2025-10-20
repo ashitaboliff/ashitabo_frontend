@@ -6,6 +6,7 @@ import {
 	createUserGachaResultAction,
 	getSignedUrlForGachaImageAction,
 } from '@/features/gacha/actions'
+import { invalidateGachaPreviewCache } from '@/features/gacha/hooks/useGachaPreview'
 import CardAnimation from '@/features/gacha/components/animations/CardAnimation'
 import Gacha, { type GachaItem } from '@/features/gacha/components/GachaList'
 import type { RarityType } from '@/features/gacha/types'
@@ -74,6 +75,7 @@ export const GachaResult = ({
 			})
 			setCreateUserRes(result)
 			if (result.ok && onGachaSuccess) {
+				invalidateGachaPreviewCache(userId, gachaData.data.src)
 				onGachaSuccess()
 			}
 		})()
