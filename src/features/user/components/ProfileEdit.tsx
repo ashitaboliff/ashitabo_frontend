@@ -1,9 +1,9 @@
 'use client'
 
 import Loading from '@/components/ui/atoms/Loading'
-import { FeedbackMessage as FeedbackMessageView } from '@/components/ui/atoms/Message'
 import SelectField from '@/components/ui/atoms/SelectField'
 import TextInputField from '@/components/ui/atoms/TextInputField'
+import FeedbackMessage from '@/components/ui/molecules/FeedbackMessage'
 import MultiSelectField from '@/components/ui/molecules/MultiSelectField'
 import { useProfileForm } from '@/features/user/hooks/useProfileForm'
 import { expectedYearMap } from '@/features/user/schemas/profileSchema'
@@ -29,7 +29,7 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 		<div className="flex flex-col items-center justify-center p-4 bg-white shadow-lg rounded-lg">
 			{isSubmitting && <Loading />}
 			<h1 className="text-2xl font-bold mb-4">プロフィール編集</h1>
-			<FeedbackMessageView
+			<FeedbackMessage
 				source={submitFeedback}
 				className="mb-4 w-full max-w-xs"
 			/>

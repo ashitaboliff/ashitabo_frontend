@@ -2,10 +2,10 @@
 
 import { useRouter } from 'next-nprogress-bar'
 import { useId, useState } from 'react'
-import { FeedbackMessage as FeedbackMessageView } from '@/components/ui/atoms/Message'
 import Pagination from '@/components/ui/atoms/Pagination'
 import RadioSortGroup from '@/components/ui/atoms/RadioSortGroup'
 import SelectField from '@/components/ui/atoms/SelectField'
+import FeedbackMessage from '@/components/ui/molecules/FeedbackMessage'
 import Popup from '@/components/ui/molecules/Popup'
 import { BOOKING_TIME_LIST } from '@/features/booking/constants'
 import type { BanBooking } from '@/features/booking/types'
@@ -224,7 +224,7 @@ const BanBookingPage = () => {
 							閉じる
 						</button>
 					</div>
-					<FeedbackMessageView source={error} defaultVariant="error" />
+					<FeedbackMessage source={error} defaultVariant="error" />
 				</div>
 			</Popup>
 			<Popup

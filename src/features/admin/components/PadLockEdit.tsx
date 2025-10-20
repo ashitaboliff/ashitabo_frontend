@@ -5,11 +5,11 @@ import { useRouter } from 'next-nprogress-bar'
 import { useCallback, useId, useState } from 'react'
 import { type SubmitHandler, useForm } from 'react-hook-form'
 import * as zod from 'zod'
-import { FeedbackMessage as FeedbackMessageView } from '@/components/ui/atoms/Message'
 import Pagination from '@/components/ui/atoms/Pagination'
 import SelectField from '@/components/ui/atoms/SelectField'
 import TextInputField from '@/components/ui/atoms/TextInputField'
 import { TiDeleteOutline } from '@/components/ui/icons'
+import FeedbackMessage from '@/components/ui/molecules/FeedbackMessage'
 import Popup from '@/components/ui/molecules/Popup'
 import type { PadLock } from '@/features/admin/types'
 import type { ApiError } from '@/types/responseTypes'
@@ -227,7 +227,7 @@ const PadLockEdit = ({ padLocks }: { padLocks: PadLock[] }) => {
 						削除
 					</button>
 				</div>
-				<FeedbackMessageView source={error} defaultVariant="error" />
+				<FeedbackMessage source={error} defaultVariant="error" />
 			</Popup>
 			<Popup
 				id={createPopupId}
@@ -263,7 +263,7 @@ const PadLockEdit = ({ padLocks }: { padLocks: PadLock[] }) => {
 							閉じる
 						</button>
 					</div>
-					<FeedbackMessageView source={error} defaultVariant="error" />
+					<FeedbackMessage source={error} defaultVariant="error" />
 				</form>
 			</Popup>
 			<Pagination

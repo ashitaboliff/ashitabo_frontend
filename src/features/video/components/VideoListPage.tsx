@@ -1,9 +1,9 @@
 'use client'
 
 import { useMemo } from 'react'
-import { FeedbackMessage as FeedbackMessageView } from '@/components/ui/atoms/Message'
 import Pagination from '@/components/ui/atoms/Pagination'
 import SelectField from '@/components/ui/atoms/SelectField'
+import FeedbackMessage from '@/components/ui/molecules/FeedbackMessage'
 import { useSession } from '@/features/auth/hooks/useSession'
 import VideoItem from '@/features/video/components/VideoItem'
 import VideoSearchForm from '@/features/video/components/VideoSearchForm'
@@ -118,7 +118,7 @@ const VideoListPage = ({
 					</div>
 				</div>
 
-				<FeedbackMessageView source={error} defaultVariant="error" />
+				<FeedbackMessage source={error} defaultVariant="error" />
 
 				{isLoading ? (
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">

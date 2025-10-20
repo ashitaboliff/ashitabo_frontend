@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next-nprogress-bar'
 import { type ReactNode, useCallback, useState } from 'react'
-import { FeedbackMessage as FeedbackMessageView } from '@/components/ui/atoms/Message'
+import FeedbackMessage from '@/components/ui/molecules/FeedbackMessage'
 import { signOutUser as signOutAction } from '@/features/user/hooks/signOut'
 import { useFeedback } from '@/hooks/useFeedback'
 import type { Session } from '@/types/session'
@@ -94,7 +94,7 @@ const UserPageControls = ({ session, children }: UserPageControlsProps) => {
 			<div className="w-full">{children}</div>
 
 			<div className="w-full md:w-1/2 lg:w-1/3 mt-4">
-				<FeedbackMessageView source={signOutMessage} />
+				<FeedbackMessage source={signOutMessage} />
 			</div>
 
 			<div className="flex flex-col sm:flex-row justify-center gap-4 mt-6 w-full md:w-1/2 lg:w-1/3">

@@ -6,7 +6,7 @@ import { MdOutlineEditCalendar } from '@/components/ui/icons'
 import { BookingErrorMessage } from '@/features/booking/components/BookingActionFeedback'
 import { BOOKING_TIME_LIST } from '@/features/booking/constants'
 import type { BookingEditFormValues } from '@/features/booking/schema'
-import type { FeedbackMessage } from '@/types/feedback'
+import type { FeedbackMessageType } from '@/types/feedback'
 
 type Props = {
 	register: UseFormRegister<BookingEditFormValues>
@@ -16,7 +16,7 @@ type Props = {
 	onCancel: () => void
 	onOpenCalendar: () => void
 	onSubmit: (event: React.FormEvent<HTMLFormElement>) => void
-	errorFeedback: FeedbackMessage | null
+	errorFeedback: FeedbackMessageType | null
 	bookingTimeIndex: number
 }
 

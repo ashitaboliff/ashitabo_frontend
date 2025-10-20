@@ -6,10 +6,10 @@ import { useRouter } from 'next-nprogress-bar'
 import { useEffect, useMemo, useState } from 'react'
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form'
 import CustomDatePicker from '@/components/ui/atoms/DatePicker'
-import { FeedbackMessage } from '@/components/ui/atoms/Message'
 import ShareButton from '@/components/ui/atoms/ShareButton'
 import TextareaInputField from '@/components/ui/atoms/TextareaInputField'
 import TextInputField from '@/components/ui/atoms/TextInputField'
+import FeedbackMessage from '@/components/ui/molecules/FeedbackMessage'
 import MultiSelectField from '@/components/ui/molecules/MultiSelectField'
 import {
 	type ScheduleCreateFormInput,

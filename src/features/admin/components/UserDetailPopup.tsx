@@ -1,6 +1,6 @@
 'use client'
 
-import { FeedbackMessage as FeedbackMessageView } from '@/components/ui/atoms/Message'
+import FeedbackMessage from '@/components/ui/molecules/FeedbackMessage'
 import Popup from '@/components/ui/molecules/Popup'
 import { useSession } from '@/features/auth/hooks/useSession'
 import {
@@ -116,7 +116,7 @@ const UserDetailPopup = ({
 							閉じる
 						</button>
 					</div>
-					<FeedbackMessageView source={actionError} defaultVariant="error" />
+					<FeedbackMessage source={actionError} defaultVariant="error" />
 				</div>
 			)}
 		</Popup>

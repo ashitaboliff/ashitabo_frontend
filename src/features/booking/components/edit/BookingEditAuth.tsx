@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next-nprogress-bar'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { FeedbackMessage as FeedbackMessageView } from '@/components/ui/atoms/Message'
+import FeedbackMessage from '@/components/ui/molecules/FeedbackMessage'
 import PasswordInputField from '@/components/ui/molecules/PasswordInputField'
 import BookingDetailBox from '@/features/booking/components/BookingDetailBox'
 import DetailNotFoundPage from '@/features/booking/components/DetailNotFound'
@@ -113,7 +113,7 @@ const BookingEditAuthForm = ({ session, bookingDetail, onSuccess }: Props) => {
 					</button>
 				</div>
 			</form>
-			<FeedbackMessageView source={feedback.feedback} className="mt-4" />
+			<FeedbackMessage source={feedback.feedback} className="mt-4" />
 		</div>
 	)
 }

@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import useSWR from 'swr'
-import { FeedbackMessage as FeedbackMessageView } from '@/components/ui/atoms/Message'
 import { FaPlusCircle } from '@/components/ui/icons'
+import FeedbackMessage from '@/components/ui/molecules/FeedbackMessage'
 import BandFormModal from '@/features/band/components/BandFormModal'
 import BandListItem from '@/features/band/components/BandListItem'
 import MemberManagementModal from '@/features/band/components/MemberManagementModal'
@@ -111,8 +111,8 @@ export default function BandList({ currentUserId }: BandListProps) {
 
 	return (
 		<div>
-			<FeedbackMessageView source={feedback.feedback} />
-			<FeedbackMessageView source={error} defaultVariant="error" />
+			<FeedbackMessage source={feedback.feedback} />
+			<FeedbackMessage source={error} defaultVariant="error" />
 			<div className="mb-6 text-right">
 				<button
 					onClick={handleOpenCreateBandModal}

@@ -2,7 +2,7 @@
 
 import { addDays } from 'date-fns'
 import { useEffect, useMemo } from 'react'
-import { FeedbackMessage as FeedbackMessageView } from '@/components/ui/atoms/Message'
+import FeedbackMessage from '@/components/ui/molecules/FeedbackMessage'
 import FlashMessage, {
 	type NoticeType,
 } from '@/components/ui/molecules/FlashMessage'
@@ -80,7 +80,7 @@ const MainPage = ({ initialViewDate, type, message }: MainPageProps) => {
 			{errorFeedback.feedback && (
 				<div className="my-4 flex flex-col items-center gap-3">
 					<div className="w-full max-w-lg">
-						<FeedbackMessageView source={errorFeedback.feedback} />
+						<FeedbackMessage source={errorFeedback.feedback} />
 					</div>
 					<button
 						type="button"

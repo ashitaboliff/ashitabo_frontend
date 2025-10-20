@@ -1,6 +1,6 @@
 'use client'
 
-import { FeedbackMessage as FeedbackMessageView } from '@/components/ui/atoms/Message'
+import FeedbackMessage from '@/components/ui/molecules/FeedbackMessage'
 import Popup from '@/components/ui/molecules/Popup'
 import type { UserDetail } from '@/features/user/types'
 import type { ApiError } from '@/types/responseTypes'
@@ -54,7 +54,7 @@ const UserDeleteConfirmPopup = ({
 						いいえ
 					</button>
 				</div>
-				<FeedbackMessageView source={actionError} defaultVariant="error" />
+				<FeedbackMessage source={actionError} defaultVariant="error" />
 			</div>
 		</Popup>
 	)

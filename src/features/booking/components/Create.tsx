@@ -5,10 +5,10 @@ import { useRouter } from 'next-nprogress-bar'
 import { useMemo, useState } from 'react'
 import { type SubmitHandler, useForm } from 'react-hook-form'
 import { useSWRConfig } from 'swr'
-import { FeedbackMessage as FeedbackMessageView } from '@/components/ui/atoms/Message'
 import ShareButton from '@/components/ui/atoms/ShareButton'
 import TextInputField from '@/components/ui/atoms/TextInputField'
 import AddCalendarPopup from '@/components/ui/molecules/AddCalendarPopup'
+import FeedbackMessage from '@/components/ui/molecules/FeedbackMessage'
 import PasswordInputField from '@/components/ui/molecules/PasswordInputField'
 import Popup from '@/components/ui/molecules/Popup'
 import { BOOKING_TIME_LIST } from '@/features/booking/constants'
@@ -229,7 +229,7 @@ const CreatePage = ({
 						</button>
 					</div>
 					{messageFeedback.feedback?.kind === 'error' && (
-						<FeedbackMessageView source={messageFeedback.feedback} />
+						<FeedbackMessage source={messageFeedback.feedback} />
 					)}
 				</form>
 

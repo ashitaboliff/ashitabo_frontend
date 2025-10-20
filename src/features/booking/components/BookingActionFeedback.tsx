@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react'
-import { FeedbackMessage as FeedbackMessageView } from '@/components/ui/atoms/Message'
-import type { FeedbackMessage } from '@/types/feedback'
+import FeedbackMessage from '@/components/ui/molecules/FeedbackMessage'
+import type { FeedbackMessageType } from '@/types/feedback'
 
 type BookingSuccessMessageProps = {
-	feedback?: FeedbackMessage | null
+	feedback?: FeedbackMessageType | null
 	children?: ReactNode
 	onBack?: () => void
 	backButtonLabel?: string
@@ -26,7 +26,7 @@ export const BookingSuccessMessage = ({
 	return (
 		<div className={className}>
 			{feedback ? (
-				<FeedbackMessageView
+				<FeedbackMessage
 					source={feedback}
 					defaultVariant={feedback.kind ?? 'success'}
 				/>
@@ -48,7 +48,7 @@ export const BookingSuccessMessage = ({
 }
 
 type BookingErrorMessageProps = {
-	feedback?: FeedbackMessage | null
+	feedback?: FeedbackMessageType | null
 	className?: string
 }
 
@@ -62,7 +62,7 @@ export const BookingErrorMessage = ({
 
 	return (
 		<div className={className}>
-			<FeedbackMessageView
+			<FeedbackMessage
 				source={feedback}
 				defaultVariant={feedback.kind ?? 'error'}
 			/>

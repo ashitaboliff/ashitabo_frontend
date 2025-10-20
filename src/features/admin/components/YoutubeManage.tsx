@@ -2,10 +2,10 @@
 
 import { useRouter } from 'next-nprogress-bar'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { FeedbackMessage as FeedbackMessageView } from '@/components/ui/atoms/Message'
 import Pagination from '@/components/ui/atoms/Pagination'
 import SelectField from '@/components/ui/atoms/SelectField'
 import Tags from '@/components/ui/atoms/Tags'
+import FeedbackMessage from '@/components/ui/molecules/FeedbackMessage'
 import {
 	createPlaylistAction,
 	getAuthUrl,
@@ -131,7 +131,7 @@ const YoutubeManagement = ({
 					更新
 				</button>
 			</div>
-			<FeedbackMessageView source={actionFeedback.feedback} />
+			<FeedbackMessage source={actionFeedback.feedback} />
 
 			<div className="overflow-x-auto w-full flex flex-col justify-center gap-y-2">
 				<div className="flex flex-row items-center justify-between">

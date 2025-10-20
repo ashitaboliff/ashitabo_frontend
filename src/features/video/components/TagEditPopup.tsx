@@ -3,8 +3,8 @@
 import { useRouter } from 'next-nprogress-bar'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { FeedbackMessage as FeedbackMessageView } from '@/components/ui/atoms/Message'
 import { TbEdit } from '@/components/ui/icons'
+import FeedbackMessage from '@/components/ui/molecules/FeedbackMessage'
 import Popup from '@/components/ui/molecules/Popup'
 import TagInputField from '@/components/ui/molecules/TagsInputField'
 import type { liveOrBand } from '@/features/video/types'
@@ -124,7 +124,7 @@ const TagEditPopup = ({
 							キャンセル
 						</button>
 					</div>
-					<FeedbackMessageView source={tagFeedback.feedback} />
+					<FeedbackMessage source={tagFeedback.feedback} />
 				</form>
 			</Popup>
 			<Popup
