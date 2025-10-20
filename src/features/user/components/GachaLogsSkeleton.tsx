@@ -2,11 +2,11 @@
 
 import { useMemo } from 'react'
 
-interface LogsSkeletonProps {
-	logsPerPage: number
+interface Props {
+	readonly logsPerPage: number
 }
 
-const LogsSkeleton = ({ logsPerPage }: LogsSkeletonProps) => {
+const LogsSkeleton = ({ logsPerPage }: Props) => {
 	const skeletonIds = useMemo(
 		() =>
 			Array.from(

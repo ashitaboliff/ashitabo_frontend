@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
-import { LuArrowRight } from 'react-icons/lu'
+import { LuArrowRight } from '@/components/ui/icons'
 
 const LinkWithArrow = ({
 	href,

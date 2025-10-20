@@ -1,16 +1,14 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
 import { useRouter } from 'next-nprogress-bar'
 import { useMemo, useState } from 'react'
 import { type SubmitHandler, useForm } from 'react-hook-form'
 import { useSWRConfig } from 'swr'
-import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import ShareButton from '@/components/ui/atoms/ShareButton'
 import TextInputField from '@/components/ui/atoms/TextInputField'
 import AddCalendarPopup from '@/components/ui/molecules/AddCalendarPopup'
+import FeedbackMessage from '@/components/ui/molecules/FeedbackMessage'
 import PasswordInputField from '@/components/ui/molecules/PasswordInputField'
 import Popup from '@/components/ui/molecules/Popup'
 import { BOOKING_TIME_LIST } from '@/features/booking/constants'
@@ -25,6 +23,7 @@ import { useFeedback } from '@/hooks/useFeedback'
 import type { Session } from '@/types/session'
 import { DateToDayISOstring, getCurrentJSTDateString, toDateKey } from '@/utils'
 import { mutateBookingCalendarsForDate } from '@/utils/calendarCache'
+import { formatDateSlashWithWeekday } from '@/utils/dateFormat'
 import { logError } from '@/utils/logger'
 import { createBookingAction } from '../actions'
 
@@ -99,7 +98,7 @@ const CreatePage = ({
 	})
 
 	const { onGachaPlayedSuccessfully, gachaPlayCountToday } =
-		useGachaPlayManager()
+		useGachaPlayManager({ userId: session.user.id })
 
 	const shareUrl = useMemo(() => {
 		if (typeof window === 'undefined' || !createdBooking) {
@@ -230,7 +229,7 @@ const CreatePage = ({
 						</button>
 					</div>
 					{messageFeedback.feedback?.kind === 'error' && (
-						<ErrorMessage message={messageFeedback.feedback} />
+						<FeedbackMessage source={messageFeedback.feedback} />
 					)}
 				</form>
 
@@ -246,8 +245,8 @@ const CreatePage = ({
 						</h3>
 						<p className="text-center">
 							日付:{' '}
-							{format(createdBooking.bookingDate, 'yyyy/MM/dd(E)', {
-								locale: ja,
+							{formatDateSlashWithWeekday(createdBooking.bookingDate, {
+								space: false,
 							})}
 						</p>
 						<p className="text-center">
@@ -273,12 +272,9 @@ const CreatePage = ({
 								<ShareButton
 									url={shareUrl}
 									title="LINEで共有"
-									text={`予約日時: ${format(
+									text={`予約日時: ${formatDateSlashWithWeekday(
 										createdBooking.bookingDate,
-										'yyyy/MM/dd(E)',
-										{
-											locale: ja,
-										},
+										{ space: false },
 									)} ${BOOKING_TIME_LIST[createdBooking.bookingTimeIndex]}`}
 									isFullButton
 									isOnlyLine

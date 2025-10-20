@@ -1,13 +1,12 @@
 'use client'
 
-import { format } from 'date-fns'
 import { useCallback, useId } from 'react'
-import { FaApple, FaYahoo } from 'react-icons/fa'
-import { SiGooglecalendar } from 'react-icons/si'
+import { FaApple, FaYahoo, SiGooglecalendar } from '@/components/ui/icons'
 import Popup from '@/components/ui/molecules/Popup'
 import { BOOKING_TIME_LIST } from '@/features/booking/constants'
 import type { Booking } from '@/features/booking/types'
 import { useLocationNavigate, useWindowOpen } from '@/hooks/useBrowserApis'
+import { formatDateTimeCompact } from '@/utils/dateFormat'
 
 const AddCalendarPopup = ({
 	bookingDetail,
@@ -36,9 +35,11 @@ const AddCalendarPopup = ({
 				),
 		)
 
-	const googleCalendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(bookingDetail.registName)}&dates=${encodeURIComponent(format(bookingDate[0], "yyyyMMdd'T'HHmmss"))}/${encodeURIComponent(format(bookingDate[1], "yyyyMMdd'T'HHmmss"))}&details=${encodeURIComponent(bookingDetail.name)}による音楽室でのコマ予約&location=あしたぼ`
-	const yahooCalendarUrl = `https://calendar.yahoo.co.jp/?v=60&title=${encodeURIComponent(bookingDetail.registName)}&st=${encodeURIComponent(format(bookingDate[0], "yyyyMMdd'T'HHmmss"))}&et=${encodeURIComponent(format(bookingDate[1], "yyyyMMdd'T'HHmmss"))}&desc=${encodeURIComponent(bookingDetail.name)}による音楽室でのコマ予約&in_loc=あしたぼ`
-	const appleCalendarUrl = `/api/generate-ics?start=${encodeURIComponent(format(bookingDate[0], "yyyyMMdd'T'HHmmss"))}&end=${encodeURIComponent(format(bookingDate[1], "yyyyMMdd'T'HHmmss"))}&summary=${encodeURIComponent(bookingDetail.registName)}&description=${encodeURIComponent(bookingDetail.name)}による音楽室でのコマ予約&openExternalBrowser=1`
+	const startCompact = formatDateTimeCompact(bookingDate[0])
+	const endCompact = formatDateTimeCompact(bookingDate[1])
+	const googleCalendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(bookingDetail.registName)}&dates=${encodeURIComponent(startCompact)}/${encodeURIComponent(endCompact)}&details=${encodeURIComponent(bookingDetail.name)}による音楽室でのコマ予約&location=あしたぼ`
+	const yahooCalendarUrl = `https://calendar.yahoo.co.jp/?v=60&title=${encodeURIComponent(bookingDetail.registName)}&st=${encodeURIComponent(startCompact)}&et=${encodeURIComponent(endCompact)}&desc=${encodeURIComponent(bookingDetail.name)}による音楽室でのコマ予約&in_loc=あしたぼ`
+	const appleCalendarUrl = `/api/generate-ics?start=${encodeURIComponent(startCompact)}&end=${encodeURIComponent(endCompact)}&summary=${encodeURIComponent(bookingDetail.registName)}&description=${encodeURIComponent(bookingDetail.name)}による音楽室でのコマ予約&openExternalBrowser=1`
 
 	const handleOpenGoogleCalendar = useCallback(() => {
 		openWindow(googleCalendarUrl, '_blank', 'noopener')

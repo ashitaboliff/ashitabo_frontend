@@ -1,7 +1,7 @@
 import { Inter } from 'next/font/google'
 import Image from 'next/image'
 import Link from 'next/link'
-import { FaInstagram, FaXTwitter, FaYoutube } from 'react-icons/fa6'
+import { FaInstagram, FaXTwitter, FaYoutube } from '@/components/ui/icons'
 import { createMetaData } from '@/hooks/useMetaData'
 import { getImageUrl } from '@/lib/r2'
 

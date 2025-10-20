@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { FaRegUserCircle } from 'react-icons/fa'
+import { FaRegUserCircle } from '@/components/ui/icons'
 import { useSession } from '@/features/auth/hooks/useSession'
 
 const HeaderIcon = () => {

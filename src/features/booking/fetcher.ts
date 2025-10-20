@@ -1,7 +1,8 @@
-import { addDays, format } from 'date-fns'
+import { addDays } from 'date-fns'
 import { getBookingByDateAction } from '@/features/booking/actions'
 import { BOOKING_CALENDAR_SWR_KEY } from '@/features/booking/constants'
 import type { BookingResponse } from '@/features/booking/types'
+import { toDateKey } from '@/utils'
 
 type BookingRangeKey = [typeof BOOKING_CALENDAR_SWR_KEY, string, string]
 
@@ -9,8 +10,8 @@ export const buildBookingRangeKey = (
 	viewDate: Date,
 	viewRangeDays: number,
 ): BookingRangeKey => {
-	const startDate = format(viewDate, 'yyyy-MM-dd')
-	const endDate = format(addDays(viewDate, viewRangeDays), 'yyyy-MM-dd')
+	const startDate = toDateKey(viewDate)
+	const endDate = toDateKey(addDays(viewDate, viewRangeDays))
 	return [BOOKING_CALENDAR_SWR_KEY, startDate, endDate]
 }
 

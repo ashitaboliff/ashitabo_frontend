@@ -1,13 +1,11 @@
 'use client'
 
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
 import { useRouter } from 'next-nprogress-bar'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import Pagination from '@/components/ui/atoms/Pagination'
 import SelectField from '@/components/ui/atoms/SelectField'
 import Tags from '@/components/ui/atoms/Tags'
+import FeedbackMessage from '@/components/ui/molecules/FeedbackMessage'
 import {
 	createPlaylistAction,
 	getAuthUrl,
@@ -17,6 +15,7 @@ import type { Playlist } from '@/features/video/types'
 import { useLocationNavigate } from '@/hooks/useBrowserApis'
 import { useFeedback } from '@/hooks/useFeedback'
 import { usePagedResource } from '@/hooks/usePagedResource'
+import { formatDateJa, formatDateSlash } from '@/utils/dateFormat'
 
 interface YoutubeManagementProps {
 	playlists: Playlist[] | undefined | null
@@ -96,7 +95,7 @@ const YoutubeManagement = ({
 	}, [])
 
 	const lastUpdatedText = playlists?.[0]?.updatedAt
-		? format(new Date(playlists[0].updatedAt), 'yyyy/MM/dd', { locale: ja })
+		? formatDateSlash(playlists[0].updatedAt)
 		: '不明'
 
 	return (
@@ -132,7 +131,7 @@ const YoutubeManagement = ({
 					更新
 				</button>
 			</div>
-			<ErrorMessage message={actionFeedback.feedback} />
+			<FeedbackMessage source={actionFeedback.feedback} />
 
 			<div className="overflow-x-auto w-full flex flex-col justify-center gap-y-2">
 				<div className="flex flex-row items-center justify-between">
@@ -237,13 +236,7 @@ const YoutubeManagement = ({
 							<div className="font-bold basis-1/4">作成日:</div>
 							<div className="basis-3/4">
 								{detailPlaylist?.createdAt
-									? format(
-											new Date(detailPlaylist.createdAt),
-											'yyyy年MM月dd日',
-											{
-												locale: ja,
-											},
-										)
+									? formatDateJa(detailPlaylist.createdAt)
 									: '不明'}
 							</div>
 						</div>
@@ -251,13 +244,7 @@ const YoutubeManagement = ({
 							<div className="font-bold basis-1/4">更新日:</div>
 							<div className="basis-3/4">
 								{detailPlaylist?.updatedAt
-									? format(
-											new Date(detailPlaylist.updatedAt),
-											'yyyy年MM月dd日',
-											{
-												locale: ja,
-											},
-										)
+									? formatDateJa(detailPlaylist.updatedAt)
 									: '不明'}
 							</div>
 						</div>

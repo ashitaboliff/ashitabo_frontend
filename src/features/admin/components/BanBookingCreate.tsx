@@ -7,9 +7,9 @@ import { useCallback, useId, useState } from 'react'
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form'
 import * as zod from 'zod'
 import CustomDatePicker from '@/components/ui/atoms/DatePicker'
-import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import SelectField from '@/components/ui/atoms/SelectField'
 import TextInputField from '@/components/ui/atoms/TextInputField'
+import FeedbackMessage from '@/components/ui/molecules/FeedbackMessage'
 import Popup from '@/components/ui/molecules/Popup'
 import { BOOKING_TIME_LIST } from '@/features/booking/constants'
 import type { ApiError } from '@/types/responseTypes'
@@ -316,7 +316,7 @@ const BanBookingCreate = () => {
 					</button>
 				</div>
 			</form>
-			<ErrorMessage error={error} />
+			<FeedbackMessage source={error} defaultVariant="error" />
 			<Popup
 				id={popupId}
 				title="予約禁止日追加"

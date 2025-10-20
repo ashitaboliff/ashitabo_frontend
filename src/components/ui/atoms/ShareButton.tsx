@@ -1,8 +1,7 @@
 'use client'
 
 import { useCallback, useMemo } from 'react'
-import { CiShare1 } from 'react-icons/ci'
-import { IoShareSocialSharp } from 'react-icons/io5'
+import { CiShare1, IoShareSocialSharp } from '@/components/ui/icons'
 import {
 	useNavigatorShare,
 	useWindowAlert,

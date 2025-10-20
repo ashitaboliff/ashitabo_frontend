@@ -1,13 +1,12 @@
 'use client'
 
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
-import { TiDeleteOutline } from 'react-icons/ti'
 import useSWR from 'swr'
+import { TiDeleteOutline } from '@/components/ui/icons'
 import GenericTableBody from '@/components/ui/molecules/GenericTableBody'
 import { BOOKING_TIME_LIST } from '@/features/booking/constants'
 import type { BanBooking } from '@/features/booking/types'
 import { getCurrentJSTDateString } from '@/utils'
+import { formatDateJa } from '@/utils/dateFormat'
 import { getBanBookingAction } from '../action'
 import type { BanBookingSort } from '../types'
 
@@ -64,11 +63,7 @@ const BanBookingList = ({
 					</div>
 				)}
 			</td>
-			<td>
-				{format(banBooking.startDate, 'yyyy年MM月dd日', {
-					locale: ja,
-				})}
-			</td>
+			<td>{formatDateJa(banBooking.startDate)}</td>
 			<td>
 				{banBooking.endTime
 					? BOOKING_TIME_LIST[banBooking.startTime].split('~')[0] +

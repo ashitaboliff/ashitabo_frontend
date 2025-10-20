@@ -1,10 +1,13 @@
 'use client'
 
 import Link from 'next/link'
-import { FaRegUserCircle, FaYoutube } from 'react-icons/fa'
-import { LuLockKeyhole } from 'react-icons/lu'
-import { RiQuestionLine } from 'react-icons/ri'
-import { RxCrossCircled } from 'react-icons/rx'
+import {
+	FaRegUserCircle,
+	FaYoutube,
+	LuLockKeyhole,
+	RiQuestionLine,
+	RxCrossCircled,
+} from '@/components/ui/icons'
 
 const AdminMain = () => {
 	return (

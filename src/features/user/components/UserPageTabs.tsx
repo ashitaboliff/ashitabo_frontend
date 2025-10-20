@@ -1,11 +1,13 @@
 'use client'
 
-import { type ReactNode, useState } from 'react'
-import { GiCardRandom, GiGuitarHead } from 'react-icons/gi'
-import { MdOutlineEditCalendar } from 'react-icons/md'
+import dynamic from 'next/dynamic'
+import { type ReactNode, useCallback, useState } from 'react'
 import { Tab, Tabs } from '@/components/ui/atoms/Tabs'
-import GachaMainPopup from '@/features/gacha/components/GachaMainPopup'
-import RatioPopup from '@/features/gacha/components/RatioPopup'
+import {
+	GiCardRandom,
+	GiGuitarHead,
+	MdOutlineEditCalendar,
+} from '@/components/ui/icons'
 import { useGachaPlayManager } from '@/features/gacha/hooks/useGachaPlayManager'
 import type { CarouselPackDataItem } from '@/features/gacha/types'
 import BookingLogs from '@/features/user/components/BookingLogs'
@@ -13,12 +15,32 @@ import GachaLogs from '@/features/user/components/GachaLogs'
 import { gkktt } from '@/lib/fonts'
 import type { Session } from '@/types/session'
 
-interface UserPageTabsProps {
-	session: Session
-	gachaCarouselData: CarouselPackDataItem[]
+const GachaMainPopup = dynamic(
+	() => import('@/features/gacha/components/GachaMainPopup'),
+	{
+		ssr: false,
+		loading: () => null,
+	},
+) as typeof import('@/features/gacha/components/GachaMainPopup')['default']
+
+const RatioPopup = dynamic(
+	() => import('@/features/gacha/components/RatioPopup'),
+	{
+		ssr: false,
+		loading: () => (
+			<button type="button" className="btn btn-outline w-full sm:w-auto">
+				提供割合
+			</button>
+		),
+	},
+) as typeof import('@/features/gacha/components/RatioPopup')['default']
+
+interface Props {
+	readonly session: Session
+	readonly gachaCarouselData: CarouselPackDataItem[]
 }
 
-const UserPageTabs = ({ session, gachaCarouselData }: UserPageTabsProps) => {
+const UserPageTabs = ({ session, gachaCarouselData }: Props) => {
 	const [isGachaPopupOpen, setIsGachaPopupOpen] = useState(false)
 
 	const {
@@ -27,13 +49,14 @@ const UserPageTabs = ({ session, gachaCarouselData }: UserPageTabsProps) => {
 		gachaMessage,
 		onGachaPlayedSuccessfully,
 		MAX_GACHA_PLAYS_PER_DAY,
-	} = useGachaPlayManager()
+	} = useGachaPlayManager({ userId: session.user.id })
 
-	const handleOpenGachaPopup = () => {
-		if (canPlayGacha) {
-			setIsGachaPopupOpen(true)
+	const handleOpenGachaPopup = useCallback(() => {
+		if (!canPlayGacha) {
+			return
 		}
-	}
+		setIsGachaPopupOpen(true)
+	}, [canPlayGacha])
 
 	const tabs: { id: string; label: ReactNode; content: ReactNode }[] = [
 		{
@@ -53,7 +76,7 @@ const UserPageTabs = ({ session, gachaCarouselData }: UserPageTabsProps) => {
 							onClick={handleOpenGachaPopup}
 							disabled={!canPlayGacha}
 						>
-							ガチャを引く ({MAX_GACHA_PLAYS_PER_DAY - gachaPlayCountToday}回残)
+							{`ガチャを引く (${MAX_GACHA_PLAYS_PER_DAY - gachaPlayCountToday}回残)`}
 						</button>
 						<RatioPopup gkktt={gkktt} />
 					</div>
@@ -91,7 +114,6 @@ const UserPageTabs = ({ session, gachaCarouselData }: UserPageTabsProps) => {
 				gachaPlayCountToday={gachaPlayCountToday}
 				onGachaPlayedSuccessfully={() => {
 					onGachaPlayedSuccessfully()
-					setIsGachaPopupOpen(false)
 				}}
 				open={isGachaPopupOpen}
 				onClose={() => setIsGachaPopupOpen(false)}

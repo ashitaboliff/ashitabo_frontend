@@ -1,5 +1,5 @@
-import { format, parseISO } from 'date-fns'
 import { type NextRequest, NextResponse } from 'next/server'
+import { formatIcsDateTime } from '@/utils/dateFormat'
 
 // iCalendarの特殊文字をエスケープする関数
 const escapeICSString = (str: string): string => {
@@ -13,8 +13,8 @@ const escapeICSString = (str: string): string => {
 // 日付をiCalendar形式 (YYYYMMDDTHHMMSSZ) にフォーマットする関数
 const formatDateToICS = (dateString: string): string => {
 	// ISO 8601形式の文字列をパースし、UTCとしてフォーマット
-	const date = parseISO(dateString)
-	return format(date, "yyyyMMdd'T'HHmmss'Z'")
+	const date = new Date(dateString)
+	return formatIcsDateTime(date)
 }
 
 // iCalendarファイルを生成する関数

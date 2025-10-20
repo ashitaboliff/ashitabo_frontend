@@ -1,12 +1,11 @@
 'use client'
 
-import { addDays, format } from 'date-fns'
-import { ja } from 'date-fns/locale'
+import { addDays } from 'date-fns'
 import { useEffect, useMemo } from 'react'
-import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
+import FeedbackMessage from '@/components/ui/molecules/FeedbackMessage'
 import FlashMessage, {
 	type NoticeType,
-} from '@/components/ui/atoms/FlashMessage'
+} from '@/components/ui/molecules/FlashMessage'
 import BookingCalendar from '@/features/booking/components/BookingCalendar'
 import {
 	BOOKING_MAIN_VIEW_MIN_OFFSET_DAYS,
@@ -19,6 +18,7 @@ import {
 } from '@/features/booking/hooks'
 import { useFeedback } from '@/hooks/useFeedback'
 import type { ApiError } from '@/types/responseTypes'
+import { formatMonthDay, formatWeekday } from '@/utils/dateFormat'
 
 type MainPageProps = {
 	initialViewDate: string
@@ -78,9 +78,9 @@ const MainPage = ({ initialViewDate, type, message }: MainPageProps) => {
 		<>
 			{type && message && <FlashMessage type={type}>{message}</FlashMessage>}
 			{errorFeedback.feedback && (
-				<div className="my-4 flex flex-col items-center gap-3 border border-error p-4 rounded bg-error/10">
+				<div className="my-4 flex flex-col items-center gap-3">
 					<div className="w-full max-w-lg">
-						<ErrorMessage message={errorFeedback.feedback} />
+						<FeedbackMessage source={errorFeedback.feedback} />
 					</div>
 					<button
 						type="button"
@@ -102,10 +102,17 @@ const MainPage = ({ initialViewDate, type, message }: MainPageProps) => {
 						{'<'}
 					</button>
 					<div className="text-md sm:text-lg font-bold w-64 sm:w-72 text-center">
-						{format(viewDate, 'M/d(E)', { locale: ja })}~
-						{format(addDays(viewDate, viewRangeDays - 1), 'M/d(E)', {
-							locale: ja,
-						})}
+						{`${formatMonthDay(viewDate, {
+							pad: false,
+							separator: '/',
+						})}${formatWeekday(viewDate, { enclosed: true })}`}
+						~
+						{`${formatMonthDay(addDays(viewDate, viewRangeDays - 1), {
+							pad: false,
+							separator: '/',
+						})}${formatWeekday(addDays(viewDate, viewRangeDays - 1), {
+							enclosed: true,
+						})}`}
 						までのコマ表
 					</div>
 					<button

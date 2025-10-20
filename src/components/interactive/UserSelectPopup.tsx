@@ -2,8 +2,8 @@
 
 import Image from 'next/image'
 import { memo, useCallback, useEffect, useId, useState } from 'react'
-import { LuCheck, LuUserRound } from 'react-icons/lu'
 import InstIcon from '@/components/ui/atoms/InstIcon'
+import { LuCheck, LuUserRound } from '@/components/ui/icons'
 import Popup from '@/components/ui/molecules/Popup'
 import TextSearchField from '@/components/ui/molecules/TextSearchField'
 import { getUsersForSelect } from '@/features/user/actions'

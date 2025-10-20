@@ -132,7 +132,7 @@ export const GachaResult = ({
 	}
 
 	return (
-		<div className="flex flex-col items-center h-[25rem]">
+		<div className="flex flex-col items-center h-[25rem] my-2">
 			<CardAnimation
 				frontImageSignedUrl={signedUrl}
 				rarity={gachaData.name}

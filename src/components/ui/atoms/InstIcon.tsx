@@ -1,13 +1,11 @@
-'use client'
-
-import { FaDrum as DrumIcon } from 'react-icons/fa'
 import {
 	GiGuitarBassHead as BassIcon,
+	FaDrum as DrumIcon,
 	GiGuitarHead as GuitarIcon,
-} from 'react-icons/gi'
-import { IoMdMicrophone as MicIcon } from 'react-icons/io'
-import { IoEllipsisHorizontalCircleSharp as OtherIcon } from 'react-icons/io5'
-import { MdPiano as PianoIcon } from 'react-icons/md'
+	IoMdMicrophone as MicIcon,
+	IoEllipsisHorizontalCircleSharp as OtherIcon,
+	MdPiano as PianoIcon,
+} from '@/components/ui/icons'
 import { type Part, PartMap } from '@/features/user/types'
 
 const InstIcon = ({ part, size }: { part: Part[]; size?: number }) => {

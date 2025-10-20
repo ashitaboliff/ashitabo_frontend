@@ -30,6 +30,10 @@ if (appUrl) {
 	})
 }
 
+const withBundleAnalyzer = (await import('@next/bundle-analyzer')).default({
+	enabled: process.env.ANALYZE === 'true',
+})
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	trailingSlash: false,
@@ -39,4 +43,4 @@ const nextConfig = {
 	},
 }
 
-export default nextConfig
+export default withBundleAnalyzer(nextConfig)

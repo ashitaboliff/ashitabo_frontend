@@ -8,14 +8,14 @@ import { useSignedGachaImages } from '@/features/gacha/hooks/useSignedGachaImage
 import type { GachaData, GachaSort } from '@/features/gacha/types'
 import GachaLogsSkeleton from './GachaLogsSkeleton'
 
-interface GachaLogListProps {
-	userId: string
-	currentPage: number
-	logsPerPage: number
-	sort: GachaSort
-	onGachaItemClick: (gachaSrc: string) => void
-	onDataLoaded: (totalCount: number) => void
-	initialData?: { gacha: GachaData[]; totalCount: number }
+interface Props {
+	readonly userId: string
+	readonly currentPage: number
+	readonly logsPerPage: number
+	readonly sort: GachaSort
+	readonly onGachaItemClick: (gachaSrc: string) => void
+	readonly onDataLoaded: (totalCount: number) => void
+	readonly initialData?: { gacha: GachaData[]; totalCount: number }
 }
 
 const fetchGachas = async ([userId, page, perPage, sort]: [
@@ -31,8 +31,7 @@ const fetchGachas = async ([userId, page, perPage, sort]: [
 	if (res.ok) {
 		return res.data
 	}
-	const errorMessage = res.message || 'Failed to fetch gacha logs'
-	throw new Error(errorMessage)
+	throw res
 }
 
 const GachaLogList = ({
@@ -43,8 +42,8 @@ const GachaLogList = ({
 	onGachaItemClick,
 	onDataLoaded,
 	initialData,
-}: GachaLogListProps) => {
-	const swrKey = userId ? [userId, currentPage, logsPerPage, sort] : null
+}: Props) => {
+	const swrKey = [userId, currentPage, logsPerPage, sort]
 	const { data, error, isLoading } = useSWR(swrKey, fetchGachas, {
 		fallbackData: currentPage === 1 ? initialData : undefined,
 		revalidateOnFocus: false,
@@ -121,6 +120,7 @@ const GachaLogList = ({
 						width={180}
 						height={240}
 						onClick={() => onGachaItemClick(gachaItem.gachaSrc)}
+						unoptimized
 					/>
 				)
 			})}

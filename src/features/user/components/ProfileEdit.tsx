@@ -1,15 +1,19 @@
 'use client'
 
-import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import Loading from '@/components/ui/atoms/Loading'
 import SelectField from '@/components/ui/atoms/SelectField'
 import TextInputField from '@/components/ui/atoms/TextInputField'
+import FeedbackMessage from '@/components/ui/molecules/FeedbackMessage'
 import MultiSelectField from '@/components/ui/molecules/MultiSelectField'
 import { useProfileForm } from '@/features/user/hooks/useProfileForm'
 import { expectedYearMap } from '@/features/user/schemas/profileSchema'
 import { PartOptions, type Profile } from '@/features/user/types'
 
-const ProfileEdit = ({ profile }: { profile: Profile }) => {
+interface Props {
+	readonly profile: Profile
+}
+
+const ProfileEdit = ({ profile }: Props) => {
 	const { form, onSubmit, feedback } = useProfileForm({ mode: 'edit', profile })
 	const submitFeedback = feedback.feedback
 
@@ -29,7 +33,10 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 		<div className="flex flex-col items-center justify-center p-4 bg-white shadow-lg rounded-lg">
 			{isSubmitting && <Loading />}
 			<h1 className="text-2xl font-bold mb-4">プロフィール編集</h1>
-			<ErrorMessage message={submitFeedback} className="mb-4 w-full max-w-xs" />
+			<FeedbackMessage
+				source={submitFeedback}
+				className="mb-4 w-full max-w-xs"
+			/>
 			<form
 				className="flex flex-col space-y-4 w-full max-w-xs"
 				onSubmit={handleSubmit(onSubmit)}

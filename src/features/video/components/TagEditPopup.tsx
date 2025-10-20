@@ -3,8 +3,8 @@
 import { useRouter } from 'next-nprogress-bar'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { TbEdit } from 'react-icons/tb'
-import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
+import { TbEdit } from '@/components/ui/icons'
+import FeedbackMessage from '@/components/ui/molecules/FeedbackMessage'
 import Popup from '@/components/ui/molecules/Popup'
 import TagInputField from '@/components/ui/molecules/TagsInputField'
 import type { liveOrBand } from '@/features/video/types'
@@ -12,12 +12,12 @@ import { useFeedback } from '@/hooks/useFeedback'
 import type { Session } from '@/types/session'
 import { updateTagsAction } from '../actions'
 
-type Props = {
-	session: Session | null
-	id: string
-	currentTags: string[] | undefined
-	liveOrBand: liveOrBand
-	isFullButton?: boolean
+interface Props {
+	readonly session: Session | null
+	readonly id: string
+	readonly currentTags: string[] | undefined
+	readonly liveOrBand: liveOrBand
+	readonly isFullButton?: boolean
 }
 
 const TagEditPopup = ({
@@ -124,7 +124,7 @@ const TagEditPopup = ({
 							キャンセル
 						</button>
 					</div>
-					<ErrorMessage message={tagFeedback.feedback} />
+					<FeedbackMessage source={tagFeedback.feedback} />
 				</form>
 			</Popup>
 			<Popup

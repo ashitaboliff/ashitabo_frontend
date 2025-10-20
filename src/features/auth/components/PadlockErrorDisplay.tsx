@@ -1,10 +1,10 @@
 'use client'
 
-import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
-import type { FeedbackMessage } from '@/types/feedback'
+import FeedbackMessage from '@/components/ui/molecules/FeedbackMessage'
+import type { FeedbackMessageType } from '@/types/feedback'
 
 type PadlockErrorDisplayProps = {
-	feedback?: FeedbackMessage | null
+	feedback?: FeedbackMessageType | null
 	fieldError?: string
 }
 
@@ -14,7 +14,7 @@ const PadlockErrorDisplay = ({
 }: PadlockErrorDisplayProps) => {
 	return (
 		<div className="space-y-2">
-			<ErrorMessage message={feedback} />
+			<FeedbackMessage source={feedback} />
 			{fieldError ? (
 				<p className="text-sm text-error text-center">{fieldError}</p>
 			) : null}

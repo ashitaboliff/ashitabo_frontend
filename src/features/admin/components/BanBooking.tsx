@@ -1,17 +1,16 @@
 'use client'
 
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
 import { useRouter } from 'next-nprogress-bar'
 import { useId, useState } from 'react'
-import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import Pagination from '@/components/ui/atoms/Pagination'
 import RadioSortGroup from '@/components/ui/atoms/RadioSortGroup'
 import SelectField from '@/components/ui/atoms/SelectField'
+import FeedbackMessage from '@/components/ui/molecules/FeedbackMessage'
 import Popup from '@/components/ui/molecules/Popup'
 import { BOOKING_TIME_LIST } from '@/features/booking/constants'
 import type { BanBooking } from '@/features/booking/types'
 import type { ApiError } from '@/types/responseTypes'
+import { formatDateJa, formatDateTimeJaWithUnits } from '@/utils/dateFormat'
 import { adminRevalidateTagAction, deleteBanBookingAction } from '../action'
 import type { BanBookingSort } from '../types'
 import BanBookingList from './BanBookingList'
@@ -149,11 +148,7 @@ const BanBookingPage = () => {
 						)}
 						<div className="grid grid-cols-2 gap-2">
 							<div className="font-bold">日付:</div>
-							<div>
-								{format(popupData.startDate, 'yyyy年MM月dd日', {
-									locale: ja,
-								})}
-							</div>
+							<div>{formatDateJa(popupData.startDate)}</div>
 							<div className="font-bold">時間:</div>
 							<div>
 								{popupData.endTime
@@ -167,15 +162,15 @@ const BanBookingPage = () => {
 							<div className="font-bold">作成日:</div>
 							<div>
 								{popupData.createdAt &&
-									format(popupData.createdAt, 'yyyy年MM月dd日hh時mm分ss秒', {
-										locale: ja,
+									formatDateTimeJaWithUnits(popupData.createdAt, {
+										hour12: true,
 									})}
 							</div>
 							<div className="font-bold">更新日:</div>
 							<div>
 								{popupData.updatedAt &&
-									format(popupData.updatedAt, 'yyyy年MM月dd日hh時mm分ss秒', {
-										locale: ja,
+									formatDateTimeJaWithUnits(popupData.updatedAt, {
+										hour12: true,
 									})}
 							</div>
 						</div>
@@ -229,7 +224,7 @@ const BanBookingPage = () => {
 							閉じる
 						</button>
 					</div>
-					<ErrorMessage error={error} />
+					<FeedbackMessage source={error} defaultVariant="error" />
 				</div>
 			</Popup>
 			<Popup

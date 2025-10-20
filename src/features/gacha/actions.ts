@@ -1,3 +1,6 @@
+'use server'
+
+import { revalidateTag } from 'next/cache'
 import {
 	mapRawGacha,
 	mapRawGachaList,
@@ -34,7 +37,7 @@ export const getGachaByUserIdAction = async ({
 			perPage,
 			sort,
 		},
-		next: { revalidate: 30, tags: ['gacha-user', userId] },
+		next: { revalidate: 60 * 60, tags: [`gacha-user-${userId}`] },
 	})
 
 	return mapSuccess(
@@ -61,7 +64,7 @@ export const getGachaByGachaSrcAction = async ({
 		searchParams: {
 			gachaSrc,
 		},
-		next: { revalidate: 60, tags: ['gacha-user', userId, gachaSrc] },
+		next: { revalidate: 60 * 60, tags: [`gacha-id-${userId}-${gachaSrc}`] },
 	})
 
 	return mapSuccess(
@@ -103,6 +106,9 @@ export const createUserGachaResultAction = async ({
 	if (!res.ok) {
 		return withFallbackMessage(res, 'ガチャ記録の保存に失敗しました。')
 	}
+
+	revalidateTag(`gacha-user-${userId}`)
+	revalidateTag(`gacha-id-${userId}-${gachaSrc}`)
 
 	return createdResponse('created')
 }

@@ -1,9 +1,11 @@
 import Link from 'next/link'
-import { FaRegUserCircle } from 'react-icons/fa'
-import { IoHomeOutline } from 'react-icons/io5'
-import { LuMenu } from 'react-icons/lu'
-import { MdOutlineEditCalendar } from 'react-icons/md'
-import { RxCountdownTimer } from 'react-icons/rx'
+import {
+	FaRegUserCircle,
+	IoHomeOutline,
+	LuMenu,
+	MdOutlineEditCalendar,
+	RxCountdownTimer,
+} from '@/components/ui/icons'
 import HeaderIcon from './HeaderIcon'
 
 const Layout = async ({ className }: { className?: string }) => {

@@ -8,7 +8,7 @@ import type { Session } from '@/types/session'
 import GachaPackCarousel from './GachaPackCarousel'
 import GachaResult from './GachaResult'
 
-interface GachaMainPopupProps {
+interface Props {
 	session: Session
 	gachaPlayCountToday: number
 	onGachaPlayedSuccessfully: () => void
@@ -26,14 +26,10 @@ const GachaMainPopup = ({
 	open,
 	onClose,
 	carouselPackData,
-}: GachaMainPopupProps) => {
+}: Props) => {
 	const [currentStep, setCurrentStep] = useState<GachaStep>('select')
 	const [selectedVersion, setSelectedVersion] = useState<string | null>(null)
 	const popupId = useId()
-
-	const handleGachaSuccessInternal = () => {
-		onGachaPlayedSuccessfully()
-	}
 
 	const handlePackSelected = (version: string) => {
 		setSelectedVersion(version)
@@ -94,7 +90,7 @@ const GachaMainPopup = ({
 							version={selectedVersion}
 							userId={session.user.id}
 							currentPlayCount={gachaPlayCountToday}
-							onGachaSuccess={handleGachaSuccessInternal}
+							onGachaSuccess={onGachaPlayedSuccessfully}
 						/>
 						<button
 							type="button"

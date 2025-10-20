@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { FaEdit, FaTrashAlt, FaUsers } from 'react-icons/fa'
+import { FaEdit, FaTrashAlt, FaUsers } from '@/components/ui/icons'
 import type { BandDetails, BandMemberDetails } from '@/features/band/types'
 
 interface BandListItemProps {

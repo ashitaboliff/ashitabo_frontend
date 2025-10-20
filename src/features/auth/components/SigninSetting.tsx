@@ -1,9 +1,9 @@
 'use client'
 
 import { useRouter } from 'next-nprogress-bar'
-import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
 import SelectField from '@/components/ui/atoms/SelectField'
 import TextInputField from '@/components/ui/atoms/TextInputField'
+import FeedbackMessage from '@/components/ui/molecules/FeedbackMessage'
 import MultiSelectField from '@/components/ui/molecules/MultiSelectField'
 import { signOutUser } from '@/features/user/hooks/signOut'
 import { useProfileForm } from '@/features/user/hooks/useProfileForm'
@@ -52,8 +52,8 @@ const SigninSetting = () => {
 			)}
 			<h1 className="text-2xl font-bold mb-4">ユーザ設定</h1>
 			<div className="w-full max-w-xs space-y-3">
-				<ErrorMessage message={submitFeedback} />
-				<ErrorMessage message={signOutMessage} />
+				<FeedbackMessage source={submitFeedback} />
+				<FeedbackMessage source={signOutMessage} />
 			</div>
 			<form
 				className="flex flex-col space-y-4 w-full max-w-xs"

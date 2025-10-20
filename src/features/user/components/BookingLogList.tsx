@@ -1,22 +1,21 @@
 'use client'
 
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
 import { useEffect } from 'react'
 import useSWR from 'swr'
 import GenericTableBody from '@/components/ui/molecules/GenericTableBody'
 import { getBookingByUserIdAction } from '@/features/booking/actions'
 import { BOOKING_TIME_LIST } from '@/features/booking/constants'
 import type { Booking } from '@/features/booking/types'
+import { formatDateSlashWithWeekday } from '@/utils/dateFormat'
 
-interface BookingLogListProps {
-	userId: string
-	currentPage: number
-	logsPerPage: number
-	sort: 'new' | 'old'
-	onBookingItemClick: (booking: Booking) => void
-	onDataLoaded: (totalCount: number) => void
-	initialData?: { bookings: Booking[]; totalCount: number }
+interface Props {
+	readonly userId: string
+	readonly currentPage: number
+	readonly logsPerPage: number
+	readonly sort: 'new' | 'old'
+	readonly onBookingItemClick: (booking: Booking) => void
+	readonly onDataLoaded: (totalCount: number) => void
+	readonly initialData?: { bookings: Booking[]; totalCount: number }
 }
 
 const fetchBookings = async ([userId, page, perPage, sort]: [
@@ -41,7 +40,7 @@ const BookingLogList = ({
 	onBookingItemClick,
 	onDataLoaded,
 	initialData,
-}: BookingLogListProps) => {
+}: Props) => {
 	const { data, error, isLoading } = useSWR(
 		userId ? [userId, currentPage, logsPerPage, sort] : null,
 		fetchBookings,
@@ -69,11 +68,7 @@ const BookingLogList = ({
 
 	const renderBookingCells = (booking: Booking) => (
 		<>
-			<td>
-				{format(new Date(booking.bookingDate), 'yyyy年MM月dd日', {
-					locale: ja,
-				})}
-			</td>
+			<td>{formatDateSlashWithWeekday(booking.bookingDate)}</td>
 			<td>{BOOKING_TIME_LIST[booking.bookingTime]}</td>
 			<td>{booking.name}</td>
 			<td>{booking.registName}</td>

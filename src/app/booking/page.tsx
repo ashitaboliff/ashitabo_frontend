@@ -1,7 +1,7 @@
 'use server'
 
 import { cookies } from 'next/headers'
-import type { NoticeType } from '@/components/ui/atoms/FlashMessage'
+import type { NoticeType } from '@/components/ui/molecules/FlashMessage'
 import MainPage from '@/features/booking/components/MainPage'
 import MainPageLayout from '@/features/booking/components/MainPageLayout'
 import { getCurrentJSTDateString } from '@/utils'

@@ -2,8 +2,8 @@
 
 import { type KeyboardEvent, type ReactNode, useEffect, useState } from 'react'
 import { type Control, Controller, type UseFormSetValue } from 'react-hook-form'
-import { HiMiniXMark } from 'react-icons/hi2'
 import LabelInputField from '@/components/ui/atoms/LabelInputField'
+import { HiMiniXMark } from '@/components/ui/icons'
 
 type TagInputFieldProps = {
 	name: string

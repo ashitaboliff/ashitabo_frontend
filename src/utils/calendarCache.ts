@@ -1,4 +1,4 @@
-import { addDays, format, isWithinInterval, parseISO } from 'date-fns'
+import { addDays, isWithinInterval, parseISO } from 'date-fns'
 import type { useSWRConfig } from 'swr'
 import {
 	BOOKING_CALENDAR_SWR_KEY,
@@ -26,8 +26,8 @@ export const getBookingCalendarRangesForDate = (
 	for (let offset = 0; offset < viewRangeDays; offset += 1) {
 		const start = addDays(target, -offset)
 		const end = addDays(start, viewRangeDays)
-		const startDate = format(start, 'yyyy-MM-dd')
-		const endDate = format(end, 'yyyy-MM-dd')
+		const startDate = toDateKey(start)
+		const endDate = toDateKey(end)
 		ranges.push({ startDate, endDate })
 	}
 

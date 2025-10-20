@@ -2,11 +2,11 @@
 
 import Image from 'next/image'
 import { type FormEvent, useCallback, useEffect, useRef, useState } from 'react' // useEffect will be modified
-import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa'
 import useSWR from 'swr'
-import InfoMessage from '@/components/ui/atoms/InfoMessage' // Import InfoMessage
+import Message from '@/components/ui/atoms/Message'
 import SelectField from '@/components/ui/atoms/SelectField' // Import SelectField
 import TextInputField from '@/components/ui/atoms/TextInputField' // Import TextInputField
+import { FaEdit, FaPlus, FaTrash } from '@/components/ui/icons'
 import type {
 	BandDetails,
 	BandMemberDetails,
@@ -282,27 +282,19 @@ export default function MemberManagementModal({
 					メンバー管理: {currentBandDetails?.name || initialBand?.name}
 				</h3>
 
-				{message && (
-					<InfoMessage
-						message={message.text}
-						messageType={message.type}
-						IconColor={message.type}
-					/>
-				)}
-				{partsError && (
-					<InfoMessage
-						message={`パート情報の取得エラー: ${partsError.message}`}
-						messageType="error"
-						IconColor="error"
-					/>
-				)}
-				{bandDetailsError && (
-					<InfoMessage
-						message={`バンド詳細の取得エラー: ${bandDetailsError.message}`}
-						messageType="error"
-						IconColor="error"
-					/>
-				)}
+				{message ? (
+					<Message variant={message.type}>{message.text}</Message>
+				) : null}
+				{partsError ? (
+					<Message variant="error">
+						{`パート情報の取得エラー: ${partsError.message}`}
+					</Message>
+				) : null}
+				{bandDetailsError ? (
+					<Message variant="error">
+						{`バンド詳細の取得エラー: ${bandDetailsError.message}`}
+					</Message>
+				) : null}
 
 				{/* Add Member Section */}
 				<div className="mb-6 p-4 border rounded-md">

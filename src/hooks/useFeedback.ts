@@ -1,10 +1,10 @@
 'use client'
 
 import { useCallback, useState } from 'react'
-import type { FeedbackMessage } from '@/types/feedback'
+import type { FeedbackMessageType } from '@/types/feedback'
 import type { ApiError } from '@/types/responseTypes'
 
-const normalizeApiError = (error: ApiError): FeedbackMessage => ({
+const normalizeApiError = (error: ApiError): FeedbackMessageType => ({
 	kind: 'error',
 	message: error.message,
 	title: 'エラーが発生しました',
@@ -17,19 +17,19 @@ const normalizeApiError = (error: ApiError): FeedbackMessage => ({
 				: undefined,
 })
 
-export const useFeedback = (initial?: FeedbackMessage | null) => {
-	const [feedback, setFeedback] = useState<FeedbackMessage | null>(
+export const useFeedback = (initial?: FeedbackMessageType | null) => {
+	const [feedback, setFeedback] = useState<FeedbackMessageType | null>(
 		initial ?? null,
 	)
 
-	const showMessage = useCallback((message: FeedbackMessage) => {
+	const showMessage = useCallback((message: FeedbackMessageType) => {
 		setFeedback(message)
 	}, [])
 
 	const showError = useCallback(
 		(
 			message: string,
-			options?: Partial<Omit<FeedbackMessage, 'kind' | 'message'>>,
+			options?: Partial<Omit<FeedbackMessageType, 'kind' | 'message'>>,
 		) => {
 			setFeedback({
 				kind: 'error',
@@ -49,7 +49,7 @@ export const useFeedback = (initial?: FeedbackMessage | null) => {
 	const showSuccess = useCallback(
 		(
 			message: string,
-			options?: Partial<Omit<FeedbackMessage, 'kind' | 'message'>>,
+			options?: Partial<Omit<FeedbackMessageType, 'kind' | 'message'>>,
 		) => {
 			setFeedback({
 				kind: 'success',
