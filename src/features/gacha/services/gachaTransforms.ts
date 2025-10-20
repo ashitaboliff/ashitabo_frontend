@@ -14,10 +14,7 @@ export interface RawGachaData {
 const toDate = (value: string | Date): Date =>
 	value instanceof Date ? value : new Date(value)
 
-export const toSignedImageKey = (gachaSrc: string): string | null => {
-	if (!gachaSrc) {
-		return null
-	}
+export const toSignedImageKey = (gachaSrc: string): string => {
 	const prefix = '/gacha/'
 	const withoutPrefix = gachaSrc.startsWith(prefix)
 		? gachaSrc.slice(prefix.length)

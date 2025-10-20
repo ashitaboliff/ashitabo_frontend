@@ -17,6 +17,8 @@ type SignedUrlEntry = {
 
 type SignedUrlMap = Record<string, SignedUrlEntry>
 
+const STALE_EXPIRY_OFFSET_MS = 1000
+
 /**
  * ガチャカードの署名付き画像URLをまとめて解決し、期限管理と再取得制御を自動化するフック。
  * 既存の署名済みURLをプリフェッチしつつ、失効前にバックグラウンド更新を行う。
@@ -171,7 +173,10 @@ export const useSignedGachaImages = (items: GachaData[] | undefined) => {
 			}
 			return {
 				...prev,
-				[gachaSrc]: { url: existing.url, expiresAt: Date.now() - 1000 },
+				[gachaSrc]: {
+					url: existing.url,
+					expiresAt: Date.now() - STALE_EXPIRY_OFFSET_MS,
+				},
 			}
 		})
 	}, [])

@@ -9,6 +9,7 @@ import {
 import CardAnimation from '@/features/gacha/components/animations/CardAnimation'
 import Gacha, { type GachaItem } from '@/features/gacha/components/GachaList'
 import { invalidateGachaPreviewCache } from '@/features/gacha/hooks/useGachaPreview'
+import { toSignedImageKey } from '@/features/gacha/services/gachaTransforms'
 import type { RarityType } from '@/features/gacha/types'
 import type { ApiResponse } from '@/types/responseTypes'
 
@@ -45,9 +46,7 @@ export const GachaResult = ({
 				throw new Error('Gacha image source is missing.')
 			}
 			const res = await getSignedUrlForGachaImageAction({
-				r2Key: gachaData.data.src
-					.replace('/gacha/', '')
-					.replace('.png', '.webp'),
+				r2Key: toSignedImageKey(gachaData.data.src),
 			})
 			if (res.ok) {
 				return res.data
