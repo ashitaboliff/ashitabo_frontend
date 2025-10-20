@@ -1,12 +1,11 @@
 'use client'
 
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale/ja'
 import { useId } from 'react'
 import Popup from '@/components/ui/molecules/Popup'
 import CardAnimation from '@/features/gacha/components/animations/CardAnimation'
 import { gachaConfigs } from '@/features/gacha/config'
 import type { GachaData } from '@/features/gacha/types'
+import { formatDateJa } from '@/utils/dateFormat'
 
 interface GachaPreviewPopupProps {
 	gachaItem: GachaData
@@ -68,10 +67,7 @@ const GachaPreviewPopup = ({
 						</div>
 						<div className="ml-auto">所持枚数: {count}枚</div>
 						<div className="ml-auto">
-							引いた日:{' '}
-							{format(new Date(gachaItem.createdAt), 'yyyy年MM月dd日', {
-								locale: ja,
-							})}
+							引いた日: {formatDateJa(gachaItem.createdAt)}
 						</div>
 					</>
 				)}

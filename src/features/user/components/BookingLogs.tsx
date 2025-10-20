@@ -1,7 +1,5 @@
 'use client'
 
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
 import { useEffect, useState } from 'react'
 import Pagination from '@/components/ui/atoms/Pagination'
 import RadioSortGroup from '@/components/ui/atoms/RadioSortGroup'
@@ -12,6 +10,7 @@ import { BOOKING_TIME_LIST } from '@/features/booking/constants'
 import type { Booking } from '@/features/booking/types'
 import { usePagedResource } from '@/hooks/usePagedResource'
 import type { Session } from '@/types/session'
+import { formatDateJa, formatDateTimeJa } from '@/utils/dateFormat'
 import BookingLogList from './BookingLogList'
 
 interface UserBookingLogsProps {
@@ -123,11 +122,7 @@ const UserBookingLogs = ({ session, initialData }: UserBookingLogsProps) => {
 								<div className="font-bold">予約ID:</div>
 								<div>{popupData.id}</div>
 								<div className="font-bold">予約日:</div>
-								<div>
-									{format(new Date(popupData.bookingDate), 'yyyy年MM月dd日', {
-										locale: ja,
-									})}
-								</div>
+								<div>{formatDateJa(popupData.bookingDate)}</div>
 								<div className="font-bold">予約時間:</div>
 								<div>{BOOKING_TIME_LIST[popupData.bookingTime]}</div>
 								<div className="font-bold">バンド名:</div>
@@ -135,25 +130,9 @@ const UserBookingLogs = ({ session, initialData }: UserBookingLogsProps) => {
 								<div className="font-bold">登録者名:</div>{' '}
 								<div>{popupData.registName}</div>
 								<div className="font-bold">作成日:</div>
-								<div>
-									{format(
-										new Date(popupData.createdAt),
-										'yyyy年MM月dd日 HH:mm:ss',
-										{
-											locale: ja,
-										},
-									)}
-								</div>
+								<div>{formatDateTimeJa(popupData.createdAt)}</div>
 								<div className="font-bold">更新日:</div>
-								<div>
-									{format(
-										new Date(popupData.updatedAt),
-										'yyyy年MM月dd日 HH:mm:ss',
-										{
-											locale: ja,
-										},
-									)}
-								</div>
+								<div>{formatDateTimeJa(popupData.updatedAt)}</div>
 							</div>
 							<div className="flex justify-center space-x-2 mt-4">
 								{' '}

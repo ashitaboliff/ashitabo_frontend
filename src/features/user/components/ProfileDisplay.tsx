@@ -1,5 +1,3 @@
-'use client'
-
 import Image from 'next/image'
 import InstIcon from '@/components/ui/atoms/InstIcon'
 import { type Profile, RoleMap } from '@/features/user/types'

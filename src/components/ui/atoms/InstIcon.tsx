@@ -1,5 +1,3 @@
-'use client'
-
 import { FaDrum as DrumIcon } from 'react-icons/fa'
 import {
 	GiGuitarBassHead as BassIcon,
