@@ -7,12 +7,12 @@ import { signOutUser as signOutAction } from '@/features/user/hooks/signOut'
 import { useFeedback } from '@/hooks/useFeedback'
 import type { Session } from '@/types/session'
 
-interface UserPageControlsProps {
-	session: Session
-	children: ReactNode
+interface Props {
+	readonly session: Session
+	readonly children: ReactNode
 }
 
-const UserPageControls = ({ session, children }: UserPageControlsProps) => {
+const UserPageControls = ({ session, children }: Props) => {
 	const router = useRouter()
 	const signOutFeedback = useFeedback()
 	const [isSigningOut, setIsSigningOut] = useState(false)

@@ -43,7 +43,7 @@ export const createIcon = (icon: IconTree) =>
 			typeof rawAttr.className === 'string'
 				? (rawAttr.className as string)
 				: undefined
-		const attrStyle = (rawAttr.style as CSSProperties | undefined) ?? undefined
+		const attrStyle = rawAttr.style as CSSProperties | undefined
 		delete rawAttr.className
 		delete rawAttr.style
 

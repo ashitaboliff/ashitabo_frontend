@@ -98,7 +98,7 @@ export const useGachaPlayManager = (options?: UseGachaPlayManagerOptions) => {
 		if (options?.userId) {
 			void mutate(
 				(key) =>
-					Array.isArray(key) && key.length === 4 && key[1] === options.userId,
+					Array.isArray(key) && key.length === 4 && key[0] === options.userId,
 				undefined,
 				{ revalidate: true },
 			)

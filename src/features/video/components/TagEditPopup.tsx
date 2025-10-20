@@ -12,12 +12,12 @@ import { useFeedback } from '@/hooks/useFeedback'
 import type { Session } from '@/types/session'
 import { updateTagsAction } from '../actions'
 
-type Props = {
-	session: Session | null
-	id: string
-	currentTags: string[] | undefined
-	liveOrBand: liveOrBand
-	isFullButton?: boolean
+interface Props {
+	readonly session: Session | null
+	readonly id: string
+	readonly currentTags: string[] | undefined
+	readonly liveOrBand: liveOrBand
+	readonly isFullButton?: boolean
 }
 
 const TagEditPopup = ({

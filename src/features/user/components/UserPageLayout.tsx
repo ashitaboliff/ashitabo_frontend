@@ -4,17 +4,13 @@ import type { Profile } from '@/features/user/types'
 import type { Session } from '@/types/session'
 import UserPageControls from './UserPageControls'
 
-interface UserPageLayoutProps {
-	session: Session
-	profile: Profile | null
-	children: ReactNode
+interface Props {
+	readonly session: Session
+	readonly profile: Profile | null
+	readonly children: ReactNode
 }
 
-const UserPageLayout = ({
-	session,
-	profile,
-	children,
-}: UserPageLayoutProps) => {
+const UserPageLayout = ({ session, profile, children }: Props) => {
 	return (
 		<div className="container mx-auto p-4 flex flex-col items-center">
 			<ProfileDisplay session={session} profile={profile} />

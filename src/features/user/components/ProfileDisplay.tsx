@@ -3,13 +3,12 @@ import InstIcon from '@/components/ui/atoms/InstIcon'
 import { type Profile, RoleMap } from '@/features/user/types'
 import type { Session } from '@/types/session'
 
-const ProfileDisplay = ({
-	session,
-	profile,
-}: {
-	session: Session
-	profile: Profile | null
-}) => {
+interface Props {
+	readonly session: Session
+	readonly profile: Profile | null
+}
+
+const ProfileDisplay = ({ session, profile }: Props) => {
 	const role = profile?.role ?? 'STUDENT'
 	const parts = profile?.part ?? []
 	const displayName = profile?.name ?? session.user.name

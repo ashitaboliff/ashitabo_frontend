@@ -11,12 +11,12 @@ import { usePagedResource } from '@/hooks/usePagedResource'
 import type { Session } from '@/types/session'
 import GachaLogList from './GachaLogList'
 
-interface UserGachaLogsProps {
-	session: Session
-	initialData?: { gacha: GachaData[]; totalCount: number }
+interface Props {
+	readonly session: Session
+	readonly initialData?: { gacha: GachaData[]; totalCount: number }
 }
 
-const UserGachaLogs = ({ session, initialData }: UserGachaLogsProps) => {
+const UserGachaLogs = ({ session, initialData }: Props) => {
 	const {
 		state: { page, perPage, sort, totalCount },
 		pageCount,

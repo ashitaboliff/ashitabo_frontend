@@ -35,12 +35,12 @@ const RatioPopup = dynamic(
 	},
 ) as typeof import('@/features/gacha/components/RatioPopup')['default']
 
-interface UserPageTabsProps {
-	session: Session
-	gachaCarouselData: CarouselPackDataItem[]
+interface Props {
+	readonly session: Session
+	readonly gachaCarouselData: CarouselPackDataItem[]
 }
 
-const UserPageTabs = ({ session, gachaCarouselData }: UserPageTabsProps) => {
+const UserPageTabs = ({ session, gachaCarouselData }: Props) => {
 	const [isGachaPopupOpen, setIsGachaPopupOpen] = useState(false)
 
 	const {
@@ -76,8 +76,7 @@ const UserPageTabs = ({ session, gachaCarouselData }: UserPageTabsProps) => {
 							onClick={handleOpenGachaPopup}
 							disabled={!canPlayGacha}
 						>
-							ガチャを引く ({MAX_GACHA_PLAYS_PER_DAY - gachaPlayCountToday}
-							回残)
+							{`ガチャを引く (${MAX_GACHA_PLAYS_PER_DAY - gachaPlayCountToday}回残)`}
 						</button>
 						<RatioPopup gkktt={gkktt} />
 					</div>

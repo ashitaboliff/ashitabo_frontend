@@ -13,12 +13,12 @@ import type { Session } from '@/types/session'
 import { formatDateJa, formatDateTimeJa } from '@/utils/dateFormat'
 import BookingLogList from './BookingLogList'
 
-interface UserBookingLogsProps {
-	session: Session
-	initialData?: { bookings: Booking[]; totalCount: number }
+interface Props {
+	readonly session: Session
+	readonly initialData?: { bookings: Booking[]; totalCount: number }
 }
 
-const UserBookingLogs = ({ session, initialData }: UserBookingLogsProps) => {
+const UserBookingLogs = ({ session, initialData }: Props) => {
 	const {
 		state: { page, perPage, sort, totalCount },
 		pageCount,

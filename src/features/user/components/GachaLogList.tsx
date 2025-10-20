@@ -8,14 +8,14 @@ import { useSignedGachaImages } from '@/features/gacha/hooks/useSignedGachaImage
 import type { GachaData, GachaSort } from '@/features/gacha/types'
 import GachaLogsSkeleton from './GachaLogsSkeleton'
 
-interface GachaLogListProps {
-	userId: string
-	currentPage: number
-	logsPerPage: number
-	sort: GachaSort
-	onGachaItemClick: (gachaSrc: string) => void
-	onDataLoaded: (totalCount: number) => void
-	initialData?: { gacha: GachaData[]; totalCount: number }
+interface Props {
+	readonly userId: string
+	readonly currentPage: number
+	readonly logsPerPage: number
+	readonly sort: GachaSort
+	readonly onGachaItemClick: (gachaSrc: string) => void
+	readonly onDataLoaded: (totalCount: number) => void
+	readonly initialData?: { gacha: GachaData[]; totalCount: number }
 }
 
 const fetchGachas = async ([userId, page, perPage, sort]: [
@@ -42,7 +42,7 @@ const GachaLogList = ({
 	onGachaItemClick,
 	onDataLoaded,
 	initialData,
-}: GachaLogListProps) => {
+}: Props) => {
 	const swrKey = [userId, currentPage, logsPerPage, sort]
 	const { data, error, isLoading } = useSWR(swrKey, fetchGachas, {
 		fallbackData: currentPage === 1 ? initialData : undefined,

@@ -4,7 +4,7 @@ import {
 } from '@/components/ui/icons'
 
 export const CALENDAR_CELL_CONTENT_CLASS =
-	'w-11 h-13 sm:w-full sm:h-16 flex flex-col justify-center items-center text-center break-words overflow-hidden py-1'
+	'w-11 h-12 sm:w-full sm:h-16 flex flex-col justify-center items-center text-center break-words overflow-hidden py-1'
 
 const truncateWithEllipsis = (value: string, maxLength: number): string => {
 	if (!value) return ''

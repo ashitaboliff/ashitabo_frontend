@@ -9,7 +9,11 @@ import { useProfileForm } from '@/features/user/hooks/useProfileForm'
 import { expectedYearMap } from '@/features/user/schemas/profileSchema'
 import { PartOptions, type Profile } from '@/features/user/types'
 
-const ProfileEdit = ({ profile }: { profile: Profile }) => {
+interface Props {
+	readonly profile: Profile
+}
+
+const ProfileEdit = ({ profile }: Props) => {
 	const { form, onSubmit, feedback } = useProfileForm({ mode: 'edit', profile })
 	const submitFeedback = feedback.feedback
 

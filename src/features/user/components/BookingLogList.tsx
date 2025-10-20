@@ -8,14 +8,14 @@ import { BOOKING_TIME_LIST } from '@/features/booking/constants'
 import type { Booking } from '@/features/booking/types'
 import { formatDateSlashWithWeekday } from '@/utils/dateFormat'
 
-interface BookingLogListProps {
-	userId: string
-	currentPage: number
-	logsPerPage: number
-	sort: 'new' | 'old'
-	onBookingItemClick: (booking: Booking) => void
-	onDataLoaded: (totalCount: number) => void
-	initialData?: { bookings: Booking[]; totalCount: number }
+interface Props {
+	readonly userId: string
+	readonly currentPage: number
+	readonly logsPerPage: number
+	readonly sort: 'new' | 'old'
+	readonly onBookingItemClick: (booking: Booking) => void
+	readonly onDataLoaded: (totalCount: number) => void
+	readonly initialData?: { bookings: Booking[]; totalCount: number }
 }
 
 const fetchBookings = async ([userId, page, perPage, sort]: [
@@ -40,7 +40,7 @@ const BookingLogList = ({
 	onBookingItemClick,
 	onDataLoaded,
 	initialData,
-}: BookingLogListProps) => {
+}: Props) => {
 	const { data, error, isLoading } = useSWR(
 		userId ? [userId, currentPage, logsPerPage, sort] : null,
 		fetchBookings,
