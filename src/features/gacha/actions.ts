@@ -108,9 +108,7 @@ export const createUserGachaResultAction = async ({
 	}
 
 	revalidateTag(`gacha-user-${userId}`)
-	console.log('Revalidating tag:', `gacha-user-${userId}`)
 	revalidateTag(`gacha-id-${userId}-${gachaSrc}`)
-	console.log('Revalidating tag:', `gacha-id-${userId}-${gachaSrc}`)
 
 	return createdResponse('created')
 }
