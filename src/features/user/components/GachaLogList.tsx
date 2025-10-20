@@ -121,6 +121,7 @@ const GachaLogList = ({
 						width={180}
 						height={240}
 						onClick={() => onGachaItemClick(gachaItem.gachaSrc)}
+						unoptimized
 					/>
 				)
 			})}

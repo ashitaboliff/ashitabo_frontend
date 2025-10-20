@@ -48,18 +48,24 @@ const Message = ({
 	}
 
 	return (
-		<div
-			className={`flex items-start gap-3 rounded-md border px-3 py-2 text-sm ${variantToClass[variant]} ${className ?? ''}`.trim()}
-			role={role ?? (variant === 'error' ? 'alert' : 'status')}
-		>
-			{showIcon ? (
-				<span className={`mt-0.5 ${iconClassName ?? ''}`.trim()}>
-					{icon ?? variantToIcon[variant]}
-				</span>
-			) : null}
-			<div className="flex-1 space-y-1">
-				{title ? <p className="font-semibold">{title}</p> : null}
-				{children}
+		<div className={`relative ${className ?? ''}`.trim()}>
+			<div
+				className="pointer-events-none absolute inset-0 rounded-md bg-white"
+				aria-hidden="true"
+			/>
+			<div
+				className={`relative z-10 flex items-start gap-3 rounded-md border px-3 py-2 text-sm ${variantToClass[variant]}`.trim()}
+				role={role ?? (variant === 'error' ? 'alert' : 'status')}
+			>
+				{showIcon ? (
+					<span className={`mt-0.5 ${iconClassName ?? ''}`.trim()}>
+						{icon ?? variantToIcon[variant]}
+					</span>
+				) : null}
+				<div className="flex-1 space-y-1">
+					{title ? <p className="font-semibold">{title}</p> : null}
+					{children}
+				</div>
 			</div>
 		</div>
 	)
