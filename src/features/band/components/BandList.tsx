@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { FaPlusCircle } from 'react-icons/fa'
 import useSWR from 'swr'
-import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
+import { FeedbackMessage as FeedbackMessageView } from '@/components/ui/atoms/Message'
+import { FaPlusCircle } from '@/components/ui/icons'
 import BandFormModal from '@/features/band/components/BandFormModal'
 import BandListItem from '@/features/band/components/BandListItem'
 import MemberManagementModal from '@/features/band/components/MemberManagementModal'
@@ -111,8 +111,8 @@ export default function BandList({ currentUserId }: BandListProps) {
 
 	return (
 		<div>
-			<ErrorMessage message={feedback.feedback} />
-			<ErrorMessage message={error} />
+			<FeedbackMessageView source={feedback.feedback} />
+			<FeedbackMessageView source={error} defaultVariant="error" />
 			<div className="mb-6 text-right">
 				<button
 					onClick={handleOpenCreateBandModal}

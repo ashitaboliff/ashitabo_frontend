@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { LuShieldAlert } from 'react-icons/lu'
+import { LuShieldAlert } from '@/components/ui/icons'
 import AuthIssueLayout from '@/features/auth/components/AuthIssueLayout'
 import { createMetaData } from '@/hooks/useMetaData'
 

@@ -1,8 +1,8 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { compileMDX } from 'next-mdx-remote/rsc'
-import { LuCalendar, LuCalendarSync } from 'react-icons/lu'
 import rehypeRaw from 'rehype-raw'
+import { LuCalendar, LuCalendarSync } from '@/components/ui/icons'
 import { AuthPage } from '@/features/auth/components/UnifiedAuth'
 
 const UsagePage = async () => {

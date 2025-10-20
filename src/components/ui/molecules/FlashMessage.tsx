@@ -1,6 +1,7 @@
 'use client'
 
 import { type ReactNode, useEffect, useState } from 'react'
+import Message from '@/components/ui/atoms/Message'
 
 export type NoticeType = 'info' | 'success' | 'warning' | 'error'
 
@@ -45,16 +46,16 @@ const FlashMessage = ({
 	if (!visible) return null
 
 	return (
-		<div
-			className={`fixed inset-x-0 top-0 z-50 flex justify-center pointer-events-none`}
-		>
+		<div className="fixed inset-x-0 top-0 z-50 flex justify-center pointer-events-none">
 			<div
-				role="alert"
-				className={`alert alert-soft alert-${type} transform will-change-transform mt-4 pointer-events-auto text-base
-					${inView ? 'translate-y-0 ease-out duration-[350ms]' : '-translate-y-full ease-in duration-[280ms]'} 
-					${className}`}
+				className={`transform will-change-transform mt-4 pointer-events-auto ${inView ? 'translate-y-0 ease-out duration-[350ms]' : '-translate-y-full ease-in duration-[280ms]'}`}
 			>
-				<span>{children}</span>
+				<Message
+					variant={type}
+					className={`shadow-lg ${className ?? ''}`.trim()}
+				>
+					{children}
+				</Message>
 			</div>
 		</div>
 	)

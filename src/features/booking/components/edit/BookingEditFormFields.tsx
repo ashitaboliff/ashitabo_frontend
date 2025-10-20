@@ -1,8 +1,8 @@
 'use client'
 
 import type { FieldErrors, UseFormRegister } from 'react-hook-form'
-import { MdOutlineEditCalendar } from 'react-icons/md'
 import TextInputField from '@/components/ui/atoms/TextInputField'
+import { MdOutlineEditCalendar } from '@/components/ui/icons'
 import { BookingErrorMessage } from '@/features/booking/components/BookingActionFeedback'
 import { BOOKING_TIME_LIST } from '@/features/booking/constants'
 import type { BookingEditFormValues } from '@/features/booking/schema'

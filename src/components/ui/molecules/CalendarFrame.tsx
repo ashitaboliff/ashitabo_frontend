@@ -1,6 +1,5 @@
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
 import { type Key, type KeyboardEvent, memo, type ReactNode } from 'react'
+import { formatMonthDay, formatWeekday } from '@/utils/dateFormat'
 
 export interface CalendarCellRenderProps {
 	date: string
@@ -42,9 +41,9 @@ const defaultTimeCellClass =
 
 const defaultHeader = (date: string) => (
 	<p className="text-xs-custom sm:text-sm text-base-content">
-		{format(new Date(date), 'MM/dd', { locale: ja })}
+		{formatMonthDay(date)}
 		<br />
-		{format(new Date(date), '(E)', { locale: ja })}
+		{formatWeekday(date, { enclosed: true })}
 	</p>
 )
 

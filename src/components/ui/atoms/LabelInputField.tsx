@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import IconFactory from '@/utils/IconFactory'
+import { InfoIcon } from '@/components/ui/icons'
 
 const LabelInputField = ({
 	label,
@@ -24,7 +24,7 @@ const LabelInputField = ({
 						className="btn btn-ghost btn-xs p-0"
 						aria-label="追加情報"
 					>
-						{IconFactory.getIcon({ color: 'info', type: 'info' })}
+						<InfoIcon className="w-4 h-4" aria-hidden="true" />
 					</button>
 					<div className="card dropdown-content card-sm w-48 bg-white shadow rounded-box p-2 z-10">
 						<p className="text-sm">{infoDropdown}</p>

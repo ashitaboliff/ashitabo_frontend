@@ -2,9 +2,8 @@
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useId, useState } from 'react'
-import { BiSearch } from 'react-icons/bi'
-import { RiQuestionLine } from 'react-icons/ri'
 import ShareButton from '@/components/ui/atoms/ShareButton'
+import { BiSearch, RiQuestionLine } from '@/components/ui/icons'
 import Popup from '@/components/ui/molecules/Popup'
 import TagInputField from '@/components/ui/molecules/TagsInputField'
 import TextSearchField from '@/components/ui/molecules/TextSearchField'

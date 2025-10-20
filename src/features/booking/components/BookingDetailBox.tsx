@@ -1,9 +1,8 @@
 'use client'
 
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
 import type { ReactNode } from 'react'
 import { BOOKING_TIME_LIST } from '@/features/booking/constants'
+import { formatDateJaWithWeekday } from '@/utils/dateFormat'
 
 interface BookingDetailItem {
 	label: string
@@ -26,9 +25,7 @@ const BookingDetailBox = ({
 	const data: BookingDetailItem[] = [
 		{
 			label: '日付',
-			value: format(new Date(bookingDate), 'yyyy年MM月dd日(E)', {
-				locale: ja,
-			}),
+			value: formatDateJaWithWeekday(bookingDate),
 		},
 		{
 			label: '時間',

@@ -1,7 +1,5 @@
 'use client'
 
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale/ja'
 import { usePathname } from 'next/navigation'
 import { useRouter } from 'next-nprogress-bar'
 import { useState } from 'react'
@@ -11,6 +9,7 @@ import BookingDetailBox from '@/features/booking/components/BookingDetailBox'
 import DetailNotFoundPage from '@/features/booking/components/DetailNotFound'
 import { BOOKING_TIME_LIST } from '@/features/booking/constants'
 import type { Booking } from '@/features/booking/types'
+import { formatDateSlashWithWeekday } from '@/utils/dateFormat'
 
 const DetailPage = ({ bookingDetail }: { bookingDetail: Booking }) => {
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
@@ -47,12 +46,9 @@ const DetailPage = ({ bookingDetail }: { bookingDetail: Booking }) => {
 				<ShareButton
 					url={pathname}
 					title="LINEで共有"
-					text={`予約日時: ${format(
-						new Date(bookingDetail.bookingDate),
-						'yyyy/MM/dd(E)',
-						{
-							locale: ja,
-						},
+					text={`予約日時: ${formatDateSlashWithWeekday(
+						bookingDetail.bookingDate,
+						{ space: false },
 					)} ${BOOKING_TIME_LIST[Number(bookingDetail.bookingTime)]}`}
 					isFullButton
 					isOnlyLine

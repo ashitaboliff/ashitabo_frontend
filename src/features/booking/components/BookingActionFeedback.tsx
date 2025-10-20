@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
+import { FeedbackMessage as FeedbackMessageView } from '@/components/ui/atoms/Message'
 import type { FeedbackMessage } from '@/types/feedback'
 
 type BookingSuccessMessageProps = {
@@ -26,7 +26,10 @@ export const BookingSuccessMessage = ({
 	return (
 		<div className={className}>
 			{feedback ? (
-				<ErrorMessage message={feedback} kind={feedback.kind ?? 'success'} />
+				<FeedbackMessageView
+					source={feedback}
+					defaultVariant={feedback.kind ?? 'success'}
+				/>
 			) : null}
 			{children}
 			{onBack ? (
@@ -59,7 +62,10 @@ export const BookingErrorMessage = ({
 
 	return (
 		<div className={className}>
-			<ErrorMessage message={feedback} kind={feedback.kind ?? 'error'} />
+			<FeedbackMessageView
+				source={feedback}
+				defaultVariant={feedback.kind ?? 'error'}
+			/>
 		</div>
 	)
 }

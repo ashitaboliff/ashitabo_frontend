@@ -1,13 +1,12 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { eachDayOfInterval, format } from 'date-fns'
-import { ja } from 'date-fns/locale'
+import { eachDayOfInterval } from 'date-fns'
 import { useRouter } from 'next-nprogress-bar'
 import { useEffect, useMemo, useState } from 'react'
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form'
 import CustomDatePicker from '@/components/ui/atoms/DatePicker'
-import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
+import { FeedbackMessage } from '@/components/ui/atoms/Message'
 import ShareButton from '@/components/ui/atoms/ShareButton'
 import TextareaInputField from '@/components/ui/atoms/TextareaInputField'
 import TextInputField from '@/components/ui/atoms/TextInputField'
@@ -20,6 +19,7 @@ import {
 import { useFeedback } from '@/hooks/useFeedback'
 import type { Session } from '@/types/session'
 import { DateToDayISOstring } from '@/utils'
+import { formatDateSlashWithWeekday } from '@/utils/dateFormat'
 import { logError } from '@/utils/logger'
 import { createScheduleAction } from '../actions'
 
@@ -164,7 +164,7 @@ const ScheduleCreatePage = ({
 		<div className="flex flex-col items-center justify-center py-6 bg-white rounded-lg shadow-md">
 			<h1 className="text-2xl font-bold mb-4">日程調整作成</h1>
 			<div className="w-full max-w-xl space-y-4">
-				<ErrorMessage message={messageFeedback.feedback} />
+				<FeedbackMessage source={messageFeedback.feedback} />
 				<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
 					<TextInputField
 						type="text"
@@ -273,17 +273,19 @@ const ScheduleCreatePage = ({
 						<p>タイトル: {createdSchedule.title}</p>
 						<p>
 							日程:
-							{format(createdSchedule.startDate, 'yyyy/MM/dd(E)', {
-								locale: ja,
+							{formatDateSlashWithWeekday(createdSchedule.startDate, {
+								space: false,
 							})}{' '}
 							-{' '}
-							{format(createdSchedule.endDate, 'yyyy/MM/dd(E)', { locale: ja })}
+							{formatDateSlashWithWeekday(createdSchedule.endDate, {
+								space: false,
+							})}
 						</p>
 						<p>説明: {createdSchedule.description || '未入力'}</p>
 						<p>
 							締め切り:{' '}
-							{format(createdSchedule.deadline, 'yyyy/MM/dd(E)', {
-								locale: ja,
+							{formatDateSlashWithWeekday(createdSchedule.deadline, {
+								space: false,
 							})}
 						</p>
 						{createdSchedule.mention.length > 0 && (
@@ -299,14 +301,11 @@ const ScheduleCreatePage = ({
 								<ShareButton
 									url={shareUrl}
 									title="日程調整を共有"
-									text={`日程: ${format(
+									text={`日程: ${formatDateSlashWithWeekday(
 										createdSchedule.startDate,
-										'yyyy/MM/dd(E)',
-										{
-											locale: ja,
-										},
-									)} - ${format(createdSchedule.endDate, 'yyyy/MM/dd(E)', {
-										locale: ja,
+										{ space: false },
+									)} - ${formatDateSlashWithWeekday(createdSchedule.endDate, {
+										space: false,
 									})}`}
 									isFullButton
 								/>

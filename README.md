@@ -14,7 +14,7 @@
 - **スタイリング**: Tailwind CSS 4, DaisyUI, カスタムコンポーネント
 - **フォーム / バリデーション**: React Hook Form, Zod
 - **データ取得**: SWR, Next.js Server Actions, fetch API ラッパー (`src/lib/api`)
-- **UI 補助**: GSAP（ガチャ演出アニメーション）, react-icons, MDX (ルール/告知表示)
+- **UI 補助**: GSAP（ガチャ演出アニメーション）, MDX (ルール/告知表示)
 - **ユーティリティ**: date-fns, React YouTube, SWR, 自前の `useFeedback` フラッシュ UI
 - **品質管理**: Biome (lint & format), Vitest
 

@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { LuTriangleAlert } from 'react-icons/lu'
+import { LuTriangleAlert } from '@/components/ui/icons'
 import AuthIssueLayout from '@/features/auth/components/AuthIssueLayout'
 import {
 	AUTH_ERROR_DEFAULT,

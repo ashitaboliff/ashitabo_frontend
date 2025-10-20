@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react'
 import type { UseFormRegisterReturn } from 'react-hook-form'
-import { HiOutlineSearch } from 'react-icons/hi'
 import LabelInputField from '@/components/ui/atoms/LabelInputField'
 import TextInputField from '@/components/ui/atoms/TextInputField'
+import { HiOutlineSearch } from '@/components/ui/icons'
 
 /**
  * テキスト検索フィールド

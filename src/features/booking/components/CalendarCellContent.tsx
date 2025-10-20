@@ -1,5 +1,7 @@
-import { HiMiniXMark as ForbiddenIcon } from 'react-icons/hi2'
-import { PiCircle as CircleIcon } from 'react-icons/pi'
+import {
+	PiCircle as CircleIcon,
+	HiMiniXMark as ForbiddenIcon,
+} from '@/components/ui/icons'
 
 export const CALENDAR_CELL_CONTENT_CLASS =
 	'w-11 h-13 sm:w-14 sm:h-14 md:w-16 md:h-16 flex flex-col justify-center items-center text-center break-words py-1'

@@ -6,7 +6,7 @@ import GenericTableBody from '@/components/ui/molecules/GenericTableBody'
 import { getBookingByUserIdAction } from '@/features/booking/actions'
 import { BOOKING_TIME_LIST } from '@/features/booking/constants'
 import type { Booking } from '@/features/booking/types'
-import { formatDateJa } from '@/utils/dateFormat'
+import { formatDateSlashWithWeekday } from '@/utils/dateFormat'
 
 interface BookingLogListProps {
 	userId: string
@@ -68,7 +68,7 @@ const BookingLogList = ({
 
 	const renderBookingCells = (booking: Booking) => (
 		<>
-			<td>{formatDateJa(booking.bookingDate)}</td>
+			<td>{formatDateSlashWithWeekday(booking.bookingDate)}</td>
 			<td>{BOOKING_TIME_LIST[booking.bookingTime]}</td>
 			<td>{booking.name}</td>
 			<td>{booking.registName}</td>

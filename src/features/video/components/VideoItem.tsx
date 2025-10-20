@@ -1,13 +1,12 @@
 'use client'
 
 import { YouTubeEmbed } from '@next/third-parties/google'
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
 import { useRouter } from 'next-nprogress-bar'
 import Tags from '@/components/ui/atoms/Tags'
 import TagEditPopup from '@/features/video/components/TagEditPopup'
 import type { liveOrBand, YoutubeDetail } from '@/features/video/types'
 import type { Session } from '@/types/session'
+import { formatDateJa } from '@/utils/dateFormat'
 
 const VideoItem = ({
 	session,
@@ -52,9 +51,7 @@ const VideoItem = ({
 				{playlistTitle && (
 					<div className="text-sm">ライブ名: {playlistTitle}</div>
 				)}
-				<div className="text-sm">
-					{format(youtubeDetail.liveDate, 'yyyy年MM月dd日', { locale: ja })}
-				</div>
+				<div className="text-sm">{formatDateJa(youtubeDetail.liveDate)}</div>
 				{youtubeDetail.tags && youtubeDetail.tags.length > 0 && (
 					<div className="mt-1 flex flex-wrap gap-1">
 						<Tags tags={youtubeDetail.tags} size="text-xs-custom" />

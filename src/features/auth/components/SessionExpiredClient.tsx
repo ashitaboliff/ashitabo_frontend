@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next-nprogress-bar'
 import { useState } from 'react'
-import { LuClockAlert } from 'react-icons/lu'
+import { LuClockAlert } from '@/components/ui/icons'
 import AuthIssueLayout from '@/features/auth/components/AuthIssueLayout'
 import { useSession } from '@/features/auth/hooks/useSession'
 import { signOutUser } from '@/features/user/hooks/signOut'

@@ -1,15 +1,14 @@
 'use client'
 
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
 import { useRouter } from 'next-nprogress-bar'
-import { HiOutlineExternalLink } from 'react-icons/hi'
 import YouTube from 'react-youtube'
 import Tags from '@/components/ui/atoms/Tags'
+import { HiOutlineExternalLink } from '@/components/ui/icons'
 import type { liveOrBand, Playlist, Video } from '@/features/video/types'
 import { useWindowOpen } from '@/hooks/useBrowserApis'
 import { gkktt } from '@/lib/fonts'
 import type { Session } from '@/types/session'
+import { formatDateJa } from '@/utils/dateFormat'
 import TagEditPopup from './TagEditPopup'
 
 type Props = {
@@ -60,9 +59,7 @@ const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 						</div>
 						<div className="flex flex-col sm:flex-row sm:items-center justify-start gap-x-2 text-xs-custom sm:text-sm text-gray-600 mt-1">
 							<div>ライブ: {currentPlaylist.title.split('(')[0]}</div>
-							<div>
-								{format(detail.liveDate, 'yyyy年MM月dd日', { locale: ja })}
-							</div>
+							<div>{formatDateJa(detail.liveDate)}</div>
 						</div>
 						<div className="flex flex-row justify-between w-full mt-3 items-center">
 							<div className="flex flex-row flex-wrap gap-1">
@@ -132,9 +129,7 @@ const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 									{currentPlaylist.title.split('(')[0]}
 								</div>
 								<div className="text-xs-custom sm:text-sm text-gray-600">
-									{format(currentPlaylist.liveDate, 'yyyy年MM月dd日', {
-										locale: ja,
-									})}
+									{formatDateJa(currentPlaylist.liveDate)}
 								</div>
 							</div>
 						</div>
@@ -177,7 +172,7 @@ const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 							{detail.title.split('(')[0]}
 						</div>
 						<div className="text-xs-custom sm:text-sm text-gray-600 mt-1">
-							{format(detail.liveDate, 'yyyy年MM月dd日', { locale: ja })}
+							{formatDateJa(detail.liveDate)}
 						</div>
 						<div className="flex flex-row justify-between w-full mt-3 items-center">
 							<div className="flex flex-row flex-wrap gap-1">

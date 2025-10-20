@@ -1,14 +1,17 @@
 'use client'
 
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
 import { useState } from 'react'
-import { TiDeleteOutline } from 'react-icons/ti'
 import Pagination from '@/components/ui/atoms/Pagination'
 import SelectField from '@/components/ui/atoms/SelectField'
+import { TiDeleteOutline } from '@/components/ui/icons'
 import Popup from '@/components/ui/molecules/Popup'
 import { BOOKING_TIME_LIST } from '@/features/booking/constants'
 import type { BookingLog } from '@/features/booking/types'
+import {
+	formatDateJaWithWeekday,
+	formatDateSlashWithWeekday,
+	formatDateTimeSlash,
+} from '@/utils/dateFormat'
 
 const LogsPage = ({
 	bookingLog,
@@ -88,7 +91,7 @@ const LogsPage = ({
 										)}
 									</td>
 									<td className="p-3 whitespace-nowrap text-xs-custom sm:text-sm">
-										{format(log.bookingDate, 'yyyy/MM/dd (E)', { locale: ja })}
+										{formatDateSlashWithWeekday(log.bookingDate)}
 									</td>
 									<td className="p-3 whitespace-nowrap text-xs-custom sm:text-sm hidden sm:table-cell">
 										{BOOKING_TIME_LIST[log.bookingTime]}
@@ -137,13 +140,11 @@ const LogsPage = ({
 							{ label: '予約ID', value: popupData?.id, break: true },
 							{
 								label: '予約日',
-								value:
-									popupData &&
-									format(
-										new Date(popupData.bookingDate),
-										'yyyy年MM月dd日 (E)',
-										{ locale: ja },
-									),
+								value: popupData
+									? formatDateJaWithWeekday(popupData.bookingDate, {
+											space: true,
+										})
+									: '',
 							},
 							{
 								label: '予約時間',
@@ -153,19 +154,15 @@ const LogsPage = ({
 							{ label: '責任者', value: popupData?.name, break: true },
 							{
 								label: '作成日時',
-								value:
-									popupData &&
-									format(new Date(popupData.createdAt), 'yyyy/MM/dd HH:mm:ss', {
-										locale: ja,
-									}),
+								value: popupData
+									? formatDateTimeSlash(popupData.createdAt)
+									: '',
 							},
 							{
 								label: '更新日時',
-								value:
-									popupData &&
-									format(new Date(popupData.updatedAt), 'yyyy/MM/dd HH:mm:ss', {
-										locale: ja,
-									}),
+								value: popupData
+									? formatDateTimeSlash(popupData.updatedAt)
+									: '',
 							},
 						].map((item) =>
 							item.value ? (

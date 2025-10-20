@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useMemo, useRef } from 'react'
 import { useForm } from 'react-hook-form'
-import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
+import { FeedbackMessage as FeedbackMessageView } from '@/components/ui/atoms/Message'
 import TextInputField from '@/components/ui/atoms/TextInputField'
 import {
 	type BandFormValues,
@@ -108,7 +108,7 @@ const BandFormModal = ({
 					{isEditing ? 'バンド名を編集' : '新しいバンドを作成'}
 				</h3>
 				<form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
-					<ErrorMessage message={feedback.feedback} />
+					<FeedbackMessageView source={feedback.feedback} />
 					<TextInputField
 						label="バンド名"
 						type="text"

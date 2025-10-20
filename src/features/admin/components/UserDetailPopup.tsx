@@ -1,8 +1,6 @@
 'use client'
 
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
-import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
+import { FeedbackMessage as FeedbackMessageView } from '@/components/ui/atoms/Message'
 import Popup from '@/components/ui/molecules/Popup'
 import { useSession } from '@/features/auth/hooks/useSession'
 import {
@@ -13,6 +11,7 @@ import {
 	type UserDetail,
 } from '@/features/user/types'
 import type { ApiError } from '@/types/responseTypes'
+import { formatDateTimeJaWithUnits } from '@/utils/dateFormat'
 
 interface UserDetailPopupProps {
 	open: boolean
@@ -79,17 +78,13 @@ const UserDetailPopup = ({
 						<div className="font-bold">作成日:</div>
 						<div>
 							{selectedUser.createAt
-								? format(selectedUser.createAt, 'yyyy年MM月dd日HH時mm分ss秒', {
-										locale: ja,
-									})
+								? formatDateTimeJaWithUnits(selectedUser.createAt)
 								: ''}
 						</div>
 						<div className="font-bold">更新日:</div>
 						<div>
 							{selectedUser.updateAt
-								? format(selectedUser.updateAt, 'yyyy年MM月dd日HH時mm分ss秒', {
-										locale: ja,
-									})
+								? formatDateTimeJaWithUnits(selectedUser.updateAt)
 								: ''}
 						</div>
 					</div>
@@ -121,7 +116,7 @@ const UserDetailPopup = ({
 							閉じる
 						</button>
 					</div>
-					<ErrorMessage error={actionError} />
+					<FeedbackMessageView source={actionError} defaultVariant="error" />
 				</div>
 			)}
 		</Popup>

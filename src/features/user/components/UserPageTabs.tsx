@@ -2,9 +2,12 @@
 
 import dynamic from 'next/dynamic'
 import { type ReactNode, useCallback, useState } from 'react'
-import { GiCardRandom, GiGuitarHead } from 'react-icons/gi'
-import { MdOutlineEditCalendar } from 'react-icons/md'
 import { Tab, Tabs } from '@/components/ui/atoms/Tabs'
+import {
+	GiCardRandom,
+	GiGuitarHead,
+	MdOutlineEditCalendar,
+} from '@/components/ui/icons'
 import { useGachaPlayManager } from '@/features/gacha/hooks/useGachaPlayManager'
 import type { CarouselPackDataItem } from '@/features/gacha/types'
 import BookingLogs from '@/features/user/components/BookingLogs'

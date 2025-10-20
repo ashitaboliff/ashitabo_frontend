@@ -1,6 +1,6 @@
-export type FeedbackKind = 'error' | 'success' | 'info'
+export type FeedbackKind = 'error' | 'success' | 'info' | 'warning'
 
-export type FeedbackMessage = {
+export type FeedbackMessageType = {
 	kind: FeedbackKind
 	message: string
 	title?: string

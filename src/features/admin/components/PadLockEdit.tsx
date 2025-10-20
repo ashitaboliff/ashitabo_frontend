@@ -1,20 +1,19 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
 import { useRouter } from 'next-nprogress-bar'
 import { useCallback, useId, useState } from 'react'
 import { type SubmitHandler, useForm } from 'react-hook-form'
-import { TiDeleteOutline } from 'react-icons/ti'
 import * as zod from 'zod'
-import ErrorMessage from '@/components/ui/atoms/ErrorMessage'
+import { FeedbackMessage as FeedbackMessageView } from '@/components/ui/atoms/Message'
 import Pagination from '@/components/ui/atoms/Pagination'
 import SelectField from '@/components/ui/atoms/SelectField'
 import TextInputField from '@/components/ui/atoms/TextInputField'
+import { TiDeleteOutline } from '@/components/ui/icons'
 import Popup from '@/components/ui/molecules/Popup'
 import type { PadLock } from '@/features/admin/types'
 import type { ApiError } from '@/types/responseTypes'
+import { formatDateTimeJaWithUnits } from '@/utils/dateFormat'
 import { createPadLockAction, deletePadLockAction } from '../action'
 
 const padLockFormSchema = zod.object({
@@ -148,13 +147,13 @@ const PadLockEdit = ({ padLocks }: { padLocks: PadLock[] }) => {
 								</td>
 								<td>{padLock.name}</td>
 								<td>
-									{format(padLock.createdAt, 'yyyy年MM月dd日hh時mm分ss秒', {
-										locale: ja,
+									{formatDateTimeJaWithUnits(padLock.createdAt, {
+										hour12: true,
 									})}
 								</td>
 								<td>
-									{format(padLock.updatedAt, 'yyyy年MM月dd日hh時mm分ss秒', {
-										locale: ja,
+									{formatDateTimeJaWithUnits(padLock.updatedAt, {
+										hour12: true,
 									})}
 								</td>
 							</tr>
@@ -178,15 +177,15 @@ const PadLockEdit = ({ padLocks }: { padLocks: PadLock[] }) => {
 						<div className="font-bold">作成日:</div>
 						<div>
 							{popupData?.createdAt &&
-								format(popupData?.createdAt, 'yyyy年MM月dd日hh時mm分ss秒', {
-									locale: ja,
+								formatDateTimeJaWithUnits(popupData.createdAt, {
+									hour12: true,
 								})}
 						</div>
 						<div className="font-bold">更新日:</div>
 						<div>
 							{popupData?.updatedAt &&
-								format(popupData?.updatedAt, 'yyyy年MM月dd日hh時mm分ss秒', {
-									locale: ja,
+								formatDateTimeJaWithUnits(popupData.updatedAt, {
+									hour12: true,
 								})}
 						</div>
 					</div>
@@ -228,7 +227,7 @@ const PadLockEdit = ({ padLocks }: { padLocks: PadLock[] }) => {
 						削除
 					</button>
 				</div>
-				<ErrorMessage error={error} />
+				<FeedbackMessageView source={error} defaultVariant="error" />
 			</Popup>
 			<Popup
 				id={createPopupId}
@@ -264,7 +263,7 @@ const PadLockEdit = ({ padLocks }: { padLocks: PadLock[] }) => {
 							閉じる
 						</button>
 					</div>
-					<ErrorMessage error={error} />
+					<FeedbackMessageView source={error} defaultVariant="error" />
 				</form>
 			</Popup>
 			<Pagination
