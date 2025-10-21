@@ -3,20 +3,20 @@
 import { addDays, subDays } from 'date-fns'
 import type { Metadata, ResolvingMetadata } from 'next'
 import { cookies } from 'next/headers'
-import { AuthPage } from '@/features/auth/components/UnifiedAuth'
+import BookingEdit from '@/app/booking/[id]/edit/_components'
+import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 import {
 	getBookingByDateAction,
 	getBookingByIdAction,
-} from '@/features/booking/actions'
-import DetailNotFoundPage from '@/features/booking/components/DetailNotFound'
-import BookingEdit from '@/features/booking/components/edit/BookingEdit'
+} from '@/domains/booking/api/bookingActions'
 import {
 	BOOKING_TIME_LIST,
 	BOOKING_VIEW_RANGE_DAYS,
-} from '@/features/booking/constants'
-import { createMetaData } from '@/hooks/useMetaData'
-import { toDateKey } from '@/utils'
-import { logError } from '@/utils/logger'
+} from '@/domains/booking/constants/bookingConstants'
+import BookingDetailNotFound from '@/domains/booking/ui/BookingDetailNotFound'
+import { createMetaData } from '@/shared/hooks/useMetaData'
+import { toDateKey } from '@/shared/utils'
+import { logError } from '@/shared/utils/logger'
 
 type PageParams = Promise<{ id: string }>
 type PageProps = {
@@ -82,7 +82,7 @@ const Page = async ({ params }: PageProps) => {
 						return null
 					}
 					logError('Failed to get booking detail for edit page', bookingDetail)
-					return <DetailNotFoundPage />
+					return <BookingDetailNotFound />
 				}
 
 				const initialBookingResponse = bookingResponse.ok

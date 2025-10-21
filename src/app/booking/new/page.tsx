@@ -1,6 +1,6 @@
-import { AuthPage } from '@/features/auth/components/UnifiedAuth'
-import CreatePage from '@/features/booking/components/Create'
-import { createMetaData } from '@/hooks/useMetaData'
+import BookingCreate from '@/app/booking/new/_components'
+import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
+import { createMetaData } from '@/shared/hooks/useMetaData'
 
 export async function metadata() {
 	return createMetaData({
@@ -9,11 +9,11 @@ export async function metadata() {
 	})
 }
 
-type PageProps = {
+interface Props {
 	searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
-const Page = async ({ searchParams }: PageProps) => {
+const Page = async ({ searchParams }: Props) => {
 	return (
 		<AuthPage requireProfile={true}>
 			{async (authResult) => {
@@ -27,7 +27,7 @@ const Page = async ({ searchParams }: PageProps) => {
 				const timeParam = typeof time === 'string' ? time : undefined
 
 				return (
-					<CreatePage
+					<BookingCreate
 						session={session}
 						initialDateParam={dateParam}
 						initialTimeParam={timeParam}

@@ -1,13 +1,13 @@
-import { AuthPage } from '@/features/auth/components/UnifiedAuth'
-import { gachaConfigs } from '@/features/gacha/config'
-import { ensureSignedResourceUrls } from '@/features/gacha/services/signedGachaResourceCache'
-import type { CarouselPackDataItem } from '@/features/gacha/types'
-import UserPageLayout from '@/features/user/components/UserPageLayout'
-import UserPageTabs from '@/features/user/components/UserPageTabs'
-import type { Profile } from '@/features/user/types'
-import { createMetaData } from '@/hooks/useMetaData'
-import { apiGet } from '@/lib/api/crud'
-import { logError } from '@/utils/logger'
+import UserPageLayout from '@/app/user/_components/UserPageLayout'
+import UserPageTabs from '@/app/user/_components/UserPageTabs'
+import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
+import { gachaConfigs } from '@/domains/gacha/config/gachaConfig'
+import type { CarouselPackDataItem } from '@/domains/gacha/model/gachaTypes'
+import { ensureSignedResourceUrls } from '@/domains/gacha/services/signedGachaResourceCache'
+import type { Profile } from '@/domains/user/model/userTypes'
+import { createMetaData } from '@/shared/hooks/useMetaData'
+import { apiGet } from '@/shared/lib/api/crud'
+import { logError } from '@/shared/utils/logger'
 
 export async function metadata() {
 	return createMetaData({

@@ -1,5 +1,5 @@
-import BanBookingCreate from '@/features/admin/components/BanBookingCreate'
-import { AuthPage } from '@/features/auth/components/UnifiedAuth'
+import BanBookingCreate from '@/app/admin/forbidden/new/_components'
+import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 
 const Page = async () => {
 	return (

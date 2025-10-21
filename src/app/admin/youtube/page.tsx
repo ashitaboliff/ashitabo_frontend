@@ -1,10 +1,10 @@
 import { notFound } from 'next/navigation'
-import YoutubeManagement from '@/features/admin/components/YoutubeManage'
-import { AuthPage } from '@/features/auth/components/UnifiedAuth'
+import YoutubeManagement from '@/app/admin/youtube/_components'
+import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 import {
 	getAccessTokenAction,
 	getPlaylistAction,
-} from '@/features/video/actions'
+} from '@/domains/video/api/videoActions'
 import { StatusCode } from '@/types/responseTypes'
 
 const YoutubePage = async () => {

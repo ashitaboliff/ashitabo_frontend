@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
-import { getAllBookingAction } from '@/features/booking/actions'
-import LogsPage from '@/features/booking/components/Logs' // インポート名とパスを変更
-import { createMetaData } from '@/hooks/useMetaData'
+import BookingLogs from '@/app/booking/logs/_components'
+import { getAllBookingAction } from '@/domains/booking/api/bookingActions'
+import { createMetaData } from '@/shared/hooks/useMetaData'
 
 export async function metadata() {
 	return createMetaData({
@@ -14,7 +14,7 @@ const BookingLog = async () => {
 	const bookingLog = await getAllBookingAction()
 	if (!bookingLog.ok) return notFound()
 
-	return <LogsPage bookingLog={bookingLog.data} />
+	return <BookingLogs bookingLog={bookingLog.data} />
 }
 
 export default BookingLog

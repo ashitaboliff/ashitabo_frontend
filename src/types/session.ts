@@ -1,4 +1,4 @@
-import type { AccountRole } from '@/features/user/types'
+import type { AccountRole } from '@/domains/user/model/userTypes'
 
 export interface SessionUser {
 	id: string

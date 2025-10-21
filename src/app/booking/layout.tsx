@@ -1,6 +1,7 @@
 import { Inter } from 'next/font/google'
-import HomePageHeader from '@/components/shared/HomePageHeader'
-import { createMetaData } from '@/hooks/useMetaData'
+import type { ReactNode } from 'react'
+import { createMetaData } from '@/shared/hooks/useMetaData'
+import HomePageHeader from '@/shared/ui/molecules/HomePageHeader'
 
 const _inter = Inter({ subsets: ['latin'] })
 
@@ -13,7 +14,7 @@ export const metadata = createMetaData({
 export default function RootLayout({
 	children,
 }: Readonly<{
-	children: React.ReactNode
+	children: ReactNode
 }>) {
 	return (
 		<>

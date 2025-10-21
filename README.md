@@ -1,11 +1,11 @@
 # あしたぼ フロントエンド
 
-信州大学／長野県立大学の軽音サークル「あしたぼ」の活動をオンラインで支援するフロントエンドです。Next.js 15とTypeScriptで構築されています。予約管理、動画配信、ガチャ演出など複数ドメインを一つのアプリケーションで提供します。とくに `/features/booking` はドメイン分離やデータフローが最も整理されているため、本ドキュメントでも重点的に紹介します。
+信州大学／長野県立大学の軽音サークル「あしたぼ」の活動をオンラインで支援するフロントエンドです。Next.js 15とTypeScriptで構築されています。予約管理、動画配信、ガチャ演出など複数ドメインを一つのアプリケーションで提供します。とくに `/app/booking` はドメイン分離やデータフローが最も整理されているため、本ドキュメントでも重点的に紹介します。
 
 ## プロジェクト概要
 
 - **目的**: 音楽スタジオの予約コマ管理を中心に、バンド活動をサポートする情報発信・管理機能を提供します。
-- **構成**: Next.js App Router によるページ構成、ドメインごとに切り出された `features` ディレクトリ、再利用可能な UI は `components` へ集約。
+- **構成**: Next.js App Router によるページ構成、ドメインごとに切り出された `/domain` ディレクトリ、再利用可能な UI は `/shared/ui` へ集約。
 - **設計思想**: サーバーアクションによる API 呼び出しと SWR によるクライアントキャッシュを組み合わせ、双方向なデータ更新と UX を両立します。
 
 ## 使用技術
@@ -13,7 +13,7 @@
 - **フレームワーク / 言語**: Next.js 15 (App Router), React 19, TypeScript 5
 - **スタイリング**: Tailwind CSS 4, DaisyUI, カスタムコンポーネント
 - **フォーム / バリデーション**: React Hook Form, Zod
-- **データ取得**: SWR, Next.js Server Actions, fetch API ラッパー (`src/lib/api`)
+- **データ取得**: SWR, Next.js Server Actions, fetch API ラッパー (`src/shared/lib/api`)
 - **UI 補助**: GSAP（ガチャ演出アニメーション）, MDX (ルール/告知表示)
 - **ユーティリティ**: date-fns, React YouTube, SWR, 自前の `useFeedback` フラッシュ UI
 - **品質管理**: Biome (lint & format), Vitest
@@ -24,31 +24,40 @@
 frontend/
 ├─ src/
 │  ├─ app/                  # App Router のページ・レイアウト（サーバーコンポーネント中心）
-│  ├─ components/           # ドメイン横断の UI atoms/molecules/organisms
-│  ├─ features/             # ドメイン単位のまとまり（booking, band, video など）
-│  ├─ hooks/                # 共通カスタムフック
-│  ├─ lib/                  # API ラッパー・フォント・R2 ストレージなどの基盤層
-│  ├─ types/                # アプリ共通の型定義
-│  └─ utils/                # 日付、キャッシュ制御、ロガー等のユーティリティ
+│  │  ├─ **/page.tsx        # 各ページのエントリーポイント
+|  |  └─ **/_components/    # ページ固有のクライアントコンポーネント
+|  |     ├─ index.tsx       # ページ専用コンポーネント (page.tsx を薄く保持するためのもの)
+|  │     └─ ...             # その他のページ専用コンポーネント
+│  ├─ domain/               # ドメイン単位のまとまり（booking, band, video など）
+│  │  └─ */ui/              # ドメイン固有の共通 UI コンポーネント
+│  └─ shared/               # ドメイン固有のロジック・UI（actions, hooks, service など）
+│     ├─ ui/                # 共通 UI コンポーネント（ボタン、モーダル、フォーム要素など）
+│     |  ├─ atoms/          # 原子コンポーネント
+│     |  ├─ molecules/      # 分子コンポーネント
+│     |  └─ layouts/        # レイアウトコンポーネント
+│     ├─ hooks/             # 共通カスタムフック
+│     ├─ lib/               # API ラッパー・フォント・R2 ストレージなどの基盤層
+│     ├─ types/             # アプリ共通の型定義
+│     └─ utils/             # 日付、キャッシュ制御、ロガー等のユーティリティ
 ├─ public/                  # 画像・静的アセット
 ├─ package.json             # スクリプトと依存ライブラリ
 ├─ biome.json               # Biome 設定
-└─ vitest.config.ts        # ユニットテスト設定
+└─ vitest.config.ts         # ユニットテスト設定
 ```
 
-### `/features/booking` 詳細
+### `/domain/booking` 詳細
 
 ```text
-src/features/booking/
-├─ actions.ts              # サーバーアクション。API 呼び出し＋再検証タグ管理
-├─ constants.ts            # ドメイン固有定数（表示範囲・タイムスロット等）
-├─ fetcher.ts              # SWR 用のキー生成とフェッチャー
-├─ hooks.ts                # 週ナビゲーションや SWR ラッパー
-├─ schema.ts               # Zod スキーマ（認証/作成/編集フォーム）
-├─ service.ts              # API レスポンスからドメイン型への変換
-├─ types.ts                # Booking ドメインの TypeScript 型
-├─ components/             # 画面 UI（MainPage, Calendar, Create など）
-└─ content/booking-rule.mdx# 使い方モーダルに表示する MDX
+src/domain/booking/
+├─ api/
+│  ├─ bookingAction.ts   # サーバーアクション。API 呼び出し＋再検証タグ管理
+│  ├─ bookingFetcher.ts  # SWR 用のキー生成とフェッチャー
+│  └─ dto.ts             # API レスポンスからドメイン型への変換
+├─ constants/            # ドメイン固有定数（表示範囲・タイムスロット等）
+├─ hooks/                # 週ナビゲーションや SWR ラッパー
+├─ model/                # Booking ドメインの TypeScript 型, Zod スキーマ
+├─ ui/                   # 画面 UI（MainPage, Calendar, Create など）
+└─ content/              # 使い方モーダルに表示する MDX
 ```
 
 `booking` が模範的な理由:
@@ -72,11 +81,11 @@ src/features/booking/
 ## 主な機能
 
 - **部室予約管理** (`/booking`): 週間カレンダー表示、予約作成・編集・履歴表示、パスワード認証、再検証タグを活用したリアルタイム更新。
-- **バンド管理** (`/features/band`): メンバー追加・編集モーダル、バンド一覧 UI。 **未実装**
-- **動画配信** (`/features/video`): 検索フォーム、タグ編集、詳細ページ、YouTube 埋め込み。
-- **ガチャ演出** (`/features/gacha`): GSAP を利用したカードアニメーション、レアリティ別エフェクト、プレビュー/本番ポップアップ。
-- **スケジュール管理** (`/features/schedule`): スケジュール作成フォーム、サーバーアクションを使った予約連携。
-- **ユーザー/認証** (`/features/user`, `/features/auth`): プロフィール表示やログイン周辺 UI。
+- **バンド管理** (`/domain/band`): メンバー追加・編集モーダル、バンド一覧 UI。 **未実装**
+- **動画配信** (`/domain/video`): 検索フォーム、タグ編集、詳細ページ、YouTube 埋め込み。
+- **ガチャ演出** (`/domain/gacha`): GSAP を利用したカードアニメーション、レアリティ別エフェクト、プレビュー/本番ポップアップ。
+- **スケジュール管理** (`/domain/schedule`): スケジュール作成フォーム、サーバーアクションを使った予約連携。
+- **ユーザー/認証** (`/domain/user`, `/domain/auth`): プロフィール表示やログイン周辺 UI。
 
 ## 開発環境のセットアップ
 
@@ -106,7 +115,7 @@ src/features/booking/
 
 ## 開発手法と命名規則
 
-- **ドメイン駆動の配置**: ドメイン特有のロジック・UI は `src/features/<domain>` にまとめ、App Router からは必要なコンポーネントとアクションのみを公開。
+- **ドメイン駆動の配置**: ドメイン特有のロジック・UI は `src/domain/<domain>` にまとめ、App Router からは必要なコンポーネントとアクションのみを公開。
 - **ファイル命名**:
   - React コンポーネント: `PascalCase.tsx`
   - カスタムフック: `useBookingWeekNavigation` のように `use` 接頭辞 + `camelCase`
@@ -122,6 +131,6 @@ src/features/booking/
 - **Lint / Format**: 変更前後で `npm run check` を実行し、Biome によるコードスタイルを維持。
 - **テスト**: 新規ロジック追加時は `npm run test` を推奨。Vitest の設定は `vitest.config.ts` に集約。
 - **サーバーアクションの再検証**: 予約周りの変更では `revalidateTag` と `mutateBookingCalendarsForDate` の呼び出し漏れに注意し、UI とサーバーキャッシュの整合性を確認。
-- **アクセシビリティ**: SVG やモーダルなどは aria 属性を明示し、特に `/features/booking` のカレンダーはキーボード操作でも情報が伝わるよう `aria-hidden` やボタン属性を利用。
+- **アクセシビリティ**: SVG やモーダルなどは aria 属性を明示し、特に `/domain/booking` のカレンダーはキーボード操作でも情報が伝わるよう `aria-hidden` やボタン属性を利用。
 
-この README を起点に、まずは `/features/booking` のコードベースを理解すると全体の設計パターンが掴みやすくなります。他ドメインも同じ構造で拡張しやすいよう設計されています。
+この README を起点に、まずは `/domain/booking` のコードベースを理解すると全体の設計パターンが掴みやすくなります。他ドメインも同じ構造で拡張しやすいよう設計されています。

@@ -1,6 +1,6 @@
-import SigninPage from '@/features/auth/components/SigninPage'
-import { AuthPage } from '@/features/auth/components/UnifiedAuth'
-import { createMetaData } from '@/hooks/useMetaData'
+import SigninPage from '@/app/auth/signin/_components'
+import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
+import { createMetaData } from '@/shared/hooks/useMetaData'
 
 export async function metadata() {
 	return createMetaData({

@@ -1,5 +1,5 @@
-import AdminUserPage from '@/features/admin/components/UserManage'
-import { AuthPage } from '@/features/auth/components/UnifiedAuth'
+import AdminUserPage from '@/app/admin/user/_components'
+import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 
 const Page = async () => {
 	return (

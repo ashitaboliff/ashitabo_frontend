@@ -1,13 +1,14 @@
 import { Inter } from 'next/font/google'
 import Link from 'next/link'
 import Script from 'next/script'
-import PublicEnv from '@/lib/env/public'
-import { nicomoji } from '@/lib/fonts'
+import PublicEnv from '@/shared/lib/env/public'
+import { nicomoji } from '@/shared/lib/fonts'
 import './globals.css'
-import Footer from '@/components/home/Footer'
-import Header from '@/components/home/Header'
-import ProgressBarProvider from '@/components/ui/atoms/ProgressBarProvider'
-import { createMetaData } from '@/hooks/useMetaData'
+import type { ReactNode } from 'react'
+import { createMetaData } from '@/shared/hooks/useMetaData'
+import ProgressBarProvider from '@/shared/ui/atoms/ProgressBarProvider'
+import Footer from '@/shared/ui/layout/Footer'
+import Header from '@/shared/ui/layout/Header'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -19,7 +20,7 @@ export const metadata = createMetaData({
 export default async function RootLayout({
 	children,
 }: Readonly<{
-	children: React.ReactNode
+	children: ReactNode
 }>) {
 	return (
 		<html lang="ja">

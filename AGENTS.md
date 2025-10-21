@@ -19,19 +19,20 @@
 
 ### 1. ドメイン駆動設計
 
-```
-src/features/<domain>/
-├─ actions.ts          # サーバーアクション（API呼び出し・再検証タグ管理）
-├─ constants.ts        # ドメイン固有定数
-├─ fetcher.ts          # SWR キー生成・フェッチャー
-├─ hooks.ts            # クライアント状態管理
-├─ schema.ts           # Zod バリデーションスキーマ
-├─ service.ts          # DTO → ドメイン型の変換
-├─ types.ts            # TypeScript 型定義
-└─ components/         # UI コンポーネント
+```text
+src/domain/booking/
+├─ api/
+│  ├─ bookingAction.ts   # サーバーアクション。API 呼び出し＋再検証タグ管理
+│  ├─ bookingFetcher.ts  # SWR 用のキー生成とフェッチャー
+│  └─ dto.ts             # API レスポンスからドメイン型への変換
+├─ constants/            # ドメイン固有定数（表示範囲・タイムスロット等）
+├─ hooks/                # 週ナビゲーションや SWR ラッパー
+├─ model/                # Booking ドメインの TypeScript 型, Zod スキーマ
+├─ ui/                   # 画面 UI（MainPage, Calendar, Create など）
+└─ content/              # 使い方モーダルに表示する MDX
 ```
 
-**重要**: `/features/booking` は最も規律ある実装例です。新機能追加時は booking の構造を参考にしてください。
+**重要**: `/domain/booking` は最も規律ある実装例です。新機能追加時は booking の構造を参考にしてください。
 
 ### 2. データフロー
 
@@ -70,12 +71,12 @@ Page (Server)
 
 ### 新機能追加
 
-- [ ] `src/features/<domain>/types.ts` に ドメイン型 を定義
-- [ ] `src/features/<domain>/schema.ts` に Zod スキーマ を定義
-- [ ] `src/features/<domain>/service.ts` に API レスポンス → ドメイン型の変換ロジック を実装
-- [ ] `src/features/<domain>/actions.ts` にサーバーアクション を実装（`revalidateTag` を忘れずに）
-- [ ] `src/features/<domain>/hooks.ts` に SWR ラッパー を実装
-- [ ] `src/features/<domain>/components/` に UI を実装
+- [ ] `src/domain/<domain>/model/` に ドメイン型, Zod スキーマ を定義
+- [ ] `src/domain/<domain>/api/dto.ts` に API レスポンス → ドメイン型の変換ロジック を実装
+- [ ] `src/domain/<domain>/api/` にサーバーアクション を実装（`revalidateTag` を忘れずに）
+- [ ] `src/domain/<domain>/hooks/` に SWR ラッパー を実装
+- [ ] `src/domain/<domain>/ui/` に UI を実装
+- [ ] `src/app/<domain>/_components/` に ページ専用クライアントコンポーネント を実装
 - [ ] `src/app/<domain>/page.tsx` から上記コンポーネント・アクション を使用
 
 ### コンポーネント実装
@@ -119,7 +120,7 @@ export const createBookingAction = async ({
 }
 ```
 
-- API 呼び出しは `src/lib/api/crud` のラッパーを使用
+- API 呼び出しは `src/shared/lib/api/crud` のラッパーを使用
 - 成功時は `revalidateTag` で Next.js のサーバーレンダリング結果を更新
 - クライアント側は `mutate*` で SWR キャッシュを同期
 
@@ -267,7 +268,7 @@ const bookingDate = watch('bookingDate')
 
 ## API ラッパーと応答管理
 
-### `@/lib/api/crud` - HTTP メソッドの統一インターフェース
+### `@/shared/lib/api/crud` - HTTP メソッドの統一インターフェース
 
 ```typescript
 // 使用例（actions.ts）
@@ -390,11 +391,11 @@ npm run build      # 本番ビルド試行（型エラーをキャッチ）
 ## 推奨参照順序
 
 1. **README.md** - 全体像・データフロー・ディレクトリ構造
-2. **src/features/booking/** - 最良実装例を詳細に確認
+2. **src/domain/booking/** - 最良実装例を詳細に確認
 3. **src/app/booking/page.tsx** - サーバーコンポーネントからの使用パターン
 4. **src/lib/api/** - API ラッパーの設計
 5. **src/components/ui/** - 共通 UI コンポーネント
 
 ---
 
-**最後に**: 不確かな場合は、/features/booking の実装を「サンプルコード」として参照し、同じ構造で実装してください。
+**最後に**: 不確かな場合は、/domain/booking の実装を「サンプルコード」として参照し、同じ構造で実装してください。

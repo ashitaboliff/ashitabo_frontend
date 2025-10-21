@@ -1,8 +1,8 @@
-import { AuthPage } from '@/features/auth/components/UnifiedAuth'
-import { getUserIdWithNames } from '@/features/schedule/actions'
-import ScheduleCreatePage from '@/features/schedule/components/CreatePage'
-import { createMetaData } from '@/hooks/useMetaData'
-import { logError } from '@/utils/logger'
+import ScheduleCreatePage from '@/app/schedule/new/_components'
+import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
+import { getUserIdWithNames } from '@/domains/schedule/api/scheduleActions'
+import { createMetaData } from '@/shared/hooks/useMetaData'
+import { logError } from '@/shared/utils/logger'
 
 export async function metadata() {
 	return createMetaData({

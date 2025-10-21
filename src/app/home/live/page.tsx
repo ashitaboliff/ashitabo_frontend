@@ -1,7 +1,7 @@
 import { Inter } from 'next/font/google'
 import Image from 'next/image'
-import { createMetaData } from '@/hooks/useMetaData'
-import { getImageUrl } from '@/lib/r2'
+import { createMetaData } from '@/shared/hooks/useMetaData'
+import { getImageUrl } from '@/shared/lib/r2'
 
 const inter = Inter({ subsets: ['latin'] })
 

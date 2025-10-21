@@ -2,10 +2,9 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { Inter } from 'next/font/google'
 import Link from 'next/link'
-import { compileMDX } from 'next-mdx-remote/rsc' // Required for frontmatter parsing
-import HomePageHeader from '@/components/shared/HomePageHeader'
-import { createMetaData } from '@/hooks/useMetaData'
-import { logError } from '@/utils/logger'
+import { compileMDX } from 'next-mdx-remote/rsc'
+import { createMetaData } from '@/shared/hooks/useMetaData'
+import { logError } from '@/shared/utils/logger'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -83,38 +82,35 @@ const BlogsPage = async () => {
 	const posts = await getAllPostsMeta()
 
 	return (
-		<>
-			<HomePageHeader />
-			<div
-				className={`container mx-auto flex flex-col items-center justify-center p-4 gap-y-3 ${inter.className}`}
-			>
-				<h1 className="text-3xl font-bold mb-6">おしらせ一覧</h1>
-				{posts.length > 0 ? (
-					<ul className="space-y-3">
-						{posts.map((post) => (
-							<li key={post.slug}>
-								<Link
-									href={`/blogs/${post.slug}`}
-									className="text-lg underline hover:text-secondary"
-								>
-									{post.title}
-									{post.createdAt && (
-										<span className="text-sm text-gray-500 ml-2">
-											({new Date(post.createdAt).toLocaleDateString('ja-JP')})
-										</span>
-									)}
-								</Link>
-							</li>
-						))}
-					</ul>
-				) : (
-					<p>まだお知らせはありません。</p>
-				)}
-				<Link className="btn btn-outline mt-8" href="/">
-					戻る
-				</Link>
-			</div>
-		</>
+		<div
+			className={`container mx-auto flex flex-col items-center justify-center p-4 gap-y-3 ${inter.className}`}
+		>
+			<h1 className="text-3xl font-bold mb-6">おしらせ一覧</h1>
+			{posts.length > 0 ? (
+				<ul className="space-y-3">
+					{posts.map((post) => (
+						<li key={post.slug}>
+							<Link
+								href={`/blogs/${post.slug}`}
+								className="text-lg underline hover:text-secondary"
+							>
+								{post.title}
+								{post.createdAt && (
+									<span className="text-sm text-gray-500 ml-2">
+										({new Date(post.createdAt).toLocaleDateString('ja-JP')})
+									</span>
+								)}
+							</Link>
+						</li>
+					))}
+				</ul>
+			) : (
+				<p>まだお知らせはありません。</p>
+			)}
+			<Link className="btn btn-outline mt-8" href="/">
+				戻る
+			</Link>
+		</div>
 	)
 }
 

@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation'
-import { AuthPage } from '@/features/auth/components/UnifiedAuth'
-import ProfileEdit from '@/features/user/components/ProfileEdit'
-import type { Profile } from '@/features/user/types'
-import { apiGet } from '@/lib/api/crud'
+import ProfileEdit from '@/app/user/edit/_components'
+import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
+import type { Profile } from '@/domains/user/model/userTypes'
+import { apiGet } from '@/shared/lib/api/crud'
 
 export async function metadata() {
 	return {

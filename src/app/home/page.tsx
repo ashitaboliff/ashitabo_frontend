@@ -1,5 +1,5 @@
-import HomeButton from '@/components/home/HomeButton'
-import Carousel from '@/components/home/HomeCarousel'
+import HomeButton from '@/app/home/_components/HomeButton'
+import Carousel from '@/app/home/_components/HomeCarousel'
 
 const Page = () => {
 	return (

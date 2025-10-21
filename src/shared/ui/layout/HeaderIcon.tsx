@@ -1,0 +1,28 @@
+'use client'
+
+import Image from 'next/image'
+import Link from 'next/link'
+import { useSession } from '@/domains/auth/hooks/useSession'
+import { FaRegUserCircle } from '@/shared/ui/icons'
+
+const HeaderIcon = () => {
+	const { data: session } = useSession()
+
+	return (
+		<Link href="/user" className="btn btn-square btn-ghost text-3xl">
+			{session?.user?.image ? (
+				<Image
+					src={session.user.image}
+					alt="user icon"
+					width={40}
+					height={40}
+					className="rounded-full"
+				/>
+			) : (
+				<FaRegUserCircle />
+			)}
+		</Link>
+	)
+}
+
+export default HeaderIcon

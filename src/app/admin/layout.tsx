@@ -1,4 +1,5 @@
-import { createMetaData } from '@/hooks/useMetaData'
+import type { ReactNode } from 'react'
+import { createMetaData } from '@/shared/hooks/useMetaData'
 
 export async function metadata() {
 	return createMetaData({
@@ -11,7 +12,7 @@ export async function metadata() {
 export default function RootLayout({
 	children,
 }: Readonly<{
-	children: React.ReactNode
+	children: ReactNode
 }>) {
 	return <>{children}</>
 }
