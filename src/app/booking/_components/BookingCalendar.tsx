@@ -3,7 +3,6 @@
 import { addDays } from 'date-fns'
 import { useRouter } from 'next-nprogress-bar'
 import { useMemo } from 'react'
-import CalendarFrame from '@/shared/ui/molecules/CalendarFrame'
 import {
 	AvailableCell,
 	BookingInfoCell,
@@ -14,6 +13,7 @@ import {
 	FORBIDDEN_BOOKING,
 } from '@/domains/booking/constants/bookingConstants'
 import type { BookingResponse } from '@/domains/booking/model/bookingTypes'
+import CalendarFrame from '@/shared/ui/molecules/CalendarFrame'
 import { DateToDayISOstring, toDateKey } from '@/shared/utils'
 
 /**

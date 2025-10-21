@@ -2,9 +2,9 @@
 
 import React, { type ReactNode, useCallback, useMemo } from 'react'
 import type { UseFormRegisterReturn } from 'react-hook-form'
+import { createSyntheticEvent } from '@/shared/hooks/useSelectField'
 import InputFieldError from '@/shared/ui/atoms/InputFieldError'
 import LabelInputField from '@/shared/ui/atoms/LabelInputField'
-import { createSyntheticEvent } from '@/shared/hooks/useSelectField'
 
 export type SelectOptions<TValue extends string | number> = Record<
 	string,

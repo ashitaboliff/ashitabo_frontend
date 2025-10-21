@@ -2,14 +2,17 @@
 
 import { useState } from 'react'
 import useSWR from 'swr'
+import {
+	deleteBandAction,
+	getUserBandsAction,
+} from '@/domains/band/api/bandActions'
+import type { BandDetails } from '@/domains/band/model/bandTypes'
+import { useFeedback } from '@/shared/hooks/useFeedback'
 import { FaPlusCircle } from '@/shared/ui/icons'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import BandFormModal from './BandFormModal'
 import BandListItem from './BandListItem'
 import MemberManagementModal from './MemberManagementModal'
-import type { BandDetails } from '@/domains/band/model/bandTypes'
-import { useFeedback } from '@/shared/hooks/useFeedback'
-import { deleteBandAction, getUserBandsAction } from '@/domains/band/api/bandActions'
 
 // SWR fetcher function
 const fetchUserBands = async () => {

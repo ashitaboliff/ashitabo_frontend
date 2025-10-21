@@ -1,7 +1,7 @@
 import type { Metadata, ResolvingMetadata } from 'next'
-import { getBookingByIdAction } from '@/domains/booking/api/bookingActions'
 import DetailPage from '@/app/booking/[id]/_components/Detail'
 import DetailNotFoundPage from '@/app/booking/[id]/_components/DetailNotFound'
+import { getBookingByIdAction } from '@/domains/booking/api/bookingActions'
 import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 

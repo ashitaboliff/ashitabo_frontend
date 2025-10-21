@@ -1,6 +1,6 @@
 'use client'
 
-import type { FormEventHandler } from 'react'
+import type { ChangeEvent, FormEventHandler, KeyboardEvent } from 'react'
 import type { FieldErrors, UseFormRegister } from 'react-hook-form'
 import {
 	DIGIT_FIELDS,
@@ -9,20 +9,20 @@ import {
 
 const inputClass = 'input w-16 h-16 text-center text-2xl'
 
-type PadlockFormProps = {
-	register: UseFormRegister<PadlockDigits>
-	errors: FieldErrors<PadlockDigits>
-	onSubmit: FormEventHandler<HTMLFormElement>
-	onClear: () => void
-	onDigitChange: (
-		event: React.ChangeEvent<HTMLInputElement>,
+interface Props {
+	readonly register: UseFormRegister<PadlockDigits>
+	readonly errors: FieldErrors<PadlockDigits>
+	readonly onSubmit: FormEventHandler<HTMLFormElement>
+	readonly onClear: () => void
+	readonly onDigitChange: (
+		event: ChangeEvent<HTMLInputElement>,
 		next?: keyof PadlockDigits,
 	) => void
-	onDigitKeyDown: (
-		event: React.KeyboardEvent<HTMLInputElement>,
+	readonly onDigitKeyDown: (
+		event: KeyboardEvent<HTMLInputElement>,
 		prev?: keyof PadlockDigits,
 	) => void
-	disableSubmit?: boolean
+	readonly disableSubmit?: boolean
 }
 
 const PadlockForm = ({
@@ -33,7 +33,7 @@ const PadlockForm = ({
 	onDigitChange,
 	onDigitKeyDown,
 	disableSubmit,
-}: PadlockFormProps) => (
+}: Props) => (
 	<form onSubmit={onSubmit} className="flex flex-col items-center gap-y-2">
 		<div className="flex flex-row justify-center">
 			{DIGIT_FIELDS.map((field, index) => {

@@ -1,10 +1,13 @@
+import type {
+	Schedule,
+	UserWithName,
+} from '@/domains/schedule/model/scheduleTypes'
 import {
 	mapRawSchedule,
 	mapRawUserWithNames,
 	type RawSchedule,
 	type RawUserWithName,
 } from '@/domains/schedule/services/scheduleTransforms'
-import type { Schedule, UserWithName } from '@/domains/schedule/model/scheduleTypes'
 import { apiGet, apiPost } from '@/shared/lib/api/crud'
 import {
 	createdResponse,

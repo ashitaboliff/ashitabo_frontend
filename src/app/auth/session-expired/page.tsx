@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import SessionExpiredClient from '@/domains/auth/ui/SessionExpiredClient'
+import SessionExpiredClient from '@/app/auth/session-expired/_components/SessionExpiredClient'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 

@@ -2,15 +2,15 @@
 
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { LuTriangleAlert } from '@/shared/ui/icons'
-import AuthIssueLayout from '@/domains/auth/ui/AuthIssueLayout'
 import {
 	AUTH_ERROR_DEFAULT,
 	resolveAuthErrorDetail,
 } from '@/domains/auth/data/authErrorMap'
+import AuthIssueLayout from '@/domains/auth/ui/AuthIssueLayout'
+import { LuTriangleAlert } from '@/shared/ui/icons'
 
-interface AuthErrorClientProps {
-	initialError?: string | null
+interface Props {
+	readonly initialError?: string | null
 }
 
 const buildActions = () => (
@@ -24,9 +24,7 @@ const buildActions = () => (
 	</>
 )
 
-export default function AuthErrorClient({
-	initialError,
-}: AuthErrorClientProps) {
+export default function AuthErrorClient({ initialError }: Props) {
 	const searchParams = useSearchParams()
 	const error = searchParams.get('error') || initialError
 	const messageFromQuery = searchParams.get('message')

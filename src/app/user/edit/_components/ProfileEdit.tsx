@@ -1,13 +1,13 @@
 'use client'
 
+import { useProfileForm } from '@/domains/user/hooks/useProfileForm'
+import { PartOptions, type Profile } from '@/domains/user/model/userTypes'
+import { expectedYearMap } from '@/domains/user/schemas/profileSchema'
 import Loading from '@/shared/ui/atoms/Loading'
 import SelectField from '@/shared/ui/atoms/SelectField'
 import TextInputField from '@/shared/ui/atoms/TextInputField'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import MultiSelectField from '@/shared/ui/molecules/MultiSelectField'
-import { useProfileForm } from '@/domains/user/hooks/useProfileForm'
-import { expectedYearMap } from '@/domains/user/schemas/profileSchema'
-import { PartOptions, type Profile } from '@/domains/user/model/userTypes'
 
 interface Props {
 	readonly profile: Profile

@@ -1,9 +1,9 @@
 import { Inter } from 'next/font/google'
 import Image from 'next/image'
 import Link from 'next/link'
-import { FaInstagram, FaXTwitter, FaYoutube } from '@/shared/ui/icons'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 import { getImageUrl } from '@/shared/lib/r2'
+import { FaInstagram, FaXTwitter, FaYoutube } from '@/shared/ui/icons'
 
 export async function metadata() {
 	return createMetaData({

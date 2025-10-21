@@ -1,10 +1,13 @@
 import { Suspense } from 'react'
-import Loading from '@/shared/ui/atoms/Loading'
-import { searchYoutubeDetailsAction } from '@/domains/video/api/videoActions'
 import VideoListPage from '@/app/video/_components/VideoListPage'
-import type { YoutubeDetail, YoutubeSearchQuery } from '@/domains/video/model/videoTypes'
-import type { ApiError } from '@/types/responseTypes'
+import { searchYoutubeDetailsAction } from '@/domains/video/api/videoActions'
+import type {
+	YoutubeDetail,
+	YoutubeSearchQuery,
+} from '@/domains/video/model/videoTypes'
+import Loading from '@/shared/ui/atoms/Loading'
 import { logError } from '@/shared/utils/logger'
+import type { ApiError } from '@/types/responseTypes'
 
 const parseVideoPageSearchParams = (
 	params: URLSearchParams,

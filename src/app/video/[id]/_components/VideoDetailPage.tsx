@@ -2,14 +2,18 @@
 
 import { useRouter } from 'next-nprogress-bar'
 import YouTube from 'react-youtube'
-import Tags from '@/shared/ui/atoms/Tags'
-import { HiOutlineExternalLink } from '@/shared/ui/icons'
-import type { liveOrBand, Playlist, Video } from '@/domains/video/model/videoTypes'
+import TagEditPopup from '@/app/video/_components/TagEditPopup'
+import type {
+	liveOrBand,
+	Playlist,
+	Video,
+} from '@/domains/video/model/videoTypes'
 import { useWindowOpen } from '@/shared/hooks/useBrowserApis'
 import { gkktt } from '@/shared/lib/fonts'
-import type { Session } from '@/types/session'
+import Tags from '@/shared/ui/atoms/Tags'
+import { HiOutlineExternalLink } from '@/shared/ui/icons'
 import { formatDateJa } from '@/shared/utils/dateFormat'
-import TagEditPopup from '@/app/video/_components/TagEditPopup'
+import type { Session } from '@/types/session'
 
 type Props = {
 	session: Session | null

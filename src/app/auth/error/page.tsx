@@ -1,5 +1,5 @@
 import { Suspense } from 'react'
-import AuthErrorClient from '@/domains/auth/ui/AuthErrorClient'
+import AuthErrorClient from '@/app/auth/error/_components/AuthErrorClient'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 
 export async function generateMetadata() {

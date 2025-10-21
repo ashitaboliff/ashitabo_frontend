@@ -1,7 +1,7 @@
 import Link from 'next/link'
-import { LuShieldAlert } from '@/shared/ui/icons'
 import AuthIssueLayout from '@/domains/auth/ui/AuthIssueLayout'
 import { createMetaData } from '@/shared/hooks/useMetaData'
+import { LuShieldAlert } from '@/shared/ui/icons'
 
 export async function generateMetadata() {
 	return createMetaData({

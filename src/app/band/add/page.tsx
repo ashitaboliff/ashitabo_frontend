@@ -1,5 +1,5 @@
-import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 import BandAddForm from '@/app/band/add/_components/BandAddForm'
+import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 
 const Page = async () => {
 	return (

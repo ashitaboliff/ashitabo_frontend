@@ -1,3 +1,4 @@
+import { type Part, PartMap } from '@/domains/user/model/userTypes'
 import {
 	GiGuitarBassHead as BassIcon,
 	FaDrum as DrumIcon,
@@ -6,7 +7,6 @@ import {
 	IoEllipsisHorizontalCircleSharp as OtherIcon,
 	MdPiano as PianoIcon,
 } from '@/shared/ui/icons'
-import { type Part, PartMap } from '@/domains/user/model/userTypes'
 
 const InstIcon = ({ part, size }: { part: Part[]; size?: number }) => {
 	const iconSize = size ?? 20

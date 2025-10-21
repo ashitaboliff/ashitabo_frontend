@@ -1,14 +1,14 @@
 import type { ReactNode } from 'react'
 
-type AuthIssueLayoutProps = {
-	title: string
-	message: ReactNode
-	details?: ReactNode
-	code?: string | null
-	actions?: ReactNode
-	icon?: ReactNode
-	className?: string
-	children?: ReactNode
+interface Props {
+	readonly title: string
+	readonly message: ReactNode
+	readonly details?: ReactNode
+	readonly code?: string | null
+	readonly actions?: ReactNode
+	readonly icon?: ReactNode
+	readonly className?: string
+	readonly children?: ReactNode
 }
 
 const AuthIssueLayout = ({
@@ -20,7 +20,7 @@ const AuthIssueLayout = ({
 	icon,
 	className = '',
 	children,
-}: AuthIssueLayoutProps) => {
+}: Props) => {
 	return (
 		<div className={`flex items-center justify-center p-4 ${className}`.trim()}>
 			<div className="card w-full max-w-xl bg-base-100 shadow-xl">

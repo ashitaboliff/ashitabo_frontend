@@ -1,16 +1,20 @@
 'use client'
 
 import useSWR from 'swr'
-import GenericTableBody from '@/shared/ui/molecules/GenericTableBody'
-import { AccountRoleMap, RoleMap, type UserDetail } from '@/domains/user/model/userTypes'
 import { getAllUserDetailsAction } from '@/domains/admin/api/adminActions'
+import {
+	AccountRoleMap,
+	RoleMap,
+	type UserDetail,
+} from '@/domains/user/model/userTypes'
+import GenericTableBody from '@/shared/ui/molecules/GenericTableBody'
 
 interface Props {
-	currentPage: number
-	usersPerPage: number
-	sort: 'new' | 'old'
-	onUserItemClick: (user: UserDetail) => void
-	onDataLoaded: (totalCount: number) => void
+	readonly currentPage: number
+	readonly usersPerPage: number
+	readonly sort: 'new' | 'old'
+	readonly onUserItemClick: (user: UserDetail) => void
+	readonly onDataLoaded: (totalCount: number) => void
 }
 
 const fetchUsers = async ([page, perPage, sort]: [

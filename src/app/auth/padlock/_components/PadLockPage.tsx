@@ -1,18 +1,18 @@
 'use client'
 
 import Image from 'next/image'
-import PadlockErrorDisplay from '@/domains/auth/ui/PadlockErrorDisplay'
-import PadlockForm from '@/domains/auth/ui/PadlockForm'
-import PadlockLoading from '@/domains/auth/ui/PadlockLoading'
+import PadlockForm from '@/app/auth/padlock/_components/PadlockForm'
 import { useAuthPadlock } from '@/domains/auth/hooks/useAuthPadlock'
+import AuthLoadingIndicator from '@/domains/auth/ui/AuthLoadingIndicator'
 import { getImageUrl } from '@/shared/lib/r2'
+import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 
-export type AuthPadLockProps = {
-	csrfToken?: string | null
-	callbackUrl?: string | null
+interface Props {
+	readonly csrfToken?: string | null
+	readonly callbackUrl?: string | null
 }
 
-const AuthPadLock = ({ csrfToken, callbackUrl }: AuthPadLockProps) => {
+const PadLockPage = ({ csrfToken, callbackUrl }: Props) => {
 	const {
 		formRef,
 		isLoading,
@@ -34,7 +34,7 @@ const AuthPadLock = ({ csrfToken, callbackUrl }: AuthPadLockProps) => {
 
 	return (
 		<div className="flex flex-col items-center justify-center space-y-2 h-full">
-			{isLoading && <PadlockLoading message={loadingMessage} />}
+			{isLoading && <AuthLoadingIndicator message={loadingMessage} />}
 			<form
 				ref={formRef}
 				action="/api/auth/signin/line"
@@ -72,9 +72,14 @@ const AuthPadLock = ({ csrfToken, callbackUrl }: AuthPadLockProps) => {
 					/>
 				</div>
 			</div>
-			<PadlockErrorDisplay feedback={feedbackMessage} fieldError={digitError} />
+			<div className="space-y-2">
+				<FeedbackMessage source={feedbackMessage} />
+				{digitError ? (
+					<p className="text-sm text-error text-center">{digitError}</p>
+				) : null}
+			</div>
 		</div>
 	)
 }
 
-export default AuthPadLock
+export default PadLockPage

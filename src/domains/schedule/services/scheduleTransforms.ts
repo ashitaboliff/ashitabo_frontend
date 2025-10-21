@@ -1,4 +1,7 @@
-import type { Schedule, UserWithName } from '@/domains/schedule/model/scheduleTypes'
+import type {
+	Schedule,
+	UserWithName,
+} from '@/domains/schedule/model/scheduleTypes'
 
 const toDate = (value: string | Date | undefined | null): Date | undefined => {
 	if (!value) return undefined

@@ -1,11 +1,14 @@
 'use client'
 
 import { useCallback, useId } from 'react'
-import { FaApple, FaYahoo, SiGooglecalendar } from '@/shared/ui/icons'
-import Popup from '@/shared/ui/molecules/Popup'
 import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
 import type { Booking } from '@/domains/booking/model/bookingTypes'
-import { useLocationNavigate, useWindowOpen } from '@/shared/hooks/useBrowserApis'
+import {
+	useLocationNavigate,
+	useWindowOpen,
+} from '@/shared/hooks/useBrowserApis'
+import { FaApple, FaYahoo, SiGooglecalendar } from '@/shared/ui/icons'
+import Popup from '@/shared/ui/molecules/Popup'
 import { formatDateTimeCompact } from '@/shared/utils/dateFormat'
 
 const AddCalendarPopup = ({

@@ -4,9 +4,13 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next-nprogress-bar'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { createProfileAction, putProfileAction } from '@/domains/auth/api/authActions'
+import {
+	createProfileAction,
+	putProfileAction,
+} from '@/domains/auth/api/authActions'
 import { useSession } from '@/domains/auth/hooks/useSession'
 import { makeAuthDetails } from '@/domains/auth/utils/sessionInfo'
+import type { Profile } from '@/domains/user/model/userTypes'
 import {
 	getAutoExpectedYear,
 	type ProfileFormValues,
@@ -14,10 +18,9 @@ import {
 	profileSchema,
 	toProfileFormValues,
 } from '@/domains/user/schemas/profileSchema'
-import type { Profile } from '@/domains/user/model/userTypes'
 import { useFeedback } from '@/shared/hooks/useFeedback'
-import { StatusCode } from '@/types/responseTypes'
 import { logError } from '@/shared/utils/logger'
+import { StatusCode } from '@/types/responseTypes'
 
 export type ProfileFormMode = 'create' | 'edit'
 

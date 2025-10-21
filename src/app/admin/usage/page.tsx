@@ -2,8 +2,8 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { compileMDX } from 'next-mdx-remote/rsc'
 import rehypeRaw from 'rehype-raw'
-import { LuCalendar, LuCalendarSync } from '@/shared/ui/icons'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
+import { LuCalendar, LuCalendarSync } from '@/shared/ui/icons'
 
 const UsagePage = async () => {
 	const filePath = path.join(

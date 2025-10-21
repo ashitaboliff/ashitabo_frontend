@@ -1,7 +1,5 @@
 'use client'
 
-import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
-import Popup from '@/shared/ui/molecules/Popup'
 import { useSession } from '@/domains/auth/hooks/useSession'
 import {
 	type AccountRole,
@@ -10,18 +8,20 @@ import {
 	RoleMap,
 	type UserDetail,
 } from '@/domains/user/model/userTypes'
-import type { ApiError } from '@/types/responseTypes'
+import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
+import Popup from '@/shared/ui/molecules/Popup'
 import { formatDateTimeJaWithUnits } from '@/shared/utils/dateFormat'
+import type { ApiError } from '@/types/responseTypes'
 
 interface Props {
-	open: boolean
-	onClose: () => void
-	selectedUser: UserDetail | null
-	actionLoading: boolean
-	onRoleChange: (id: string, role: AccountRole) => void
-	setIsDeletePopupOpen: (isOpen: boolean) => void
-	actionError: ApiError | null
-	setActionError: (error: ApiError | null) => void
+	readonly open: boolean
+	readonly onClose: () => void
+	readonly selectedUser: UserDetail | null
+	readonly actionLoading: boolean
+	readonly onRoleChange: (id: string, role: AccountRole) => void
+	readonly setIsDeletePopupOpen: (isOpen: boolean) => void
+	readonly actionError: ApiError | null
+	readonly setActionError: (error: ApiError | null) => void
 }
 
 const UserDetailPopup = ({

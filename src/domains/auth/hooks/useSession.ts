@@ -2,8 +2,8 @@
 
 import { useCallback } from 'react'
 import useSWR from 'swr'
-import { getAuthDetails } from '@/domains/auth/api/authActions'
 import { updateSession as requestSessionUpdate } from '@/domains/auth/api'
+import { getAuthDetails } from '@/domains/auth/api/authActions'
 import type { AuthDetails } from '@/domains/auth/model/authTypes'
 import type { Session } from '@/types/session'
 

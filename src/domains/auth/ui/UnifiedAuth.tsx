@@ -4,12 +4,12 @@ import { getAuthDetails } from '@/domains/auth/api/authActions'
 import type { AuthDetails } from '@/domains/auth/model/authTypes'
 import type { AccountRole } from '@/domains/user/model/userTypes'
 
-interface AuthPageProps {
-	children: (authResult: AuthDetails) => ReactNode
-	requireProfile?: boolean
-	allowUnauthenticated?: boolean
-	redirectIfAuthenticated?: boolean
-	requireRole?: AccountRole
+interface Props {
+	readonly children: (authResult: AuthDetails) => ReactNode
+	readonly requireProfile?: boolean
+	readonly allowUnauthenticated?: boolean
+	readonly redirectIfAuthenticated?: boolean
+	readonly requireRole?: AccountRole
 }
 
 /**
@@ -27,7 +27,7 @@ export async function AuthPage({
 	allowUnauthenticated = false,
 	redirectIfAuthenticated = false,
 	requireRole = 'USER',
-}: AuthPageProps) {
+}: Props) {
 	const authResult = await getAuthDetails(true)
 	const { status, issue } = authResult
 

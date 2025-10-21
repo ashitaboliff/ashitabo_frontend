@@ -2,9 +2,9 @@
 
 import { useRouter } from 'next-nprogress-bar'
 import { type ReactNode, useCallback, useState } from 'react'
-import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import { signOutUser as signOutAction } from '@/domains/user/hooks/useSignOut'
 import { useFeedback } from '@/shared/hooks/useFeedback'
+import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import type { Session } from '@/types/session'
 
 type Props = {

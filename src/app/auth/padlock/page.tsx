@@ -1,8 +1,8 @@
+import PadLockPage from '@/app/auth/padlock/_components/PadLockPage'
 import {
 	getPadlockCallbackUrl,
 	getPadlockCsrfToken,
 } from '@/domains/auth/api/authActions'
-import AuthPadLock from '@/domains/auth/ui/AuthPadLock'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 
@@ -23,7 +23,7 @@ const Page = async () => {
 			allowUnauthenticated={true}
 			redirectIfAuthenticated={true}
 		>
-			{() => <AuthPadLock csrfToken={csrfToken} callbackUrl={callbackUrl} />}
+			{() => <PadLockPage csrfToken={csrfToken} callbackUrl={callbackUrl} />}
 		</AuthPage>
 	)
 }

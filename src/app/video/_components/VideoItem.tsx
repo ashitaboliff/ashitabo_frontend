@@ -2,11 +2,14 @@
 
 import { YouTubeEmbed } from '@next/third-parties/google'
 import { useRouter } from 'next-nprogress-bar'
+import type {
+	liveOrBand,
+	YoutubeDetail,
+} from '@/domains/video/model/videoTypes'
 import Tags from '@/shared/ui/atoms/Tags'
-import TagEditPopup from './TagEditPopup'
-import type { liveOrBand, YoutubeDetail } from '@/domains/video/model/videoTypes'
-import type { Session } from '@/types/session'
 import { formatDateJa } from '@/shared/utils/dateFormat'
+import type { Session } from '@/types/session'
+import TagEditPopup from './TagEditPopup'
 
 interface Props {
 	session: Session | null

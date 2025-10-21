@@ -3,16 +3,6 @@
 import Image from 'next/image'
 import { type FormEvent, useCallback, useEffect, useRef, useState } from 'react'
 import useSWR from 'swr'
-import Message from '@/shared/ui/atoms/Message'
-import SelectField from '@/shared/ui/atoms/SelectField'
-import TextInputField from '@/shared/ui/atoms/TextInputField'
-import { FaEdit, FaPlus, FaTrash } from '@/shared/ui/icons'
-import type {
-	BandDetails,
-	BandMemberDetails,
-	Part,
-	UserWithProfile,
-} from '@/domains/band/model/bandTypes'
 import {
 	addBandMemberAction,
 	getAvailablePartsAction,
@@ -21,6 +11,16 @@ import {
 	searchUsersForBandAction,
 	updateBandMemberAction,
 } from '@/domains/band/api/bandActions'
+import type {
+	BandDetails,
+	BandMemberDetails,
+	Part,
+	UserWithProfile,
+} from '@/domains/band/model/bandTypes'
+import Message from '@/shared/ui/atoms/Message'
+import SelectField from '@/shared/ui/atoms/SelectField'
+import TextInputField from '@/shared/ui/atoms/TextInputField'
+import { FaEdit, FaPlus, FaTrash } from '@/shared/ui/icons'
 
 interface Props {
 	isOpen: boolean

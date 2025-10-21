@@ -6,8 +6,8 @@ import { nicomoji } from '@/shared/lib/fonts'
 import './globals.css'
 import Footer from '@/components/home/Footer'
 import Header from '@/components/home/Header'
-import ProgressBarProvider from '@/shared/ui/atoms/ProgressBarProvider'
 import { createMetaData } from '@/shared/hooks/useMetaData'
+import ProgressBarProvider from '@/shared/ui/atoms/ProgressBarProvider'
 
 const inter = Inter({ subsets: ['latin'] })
 

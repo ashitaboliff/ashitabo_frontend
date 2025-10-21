@@ -1,10 +1,13 @@
 import type React from 'react'
 import { useCallback, useMemo } from 'react'
 import type { UseFormSetValue } from 'react-hook-form'
+import {
+	createSyntheticEvent,
+	useDropdown,
+} from '@/shared/hooks/useSelectField'
 import InputFieldError from '@/shared/ui/atoms/InputFieldError'
 import LabelInputField from '@/shared/ui/atoms/LabelInputField'
 import type { BaseSelectFieldProps } from '@/shared/ui/atoms/SelectField'
-import { createSyntheticEvent, useDropdown } from '@/shared/hooks/useSelectField'
 
 interface MultiSelectFieldProps<TValue extends string | number>
 	extends BaseSelectFieldProps<TValue> {

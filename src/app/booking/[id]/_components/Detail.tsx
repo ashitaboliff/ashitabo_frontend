@@ -3,13 +3,13 @@
 import { usePathname } from 'next/navigation'
 import { useRouter } from 'next-nprogress-bar'
 import { useState } from 'react'
-import ShareButton from '@/shared/ui/atoms/ShareButton'
-import AddCalendarPopup from '@/shared/ui/molecules/AddCalendarPopup'
 import BookingDetailBox from '@/app/booking/_components/BookingDetailBox'
-import DetailNotFoundPage from './DetailNotFound'
 import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
 import type { Booking } from '@/domains/booking/model/bookingTypes'
+import ShareButton from '@/shared/ui/atoms/ShareButton'
+import AddCalendarPopup from '@/shared/ui/molecules/AddCalendarPopup'
 import { formatDateSlashWithWeekday } from '@/shared/utils/dateFormat'
+import DetailNotFoundPage from './DetailNotFound'
 
 interface Props {
 	readonly bookingDetail: Booking

@@ -2,10 +2,10 @@
 
 import { useRouter } from 'next-nprogress-bar'
 import { useState } from 'react'
-import { LuClockAlert } from '@/shared/ui/icons'
-import AuthIssueLayout from '@/domains/auth/ui/AuthIssueLayout'
 import { useSession } from '@/domains/auth/hooks/useSession'
+import AuthIssueLayout from '@/domains/auth/ui/AuthIssueLayout'
 import { signOutUser } from '@/domains/user/hooks/useSignOut'
+import { LuClockAlert } from '@/shared/ui/icons'
 import { logError } from '@/shared/utils/logger'
 
 const SessionExpiredClient = () => {

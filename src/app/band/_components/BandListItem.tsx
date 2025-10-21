@@ -1,8 +1,11 @@
 'use client'
 
 import Image from 'next/image'
+import type {
+	BandDetails,
+	BandMemberDetails,
+} from '@/domains/band/model/bandTypes'
 import { FaEdit, FaTrashAlt, FaUsers } from '@/shared/ui/icons'
-import type { BandDetails, BandMemberDetails } from '@/domains/band/model/bandTypes'
 
 interface Props {
 	band: BandDetails

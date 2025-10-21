@@ -1,4 +1,8 @@
-import type { AuthDetails, AuthIssue, AuthStatus } from '@/domains/auth/model/authTypes'
+import type {
+	AuthDetails,
+	AuthIssue,
+	AuthStatus,
+} from '@/domains/auth/model/authTypes'
 import type { AccountRole } from '@/domains/user/model/userTypes'
 import type { Session } from '@/types/session'
 

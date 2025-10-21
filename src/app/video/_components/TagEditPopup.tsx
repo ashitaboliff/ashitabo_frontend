@@ -3,14 +3,14 @@
 import { useRouter } from 'next-nprogress-bar'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { updateTagsAction } from '@/domains/video/api/videoActions'
+import type { liveOrBand } from '@/domains/video/model/videoTypes'
+import { useFeedback } from '@/shared/hooks/useFeedback'
 import { TbEdit } from '@/shared/ui/icons'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import Popup from '@/shared/ui/molecules/Popup'
 import TagInputField from '@/shared/ui/molecules/TagsInputField'
-import type { liveOrBand } from '@/domains/video/model/videoTypes'
-import { useFeedback } from '@/shared/hooks/useFeedback'
 import type { Session } from '@/types/session'
-import { updateTagsAction } from '@/domains/video/api/videoActions'
 
 interface Props {
 	readonly session: Session | null

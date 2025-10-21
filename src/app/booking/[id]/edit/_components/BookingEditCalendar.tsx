@@ -2,7 +2,6 @@
 
 import { addDays } from 'date-fns'
 import type { UseFormSetValue } from 'react-hook-form'
-import CalendarFrame from '@/shared/ui/molecules/CalendarFrame'
 import {
 	AvailableCell,
 	BookingInfoCell,
@@ -13,8 +12,9 @@ import {
 	BOOKING_TIME_LIST,
 	FORBIDDEN_BOOKING,
 } from '@/domains/booking/constants/bookingConstants'
-import type { BookingEditFormValues } from '@/domains/booking/schemas/bookingSchema'
 import type { BookingResponse } from '@/domains/booking/model/bookingTypes'
+import type { BookingEditFormValues } from '@/domains/booking/schemas/bookingSchema'
+import CalendarFrame from '@/shared/ui/molecules/CalendarFrame'
 import { DateToDayISOstring } from '@/shared/utils'
 
 interface Props {

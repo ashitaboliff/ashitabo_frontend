@@ -2,17 +2,17 @@
 
 import dynamic from 'next/dynamic'
 import { type ReactNode, useCallback, useState } from 'react'
+import BookingLogs from '@/app/user/_components/BookingLogs'
+import GachaLogs from '@/app/user/_components/GachaLogs'
+import { useGachaPlayManager } from '@/domains/gacha/hooks/useGachaPlayManager'
+import type { CarouselPackDataItem } from '@/domains/gacha/model/gachaTypes'
+import { gkktt } from '@/shared/lib/fonts'
 import { Tab, Tabs } from '@/shared/ui/atoms/Tabs'
 import {
 	GiCardRandom,
 	GiGuitarHead,
 	MdOutlineEditCalendar,
 } from '@/shared/ui/icons'
-import { useGachaPlayManager } from '@/domains/gacha/hooks/useGachaPlayManager'
-import type { CarouselPackDataItem } from '@/domains/gacha/model/gachaTypes'
-import BookingLogs from '@/app/user/_components/BookingLogs'
-import GachaLogs from '@/app/user/_components/GachaLogs'
-import { gkktt } from '@/shared/lib/fonts'
 import type { Session } from '@/types/session'
 
 const GachaMainPopup = dynamic(
@@ -23,17 +23,14 @@ const GachaMainPopup = dynamic(
 	},
 ) as typeof import('@/domains/gacha/ui/GachaMainPopup')['default']
 
-const RatioPopup = dynamic(
-	() => import('@/domains/gacha/ui/RatioPopup'),
-	{
-		ssr: false,
-		loading: () => (
-			<button type="button" className="btn btn-outline w-full sm:w-auto">
-				提供割合
-			</button>
-		),
-	},
-) as typeof import('@/domains/gacha/ui/RatioPopup')['default']
+const RatioPopup = dynamic(() => import('@/domains/gacha/ui/RatioPopup'), {
+	ssr: false,
+	loading: () => (
+		<button type="button" className="btn btn-outline w-full sm:w-auto">
+			提供割合
+		</button>
+	),
+}) as typeof import('@/domains/gacha/ui/RatioPopup')['default']
 
 interface Props {
 	readonly session: Session

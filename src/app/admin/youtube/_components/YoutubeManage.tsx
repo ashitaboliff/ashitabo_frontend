@@ -2,10 +2,6 @@
 
 import { useRouter } from 'next-nprogress-bar'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import Pagination from '@/shared/ui/atoms/Pagination'
-import SelectField from '@/shared/ui/atoms/SelectField'
-import Tags from '@/shared/ui/atoms/Tags'
-import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import {
 	createPlaylistAction,
 	getAuthUrl,
@@ -15,17 +11,18 @@ import type { Playlist } from '@/domains/video/model/videoTypes'
 import { useLocationNavigate } from '@/shared/hooks/useBrowserApis'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { usePagedResource } from '@/shared/hooks/usePagedResource'
+import Pagination from '@/shared/ui/atoms/Pagination'
+import SelectField from '@/shared/ui/atoms/SelectField'
+import Tags from '@/shared/ui/atoms/Tags'
+import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import { formatDateJa, formatDateSlash } from '@/shared/utils/dateFormat'
 
 interface Props {
-	playlists: Playlist[] | undefined | null
-	isAccessToken: boolean
+	readonly playlists: Playlist[] | undefined | null
+	readonly isAccessToken: boolean
 }
 
-const YoutubeManagement = ({
-	playlists,
-	isAccessToken,
-}: Props) => {
+const YoutubeManagement = ({ playlists, isAccessToken }: Props) => {
 	const router = useRouter()
 	const actionFeedback = useFeedback()
 	const navigate = useLocationNavigate()

@@ -1,3 +1,9 @@
+import type {
+	Playlist,
+	Video,
+	YoutubeDetail,
+	YoutubeSearchQuery,
+} from '@/domains/video/model/videoTypes'
 import {
 	mapRawPlaylist,
 	mapRawPlaylists,
@@ -5,14 +11,12 @@ import {
 	type RawPlaylist,
 	type RawVideo,
 } from '@/domains/video/services/videoTransforms'
-import type {
-	Playlist,
-	Video,
-	YoutubeDetail,
-	YoutubeSearchQuery,
-} from '@/domains/video/model/videoTypes'
 import { apiGet, apiPost } from '@/shared/lib/api/crud'
-import { mapSuccess, okResponse, withFallbackMessage } from '@/shared/lib/api/helper'
+import {
+	mapSuccess,
+	okResponse,
+	withFallbackMessage,
+} from '@/shared/lib/api/helper'
 import { type ApiResponse, StatusCode } from '@/types/responseTypes'
 
 export const searchYoutubeDetailsAction = async (

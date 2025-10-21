@@ -2,10 +2,10 @@
 
 import { useEffect } from 'react'
 import useSWR from 'swr'
-import GenericTableBody from '@/shared/ui/molecules/GenericTableBody'
 import { getBookingByUserIdAction } from '@/domains/booking/api/bookingActions'
 import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
 import type { Booking } from '@/domains/booking/model/bookingTypes'
+import GenericTableBody from '@/shared/ui/molecules/GenericTableBody'
 import { formatDateSlashWithWeekday } from '@/shared/utils/dateFormat'
 
 interface Props {

@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
-import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 import ProfileEdit from '@/app/user/edit/_components/ProfileEdit'
+import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 import type { Profile } from '@/domains/user/model/userTypes'
 import { apiGet } from '@/shared/lib/api/crud'
 

@@ -5,10 +5,10 @@ import { useCallback, useEffect, useId, useState } from 'react'
 import { type SubmitHandler, useForm } from 'react-hook-form'
 import * as zod from 'zod'
 import UserSelectPopup from '@/components/interactive/UserSelectPopup'
+import { type Part, PartOptions } from '@/domains/user/model/userTypes'
 import TextInputField from '@/shared/ui/atoms/TextInputField'
 import MultiSelectField from '@/shared/ui/molecules/MultiSelectField'
 import Popup from '@/shared/ui/molecules/Popup'
-import { type Part, PartOptions } from '@/domains/user/model/userTypes'
 
 // import { createBandAction } from './actions'
 

@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
-import { getAllPadLocksAction } from '@/domains/admin/api/adminActions'
 import PadLockEdit from '@/app/admin/padlock/_components/PadLockEdit'
+import { getAllPadLocksAction } from '@/domains/admin/api/adminActions'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 
 const Page = async () => {

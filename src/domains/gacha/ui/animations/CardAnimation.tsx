@@ -3,13 +3,13 @@
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { type CSSProperties, useId, useMemo, useRef, useState } from 'react'
+import { GachaRarityMap } from '@/domains/gacha/config/gachaConfig'
+import type { RarityType } from '@/domains/gacha/model/gachaTypes'
 import {
 	type AnimationContext,
 	rarityAnimations,
 } from '@/domains/gacha/ui/animations/rarityAnimations'
 import Sparkle from '@/domains/gacha/ui/effects/Sparkle'
-import { GachaRarityMap } from '@/domains/gacha/config/gachaConfig'
-import type { RarityType } from '@/domains/gacha/model/gachaTypes'
 
 gsap.registerPlugin(useGSAP)
 

@@ -2,8 +2,8 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { FaRegUserCircle } from '@/shared/ui/icons'
 import { useSession } from '@/domains/auth/hooks/useSession'
+import { FaRegUserCircle } from '@/shared/ui/icons'
 
 const HeaderIcon = () => {
 	const { data: session } = useSession()

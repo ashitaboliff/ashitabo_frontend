@@ -2,17 +2,17 @@
 
 import { useRouter } from 'next-nprogress-bar'
 import { useState } from 'react'
-import Pagination from '@/shared/ui/atoms/Pagination'
-import RadioSortGroup from '@/shared/ui/atoms/RadioSortGroup'
-import SelectField from '@/shared/ui/atoms/SelectField'
-import type { AccountRole, UserDetail } from '@/domains/user/model/userTypes'
-import type { ApiError } from '@/types/responseTypes'
-import { logError } from '@/shared/utils/logger'
 import {
 	adminRevalidateTagAction,
 	deleteUserAction,
 	updateUserRoleAction,
 } from '@/domains/admin/api/adminActions'
+import type { AccountRole, UserDetail } from '@/domains/user/model/userTypes'
+import Pagination from '@/shared/ui/atoms/Pagination'
+import RadioSortGroup from '@/shared/ui/atoms/RadioSortGroup'
+import SelectField from '@/shared/ui/atoms/SelectField'
+import { logError } from '@/shared/utils/logger'
+import type { ApiError } from '@/types/responseTypes'
 import UserDeleteConfirmPopup from './UserDeleteConfirmPopup'
 import UserDetailPopup from './UserDetailPopup'
 import UserManageList from './UserManageList'

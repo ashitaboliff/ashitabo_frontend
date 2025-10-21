@@ -2,11 +2,14 @@
 
 import Image from 'next/image'
 import React, { useId, useState } from 'react'
-import { Tab, Tabs } from '@/shared/ui/atoms/Tabs'
-import Popup from '@/shared/ui/molecules/Popup'
-import { type GachaCategoryConfig, gachaConfigs } from '@/domains/gacha/config/gachaConfig'
+import {
+	type GachaCategoryConfig,
+	gachaConfigs,
+} from '@/domains/gacha/config/gachaConfig'
 import type { RarityType } from '@/domains/gacha/model/gachaTypes'
 import { getImageUrl } from '@/shared/lib/r2'
+import { Tab, Tabs } from '@/shared/ui/atoms/Tabs'
+import Popup from '@/shared/ui/molecules/Popup'
 
 const rarityDisplayNameMap: Record<RarityType, string> = {
 	COMMON: 'COMMON',

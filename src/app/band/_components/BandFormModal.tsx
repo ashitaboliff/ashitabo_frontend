@@ -3,16 +3,19 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useMemo, useRef } from 'react'
 import { useForm } from 'react-hook-form'
-import TextInputField from '@/shared/ui/atoms/TextInputField'
-import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
+import {
+	createBandAction,
+	updateBandAction,
+} from '@/domains/band/api/bandActions'
+import type { BandDetails } from '@/domains/band/model/bandTypes'
 import {
 	type BandFormValues,
 	bandFormSchema,
 } from '@/domains/band/schemas/bandSchema'
-import type { BandDetails } from '@/domains/band/model/bandTypes'
 import { useFeedback } from '@/shared/hooks/useFeedback'
+import TextInputField from '@/shared/ui/atoms/TextInputField'
+import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import { logError } from '@/shared/utils/logger'
-import { createBandAction, updateBandAction } from '@/domains/band/api/bandActions'
 
 interface Props {
 	isOpen: boolean

@@ -5,23 +5,23 @@ import { eachDayOfInterval } from 'date-fns'
 import { useRouter } from 'next-nprogress-bar'
 import { useEffect, useMemo, useState } from 'react'
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form'
-import CustomDatePicker from '@/shared/ui/atoms/DatePicker'
-import ShareButton from '@/shared/ui/atoms/ShareButton'
-import TextareaInputField from '@/shared/ui/atoms/TextareaInputField'
-import TextInputField from '@/shared/ui/atoms/TextInputField'
-import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
-import MultiSelectField from '@/shared/ui/molecules/MultiSelectField'
+import { createScheduleAction } from '@/domains/schedule/api/scheduleActions'
 import {
 	type ScheduleCreateFormInput,
 	type ScheduleCreateFormValues,
 	scheduleCreateSchema,
 } from '@/domains/schedule/schemas/createScheduleSchema'
 import { useFeedback } from '@/shared/hooks/useFeedback'
-import type { Session } from '@/types/session'
+import CustomDatePicker from '@/shared/ui/atoms/DatePicker'
+import ShareButton from '@/shared/ui/atoms/ShareButton'
+import TextareaInputField from '@/shared/ui/atoms/TextareaInputField'
+import TextInputField from '@/shared/ui/atoms/TextInputField'
+import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
+import MultiSelectField from '@/shared/ui/molecules/MultiSelectField'
 import { DateToDayISOstring } from '@/shared/utils'
 import { formatDateSlashWithWeekday } from '@/shared/utils/dateFormat'
 import { logError } from '@/shared/utils/logger'
-import { createScheduleAction } from '@/domains/schedule/api/scheduleActions'
+import type { Session } from '@/types/session'
 
 interface Props {
 	session: Session
@@ -56,10 +56,7 @@ const generateScheduleId = () => {
 	return Math.random().toString(36).slice(2)
 }
 
-const ScheduleCreatePage = ({
-	session,
-	initialUsers,
-}: Props) => {
+const ScheduleCreatePage = ({ session, initialUsers }: Props) => {
 	const router = useRouter()
 	const [currentScheduleId, setCurrentScheduleId] = useState(generateScheduleId)
 	const [createdSchedule, setCreatedSchedule] =

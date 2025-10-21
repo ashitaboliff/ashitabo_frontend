@@ -1,10 +1,10 @@
 'use client'
 
 import { useId } from 'react'
-import Popup from '@/shared/ui/molecules/Popup'
-import CardAnimation from '@/domains/gacha/ui/animations/CardAnimation'
 import { gachaConfigs } from '@/domains/gacha/config/gachaConfig'
 import type { GachaData } from '@/domains/gacha/model/gachaTypes'
+import CardAnimation from '@/domains/gacha/ui/animations/CardAnimation'
+import Popup from '@/shared/ui/molecules/Popup'
 import { formatDateJa } from '@/shared/utils/dateFormat'
 
 interface GachaPreviewPopupProps {

@@ -1,12 +1,12 @@
 import type { Metadata, ResolvingMetadata } from 'next'
 import { notFound } from 'next/navigation'
 import { cache } from 'react'
+import VideoDetailPage from '@/app/video/[id]/_components/VideoDetailPage' // 修正
 import { getAuthDetails } from '@/domains/auth/api/authActions'
 import {
 	getPlaylistByIdAction,
 	getVideoByIdAction,
 } from '@/domains/video/api/videoActions'
-import VideoDetailPage from '@/app/video/[id]/_components/VideoDetailPage' // 修正
 import { createMetaData } from '@/shared/hooks/useMetaData'
 
 type PageParams = Promise<{ id: string }>

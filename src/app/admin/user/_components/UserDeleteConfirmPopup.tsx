@@ -1,18 +1,18 @@
 'use client'
 
+import type { UserDetail } from '@/domains/user/model/userTypes'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import Popup from '@/shared/ui/molecules/Popup'
-import type { UserDetail } from '@/domains/user/model/userTypes'
 import type { ApiError } from '@/types/responseTypes'
 
 interface Props {
-	open: boolean
-	onClose: () => void
-	selectedUser: UserDetail | null
-	actionLoading: boolean
-	onDelete: (id: string) => void
-	actionError: ApiError | null
-	setActionError: (error: ApiError | null) => void
+	readonly open: boolean
+	readonly onClose: () => void
+	readonly selectedUser: UserDetail | null
+	readonly actionLoading: boolean
+	readonly onDelete: (id: string) => void
+	readonly actionError: ApiError | null
+	readonly setActionError: (error: ApiError | null) => void
 }
 
 const UserDeleteConfirmPopup = ({

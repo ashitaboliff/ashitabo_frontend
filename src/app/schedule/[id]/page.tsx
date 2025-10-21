@@ -1,9 +1,9 @@
 import type { Metadata, ResolvingMetadata } from 'next'
 import { notFound } from 'next/navigation'
 import { cache } from 'react'
+import IdPage from '@/app/schedule/[id]/_components/IdPage'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 import { getScheduleByIdAction } from '@/domains/schedule/api/scheduleActions'
-import IdPage from '@/app/schedule/[id]/_components/IdPage'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 
 type PageParams = Promise<{ id: string }>

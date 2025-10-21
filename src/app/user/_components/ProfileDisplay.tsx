@@ -1,6 +1,6 @@
 import Image from 'next/image'
-import InstIcon from '@/shared/ui/atoms/InstIcon'
 import { type Profile, RoleMap } from '@/domains/user/model/userTypes'
+import InstIcon from '@/shared/ui/atoms/InstIcon'
 import type { Session } from '@/types/session'
 
 interface Props {

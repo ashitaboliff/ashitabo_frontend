@@ -1,13 +1,13 @@
 'use client'
 
 import { useCallback, useMemo } from 'react'
-import { CiShare1, IoShareSocialSharp } from '@/shared/ui/icons'
 import {
 	useNavigatorShare,
 	useWindowAlert,
 	useWindowOpen,
 } from '@/shared/hooks/useBrowserApis'
 import PublicEnv from '@/shared/lib/env/public'
+import { CiShare1, IoShareSocialSharp } from '@/shared/ui/icons'
 
 type ShareButtonProps = {
 	url: string

@@ -2,12 +2,12 @@
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useId, useState } from 'react'
+import type { YoutubeSearchQuery } from '@/domains/video/model/videoTypes'
 import ShareButton from '@/shared/ui/atoms/ShareButton'
 import { BiSearch, RiQuestionLine } from '@/shared/ui/icons'
 import Popup from '@/shared/ui/molecules/Popup'
 import TagInputField from '@/shared/ui/molecules/TagsInputField'
 import TextSearchField from '@/shared/ui/molecules/TextSearchField'
-import type { YoutubeSearchQuery } from '@/domains/video/model/videoTypes'
 
 interface Props {
 	defaultQuery: YoutubeSearchQuery

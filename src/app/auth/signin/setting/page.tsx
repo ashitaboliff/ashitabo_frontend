@@ -1,4 +1,4 @@
-import SigninSetting from '@/domains/auth/ui/SigninSetting'
+import SigninSetting from '@/app/auth/signin/setting/_components/SigninSetting'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 

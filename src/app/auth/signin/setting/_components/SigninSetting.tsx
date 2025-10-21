@@ -1,16 +1,16 @@
 'use client'
 
 import { useRouter } from 'next-nprogress-bar'
+import AuthLoadingIndicator from '@/domains/auth/ui/AuthLoadingIndicator'
+import { useProfileForm } from '@/domains/user/hooks/useProfileForm'
+import { signOutUser } from '@/domains/user/hooks/useSignOut'
+import { PartOptions } from '@/domains/user/model/userTypes'
+import { expectedYearMap } from '@/domains/user/schemas/profileSchema'
+import { useFeedback } from '@/shared/hooks/useFeedback'
 import SelectField from '@/shared/ui/atoms/SelectField'
 import TextInputField from '@/shared/ui/atoms/TextInputField'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import MultiSelectField from '@/shared/ui/molecules/MultiSelectField'
-import { signOutUser } from '@/domains/user/hooks/useSignOut'
-import { useProfileForm } from '@/domains/user/hooks/useProfileForm'
-import { expectedYearMap } from '@/domains/user/schemas/profileSchema'
-import { PartOptions } from '@/domains/user/model/userTypes'
-import { useFeedback } from '@/shared/hooks/useFeedback'
-import AuthLoadingIndicator from './AuthLoadingIndicator'
 
 const SigninSetting = () => {
 	const router = useRouter()

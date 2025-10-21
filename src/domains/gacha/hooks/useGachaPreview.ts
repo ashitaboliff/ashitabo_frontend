@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react'
 import useSWR, { mutate as mutateGlobal } from 'swr'
 import { getGachaByGachaSrcAction } from '@/domains/gacha/api/gachaActions'
+import type { GachaData } from '@/domains/gacha/model/gachaTypes'
 import {
 	clearPreviewCacheEntry,
 	getPreviewCacheEntry,
@@ -18,9 +19,8 @@ import {
 	setSignedResourceEntry,
 	shouldRefreshSignedResource,
 } from '@/domains/gacha/services/signedGachaResourceCache'
-import type { GachaData } from '@/domains/gacha/model/gachaTypes'
-import type { Session } from '@/types/session'
 import { logError } from '@/shared/utils/logger'
+import type { Session } from '@/types/session'
 
 interface UseGachaPreviewProps {
 	session: Session
