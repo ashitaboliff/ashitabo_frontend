@@ -21,12 +21,12 @@ import { formatMonthDay, formatWeekday } from '@/shared/utils/dateFormat'
 import type { ApiError } from '@/types/responseTypes'
 
 interface Props {
-	initialViewDate: string
-	type?: NoticeType
-	message?: string
+	readonly initialViewDate: string
+	readonly type?: NoticeType
+	readonly message?: string
 }
 
-const MainPage = ({ initialViewDate, type, message }: Props) => {
+const BookingMainPage = ({ initialViewDate, type, message }: Props) => {
 	const initialDate = useMemo(
 		() => new Date(initialViewDate),
 		[initialViewDate],
@@ -139,4 +139,4 @@ const MainPage = ({ initialViewDate, type, message }: Props) => {
 	)
 }
 
-export default MainPage
+export default BookingMainPage

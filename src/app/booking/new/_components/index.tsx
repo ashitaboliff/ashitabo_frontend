@@ -34,9 +34,9 @@ import type { Session } from '@/types/session'
 const today = getCurrentJSTDateString({})
 
 interface Props {
-	session: Session
-	initialDateParam?: string
-	initialTimeParam?: string
+	readonly session: Session
+	readonly initialDateParam?: string
+	readonly initialTimeParam?: string
 }
 
 interface CreatedBookingSummary {
@@ -47,7 +47,11 @@ interface CreatedBookingSummary {
 	name: string
 }
 
-const CreatePage = ({ session, initialDateParam, initialTimeParam }: Props) => {
+const BookingCreate = ({
+	session,
+	initialDateParam,
+	initialTimeParam,
+}: Props) => {
 	const router = useRouter()
 	const { mutate } = useSWRConfig()
 	const messageFeedback = useFeedback()
@@ -319,4 +323,4 @@ const CreatePage = ({ session, initialDateParam, initialTimeParam }: Props) => {
 	)
 }
 
-export default CreatePage
+export default BookingCreate

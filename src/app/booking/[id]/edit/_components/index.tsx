@@ -3,22 +3,22 @@
 import { useRouter } from 'next-nprogress-bar'
 import { useId, useReducer, useState } from 'react'
 import { useSWRConfig } from 'swr'
-import BookingDetailBox from '@/app/booking/_components/BookingDetailBox'
 import { deleteBookingAction } from '@/domains/booking/api/bookingActions'
 import type {
 	Booking,
 	BookingResponse,
 } from '@/domains/booking/model/bookingTypes'
+import {
+	BookingErrorMessage,
+	BookingSuccessMessage,
+} from '@/domains/booking/ui/BookingActionFeedback'
+import BookingDetailBox from '@/domains/booking/ui/BookingDetailBox'
 import { mutateBookingCalendarsForDate } from '@/domains/booking/utils/calendarCache'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import Popup from '@/shared/ui/molecules/Popup'
 import { toDateKey } from '@/shared/utils'
 import { logError } from '@/shared/utils/logger'
 import type { Session } from '@/types/session'
-import {
-	BookingErrorMessage,
-	BookingSuccessMessage,
-} from './BookingActionFeedback'
 import BookingEditAuthForm from './BookingEditAuth'
 import BookingEditForm from './BookingEditForm'
 
@@ -52,10 +52,10 @@ const reducer = (state: State, action: Action): State => {
 }
 
 interface Props {
-	bookingDetail: Booking
-	session: Session
-	initialBookingResponse: BookingResponse | null
-	initialViewDay: Date
+	readonly bookingDetail: Booking
+	readonly session: Session
+	readonly initialBookingResponse: BookingResponse | null
+	readonly initialViewDay: Date
 }
 
 const BookingEdit = ({

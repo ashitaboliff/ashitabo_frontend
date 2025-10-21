@@ -3,25 +3,25 @@
 import { usePathname } from 'next/navigation'
 import { useRouter } from 'next-nprogress-bar'
 import { useState } from 'react'
-import BookingDetailBox from '@/app/booking/_components/BookingDetailBox'
 import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
 import type { Booking } from '@/domains/booking/model/bookingTypes'
+import BookingDetailBox from '@/domains/booking/ui/BookingDetailBox'
 import ShareButton from '@/shared/ui/atoms/ShareButton'
 import AddCalendarPopup from '@/shared/ui/molecules/AddCalendarPopup'
 import { formatDateSlashWithWeekday } from '@/shared/utils/dateFormat'
-import DetailNotFoundPage from './DetailNotFound'
+import BookingDetailNotFound from '../../../../domains/booking/ui/BookingDetailNotFound'
 
 interface Props {
 	readonly bookingDetail: Booking
 }
 
-const DetailPage = ({ bookingDetail }: Props) => {
+const BookingDetail = ({ bookingDetail }: Props) => {
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 	const router = useRouter()
 	const pathname = usePathname()
 
 	if (!bookingDetail) {
-		return <DetailNotFoundPage />
+		return <BookingDetailNotFound />
 	}
 
 	return (
@@ -76,4 +76,4 @@ const DetailPage = ({ bookingDetail }: Props) => {
 	)
 }
 
-export default DetailPage
+export default BookingDetail

@@ -3,8 +3,7 @@
 import { addDays, subDays } from 'date-fns'
 import type { Metadata, ResolvingMetadata } from 'next'
 import { cookies } from 'next/headers'
-import DetailNotFoundPage from '@/app/booking/[id]/_components/DetailNotFound'
-import BookingEdit from '@/app/booking/[id]/edit/_components/BookingEdit'
+import BookingEdit from '@/app/booking/[id]/edit/_components'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 import {
 	getBookingByDateAction,
@@ -14,6 +13,7 @@ import {
 	BOOKING_TIME_LIST,
 	BOOKING_VIEW_RANGE_DAYS,
 } from '@/domains/booking/constants/bookingConstants'
+import BookingDetailNotFound from '@/domains/booking/ui/BookingDetailNotFound'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 import { toDateKey } from '@/shared/utils'
 import { logError } from '@/shared/utils/logger'
@@ -82,7 +82,7 @@ const Page = async ({ params }: PageProps) => {
 						return null
 					}
 					logError('Failed to get booking detail for edit page', bookingDetail)
-					return <DetailNotFoundPage />
+					return <BookingDetailNotFound />
 				}
 
 				const initialBookingResponse = bookingResponse.ok

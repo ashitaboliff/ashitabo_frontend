@@ -6,7 +6,7 @@ import Message from '@/shared/ui/atoms/Message'
 /**
  * 予約情報が見つからなかった場合のコンポーネント、静的
  */
-const DetailNotFoundPage = () => {
+const BookingDetailNotFound = () => {
 	const router = useRouter()
 
 	return (
@@ -31,4 +31,4 @@ const DetailNotFoundPage = () => {
 	)
 }
 
-export default DetailNotFoundPage
+export default BookingDetailNotFound

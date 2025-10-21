@@ -1,7 +1,4 @@
-import {
-	PiCircle as CircleIcon,
-	HiMiniXMark as ForbiddenIcon,
-} from '@/shared/ui/icons'
+import { HiMiniXMark, PiCircle } from '@/shared/ui/icons'
 
 export const CALENDAR_CELL_CONTENT_CLASS =
 	'w-11 h-12 sm:w-full sm:h-16 flex flex-col justify-center items-center text-center break-words overflow-hidden py-1'
@@ -12,9 +9,9 @@ const truncateWithEllipsis = (value: string, maxLength: number): string => {
 	return `${value.slice(0, maxLength - 1)}...`
 }
 
-type BookingInfoCellProps = {
-	registName: string
-	name: string
+interface BookingInfoCellProps {
+	readonly registName: string
+	readonly name: string
 }
 
 export const BookingInfoCell = ({ registName, name }: BookingInfoCellProps) => (
@@ -28,13 +25,13 @@ export const BookingInfoCell = ({ registName, name }: BookingInfoCellProps) => (
 	</div>
 )
 
-type ForbiddenCellProps = {
-	label?: string
+interface ForbiddenCellProps {
+	readonly label?: string
 }
 
 export const ForbiddenCell = ({ label }: ForbiddenCellProps) => (
 	<div className={CALENDAR_CELL_CONTENT_CLASS}>
-		<ForbiddenIcon color="red" size={20} />
+		<HiMiniXMark color="red" size={20} />
 		{label ? (
 			<p className="text-xxxs sm:text-xs-custom text-base-content">{label}</p>
 		) : null}
@@ -43,6 +40,6 @@ export const ForbiddenCell = ({ label }: ForbiddenCellProps) => (
 
 export const AvailableCell = () => (
 	<div className={CALENDAR_CELL_CONTENT_CLASS}>
-		<CircleIcon color="blue" size={20} />
+		<PiCircle color="blue" size={20} />
 	</div>
 )

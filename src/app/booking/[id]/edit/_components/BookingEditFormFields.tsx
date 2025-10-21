@@ -1,23 +1,23 @@
 'use client'
 
 import type { FieldErrors, UseFormRegister } from 'react-hook-form'
-import { BookingErrorMessage } from '@/app/booking/[id]/edit/_components/BookingActionFeedback'
 import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
 import type { BookingEditFormValues } from '@/domains/booking/schemas/bookingSchema'
+import { BookingErrorMessage } from '@/domains/booking/ui/BookingActionFeedback'
 import TextInputField from '@/shared/ui/atoms/TextInputField'
 import { MdOutlineEditCalendar } from '@/shared/ui/icons'
 import type { FeedbackMessageType } from '@/types/feedback'
 
 interface Props {
-	register: UseFormRegister<BookingEditFormValues>
-	errors: FieldErrors<BookingEditFormValues>
-	isSubmitting: boolean
-	isLoading: boolean
-	onCancel: () => void
-	onOpenCalendar: () => void
-	onSubmit: (event: React.FormEvent<HTMLFormElement>) => void
-	errorFeedback: FeedbackMessageType | null
-	bookingTimeIndex: number
+	readonly register: UseFormRegister<BookingEditFormValues>
+	readonly errors: FieldErrors<BookingEditFormValues>
+	readonly isSubmitting: boolean
+	readonly isLoading: boolean
+	readonly onCancel: () => void
+	readonly onOpenCalendar: () => void
+	readonly onSubmit: (event: React.FormEvent<HTMLFormElement>) => void
+	readonly errorFeedback: FeedbackMessageType | null
+	readonly bookingTimeIndex: number
 }
 
 const BookingEditFormFields = ({

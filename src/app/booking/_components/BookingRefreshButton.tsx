@@ -4,7 +4,7 @@ import { useTransition } from 'react'
 import { useSWRConfig } from 'swr'
 import { mutateAllBookingCalendars } from '@/domains/booking/utils/calendarCache'
 
-const RefreshButton = () => {
+const BookingRefreshButton = () => {
 	const [isPending, startTransition] = useTransition()
 	const { mutate } = useSWRConfig()
 
@@ -30,4 +30,4 @@ const RefreshButton = () => {
 	)
 }
 
-export default RefreshButton
+export default BookingRefreshButton

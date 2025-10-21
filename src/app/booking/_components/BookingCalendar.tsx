@@ -4,15 +4,15 @@ import { addDays } from 'date-fns'
 import { useRouter } from 'next-nprogress-bar'
 import { useMemo } from 'react'
 import {
-	AvailableCell,
-	BookingInfoCell,
-	ForbiddenCell,
-} from '@/app/booking/_components/CalendarCellContent'
-import {
 	ABLE_BOOKING_DAYS,
 	FORBIDDEN_BOOKING,
 } from '@/domains/booking/constants/bookingConstants'
 import type { BookingResponse } from '@/domains/booking/model/bookingTypes'
+import {
+	AvailableCell,
+	BookingInfoCell,
+	ForbiddenCell,
+} from '@/domains/booking/ui/CalendarCellContent'
 import CalendarFrame from '@/shared/ui/molecules/CalendarFrame'
 import { DateToDayISOstring, toDateKey } from '@/shared/utils'
 

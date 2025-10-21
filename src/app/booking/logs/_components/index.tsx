@@ -14,13 +14,13 @@ import {
 } from '@/shared/utils/dateFormat'
 
 interface Props {
-	readonly bookingLog: BookingLog[] | undefined | null
+	readonly bookingLog: BookingLog[]
 }
 
-const LogsPage = ({ bookingLog }: Props) => {
+const BookingLogs = ({ bookingLog }: Props) => {
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [logsPerPage, setLogsPerPage] = useState(10)
-	const [popupData, setPopupData] = useState<BookingLog | undefined | null>(
+	const [popupData, setPopupData] = useState<BookingLog | undefined>(
 		bookingLog?.[0] ?? undefined,
 	)
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
@@ -199,4 +199,4 @@ const LogsPage = ({ bookingLog }: Props) => {
 	)
 }
 
-export default LogsPage
+export default BookingLogs

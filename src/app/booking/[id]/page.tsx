@@ -1,8 +1,8 @@
 import type { Metadata, ResolvingMetadata } from 'next'
-import DetailPage from '@/app/booking/[id]/_components/Detail'
-import DetailNotFoundPage from '@/app/booking/[id]/_components/DetailNotFound'
+import BookingDetail from '@/app/booking/[id]/_components'
 import { getBookingByIdAction } from '@/domains/booking/api/bookingActions'
 import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
+import BookingDetailNotFound from '@/domains/booking/ui/BookingDetailNotFound'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 
 type PageParams = Promise<{ id: string }>
@@ -40,9 +40,9 @@ const Page = async ({ params }: PageProps) => {
 
 	const bookingDetail = await getBookingByIdAction(id)
 	if (!bookingDetail.ok || !bookingDetail.data) {
-		return <DetailNotFoundPage />
+		return <BookingDetailNotFound />
 	}
-	return <DetailPage bookingDetail={bookingDetail.data} />
+	return <BookingDetail bookingDetail={bookingDetail.data} />
 }
 
 export default Page

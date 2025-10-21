@@ -3,28 +3,28 @@
 import { addDays } from 'date-fns'
 import type { UseFormSetValue } from 'react-hook-form'
 import {
-	AvailableCell,
-	BookingInfoCell,
-	ForbiddenCell,
-} from '@/app/booking/_components/CalendarCellContent'
-import {
 	ABLE_BOOKING_DAYS,
 	BOOKING_TIME_LIST,
 	FORBIDDEN_BOOKING,
 } from '@/domains/booking/constants/bookingConstants'
 import type { BookingResponse } from '@/domains/booking/model/bookingTypes'
 import type { BookingEditFormValues } from '@/domains/booking/schemas/bookingSchema'
+import {
+	AvailableCell,
+	BookingInfoCell,
+	ForbiddenCell,
+} from '@/domains/booking/ui/CalendarCellContent'
 import CalendarFrame from '@/shared/ui/molecules/CalendarFrame'
 import { DateToDayISOstring } from '@/shared/utils'
 
 interface Props {
-	bookingResponse: BookingResponse
-	actualBookingDate: string
-	actualBookingTime: number
-	bookingDate: string
-	bookingTime: number
-	setCalendarOpen: (calendarOpen: boolean) => void
-	setValue: UseFormSetValue<BookingEditFormValues>
+	readonly bookingResponse: BookingResponse
+	readonly actualBookingDate: string
+	readonly actualBookingTime: number
+	readonly bookingDate: string
+	readonly bookingTime: number
+	readonly setCalendarOpen: (calendarOpen: boolean) => void
+	readonly setValue: UseFormSetValue<BookingEditFormValues>
 }
 
 const BookingEditCalendar = ({

@@ -4,24 +4,24 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next-nprogress-bar'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import BookingDetailBox from '@/app/booking/_components/BookingDetailBox'
 import { authBookingAction } from '@/domains/booking/api/bookingActions'
 import type { Booking } from '@/domains/booking/model/bookingTypes'
 import {
 	type BookingAuthFormValues,
 	bookingAuthSchema,
 } from '@/domains/booking/schemas/bookingSchema'
+import BookingDetailBox from '@/domains/booking/ui/BookingDetailBox'
+import BookingDetailNotFound from '@/domains/booking/ui/BookingDetailNotFound'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import PasswordInputField from '@/shared/ui/molecules/PasswordInputField'
 import { logError } from '@/shared/utils/logger'
 import type { Session } from '@/types/session'
-import DetailNotFoundPage from '../../_components/DetailNotFound'
 
 interface Props {
-	session: Session
-	bookingDetail: Booking
-	onSuccess: () => void
+	readonly session: Session
+	readonly bookingDetail: Booking
+	readonly onSuccess: () => void
 }
 
 const BookingEditAuthForm = ({ session, bookingDetail, onSuccess }: Props) => {
@@ -39,7 +39,7 @@ const BookingEditAuthForm = ({ session, bookingDetail, onSuccess }: Props) => {
 	})
 
 	if (!bookingDetail) {
-		return <DetailNotFoundPage />
+		return <BookingDetailNotFound />
 	}
 
 	const togglePassword = () => setShowPassword((prev) => !prev)

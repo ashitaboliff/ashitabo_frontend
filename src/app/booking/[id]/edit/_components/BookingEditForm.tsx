@@ -22,12 +22,12 @@ import BookingEditCalendarPopup from './BookingEditCalendarPopup'
 import BookingEditFormFields from './BookingEditFormFields'
 
 interface Props {
-	bookingDetail: Booking
-	session: Session
-	onCancel: () => void
-	onSuccess: (updatedBooking: Booking) => void
-	initialBookingResponse: BookingResponse | null
-	initialViewDay: Date
+	readonly bookingDetail: Booking
+	readonly session: Session
+	readonly onCancel: () => void
+	readonly onSuccess: (updatedBooking: Booking) => void
+	readonly initialBookingResponse: BookingResponse | null
+	readonly initialViewDay: Date
 }
 
 const today = getCurrentJSTDateString({})

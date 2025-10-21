@@ -9,22 +9,22 @@ import {
 } from '@/domains/booking/hooks/bookingHooks'
 import type { BookingResponse } from '@/domains/booking/model/bookingTypes'
 import type { BookingEditFormValues } from '@/domains/booking/schemas/bookingSchema'
+import { BookingErrorMessage } from '@/domains/booking/ui/BookingActionFeedback'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import Popup from '@/shared/ui/molecules/Popup'
 import type { ApiError } from '@/types/responseTypes'
-import { BookingErrorMessage } from './BookingActionFeedback'
 import BookingEditCalendar from './BookingEditCalendar'
 
 interface Props {
-	open: boolean
-	onClose: () => void
-	initialViewDay: Date
-	initialBookingResponse: BookingResponse | null
-	actualBookingDate: string
-	actualBookingTime: number
-	bookingDate: string
-	bookingTime: number
-	setValue: UseFormSetValue<BookingEditFormValues>
+	readonly open: boolean
+	readonly onClose: () => void
+	readonly initialViewDay: Date
+	readonly initialBookingResponse: BookingResponse | null
+	readonly actualBookingDate: string
+	readonly actualBookingTime: number
+	readonly bookingDate: string
+	readonly bookingTime: number
+	readonly setValue: UseFormSetValue<BookingEditFormValues>
 }
 
 const BookingEditCalendarPopup = ({
