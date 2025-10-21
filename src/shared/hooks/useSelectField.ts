@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import {
+	type ChangeEvent,
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+} from 'react'
 
 export const createSyntheticEvent = <TValue extends string | number>(
 	name: string,
@@ -6,7 +12,7 @@ export const createSyntheticEvent = <TValue extends string | number>(
 ) =>
 	({
 		target: { name, value },
-	}) as React.ChangeEvent<HTMLSelectElement> & {
+	}) as ChangeEvent<HTMLSelectElement> & {
 		target: { name: string; value: TValue | TValue[] }
 	}
 

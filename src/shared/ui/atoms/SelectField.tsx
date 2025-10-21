@@ -1,6 +1,12 @@
 'use client'
 
-import React, { type ReactNode, useCallback, useMemo } from 'react'
+import {
+	type ChangeEvent,
+	type ReactNode,
+	type SelectHTMLAttributes,
+	useCallback,
+	useMemo,
+} from 'react'
 import type { UseFormRegisterReturn } from 'react-hook-form'
 import { createSyntheticEvent } from '@/shared/hooks/useSelectField'
 import InputFieldError from '@/shared/ui/atoms/InputFieldError'
@@ -13,7 +19,7 @@ export type SelectOptions<TValue extends string | number> = Record<
 
 export interface BaseSelectFieldProps<TValue extends string | number>
 	extends Omit<
-		React.SelectHTMLAttributes<HTMLSelectElement>,
+		SelectHTMLAttributes<HTMLSelectElement>,
 		'multiple' | 'value' | 'onChange'
 	> {
 	register?: UseFormRegisterReturn
@@ -30,7 +36,7 @@ interface SingleSelectFieldProps<TValue extends string | number>
 	extends BaseSelectFieldProps<TValue> {
 	value?: TValue
 	onChange?: (
-		event: React.ChangeEvent<HTMLSelectElement> & {
+		event: ChangeEvent<HTMLSelectElement> & {
 			target: { name: string; value: TValue }
 		},
 	) => void
@@ -53,7 +59,7 @@ const SelectField = <TValue extends string | number = string>({
 	const { onChange: registerOnChange, ...registerRest } = register ?? {}
 
 	const handleChange = useCallback(
-		(event: React.ChangeEvent<HTMLSelectElement>) => {
+		(event: ChangeEvent<HTMLSelectElement>) => {
 			registerOnChange?.(event)
 
 			if (controlledOnChange) {

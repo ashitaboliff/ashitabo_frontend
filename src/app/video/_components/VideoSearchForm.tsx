@@ -1,7 +1,13 @@
 'use client'
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useId, useState } from 'react'
+import {
+	type ChangeEvent,
+	type FormEvent,
+	useEffect,
+	useId,
+	useState,
+} from 'react'
 import type { YoutubeSearchQuery } from '@/domains/video/model/videoTypes'
 import ShareButton from '@/shared/ui/atoms/ShareButton'
 import { BiSearch, RiQuestionLine } from '@/shared/ui/icons'
@@ -52,7 +58,7 @@ const VideoSearchForm = ({ defaultQuery, isSearching, onSearch }: Props) => {
 
 	const currentQuery = getCurrentQuery() // これはフォームのdefaultValue用
 
-	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		setIsPopupOpen(false)
 		event.preventDefault()
 		const formData = new FormData(event.currentTarget)
@@ -107,7 +113,7 @@ const VideoSearchForm = ({ defaultQuery, isSearching, onSearch }: Props) => {
 		setCurrentTags(newTags)
 	}
 
-	const handleTagModeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleTagModeChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setTagSearchMode(e.target.value as 'and' | 'or')
 	}
 

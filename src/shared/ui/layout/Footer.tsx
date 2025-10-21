@@ -1,7 +1,7 @@
 'use server'
 
 import Link from 'next/link'
-import HomePageBar from '@/components/shared/HomePageBar'
+import HomePageBar from '@/shared/ui/atoms/HomePageBar'
 
 const list = [
 	{

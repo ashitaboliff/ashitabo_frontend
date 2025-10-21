@@ -7,19 +7,14 @@ import CardAnimation from '@/domains/gacha/ui/animations/CardAnimation'
 import Popup from '@/shared/ui/molecules/Popup'
 import { formatDateJa } from '@/shared/utils/dateFormat'
 
-interface GachaPreviewPopupProps {
-	gachaItem: GachaData
-	count: number
-	open: boolean
-	onClose: () => void
+interface Props {
+	readonly gachaItem: GachaData
+	readonly count: number
+	readonly open: boolean
+	readonly onClose: () => void
 }
 
-const GachaPreviewPopup = ({
-	open,
-	onClose,
-	gachaItem,
-	count,
-}: GachaPreviewPopupProps) => {
+const GachaPreviewPopup = ({ open, onClose, gachaItem, count }: Props) => {
 	const popupId = useId()
 	const renderCardContent = () => {
 		if (!gachaItem) {

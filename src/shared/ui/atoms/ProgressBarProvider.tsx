@@ -1,11 +1,12 @@
 'use client'
 
-import { AppProgressBar as ProgressBar } from 'next-nprogress-bar'
+import { AppProgressBar } from 'next-nprogress-bar'
+import type { ReactNode } from 'react'
 
-const ProgressBarProvider = ({ children }: { children: React.ReactNode }) => {
+const ProgressBarProvider = ({ children }: { children: ReactNode }) => {
 	return (
 		<>
-			<ProgressBar
+			<AppProgressBar
 				height="4px"
 				color="#3C87E0"
 				options={{ showSpinner: false }}

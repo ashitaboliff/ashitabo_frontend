@@ -2,8 +2,8 @@
 
 import dynamic from 'next/dynamic'
 import { type ReactNode, useCallback, useState } from 'react'
-import BookingLogs from '@/app/user/_components/BookingLogs'
-import GachaLogs from '@/app/user/_components/GachaLogs'
+import BookingLogs from '@/app/user/_components/tabs/booking'
+import GachaLogs from '@/app/user/_components/tabs/gacha'
 import { useGachaPlayManager } from '@/domains/gacha/hooks/useGachaPlayManager'
 import type { CarouselPackDataItem } from '@/domains/gacha/model/gachaTypes'
 import { gkktt } from '@/shared/lib/fonts'
@@ -16,12 +16,12 @@ import {
 import type { Session } from '@/types/session'
 
 const GachaMainPopup = dynamic(
-	() => import('@/domains/gacha/ui/GachaMainPopup'),
+	() => import('@/app/user/_components/tabs/gacha/GachaMainPopup'),
 	{
 		ssr: false,
 		loading: () => null,
 	},
-) as typeof import('@/domains/gacha/ui/GachaMainPopup')['default']
+) as typeof import('@/app/user/_components/tabs/gacha/GachaMainPopup')['default']
 
 const RatioPopup = dynamic(() => import('@/domains/gacha/ui/RatioPopup'), {
 	ssr: false,

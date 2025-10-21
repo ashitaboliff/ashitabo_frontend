@@ -4,9 +4,10 @@ import {
 	forwardRef,
 	type ReactElement,
 	type ReactNode,
+	type SVGProps,
 } from 'react'
 
-export interface IconProps extends React.SVGProps<SVGSVGElement> {
+export interface IconProps extends SVGProps<SVGSVGElement> {
 	size?: number | string
 	title?: string
 }

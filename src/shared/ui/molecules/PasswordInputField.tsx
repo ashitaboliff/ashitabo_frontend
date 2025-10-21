@@ -1,3 +1,4 @@
+import type { MouseEvent } from 'react'
 import type { UseFormRegisterReturn } from 'react-hook-form'
 import LabelInputField from '@/shared/ui/atoms/LabelInputField'
 import { MdVisibility, MdVisibilityOff } from '@/shared/ui/icons'
@@ -24,7 +25,7 @@ const PasswordInputField = ({
 	register: UseFormRegisterReturn
 	showPassword: boolean
 	handleClickShowPassword: () => void
-	handleMouseDownPassword: (event: React.MouseEvent<HTMLButtonElement>) => void
+	handleMouseDownPassword: (event: MouseEvent<HTMLButtonElement>) => void
 	errorMessage?: string
 	className?: string
 }) => {

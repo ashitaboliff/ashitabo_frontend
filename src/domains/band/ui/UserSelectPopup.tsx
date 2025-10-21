@@ -14,19 +14,21 @@ import Popup from '@/shared/ui/molecules/Popup'
 import TextSearchField from '@/shared/ui/molecules/TextSearchField'
 import { logError } from '@/shared/utils/logger'
 
+interface Props {
+	readonly open: boolean
+	readonly onClose: () => void
+	readonly userSelect: string[] // 既存のユーザー選択、ユーザーIDの配列
+	readonly onUserSelect: (userIds: string[]) => void // ユーザー選択時のコールバック
+	readonly singleSelect?: boolean // 単一選択モード
+}
+
 const UserSelectPopupComponent = ({
 	open,
 	onClose,
 	userSelect,
 	onUserSelect,
 	singleSelect = false,
-}: {
-	open: boolean
-	onClose: () => void
-	userSelect: string[] // 既存のユーザー選択、ユーザーIDの配列
-	onUserSelect: (userIds: string[]) => void // ユーザー選択時のコールバック
-	singleSelect?: boolean // 単一選択モード
-}) => {
+}: Props) => {
 	const [searchQuery, setSearchQuery] = useState<string>('')
 	const [users, setUsers] = useState<UserForSelect[]>([])
 	const [allUsers, setAllUsers] = useState<UserForSelect[]>([])

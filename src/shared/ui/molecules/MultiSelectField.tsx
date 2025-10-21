@@ -1,5 +1,4 @@
-import type React from 'react'
-import { useCallback, useMemo } from 'react'
+import { type ChangeEvent, useCallback, useMemo } from 'react'
 import type { UseFormSetValue } from 'react-hook-form'
 import {
 	createSyntheticEvent,
@@ -16,7 +15,7 @@ interface MultiSelectFieldProps<TValue extends string | number>
 	watchValue?: TValue[]
 	value?: TValue[]
 	onChange?: (
-		event: React.ChangeEvent<HTMLSelectElement> & {
+		event: ChangeEvent<HTMLSelectElement> & {
 			target: { name: string; value: TValue[] }
 		},
 	) => void
@@ -76,7 +75,7 @@ const MultiSelectField = <TValue extends string | number = string>({
 					createSyntheticEvent(
 						name,
 						newValueArray,
-					) as React.ChangeEvent<HTMLSelectElement> & {
+					) as ChangeEvent<HTMLSelectElement> & {
 						target: { name: string; value: TValue[] }
 					},
 				)

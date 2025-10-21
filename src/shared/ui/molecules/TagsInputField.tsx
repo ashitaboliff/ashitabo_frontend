@@ -1,6 +1,12 @@
 'use client'
 
-import { type KeyboardEvent, type ReactNode, useEffect, useState } from 'react'
+import {
+	type ChangeEvent,
+	type KeyboardEvent,
+	type ReactNode,
+	useEffect,
+	useState,
+} from 'react'
 import { type Control, Controller, type UseFormSetValue } from 'react-hook-form'
 import LabelInputField from '@/shared/ui/atoms/LabelInputField'
 import { HiMiniXMark } from '@/shared/ui/icons'
@@ -46,7 +52,7 @@ const TagInputField = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [defaultValue, control, tags]) // controlを依存配列に追加
 
-	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setInputValue(e.target.value)
 	}
 

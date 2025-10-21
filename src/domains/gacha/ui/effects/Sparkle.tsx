@@ -1,13 +1,13 @@
 'use client'
 
 import gsap from 'gsap'
-import { useEffect, useRef } from 'react'
+import { type CSSProperties, useEffect, useRef } from 'react'
 import type { RarityType } from '@/domains/gacha/model/gachaTypes'
 
 interface SparkleProps {
 	size: number
 	color: string
-	style?: React.CSSProperties
+	style?: CSSProperties
 	className?: string
 	rarity: RarityType
 }

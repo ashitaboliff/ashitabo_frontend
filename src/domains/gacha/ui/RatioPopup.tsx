@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import React, { useId, useState } from 'react'
+import { Fragment, useId, useState } from 'react'
 import {
 	type GachaCategoryConfig,
 	gachaConfigs,
@@ -85,7 +85,6 @@ const RatioPopup = ({ gkktt }: { gkktt: { className: string } }) => {
 						const allProcessedCategories = calculateProbabilities(
 							versionConfig.categories,
 						)
-						// SECRET_RAREを除外
 						const processedCategories = allProcessedCategories.filter(
 							(cat) => cat.name !== 'SECRET_RARE',
 						)
@@ -105,7 +104,7 @@ const RatioPopup = ({ gkktt }: { gkktt: { className: string } }) => {
 												: 'gap-y-2'
 
 										return (
-											<React.Fragment key={category.name}>
+											<Fragment key={category.name}>
 												<div className={titleClassName}>{displayName}</div>
 												<div className="flex flex-row my-2 w-full">
 													<Image
@@ -132,7 +131,7 @@ const RatioPopup = ({ gkktt }: { gkktt: { className: string } }) => {
 														</div>
 													</div>
 												</div>
-											</React.Fragment>
+											</Fragment>
 										)
 									})}
 								</div>

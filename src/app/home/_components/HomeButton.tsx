@@ -2,7 +2,7 @@ const lightBlue = '#3C87E0'
 const lightyellow = '#F0CB51'
 const lightred = '#E3646B'
 
-import HomePageButton from '@/components/home/HomePageButton'
+import HomePageButton from '@/app/home/_components/HomePageButton'
 
 const HomeButton = async () => {
 	return (

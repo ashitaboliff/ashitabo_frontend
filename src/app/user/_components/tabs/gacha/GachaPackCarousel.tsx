@@ -5,8 +5,8 @@ import { useEffect, useMemo, useState } from 'react'
 import type { CarouselPackDataItem } from '@/domains/gacha/model/gachaTypes'
 
 interface Props {
-	onPackSelect: (version: string) => void
-	carouselPackData: CarouselPackDataItem[]
+	readonly onPackSelect: (version: string) => void
+	readonly carouselPackData: CarouselPackDataItem[]
 }
 
 const GachaPackCarousel = ({ onPackSelect, carouselPackData }: Props) => {

@@ -1,5 +1,6 @@
-import HomePageHeader from '@/components/shared/HomePageHeader'
+import type { ReactNode } from 'react'
 import { createMetaData } from '@/shared/hooks/useMetaData'
+import HomePageHeader from '@/shared/ui/molecules/HomePageHeader'
 
 export const metadata = createMetaData({
 	title: 'ライブ映像ページ',
@@ -10,7 +11,7 @@ export const metadata = createMetaData({
 export default function RootLayout({
 	children,
 }: Readonly<{
-	children: React.ReactNode
+	children: ReactNode
 }>) {
 	return (
 		<>

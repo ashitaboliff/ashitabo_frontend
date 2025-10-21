@@ -1,15 +1,15 @@
 'use client'
 
 import { type ChangeEvent, useEffect } from 'react'
+import GachaLogList from '@/app/user/_components/tabs/gacha/GachaLogList'
+import GachaPreviewPopup from '@/app/user/_components/tabs/gacha/GachaPreviewPopup'
 import { useGachaPreview } from '@/domains/gacha/hooks/useGachaPreview'
 import type { GachaData, GachaSort } from '@/domains/gacha/model/gachaTypes'
-import GachaPreviewPopup from '@/domains/gacha/ui/GachaPreviewPopup'
 import { usePagedResource } from '@/shared/hooks/usePagedResource'
 import Pagination from '@/shared/ui/atoms/Pagination'
 import RadioSortGroup from '@/shared/ui/atoms/RadioSortGroup'
 import SelectField from '@/shared/ui/atoms/SelectField'
 import type { Session } from '@/types/session'
-import GachaLogList from './GachaLogList'
 
 interface Props {
 	readonly session: Session

@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useCallback } from 'react'
+import { type ChangeEvent, type KeyboardEvent, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import * as zod from 'zod'
 
@@ -32,7 +32,7 @@ export const usePasswordForm = () => {
 	const { setFocus, register, handleSubmit, reset, formState } = form
 
 	const handleDigitChange = useCallback(
-		(event: React.ChangeEvent<HTMLInputElement>, next?: DigitField) => {
+		(event: ChangeEvent<HTMLInputElement>, next?: DigitField) => {
 			if (event.target.value.length === 1 && next) {
 				setFocus(next)
 			}
@@ -41,7 +41,7 @@ export const usePasswordForm = () => {
 	)
 
 	const handleDigitKeyDown = useCallback(
-		(event: React.KeyboardEvent<HTMLInputElement>, prev?: DigitField) => {
+		(event: KeyboardEvent<HTMLInputElement>, prev?: DigitField) => {
 			if (event.key === 'Backspace' && !event.currentTarget.value && prev) {
 				setFocus(prev)
 			}

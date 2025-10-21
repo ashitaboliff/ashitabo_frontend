@@ -7,7 +7,7 @@ import { useFeedback } from '@/shared/hooks/useFeedback'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import type { Session } from '@/types/session'
 
-type Props = {
+interface Props {
 	readonly session: Session
 	readonly children: ReactNode
 }

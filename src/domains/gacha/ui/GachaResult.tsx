@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import useSWR from 'swr'
+import Gacha, { type GachaItem } from '@/domains/gacha'
 import {
 	createUserGachaResultAction,
 	getSignedUrlForGachaImageAction,
@@ -10,15 +11,14 @@ import { invalidateGachaPreviewCache } from '@/domains/gacha/hooks/useGachaPrevi
 import type { RarityType } from '@/domains/gacha/model/gachaTypes'
 import { toSignedImageKey } from '@/domains/gacha/services/gachaTransforms'
 import CardAnimation from '@/domains/gacha/ui/animations/CardAnimation'
-import Gacha, { type GachaItem } from '@/domains/gacha/ui/GachaList'
 import type { ApiResponse } from '@/types/responseTypes'
 
 interface GachaResultProps {
-	version: string
-	userId: string
-	onGachaSuccess?: () => void
-	currentPlayCount: number
-	ignorePlayCountLimit?: boolean
+	readonly version: string
+	readonly userId: string
+	readonly onGachaSuccess?: () => void
+	readonly currentPlayCount: number
+	readonly ignorePlayCountLimit?: boolean
 }
 
 export const GachaResult = ({

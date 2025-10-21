@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react'
+import { memo, useCallback, useMemo } from 'react'
 
 interface PaginationProps {
 	currentPage: number
@@ -99,4 +99,4 @@ const Pagination = ({
 	)
 }
 
-export default React.memo(Pagination)
+export default memo(Pagination)

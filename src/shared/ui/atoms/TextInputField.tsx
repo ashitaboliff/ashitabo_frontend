@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { ChangeEvent, ReactNode } from 'react'
 import type { UseFormRegisterReturn } from 'react-hook-form'
 import LabelInputField from '@/shared/ui/atoms/LabelInputField'
 
@@ -29,7 +29,7 @@ type TextInputFieldProps = {
 	errorMessage?: string
 	className?: string
 	value?: string
-	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
+	onChange?: (e: ChangeEvent<HTMLInputElement>) => void
 	defaultValue?: string
 	autocomplete?: string
 	required?: boolean

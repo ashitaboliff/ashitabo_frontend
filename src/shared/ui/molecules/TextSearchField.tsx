@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { ChangeEvent, ReactNode } from 'react'
 import type { UseFormRegisterReturn } from 'react-hook-form'
 import LabelInputField from '@/shared/ui/atoms/LabelInputField'
 import TextInputField from '@/shared/ui/atoms/TextInputField'
@@ -31,7 +31,7 @@ const TextSearchField = ({
 	className?: string
 	defaultValue?: string
 	value?: string
-	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
+	onChange?: (e: ChangeEvent<HTMLInputElement>) => void
 }) => {
 	const defaultPlaceholder = placeholder || '検索'
 	return (

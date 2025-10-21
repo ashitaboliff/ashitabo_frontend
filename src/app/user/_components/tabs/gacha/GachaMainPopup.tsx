@@ -1,20 +1,20 @@
 'use client'
 
 import { useId, useState } from 'react'
+import GachaPackCarousel from '@/app/user/_components/tabs/gacha/GachaPackCarousel'
 import { MAX_GACHA_PLAYS_PER_DAY } from '@/domains/gacha/config/gachaConfig'
 import type { CarouselPackDataItem } from '@/domains/gacha/model/gachaTypes'
+import GachaResult from '@/domains/gacha/ui/GachaResult'
 import Popup from '@/shared/ui/molecules/Popup'
 import type { Session } from '@/types/session'
-import GachaPackCarousel from './GachaPackCarousel'
-import GachaResult from './GachaResult'
 
 interface Props {
-	session: Session
-	gachaPlayCountToday: number
-	onGachaPlayedSuccessfully: () => void
-	open: boolean
-	onClose: () => void
-	carouselPackData: CarouselPackDataItem[]
+	readonly session: Session
+	readonly gachaPlayCountToday: number
+	readonly onGachaPlayedSuccessfully: () => void
+	readonly open: boolean
+	readonly onClose: () => void
+	readonly carouselPackData: CarouselPackDataItem[]
 }
 
 type GachaStep = 'select' | 'pending' | 'result'

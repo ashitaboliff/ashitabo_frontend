@@ -1,5 +1,6 @@
 'use client'
 
+import type { FormEvent } from 'react'
 import type { FieldErrors, UseFormRegister } from 'react-hook-form'
 import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
 import type { BookingEditFormValues } from '@/domains/booking/schemas/bookingSchema'
@@ -15,7 +16,7 @@ interface Props {
 	readonly isLoading: boolean
 	readonly onCancel: () => void
 	readonly onOpenCalendar: () => void
-	readonly onSubmit: (event: React.FormEvent<HTMLFormElement>) => void
+	readonly onSubmit: (event: FormEvent<HTMLFormElement>) => void
 	readonly errorFeedback: FeedbackMessageType | null
 	readonly bookingTimeIndex: number
 }
