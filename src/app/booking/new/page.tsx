@@ -1,6 +1,6 @@
-import { AuthPage } from '@/features/auth/components/UnifiedAuth'
-import CreatePage from '@/features/booking/components/Create'
-import { createMetaData } from '@/hooks/useMetaData'
+import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
+import CreatePage from '@/app/booking/new/_components/Create'
+import { createMetaData } from '@/shared/hooks/useMetaData'
 
 export async function metadata() {
 	return createMetaData({

@@ -1,7 +1,7 @@
 'use server'
 
 import HomePageBar from '@/components/shared/HomePageBar'
-import { gkktt } from '@/lib/fonts'
+import { gkktt } from '@/shared/lib/fonts'
 
 const HomePageHeader = () => {
 	return (

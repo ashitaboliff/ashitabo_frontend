@@ -5,7 +5,7 @@ import {
 	LuMenu,
 	MdOutlineEditCalendar,
 	RxCountdownTimer,
-} from '@/components/ui/icons'
+} from '@/shared/ui/icons'
 import HeaderIcon from './HeaderIcon'
 
 const Layout = async ({ className }: { className?: string }) => {

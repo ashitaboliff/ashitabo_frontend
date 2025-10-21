@@ -1,5 +1,5 @@
 import HomePageHeader from '@/components/shared/HomePageHeader'
-import { createMetaData } from '@/hooks/useMetaData'
+import { createMetaData } from '@/shared/hooks/useMetaData'
 
 export const metadata = createMetaData({
 	title: 'ライブ映像ページ',

@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server'
-import env from '@/lib/env'
+import env from '@/shared/lib/env'
 
 const DEFAULT_BACKEND_BASE_URL = 'http://localhost:8787'
 

@@ -3,9 +3,9 @@ import path from 'node:path'
 import Link from 'next/link'
 import { compileMDX } from 'next-mdx-remote/rsc'
 import HomePageHeader from '@/components/shared/HomePageHeader'
-import { LuCalendar, LuCalendarSync } from '@/components/ui/icons'
-import { createMetaData } from '@/hooks/useMetaData'
-import { logError } from '@/utils/logger'
+import { LuCalendar, LuCalendarSync } from '@/shared/ui/icons'
+import { createMetaData } from '@/shared/hooks/useMetaData'
+import { logError } from '@/shared/utils/logger'
 
 interface Frontmatter {
 	title: string

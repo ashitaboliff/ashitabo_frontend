@@ -1,10 +1,10 @@
 'use server'
 
 import { cookies } from 'next/headers'
-import type { NoticeType } from '@/components/ui/molecules/FlashMessage'
-import MainPage from '@/features/booking/components/MainPage'
-import MainPageLayout from '@/features/booking/components/MainPageLayout'
-import { getCurrentJSTDateString } from '@/utils'
+import type { NoticeType } from '@/shared/ui/molecules/FlashMessage'
+import MainPage from '@/app/booking/_components/MainPage'
+import MainPageLayout from '@/app/booking/_components/MainPageLayout'
+import { getCurrentJSTDateString } from '@/shared/utils'
 
 const Page = async () => {
 	const cookieStore = await cookies()

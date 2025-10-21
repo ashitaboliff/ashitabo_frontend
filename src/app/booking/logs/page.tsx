@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
-import { getAllBookingAction } from '@/features/booking/actions'
-import LogsPage from '@/features/booking/components/Logs' // インポート名とパスを変更
-import { createMetaData } from '@/hooks/useMetaData'
+import { getAllBookingAction } from '@/domains/booking/api/bookingActions'
+import LogsPage from '@/app/booking/logs/_components/Logs' // インポート名とパスを変更
+import { createMetaData } from '@/shared/hooks/useMetaData'
 
 export async function metadata() {
 	return createMetaData({

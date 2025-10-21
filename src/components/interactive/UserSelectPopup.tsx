@@ -2,13 +2,13 @@
 
 import Image from 'next/image'
 import { memo, useCallback, useEffect, useId, useState } from 'react'
-import InstIcon from '@/components/ui/atoms/InstIcon'
-import { LuCheck, LuUserRound } from '@/components/ui/icons'
-import Popup from '@/components/ui/molecules/Popup'
-import TextSearchField from '@/components/ui/molecules/TextSearchField'
-import { getUsersForSelect } from '@/features/user/actions'
-import { type Part, PartMap, type UserForSelect } from '@/features/user/types'
-import { logError } from '@/utils/logger'
+import InstIcon from '@/shared/ui/atoms/InstIcon'
+import { LuCheck, LuUserRound } from '@/shared/ui/icons'
+import Popup from '@/shared/ui/molecules/Popup'
+import TextSearchField from '@/shared/ui/molecules/TextSearchField'
+import { getUsersForSelect } from '@/domains/user/api/userActions'
+import { type Part, PartMap, type UserForSelect } from '@/domains/user/model/userTypes'
+import { logError } from '@/shared/utils/logger'
 
 const UserSelectPopupComponent = ({
 	open,

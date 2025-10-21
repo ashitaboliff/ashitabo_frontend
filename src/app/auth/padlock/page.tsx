@@ -1,10 +1,10 @@
 import {
 	getPadlockCallbackUrl,
 	getPadlockCsrfToken,
-} from '@/features/auth/actions'
-import AuthPadLock from '@/features/auth/components/AuthPadLock'
-import { AuthPage } from '@/features/auth/components/UnifiedAuth'
-import { createMetaData } from '@/hooks/useMetaData'
+} from '@/domains/auth/api/authActions'
+import AuthPadLock from '@/domains/auth/ui/AuthPadLock'
+import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
+import { createMetaData } from '@/shared/hooks/useMetaData'
 
 export async function metadata() {
 	return createMetaData({

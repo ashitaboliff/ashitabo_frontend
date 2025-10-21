@@ -1,9 +1,9 @@
 import type { Metadata, ResolvingMetadata } from 'next'
-import { getBookingByIdAction } from '@/features/booking/actions'
-import DetailPage from '@/features/booking/components/Detail'
-import DetailNotFoundPage from '@/features/booking/components/DetailNotFound'
-import { BOOKING_TIME_LIST } from '@/features/booking/constants'
-import { createMetaData } from '@/hooks/useMetaData'
+import { getBookingByIdAction } from '@/domains/booking/api/bookingActions'
+import DetailPage from '@/app/booking/[id]/_components/Detail'
+import DetailNotFoundPage from '@/app/booking/[id]/_components/DetailNotFound'
+import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
+import { createMetaData } from '@/shared/hooks/useMetaData'
 
 type PageParams = Promise<{ id: string }>
 type PageProps = { params: PageParams }

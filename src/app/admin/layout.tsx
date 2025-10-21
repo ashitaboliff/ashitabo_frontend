@@ -1,4 +1,4 @@
-import { createMetaData } from '@/hooks/useMetaData'
+import { createMetaData } from '@/shared/hooks/useMetaData'
 
 export async function metadata() {
 	return createMetaData({

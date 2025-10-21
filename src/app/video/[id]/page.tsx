@@ -1,13 +1,13 @@
 import type { Metadata, ResolvingMetadata } from 'next'
 import { notFound } from 'next/navigation'
 import { cache } from 'react'
-import { getAuthDetails } from '@/features/auth/actions'
+import { getAuthDetails } from '@/domains/auth/api/authActions'
 import {
 	getPlaylistByIdAction,
 	getVideoByIdAction,
-} from '@/features/video/actions'
-import VideoDetailPage from '@/features/video/components/VideoDetailPage' // 修正
-import { createMetaData } from '@/hooks/useMetaData'
+} from '@/domains/video/api/videoActions'
+import VideoDetailPage from '@/app/video/[id]/_components/VideoDetailPage' // 修正
+import { createMetaData } from '@/shared/hooks/useMetaData'
 
 type PageParams = Promise<{ id: string }>
 type PageProps = { params: PageParams }

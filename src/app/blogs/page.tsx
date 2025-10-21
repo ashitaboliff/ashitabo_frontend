@@ -4,8 +4,8 @@ import { Inter } from 'next/font/google'
 import Link from 'next/link'
 import { compileMDX } from 'next-mdx-remote/rsc' // Required for frontmatter parsing
 import HomePageHeader from '@/components/shared/HomePageHeader'
-import { createMetaData } from '@/hooks/useMetaData'
-import { logError } from '@/utils/logger'
+import { createMetaData } from '@/shared/hooks/useMetaData'
+import { logError } from '@/shared/utils/logger'
 
 const inter = Inter({ subsets: ['latin'] })
 

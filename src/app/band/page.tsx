@@ -1,7 +1,7 @@
-import LinkWithArrow from '@/components/ui/atoms/LinkWithArrow'
-import { AuthPage } from '@/features/auth/components/UnifiedAuth'
-import MemberRecruitmentForm from '@/features/band/components/MemberRecruitmentForm'
-import { gkktt } from '@/lib/fonts'
+import LinkWithArrow from '@/shared/ui/atoms/LinkWithArrow'
+import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
+import MemberRecruitmentForm from '@/app/band/_components/MemberRecruitmentForm'
+import { gkktt } from '@/shared/lib/fonts'
 
 const Page = async () => {
 	return (

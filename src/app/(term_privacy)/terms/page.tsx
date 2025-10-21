@@ -2,8 +2,8 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { compileMDX } from 'next-mdx-remote/rsc'
 import rehypeRaw from 'rehype-raw'
-import { LuCalendar, LuCalendarSync } from '@/components/ui/icons'
-import { createMetaData } from '@/hooks/useMetaData'
+import { LuCalendar, LuCalendarSync } from '@/shared/ui/icons'
+import { createMetaData } from '@/shared/hooks/useMetaData'
 
 export async function metadata() {
 	return createMetaData({

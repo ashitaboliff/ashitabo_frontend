@@ -1,6 +1,6 @@
 import HomePageHeader from '@/components/shared/HomePageHeader'
-import { createMetaData } from '@/hooks/useMetaData'
-import { gkktt } from '@/lib/fonts'
+import { createMetaData } from '@/shared/hooks/useMetaData'
+import { gkktt } from '@/shared/lib/fonts'
 
 export const metadata = createMetaData({
 	title: 'ホーム',

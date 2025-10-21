@@ -1,6 +1,6 @@
 import { Inter } from 'next/font/google'
 import HomePageHeader from '@/components/shared/HomePageHeader'
-import { createMetaData } from '@/hooks/useMetaData'
+import { createMetaData } from '@/shared/hooks/useMetaData'
 
 const _inter = Inter({ subsets: ['latin'] })
 

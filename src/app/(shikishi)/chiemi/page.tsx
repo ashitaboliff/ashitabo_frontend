@@ -3,7 +3,7 @@
 import { gsap } from 'gsap'
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
-import { getImageUrl } from '@/lib/r2'
+import { getImageUrl } from '@/shared/lib/r2'
 
 type Petal = {
 	id: string
