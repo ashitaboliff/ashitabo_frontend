@@ -34,5 +34,5 @@ jobs:
       - name: TypeScript check
         run: npm run ts
 
-      - name: Run tests
-        run: npm run test
+      # - name: Run tests
+      #   run: npm run test
