@@ -1,4 +1,4 @@
-import PadLockPage from '@/app/auth/padlock/_components/PadLockPage'
+import PadLockPage from '@/app/auth/padlock/_components'
 import {
 	getPadlockCallbackUrl,
 	getPadlockCsrfToken,

@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import PadLockEdit from '@/app/admin/padlock/_components/PadLockEdit'
+import PadLockEdit from '@/app/admin/padlock/_components'
 import { getAllPadLocksAction } from '@/domains/admin/api/adminActions'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 

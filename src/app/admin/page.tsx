@@ -1,4 +1,4 @@
-import AdminMain from '@/app/admin/_components/AdminMain'
+import AdminMain from '@/app/admin/_components'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 
 const Page = async () => {

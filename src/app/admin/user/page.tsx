@@ -1,4 +1,4 @@
-import AdminUserPage from '@/app/admin/user/_components/UserManage'
+import AdminUserPage from '@/app/admin/user/_components'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 
 const Page = async () => {

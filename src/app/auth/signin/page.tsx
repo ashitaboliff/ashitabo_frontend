@@ -1,4 +1,4 @@
-import SigninPage from '@/app/auth/signin/_components/SigninPage'
+import SigninPage from '@/app/auth/signin/_components'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 

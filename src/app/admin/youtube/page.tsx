@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import YoutubeManagement from '@/app/admin/youtube/_components/YoutubeManage'
+import YoutubeManagement from '@/app/admin/youtube/_components'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 import {
 	getAccessTokenAction,
