@@ -1,4 +1,4 @@
-import BandAddForm from '@/app/band/add/_components/BandAddForm'
+import BandAddForm from '@/app/band/add/_components'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 
 const Page = async () => {

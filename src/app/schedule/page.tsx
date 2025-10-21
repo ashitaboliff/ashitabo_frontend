@@ -1,4 +1,4 @@
-import ScheduleMainPage from '@/app/schedule/_components/MainPage'
+import ScheduleMainPage from '@/app/schedule/_components'
 
 const Page = async () => {
 	return <ScheduleMainPage />

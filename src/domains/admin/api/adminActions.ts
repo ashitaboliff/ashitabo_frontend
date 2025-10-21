@@ -1,4 +1,3 @@
-import type { PadLock } from '@/domains/admin/model/adminTypes'
 import {
 	mapRawBanBookings,
 	mapRawPadLocks,
@@ -6,7 +5,8 @@ import {
 	type RawBanBooking,
 	type RawPadLock,
 	type RawUserDetail,
-} from '@/domains/admin/services/adminTransforms'
+} from '@/domains/admin/api/dto'
+import type { PadLock } from '@/domains/admin/model/adminTypes'
 import type { BanBooking } from '@/domains/booking/model/bookingTypes'
 import type { AccountRole, UserDetail } from '@/domains/user/model/userTypes'
 import { apiDelete, apiGet, apiPost, apiPut } from '@/shared/lib/api/crud'

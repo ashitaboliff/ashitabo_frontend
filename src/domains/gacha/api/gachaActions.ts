@@ -1,16 +1,16 @@
 'use server'
 
 import { revalidateTag } from 'next/cache'
+import {
+	mapRawGacha,
+	mapRawGachaList,
+	type RawGachaData,
+} from '@/domains/gacha/api/dto'
 import type {
 	GachaData,
 	GachaSort,
 	RarityType,
 } from '@/domains/gacha/model/gachaTypes'
-import {
-	mapRawGacha,
-	mapRawGachaList,
-	type RawGachaData,
-} from '@/domains/gacha/services/gachaTransforms'
 import { apiGet, apiPost } from '@/shared/lib/api/crud'
 import {
 	createdResponse,

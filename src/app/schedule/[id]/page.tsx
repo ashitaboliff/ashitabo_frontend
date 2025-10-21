@@ -1,7 +1,7 @@
 import type { Metadata, ResolvingMetadata } from 'next'
 import { notFound } from 'next/navigation'
 import { cache } from 'react'
-import IdPage from '@/app/schedule/[id]/_components/IdPage'
+import IdPage from '@/app/schedule/[id]/_components'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 import { getScheduleByIdAction } from '@/domains/schedule/api/scheduleActions'
 import { createMetaData } from '@/shared/hooks/useMetaData'

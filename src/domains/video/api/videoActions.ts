@@ -1,16 +1,16 @@
-import type {
-	Playlist,
-	Video,
-	YoutubeDetail,
-	YoutubeSearchQuery,
-} from '@/domains/video/model/videoTypes'
 import {
 	mapRawPlaylist,
 	mapRawPlaylists,
 	mapRawVideo,
 	type RawPlaylist,
 	type RawVideo,
-} from '@/domains/video/services/videoTransforms'
+} from '@/domains/video/api/dto'
+import type {
+	Playlist,
+	Video,
+	YoutubeDetail,
+	YoutubeSearchQuery,
+} from '@/domains/video/model/videoTypes'
 import { apiGet, apiPost } from '@/shared/lib/api/crud'
 import {
 	mapSuccess,

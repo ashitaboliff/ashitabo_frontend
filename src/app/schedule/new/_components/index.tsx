@@ -10,7 +10,7 @@ import {
 	type ScheduleCreateFormInput,
 	type ScheduleCreateFormValues,
 	scheduleCreateSchema,
-} from '@/domains/schedule/schemas/createScheduleSchema'
+} from '@/domains/schedule/model/createScheduleSchema'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import CustomDatePicker from '@/shared/ui/atoms/DatePicker'
 import ShareButton from '@/shared/ui/atoms/ShareButton'

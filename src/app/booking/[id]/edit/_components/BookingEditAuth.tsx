@@ -5,11 +5,11 @@ import { useRouter } from 'next-nprogress-bar'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { authBookingAction } from '@/domains/booking/api/bookingActions'
-import type { Booking } from '@/domains/booking/model/bookingTypes'
 import {
 	type BookingAuthFormValues,
 	bookingAuthSchema,
-} from '@/domains/booking/schemas/bookingSchema'
+} from '@/domains/booking/model/bookingSchema'
+import type { Booking } from '@/domains/booking/model/bookingTypes'
 import BookingDetailBox from '@/domains/booking/ui/BookingDetailBox'
 import BookingDetailNotFound from '@/domains/booking/ui/BookingDetailNotFound'
 import { useFeedback } from '@/shared/hooks/useFeedback'

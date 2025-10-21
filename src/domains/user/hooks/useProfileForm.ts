@@ -10,14 +10,14 @@ import {
 } from '@/domains/auth/api/authActions'
 import { useSession } from '@/domains/auth/hooks/useSession'
 import { makeAuthDetails } from '@/domains/auth/utils/sessionInfo'
-import type { Profile } from '@/domains/user/model/userTypes'
 import {
 	getAutoExpectedYear,
 	type ProfileFormValues,
 	profileDefaultValues,
 	profileSchema,
 	toProfileFormValues,
-} from '@/domains/user/schemas/profileSchema'
+} from '@/domains/user/model/profileSchema'
+import type { Profile } from '@/domains/user/model/userTypes'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { logError } from '@/shared/utils/logger'
 import { StatusCode } from '@/types/responseTypes'

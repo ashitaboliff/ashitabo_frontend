@@ -2,12 +2,6 @@
 
 import { revalidateTag } from 'next/cache'
 import { cookies } from 'next/headers'
-import { BOOKING_CALENDAR_TAG } from '@/domains/booking/constants/bookingConstants'
-import type {
-	Booking,
-	BookingLog,
-	BookingResponse,
-} from '@/domains/booking/model/bookingTypes'
 import {
 	mapRawBooking,
 	mapRawBookingList,
@@ -15,7 +9,13 @@ import {
 	mapRawBookingResponse,
 	type RawBookingData,
 	type RawBookingResponse,
-} from '@/domains/booking/services/bookingService'
+} from '@/domains/booking/api/dto'
+import { BOOKING_CALENDAR_TAG } from '@/domains/booking/constants/bookingConstants'
+import type {
+	Booking,
+	BookingLog,
+	BookingResponse,
+} from '@/domains/booking/model/bookingTypes'
 import {
 	buildBookingCalendarTag,
 	getBookingCalendarRangesForDate,

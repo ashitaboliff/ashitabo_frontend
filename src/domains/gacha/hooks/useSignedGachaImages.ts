@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { toSignedImageKey } from '@/domains/gacha/api/dto'
 import type { GachaData } from '@/domains/gacha/model/gachaTypes'
-import { toSignedImageKey } from '@/domains/gacha/services/gachaTransforms'
 import {
 	ensureSignedResourceUrls,
 	getSignedResourceEntry,

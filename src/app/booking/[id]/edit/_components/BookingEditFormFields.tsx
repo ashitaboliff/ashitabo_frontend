@@ -3,7 +3,7 @@
 import type { FormEvent } from 'react'
 import type { FieldErrors, UseFormRegister } from 'react-hook-form'
 import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
-import type { BookingEditFormValues } from '@/domains/booking/schemas/bookingSchema'
+import type { BookingEditFormValues } from '@/domains/booking/model/bookingSchema'
 import { BookingErrorMessage } from '@/domains/booking/ui/BookingActionFeedback'
 import TextInputField from '@/shared/ui/atoms/TextInputField'
 import { MdOutlineEditCalendar } from '@/shared/ui/icons'

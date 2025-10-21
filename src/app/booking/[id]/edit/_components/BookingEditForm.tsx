@@ -5,14 +5,14 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useSWRConfig } from 'swr'
 import { updateBookingAction } from '@/domains/booking/api/bookingActions'
+import {
+	type BookingEditFormValues,
+	bookingEditSchema,
+} from '@/domains/booking/model/bookingSchema'
 import type {
 	Booking,
 	BookingResponse,
 } from '@/domains/booking/model/bookingTypes'
-import {
-	type BookingEditFormValues,
-	bookingEditSchema,
-} from '@/domains/booking/schemas/bookingSchema'
 import { mutateBookingCalendarsForDate } from '@/domains/booking/utils/calendarCache'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { getCurrentJSTDateString, toDateKey } from '@/shared/utils'

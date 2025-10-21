@@ -11,7 +11,7 @@ import {
 	type BookingCreateFormInput,
 	type BookingCreateFormValues,
 	bookingCreateSchema,
-} from '@/domains/booking/schemas/bookingSchema'
+} from '@/domains/booking/model/bookingSchema'
 import { mutateBookingCalendarsForDate } from '@/domains/booking/utils/calendarCache'
 import { useGachaPlayManager } from '@/domains/gacha/hooks/useGachaPlayManager'
 import GachaResult from '@/domains/gacha/ui/GachaResult'

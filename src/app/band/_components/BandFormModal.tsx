@@ -7,11 +7,11 @@ import {
 	createBandAction,
 	updateBandAction,
 } from '@/domains/band/api/bandActions'
-import type { BandDetails } from '@/domains/band/model/bandTypes'
 import {
 	type BandFormValues,
 	bandFormSchema,
-} from '@/domains/band/schemas/bandSchema'
+} from '@/domains/band/model/bandSchema'
+import type { BandDetails } from '@/domains/band/model/bandTypes'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import TextInputField from '@/shared/ui/atoms/TextInputField'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'

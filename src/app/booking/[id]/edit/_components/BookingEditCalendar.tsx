@@ -7,8 +7,8 @@ import {
 	BOOKING_TIME_LIST,
 	FORBIDDEN_BOOKING,
 } from '@/domains/booking/constants/bookingConstants'
+import type { BookingEditFormValues } from '@/domains/booking/model/bookingSchema'
 import type { BookingResponse } from '@/domains/booking/model/bookingTypes'
-import type { BookingEditFormValues } from '@/domains/booking/schemas/bookingSchema'
 import {
 	AvailableCell,
 	BookingInfoCell,

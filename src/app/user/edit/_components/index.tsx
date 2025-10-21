@@ -1,8 +1,8 @@
 'use client'
 
 import { useProfileForm } from '@/domains/user/hooks/useProfileForm'
+import { expectedYearMap } from '@/domains/user/model/profileSchema'
 import { PartOptions, type Profile } from '@/domains/user/model/userTypes'
-import { expectedYearMap } from '@/domains/user/schemas/profileSchema'
 import Loading from '@/shared/ui/atoms/Loading'
 import SelectField from '@/shared/ui/atoms/SelectField'
 import TextInputField from '@/shared/ui/atoms/TextInputField'

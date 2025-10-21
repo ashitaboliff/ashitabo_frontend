@@ -2,14 +2,14 @@
 
 import { useEffect, useRef, useState } from 'react'
 import useSWR from 'swr'
-import Gacha, { type GachaItem } from '@/domains/gacha'
+import { toSignedImageKey } from '@/domains/gacha/api/dto'
 import {
 	createUserGachaResultAction,
 	getSignedUrlForGachaImageAction,
 } from '@/domains/gacha/api/gachaActions'
 import { invalidateGachaPreviewCache } from '@/domains/gacha/hooks/useGachaPreview'
 import type { RarityType } from '@/domains/gacha/model/gachaTypes'
-import { toSignedImageKey } from '@/domains/gacha/services/gachaTransforms'
+import Gacha, { type GachaItem } from '@/domains/gacha/services/gacha'
 import CardAnimation from '@/domains/gacha/ui/animations/CardAnimation'
 import type { ApiResponse } from '@/types/responseTypes'
 

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import useSWR, { mutate as mutateGlobal } from 'swr'
+import { toSignedImageKey } from '@/domains/gacha/api/dto'
 import { getGachaByGachaSrcAction } from '@/domains/gacha/api/gachaActions'
 import type { GachaData } from '@/domains/gacha/model/gachaTypes'
 import {
@@ -11,7 +12,6 @@ import {
 	PREVIEW_CACHE_TTL_MS,
 	setPreviewCacheEntry,
 } from '@/domains/gacha/services/gachaPreviewCache'
-import { toSignedImageKey } from '@/domains/gacha/services/gachaTransforms'
 import {
 	ensureSignedResourceUrls,
 	getSignedResourceEntry,
