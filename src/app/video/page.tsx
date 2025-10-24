@@ -1,8 +1,12 @@
 import { Suspense } from 'react'
 import VideoListPage from '@/app/video/_components/VideoListPage'
-import { searchYoutubeDetailsAction } from '@/domains/video/api/videoActions'
+import {
+	searchPlaylistAction,
+	searchVideoAction,
+} from '@/domains/video/api/videoActions'
 import type {
-	YoutubeDetail,
+	PlaylistDoc,
+	Video,
 	YoutubeSearchQuery,
 } from '@/domains/video/model/videoTypes'
 import Loading from '@/shared/ui/atoms/Loading'
@@ -16,8 +20,6 @@ const parseVideoPageSearchParams = (
 		liveOrBand: 'band',
 		bandName: '',
 		liveName: '',
-		tag: [],
-		tagSearchMode: 'or',
 		sort: 'new',
 		page: 1,
 		videoPerPage: 15,
@@ -27,10 +29,6 @@ const parseVideoPageSearchParams = (
 			(params.get('liveOrBand') as 'live' | 'band') ?? defaultQuery.liveOrBand,
 		bandName: params.get('bandName') ?? defaultQuery.bandName,
 		liveName: params.get('liveName') ?? defaultQuery.liveName,
-		tag: (params.getAll('tag') as string[]) ?? defaultQuery.tag,
-		tagSearchMode:
-			(params.get('tagSearchMode') as 'and' | 'or') ??
-			defaultQuery.tagSearchMode,
 		sort: (params.get('sort') as 'new' | 'old') ?? defaultQuery.sort,
 		page: Number(params.get('page')) || defaultQuery.page,
 		videoPerPage:
@@ -38,11 +36,13 @@ const parseVideoPageSearchParams = (
 	}
 }
 
-type VideoPageProps = {
-	searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+type Props = {
+	readonly searchParams: Promise<{
+		[key: string]: string | string[] | undefined
+	}>
 }
 
-const Page = async ({ searchParams: params }: VideoPageProps) => {
+const Page = async ({ searchParams: params }: Props) => {
 	const queryParams = new URLSearchParams()
 	for (const [key, value] of Object.entries(await params)) {
 		if (typeof value === 'string') {
@@ -55,33 +55,105 @@ const Page = async ({ searchParams: params }: VideoPageProps) => {
 	}
 
 	const currentQuery = parseVideoPageSearchParams(queryParams)
-	const searchParamsString = queryParams.toString() // keyとして使用する文字列
+	const searchParamsString = queryParams.toString()
 
-	let initialYoutubeDetails: YoutubeDetail[] = []
-	let initialPageMax = 1
-	let initialError: ApiError | undefined
-
-	const res = await searchYoutubeDetailsAction(currentQuery)
-
-	if (res.ok) {
-		initialYoutubeDetails = res.data.results
-		initialPageMax =
-			Math.ceil(res.data.totalCount / currentQuery.videoPerPage) || 1
+	if (currentQuery.liveOrBand === 'band') {
+		try {
+			const res = await searchVideoAction(currentQuery)
+			if (res.ok) {
+				const initialYoutubeDetails: Video[] = res.data.items
+				const initialPageMax = Math.ceil(
+					res.data.total / currentQuery.videoPerPage,
+				)
+				return (
+					<Suspense fallback={<Loading />}>
+						<VideoListPage
+							key={searchParamsString}
+							initialYoutubeDetails={initialYoutubeDetails}
+							initialPageMax={initialPageMax}
+						/>
+					</Suspense>
+				)
+			} else {
+				logError('Video Page', 'Failed to fetch videos', res)
+				return (
+					<Suspense fallback={<Loading />}>
+						<VideoListPage
+							key={searchParamsString}
+							initialYoutubeDetails={[]}
+							initialPageMax={0}
+							initialError={res}
+						/>
+					</Suspense>
+				)
+			}
+		} catch (error) {
+			logError('Video Page', 'Unexpected error while fetching videos', error)
+			const initialError: ApiError = {
+				ok: false,
+				status: 500,
+				message: '予期せぬエラーが発生しました。',
+			}
+			return (
+				<Suspense fallback={<Loading />}>
+					<VideoListPage
+						key={searchParamsString}
+						initialYoutubeDetails={[]}
+						initialPageMax={0}
+						initialError={initialError}
+					/>
+				</Suspense>
+			)
+		}
 	} else {
-		initialError = res
-		logError('Failed to fetch youtube details', res)
+		try {
+			const res = await searchPlaylistAction(currentQuery)
+			if (res.ok) {
+				const initialYoutubeDetails: PlaylistDoc[] = res.data.items
+				const initialPageMax = Math.ceil(
+					res.data.total / currentQuery.videoPerPage,
+				)
+				return (
+					<Suspense fallback={<Loading />}>
+						<VideoListPage
+							key={searchParamsString}
+							initialYoutubeDetails={initialYoutubeDetails}
+							initialPageMax={initialPageMax}
+						/>
+					</Suspense>
+				)
+			} else {
+				logError('Video Page', 'Failed to fetch playlists', res)
+				return (
+					<Suspense fallback={<Loading />}>
+						<VideoListPage
+							key={searchParamsString}
+							initialYoutubeDetails={[]}
+							initialPageMax={0}
+							initialError={res}
+						/>
+					</Suspense>
+				)
+			}
+		} catch (error) {
+			logError('Video Page', 'Unexpected error while fetching playlists', error)
+			const initialError: ApiError = {
+				ok: false,
+				status: 500,
+				message: '予期せぬエラーが発生しました。',
+			}
+			return (
+				<Suspense fallback={<Loading />}>
+					<VideoListPage
+						key={searchParamsString}
+						initialYoutubeDetails={[]}
+						initialPageMax={0}
+						initialError={initialError}
+					/>
+				</Suspense>
+			)
+		}
 	}
-
-	return (
-		<Suspense fallback={<Loading />}>
-			<VideoListPage
-				key={searchParamsString}
-				initialYoutubeDetails={initialYoutubeDetails}
-				initialPageMax={initialPageMax}
-				initialError={initialError}
-			/>
-		</Suspense>
-	)
 }
 
 export default Page

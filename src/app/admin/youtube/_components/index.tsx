@@ -2,32 +2,26 @@
 
 import { useRouter } from 'next-nprogress-bar'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import {
-	createPlaylistAction,
-	getAuthUrl,
-	revalidateYoutubeTag,
-} from '@/domains/video/api/videoActions'
-import type { Playlist } from '@/domains/video/model/videoTypes'
-import { useLocationNavigate } from '@/shared/hooks/useBrowserApis'
+import { createPlaylistAction } from '@/domains/video/api/videoActions'
+import type { PlaylistItem } from '@/domains/video/model/videoTypes'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { usePagedResource } from '@/shared/hooks/usePagedResource'
 import Pagination from '@/shared/ui/atoms/Pagination'
 import SelectField from '@/shared/ui/atoms/SelectField'
-import Tags from '@/shared/ui/atoms/Tags'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import { formatDateJa, formatDateSlash } from '@/shared/utils/dateFormat'
 
 interface Props {
-	readonly playlists: Playlist[] | undefined | null
-	readonly isAccessToken: boolean
+	readonly playlists: PlaylistItem[] | undefined | null
 }
 
-const YoutubeManagement = ({ playlists, isAccessToken }: Props) => {
+const YoutubeManagement = ({ playlists }: Props) => {
 	const router = useRouter()
 	const actionFeedback = useFeedback()
-	const navigate = useLocationNavigate()
 	const [isLoading, setIsLoading] = useState(false)
-	const [detailPlaylist, setDetailPlaylist] = useState<Playlist | null>(null)
+	const [detailPlaylist, setDetailPlaylist] = useState<PlaylistItem | null>(
+		null,
+	)
 	const detailDialogRef = useRef<HTMLDialogElement>(null)
 
 	const {
@@ -58,16 +52,6 @@ const YoutubeManagement = ({ playlists, isAccessToken }: Props) => {
 	const currentPlaylist =
 		playlists?.slice(indexOfFirstPlaylist, indexOfLastPlaylist) ?? []
 
-	const handleAuth = useCallback(async () => {
-		actionFeedback.clearFeedback()
-		const url = await getAuthUrl()
-		if (url.ok) {
-			navigate(url.data)
-		} else {
-			actionFeedback.showApiError(url)
-		}
-	}, [actionFeedback, navigate])
-
 	const handleFetchPlaylist = useCallback(async () => {
 		actionFeedback.clearFeedback()
 		setIsLoading(true)
@@ -81,12 +65,6 @@ const YoutubeManagement = ({ playlists, isAccessToken }: Props) => {
 		setIsLoading(false)
 	}, [actionFeedback, router])
 
-	const handleRevalidate = useCallback(async () => {
-		actionFeedback.clearFeedback()
-		await revalidateYoutubeTag()
-		actionFeedback.showSuccess('Youtubeのキャッシュを更新しました。')
-	}, [actionFeedback])
-
 	const closeDetailDialog = useCallback(() => {
 		setDetailPlaylist(null)
 	}, [])
@@ -99,18 +77,8 @@ const YoutubeManagement = ({ playlists, isAccessToken }: Props) => {
 		<div className="flex flex-col items-center justify-center gap-y-2">
 			<h1 className="text-2xl font-bold">Youtube動画管理</h1>
 			<p className="text-sm text-center">
-				このページではYoutubeに上がっている動画を取得できます。
-				<br />
-				Youtube認証が必要な場合があるため、あしたぼアカウントでログイン済みの方が操作してください。
+				このページではあしたぼホームページとYoutubeの非公開動画の同期・管理を行えます。
 			</p>
-			<button
-				type="button"
-				className="btn btn-primary btn-outline"
-				onClick={handleAuth}
-				disabled={isAccessToken}
-			>
-				Youtube認証
-			</button>
 			<div className="flex flex-row gap-x-2">
 				<button
 					type="button"
@@ -118,14 +86,7 @@ const YoutubeManagement = ({ playlists, isAccessToken }: Props) => {
 					onClick={handleFetchPlaylist}
 					disabled={isLoading}
 				>
-					{isLoading ? '処理中...' : 'Youtubeから取得'}
-				</button>
-				<button
-					type="button"
-					className="btn btn-secondary btn-outline"
-					onClick={handleRevalidate}
-				>
-					更新
+					{isLoading ? '処理中...' : 'Youtubeと同期'}
 				</button>
 			</div>
 			<FeedbackMessage source={actionFeedback.feedback} />
@@ -162,9 +123,6 @@ const YoutubeManagement = ({ playlists, isAccessToken }: Props) => {
 								className="cursor-pointer"
 							>
 								<td>{playlist.title}</td>
-								<td>
-									{playlist.tags ? <Tags tags={playlist.tags} /> : '未設定'}
-								</td>
 							</tr>
 						))}
 					</tbody>
@@ -216,16 +174,6 @@ const YoutubeManagement = ({ playlists, isAccessToken }: Props) => {
 									</a>
 								) : (
 									'不明'
-								)}
-							</div>
-						</div>
-						<div className="flex gap-x-1">
-							<div className="font-bold basis-1/4">タグ:</div>
-							<div className="basis-3/4">
-								{detailPlaylist?.tags ? (
-									<Tags tags={detailPlaylist.tags} size="text-sm" />
-								) : (
-									'未設定'
 								)}
 							</div>
 						</div>

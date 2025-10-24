@@ -144,7 +144,6 @@ const AdminUserPage = () => {
 							]}
 							currentSort={sort}
 							onSortChange={handleSortChange}
-							buttonClassName="btn-outline"
 						/>
 					</div>
 					<table className="table table-zebra table-sm w-full justify-center">

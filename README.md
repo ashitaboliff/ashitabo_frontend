@@ -25,16 +25,16 @@ frontend/
 ├─ src/
 │  ├─ app/                  # App Router のページ・レイアウト（サーバーコンポーネント中心）
 │  │  ├─ **/page.tsx        # 各ページのエントリーポイント
-|  |  └─ **/_components/    # ページ固有のクライアントコンポーネント
-|  |     ├─ index.tsx       # ページ専用コンポーネント (page.tsx を薄く保持するためのもの)
-|  │     └─ ...             # その他のページ専用コンポーネント
+│  │  └─ **/_components/    # ページ固有のクライアントコンポーネント
+│  │     ├─ index.tsx       # ページ専用コンポーネント (page.tsx を薄く保持するためのもの)
+│  │     └─ ...             # その他のページ専用コンポーネント
 │  ├─ domain/               # ドメイン単位のまとまり（booking, band, video など）
 │  │  └─ */ui/              # ドメイン固有の共通 UI コンポーネント
 │  └─ shared/               # ドメイン固有のロジック・UI（actions, hooks, service など）
 │     ├─ ui/                # 共通 UI コンポーネント（ボタン、モーダル、フォーム要素など）
-│     |  ├─ atoms/          # 原子コンポーネント
-│     |  ├─ molecules/      # 分子コンポーネント
-│     |  └─ layouts/        # レイアウトコンポーネント
+│     │  ├─ atoms/          # 原子コンポーネント
+│     │  ├─ molecules/      # 分子コンポーネント
+│     │  └─ layouts/        # レイアウトコンポーネント
 │     ├─ hooks/             # 共通カスタムフック
 │     ├─ lib/               # API ラッパー・フォント・R2 ストレージなどの基盤層
 │     ├─ types/             # アプリ共通の型定義
@@ -45,18 +45,18 @@ frontend/
 └─ vitest.config.ts         # ユニットテスト設定
 ```
 
-### `/domain/booking` 詳細
+### `/domain/**` 詳細
 
 ```text
-src/domain/booking/
+src/domain/**/
 ├─ api/
-│  ├─ bookingAction.ts   # サーバーアクション。API 呼び出し＋再検証タグ管理
-│  ├─ bookingFetcher.ts  # SWR 用のキー生成とフェッチャー
+│  ├─ **Action.ts        # サーバーアクション。API 呼び出し＋再検証タグ管理
+│  ├─ **Fetcher.ts       # SWR 用のキー生成とフェッチャー
 │  └─ dto.ts             # API レスポンスからドメイン型への変換
 ├─ constants/            # ドメイン固有定数（表示範囲・タイムスロット等）
 ├─ hooks/                # 週ナビゲーションや SWR ラッパー
-├─ model/                # Booking ドメインの TypeScript 型, Zod スキーマ
-├─ ui/                   # 画面 UI（MainPage, Calendar, Create など）
+├─ model/                # ドメインの TypeScript 型, Zod スキーマ
+├─ ui/                   # 画面 UI（**MainPage, **Calendar, **Create など）
 └─ content/              # 使い方モーダルに表示する MDX
 ```
 

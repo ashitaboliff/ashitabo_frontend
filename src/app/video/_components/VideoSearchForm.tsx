@@ -1,18 +1,11 @@
 'use client'
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import {
-	type ChangeEvent,
-	type FormEvent,
-	useEffect,
-	useId,
-	useState,
-} from 'react'
+import { type FormEvent, useId, useState } from 'react'
 import type { YoutubeSearchQuery } from '@/domains/video/model/videoTypes'
 import ShareButton from '@/shared/ui/atoms/ShareButton'
 import { BiSearch, RiQuestionLine } from '@/shared/ui/icons'
 import Popup from '@/shared/ui/molecules/Popup'
-import TagInputField from '@/shared/ui/molecules/TagsInputField'
 import TextSearchField from '@/shared/ui/molecules/TextSearchField'
 
 interface Props {
@@ -30,14 +23,6 @@ const VideoSearchForm = ({ defaultQuery, isSearching, onSearch }: Props) => {
 	const [formKey, setFormKey] = useState<number>(0)
 	const searchPopupId = useId()
 	const usagePopupId = useId()
-	const [currentTags, setCurrentTags] = useState<string[]>(
-		(searchParams.getAll('tag') as string[]) ?? defaultQuery.tag ?? [],
-	)
-	const [tagSearchMode, setTagSearchMode] = useState<'and' | 'or'>(
-		(searchParams.get('tagSearchMode') as 'and' | 'or') ??
-			defaultQuery.tagSearchMode ??
-			'or',
-	)
 
 	const getCurrentQuery = (): YoutubeSearchQuery => {
 		const params = new URLSearchParams(searchParams.toString())
@@ -47,8 +32,6 @@ const VideoSearchForm = ({ defaultQuery, isSearching, onSearch }: Props) => {
 				defaultQuery.liveOrBand,
 			bandName: params.get('bandName') ?? defaultQuery.bandName,
 			liveName: params.get('liveName') ?? defaultQuery.liveName,
-			tag: currentTags,
-			tagSearchMode: tagSearchMode,
 			sort: (params.get('sort') as 'new' | 'old') ?? defaultQuery.sort,
 			page: Number(params.get('page')) || defaultQuery.page,
 			videoPerPage:
@@ -56,7 +39,7 @@ const VideoSearchForm = ({ defaultQuery, isSearching, onSearch }: Props) => {
 		}
 	}
 
-	const currentQuery = getCurrentQuery() // これはフォームのdefaultValue用
+	const currentQuery = getCurrentQuery()
 
 	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		setIsPopupOpen(false)
@@ -66,55 +49,15 @@ const VideoSearchForm = ({ defaultQuery, isSearching, onSearch }: Props) => {
 			liveOrBand: formData.get('liveOrBand') as 'live' | 'band',
 			bandName: formData.get('bandName') as string,
 			liveName: formData.get('liveName') as string,
-			tag: currentTags,
-			tagSearchMode: formData.get('tagSearchMode') as 'and' | 'or',
 		}
 		onSearch({ ...newQuery, page: 1 })
 	}
 
 	const handleReset = () => {
 		setFormKey((prev) => prev + 1)
-		setCurrentTags(defaultQuery.tag || [])
-		setTagSearchMode(defaultQuery.tagSearchMode || 'or')
 		setIsPopupOpen(false)
 		router.replace('/video')
 		onSearch(defaultQuery)
-	}
-
-	useEffect(() => {
-		const tagsFromParams = searchParams.getAll('tag')
-		const modeFromParams = searchParams.get('tagSearchMode') as 'and' | 'or'
-
-		// URLパラメータに基づいて内部状態を更新
-		if (tagsFromParams.length > 0 || searchParams.has('tag')) {
-			setCurrentTags(tagsFromParams)
-		} else if (
-			!searchParams.has('bandName') &&
-			!searchParams.has('liveName') &&
-			!searchParams.has('liveOrBand') &&
-			!searchParams.has('tag') // tagパラメータもないことを明確化
-		) {
-			setCurrentTags(defaultQuery.tag || [])
-		}
-
-		if (modeFromParams) {
-			setTagSearchMode(modeFromParams)
-		} else if (
-			!searchParams.has('bandName') &&
-			!searchParams.has('liveName') &&
-			!searchParams.has('liveOrBand') &&
-			!searchParams.has('tagSearchMode') // tagSearchModeパラメータもないことを明確化
-		) {
-			setTagSearchMode(defaultQuery.tagSearchMode || 'or')
-		}
-	}, [searchParams, defaultQuery.tag, defaultQuery.tagSearchMode])
-
-	const handleTagsChange = (newTags: string[]) => {
-		setCurrentTags(newTags)
-	}
-
-	const handleTagModeChange = (e: ChangeEvent<HTMLInputElement>) => {
-		setTagSearchMode(e.target.value as 'and' | 'or')
 	}
 
 	return (
@@ -150,7 +93,7 @@ const VideoSearchForm = ({ defaultQuery, isSearching, onSearch }: Props) => {
 				onClose={() => setIsPopupOpen(false)}
 			>
 				<form
-					key={formKey} // key を使うことでフォーム内の defaultValue をリセット時に正しく反映
+					key={formKey}
 					onSubmit={handleSubmit}
 					className="flex flex-col gap-y-2 justify-center max-w-sm m-auto"
 				>
@@ -160,7 +103,7 @@ const VideoSearchForm = ({ defaultQuery, isSearching, onSearch }: Props) => {
 							name="liveOrBand"
 							value="live"
 							defaultChecked={currentQuery.liveOrBand === 'live'}
-							className="btn btn-tetiary w-5/12"
+							className={`btn w-5/12 checked:btn-accent btn-outline`}
 							aria-label="再生リスト"
 						/>
 						<input
@@ -168,7 +111,7 @@ const VideoSearchForm = ({ defaultQuery, isSearching, onSearch }: Props) => {
 							name="liveOrBand"
 							value="band"
 							defaultChecked={currentQuery.liveOrBand === 'band'}
-							className="btn btn-tetiary w-5/12"
+							className={`btn w-5/12 checked:btn-accent btn-outline`}
 							aria-label="動画"
 						/>
 					</div>
@@ -186,44 +129,6 @@ const VideoSearchForm = ({ defaultQuery, isSearching, onSearch }: Props) => {
 						placeholder="ライブ名"
 						defaultValue={currentQuery.liveName}
 					/>
-					<TagInputField
-						label="タグ"
-						infoDropdown="みんなのつけたタグによる検索です"
-						name="tag" // nameは引き続き必要（HTMLのname属性として、または将来的なRHF化のため）
-						placeholder="タグを入力しEnterかカンマで追加"
-						defaultValue={currentTags}
-						onChange={handleTagsChange} // このonChangeでcurrentTagsを更新
-					/>
-					<div className="form-control flex flex-row justify-center gap-x-2">
-						<label className="label cursor-pointer justify-start gap-2">
-							<span className="label-text text-xs-custom">タグ検索モード:</span>
-							<input
-								type="radio"
-								name="tagSearchMode"
-								className="radio radio-xs"
-								value="or"
-								checked={tagSearchMode === 'or'}
-								onChange={handleTagModeChange}
-							/>
-							<span className="label-text text-xs-custom">
-								いずれかを含む (OR)
-							</span>
-						</label>
-						<label className="label cursor-pointer justify-start gap-2">
-							<span className="label-text text-xs-custom"></span>
-							<input
-								type="radio"
-								name="tagSearchMode"
-								className="radio radio-xs"
-								value="and"
-								checked={tagSearchMode === 'and'}
-								onChange={handleTagModeChange}
-							/>
-							<span className="label-text text-xs-custom">
-								すべてを含む (AND)
-							</span>
-						</label>
-					</div>
 					<button type="submit" className="btn btn-primary mt-2">
 						検索
 					</button>

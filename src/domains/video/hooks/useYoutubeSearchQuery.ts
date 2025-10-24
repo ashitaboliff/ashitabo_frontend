@@ -23,14 +23,6 @@ const parseSearchParams = (
 		query.liveName = liveName
 	}
 
-	const tags = params.getAll('tag')
-	query.tag = tags.length > 0 ? tags : defaultQuery.tag
-
-	const tagSearchMode = params.get('tagSearchMode')
-	if (tagSearchMode === 'and' || tagSearchMode === 'or') {
-		query.tagSearchMode = tagSearchMode
-	}
-
 	const sort = params.get('sort')
 	if (sort === 'new' || sort === 'old') {
 		query.sort = sort

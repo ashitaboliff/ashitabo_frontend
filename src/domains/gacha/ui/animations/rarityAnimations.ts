@@ -274,7 +274,7 @@ const animateSecretRare: RarityAnimation = ({
 			'<',
 		)
 
-	const colors = ['#ff00ff', '#00ffff', '#ffff00', '#ff8800', '#00ff88']
+	const colors = ['#000000', '#222222', '#666666', '#885533', '#446688']
 	const particles = Array.from({ length: 50 }, () => {
 		const particle = document.createElement('div')
 		particle.className = 'particle-effect secret-particle'

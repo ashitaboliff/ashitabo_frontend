@@ -1,14 +1,15 @@
 'use client'
 
 import { useMemo } from 'react'
-import { useSession } from '@/domains/auth/hooks/useSession'
 import { useYoutubeSearchQuery } from '@/domains/video/hooks/useYoutubeSearchQuery'
 import type {
-	YoutubeDetail,
+	PlaylistDoc,
+	Video,
 	YoutubeSearchQuery,
 } from '@/domains/video/model/videoTypes'
 import { gkktt } from '@/shared/lib/fonts'
 import Pagination from '@/shared/ui/atoms/Pagination'
+import RadioSortGroup from '@/shared/ui/atoms/RadioSortGroup'
 import SelectField from '@/shared/ui/atoms/SelectField'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import type { ApiError } from '@/types/responseTypes'
@@ -19,15 +20,13 @@ const defaultSearchQuery: YoutubeSearchQuery = {
 	liveOrBand: 'band',
 	bandName: '',
 	liveName: '',
-	tag: [],
-	tagSearchMode: 'or', // デフォルトはOR検索
 	sort: 'new',
 	page: 1,
 	videoPerPage: 15,
 }
 
 interface Props {
-	initialYoutubeDetails: YoutubeDetail[]
+	initialYoutubeDetails: Video[] | PlaylistDoc[]
 	initialPageMax: number
 	initialError?: ApiError
 }
@@ -37,8 +36,6 @@ const VideoListPage = ({
 	initialPageMax,
 	initialError,
 }: Props) => {
-	const { data: session } = useSession() // session を取得
-
 	const {
 		query: currentQuery,
 		isSearching,
@@ -61,6 +58,9 @@ const VideoListPage = ({
 
 	const pageMax = initialPageMax
 	const youtubeDetails = initialYoutubeDetails
+	const isBand = currentQuery.liveOrBand === 'band'
+	const bandDetails = isBand ? (youtubeDetails as Video[]) : []
+	const playlistDetails = !isBand ? (youtubeDetails as PlaylistDoc[]) : []
 	const error = initialError
 	const isLoading = isPending
 
@@ -98,26 +98,16 @@ const VideoListPage = ({
 						<p className="text-xs-custom sm:text-sm whitespace-nowrap">
 							並び順:
 						</p>
-						<div className="flex flex-row gap-x-1 sm:gap-x-2">
-							<input
-								type="radio"
-								name="sort"
-								value="new"
-								checked={currentQuery.sort === 'new'}
-								className="btn btn-tetiary btn-xs sm:btn-sm"
-								aria-label="新しい順"
-								onChange={() => updateQuery({ sort: 'new' })}
-							/>
-							<input
-								type="radio"
-								name="sort"
-								value="old"
-								checked={currentQuery.sort === 'old'}
-								className="btn btn-tetiary btn-xs sm:btn-sm"
-								aria-label="古い順"
-								onChange={() => updateQuery({ sort: 'old' })}
-							/>
-						</div>
+						<RadioSortGroup
+							name="videoSort"
+							currentSort={currentQuery.sort}
+							onSortChange={(sort) => updateQuery({ sort })}
+							options={[
+								{ label: '新しい順', value: 'new' },
+								{ label: '古い順', value: 'old' },
+							]}
+							size="xs"
+						/>
 					</div>
 				</div>
 
@@ -137,16 +127,23 @@ const VideoListPage = ({
 							</div>
 						))}
 					</div>
-				) : youtubeDetails.length > 0 ? (
+				) : youtubeDetails?.length > 0 ? (
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-						{youtubeDetails.map((youtubeDetail) => (
-							<VideoItem
-								session={session}
-								key={youtubeDetail.id}
-								youtubeDetail={youtubeDetail}
-								liveOrBand={currentQuery.liveOrBand}
-							/>
-						))}
+						{isBand
+							? bandDetails.map((detail) => (
+									<VideoItem
+										key={detail.videoId}
+										youtubeDetail={detail}
+										liveOrBand="band"
+									/>
+								))
+							: playlistDetails.map((detail) => (
+									<VideoItem
+										key={detail.playlistId}
+										youtubeDetail={detail}
+										liveOrBand="live"
+									/>
+								))}
 					</div>
 				) : (
 					<div className="text-base-content w-full text-center py-10">

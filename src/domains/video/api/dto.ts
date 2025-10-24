@@ -1,19 +1,20 @@
-import type { Playlist, Video } from '@/domains/video/model/videoTypes'
+import type {
+	PlaylistDoc,
+	PlaylistItem,
+	Video,
+} from '@/domains/video/model/videoTypes'
+import { toDate } from '@/shared/utils/dateFormat'
 
-const toDate = (value: string | Date | undefined | null): Date | undefined => {
-	if (!value) return undefined
-	return value instanceof Date ? value : new Date(value)
-}
-
-export interface RawVideo {
+export type RawVideo = {
+	type: 'video'
+	videoId: string
 	title: string
 	link: string
-	videoId: string
 	liveDate: string
 	playlistId: string
-	createdAt?: string | Date | null
-	updatedAt?: string | Date | null
-	tags?: string[]
+	playlistTitle: string
+	createdAt: string | Date
+	updatedAt: string | Date
 }
 
 export const mapRawVideo = (raw: RawVideo): Video => ({
@@ -22,24 +23,48 @@ export const mapRawVideo = (raw: RawVideo): Video => ({
 	updatedAt: toDate(raw.updatedAt),
 })
 
-export interface RawPlaylist {
+export const mapRawVideos = (raw: RawVideo[] | null | undefined): Video[] =>
+	raw ? raw.map(mapRawVideo) : []
+
+export type RawPlaylistItem = {
+	type: 'playlist'
 	playlistId: string
 	title: string
 	link: string
 	liveDate: string
 	videos: RawVideo[]
-	createdAt?: string | Date | null
-	updatedAt?: string | Date | null
-	tags?: string[]
+	createdAt: string | Date
+	updatedAt: string | Date
 }
 
-export const mapRawPlaylist = (raw: RawPlaylist): Playlist => ({
+export const mapRawPlaylistItem = (raw: RawPlaylistItem): PlaylistItem => ({
 	...raw,
 	videos: raw.videos?.map(mapRawVideo) ?? [],
 	createdAt: toDate(raw.createdAt),
 	updatedAt: toDate(raw.updatedAt),
 })
 
-export const mapRawPlaylists = (
-	raw: RawPlaylist[] | null | undefined,
-): Playlist[] => (raw ? raw.map(mapRawPlaylist) : [])
+export const mapRawPlaylistItems = (
+	raw: RawPlaylistItem[] | null | undefined,
+): PlaylistItem[] => (raw ? raw.map(mapRawPlaylistItem) : [])
+
+export type RawPlaylistDoc = {
+	type: 'playlist'
+	playlistId: string
+	title: string
+	link: string
+	liveDate: string
+	videoId: string
+	createdAt: string | Date
+	updatedAt: string | Date
+}
+
+export const mapRawPlaylistDoc = (raw: RawPlaylistDoc): PlaylistDoc => ({
+	...raw,
+	createdAt: toDate(raw.createdAt),
+	updatedAt: toDate(raw.updatedAt),
+})
+
+export const mapRawPlaylistDocs = (
+	raw: RawPlaylistDoc[] | null | undefined,
+): PlaylistDoc[] => (raw ? raw.map(mapRawPlaylistDoc) : [])

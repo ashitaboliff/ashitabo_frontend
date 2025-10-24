@@ -1,24 +1,14 @@
 import { notFound } from 'next/navigation'
 import YoutubeManagement from '@/app/admin/youtube/_components'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
-import {
-	getAccessTokenAction,
-	getPlaylistAction,
-} from '@/domains/video/api/videoActions'
-import { StatusCode } from '@/types/responseTypes'
+import { getPlaylistAction } from '@/domains/video/api/videoActions'
 
 const YoutubePage = async () => {
-	const accessToken = await getAccessTokenAction()
 	const playlist = await getPlaylistAction()
 	if (!playlist.ok) {
 		return notFound()
 	}
-	return (
-		<YoutubeManagement
-			playlists={playlist.data}
-			isAccessToken={accessToken.status === StatusCode.OK}
-		/>
-	)
+	return <YoutubeManagement playlists={playlist.data} />
 }
 
 const Page = async () => {

@@ -1,8 +1,10 @@
 'use server'
 
+import { revalidateTag } from 'next/cache'
 import { cookies } from 'next/headers'
 import type { AuthDetails } from '@/domains/auth/model/authTypes'
 import { makeAuthDetails } from '@/domains/auth/utils/sessionInfo'
+import type { ProfileFormValues } from '@/domains/user/model/profileSchema'
 import type { Profile } from '@/domains/user/model/userTypes'
 import { apiGet, apiPost, apiPut } from '@/shared/lib/api/crud'
 import type { ApiResponse } from '@/types/responseTypes'
@@ -65,7 +67,7 @@ export const createProfileAction = async ({
 	body,
 }: {
 	userId: string
-	body: Record<string, unknown>
+	body: ProfileFormValues
 }): Promise<ApiResponse<Profile>> => {
 	return apiPost<Profile>(`/users/${userId}/profile`, {
 		body,
@@ -77,11 +79,15 @@ export const putProfileAction = async ({
 	body,
 }: {
 	userId: string
-	body: Record<string, unknown>
+	body: ProfileFormValues
 }): Promise<ApiResponse<Profile>> => {
-	return apiPut<Profile>(`/users/${userId}/profile`, {
+	const res = await apiPut<Profile>(`/users/${userId}/profile`, {
 		body,
 	})
+
+	revalidateTag(`user-profile-${userId}`)
+
+	return res
 }
 
 export type PadlockResponse = {

@@ -4,7 +4,7 @@ const WEEKDAY_JA = ['日', '月', '火', '水', '木', '金', '土'] as const
 
 type DateInput = Date | string | number
 
-const toDate = (value: DateInput) => {
+export const toDate = (value: DateInput) => {
 	if (value instanceof Date) {
 		return Number.isNaN(value.getTime()) ? null : new Date(value.getTime())
 	}
