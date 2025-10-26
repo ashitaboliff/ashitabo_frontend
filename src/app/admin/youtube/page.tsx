@@ -64,9 +64,7 @@ const YoutubePage = async ({ searchParams }: Props) => {
 }
 
 const Page = async (props: Props) => {
-	return (
-		<YoutubePage {...props} />
-	)
+	return <YoutubePage {...props} />
 }
 
 export default Page

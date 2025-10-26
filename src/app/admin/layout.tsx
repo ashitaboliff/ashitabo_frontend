@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
-import { createMetaData } from '@/shared/hooks/useMetaData'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
+import { createMetaData } from '@/shared/hooks/useMetaData'
 
 export async function metadata() {
 	return createMetaData({

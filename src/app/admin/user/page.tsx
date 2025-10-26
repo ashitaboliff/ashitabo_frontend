@@ -1,9 +1,7 @@
 import AdminUserPage from '@/app/admin/user/_components'
 
 const Page = async () => {
-	return (
-		<AdminUserPage />
-	)
+	return <AdminUserPage />
 }
 
 export default Page

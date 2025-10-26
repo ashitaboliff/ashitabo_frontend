@@ -55,9 +55,7 @@ const UsagePage = async () => {
 }
 
 const Page = async () => {
-	return (
-		<UsagePage />
-	)
+	return <UsagePage />
 }
 
 export default Page
