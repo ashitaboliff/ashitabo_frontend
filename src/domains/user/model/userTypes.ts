@@ -88,7 +88,7 @@ export interface UserDetail {
 	image: string | null
 	createAt: Date
 	updateAt: Date
-	AccountRole: AccountRole | null
+	accountRole: AccountRole | null
 	role?: Role
 	part?: Part[]
 }

@@ -10,7 +10,7 @@ export interface Booking {
 	isDeleted: boolean
 }
 
-export type BanBooking = {
+export type DeniedBooking = {
 	id: string
 	createdAt: Date
 	updatedAt: Date

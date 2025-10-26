@@ -4,7 +4,7 @@ import useFlashMessage from '@/shared/hooks/useFlashMessage'
 import { getCurrentJSTDateString } from '@/shared/utils'
 
 const Page = async () => {
-	const { type, message } = await useFlashMessage({ key: 'bookingFlash' })
+	const { type, message } = await useFlashMessage({ key: 'booking:flash' })
 
 	const initialViewDate = new Date(getCurrentJSTDateString({ yesterday: true }))
 

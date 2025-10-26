@@ -3,7 +3,7 @@ import Message, { type MessageVariant } from '@/shared/ui/atoms/Message'
 import type { FeedbackMessageType } from '@/types/feedback'
 import type { ApiError } from '@/types/responseTypes'
 
-type MessageSource =
+export type MessageSource =
 	| FeedbackMessageType
 	| ApiError
 	| ReactNode

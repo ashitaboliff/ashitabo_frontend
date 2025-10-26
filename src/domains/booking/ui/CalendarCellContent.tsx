@@ -25,11 +25,11 @@ export const BookingInfoCell = ({ registName, name }: BookingInfoCellProps) => (
 	</div>
 )
 
-interface ForbiddenCellProps {
+interface DeniedCellProps {
 	readonly label?: string
 }
 
-export const ForbiddenCell = ({ label }: ForbiddenCellProps) => (
+export const DeniedCell = ({ label }: DeniedCellProps) => (
 	<div className={CALENDAR_CELL_CONTENT_CLASS}>
 		<HiMiniXMark color="red" size={20} />
 		{label ? (

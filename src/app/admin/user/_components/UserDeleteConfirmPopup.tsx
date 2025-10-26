@@ -1,18 +1,19 @@
 'use client'
 
 import type { UserDetail } from '@/domains/user/model/userTypes'
-import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
+import FeedbackMessage, {
+	type MessageSource,
+} from '@/shared/ui/molecules/FeedbackMessage'
 import Popup from '@/shared/ui/molecules/Popup'
-import type { ApiError } from '@/types/responseTypes'
 
 interface Props {
 	readonly open: boolean
 	readonly onClose: () => void
 	readonly selectedUser: UserDetail | null
 	readonly actionLoading: boolean
-	readonly onDelete: (id: string) => void
-	readonly actionError: ApiError | null
-	readonly setActionError: (error: ApiError | null) => void
+	readonly onDelete: () => void
+	readonly feedbackSource?: MessageSource
+	readonly onClearFeedback: () => void
 }
 
 const UserDeleteConfirmPopup = ({
@@ -21,8 +22,8 @@ const UserDeleteConfirmPopup = ({
 	selectedUser,
 	actionLoading,
 	onDelete,
-	actionError,
-	setActionError,
+	feedbackSource,
+	onClearFeedback,
 }: Props) => {
 	return (
 		<Popup
@@ -31,21 +32,20 @@ const UserDeleteConfirmPopup = ({
 			open={open}
 			onClose={() => {
 				onClose()
-				setActionError(null)
+				onClearFeedback()
 			}}
 		>
 			<div className="flex flex-col space-y-2 text-sm items-center">
 				<div className="text-error font-bold">本当に削除しますか?</div>
-				<div>この操作は取り消せません</div>
+				<div>この操作は取り消せません。</div>
 				<div className="flex flex-row justify-center gap-x-2">
 					<button
 						type="button"
 						className="btn btn-error"
 						disabled={actionLoading}
 						onClick={() => {
-							if (selectedUser) {
-								onDelete(selectedUser.id)
-							}
+							onClearFeedback()
+							onDelete()
 						}}
 					>
 						{actionLoading ? '削除中...' : 'はい'}
@@ -54,7 +54,7 @@ const UserDeleteConfirmPopup = ({
 						いいえ
 					</button>
 				</div>
-				<FeedbackMessage source={actionError} defaultVariant="error" />
+				<FeedbackMessage source={feedbackSource} defaultVariant="error" />
 			</div>
 		</Popup>
 	)

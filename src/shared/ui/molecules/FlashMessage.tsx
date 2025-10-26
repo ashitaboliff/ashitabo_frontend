@@ -1,9 +1,9 @@
 'use client'
 
 import { type ReactNode, useEffect, useState } from 'react'
-import Message from '@/shared/ui/atoms/Message'
+import Message, { type MessageVariant } from '@/shared/ui/atoms/Message'
 
-export type NoticeType = 'info' | 'success' | 'warning' | 'error'
+export type NoticeType = MessageVariant
 
 export interface Props {
 	type?: NoticeType

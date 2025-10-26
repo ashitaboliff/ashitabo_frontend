@@ -1,5 +1,3 @@
-'use client'
-
 import Link from 'next/link'
 import {
 	FaRegUserCircle,
@@ -9,6 +7,35 @@ import {
 	RxCrossCircled,
 } from '@/shared/ui/icons'
 
+const iconSize = 25
+const adminLinks = [
+	{
+		href: '/admin/usage',
+		label: '使い方',
+		icon: <RiQuestionLine size={iconSize} />,
+	},
+	{
+		href: '/admin/user',
+		label: 'ユーザ管理',
+		icon: <FaRegUserCircle size={iconSize} />,
+	},
+	{
+		href: '/admin/padlock',
+		label: '利用登録パスワード管理',
+		icon: <LuLockKeyhole size={iconSize} />,
+	},
+	{
+		href: '/admin/denied',
+		label: 'コマ表予約禁止日設定',
+		icon: <RxCrossCircled size={iconSize} />,
+	},
+	{
+		href: '/admin/youtube',
+		label: 'YouTube管理',
+		icon: <FaYoutube size={iconSize} />,
+	},
+] as const
+
 const AdminMain = () => {
 	return (
 		<div className="flex flex-col items-center justify-center p-4">
@@ -16,54 +43,16 @@ const AdminMain = () => {
 			<div className="overflow-x-auto">
 				<table className="table table-lg">
 					<tbody>
-						<tr>
-							<th>
-								<RiQuestionLine size={25} />
-							</th>
-							<td>
-								<Link href="/admin/usage">使い方</Link>
-							</td>
-						</tr>
-						<tr>
-							<th>
-								<FaRegUserCircle size={25} />
-							</th>
-							<td>
-								<Link href="/admin/user">ユーザ管理</Link>
-							</td>
-						</tr>
-						<tr>
-							<th>
-								<LuLockKeyhole size={25} />
-							</th>
-							<td>
-								<Link href="/admin/padlock">利用登録パスワード管理</Link>
-							</td>
-						</tr>
-						<tr>
-							<th>
-								<RxCrossCircled size={25} />
-							</th>
-							<td>
-								<Link href="/admin/forbidden">コマ表予約禁止日設定</Link>
-							</td>
-						</tr>
-						<tr>
-							<th>
-								<FaYoutube size={25} />
-							</th>
-							<td>
-								<Link href="/admin/youtube">YouTube管理</Link>
-							</td>
-						</tr>
-						{/* <tr>
-							<th>
-								<MdOutlineEditCalendar />
-							</th>
-							<td>
-								<Link href="/admin/booking">部室予約管理</Link>
-							</td>
-						</tr> */}
+						{adminLinks.map((link) => (
+							<tr key={link.href} className="hover:bg-base-200">
+								<td className="w-12">{link.icon}</td>
+								<td>
+									<Link href={link.href} className="text-lg font-medium">
+										{link.label}
+									</Link>
+								</td>
+							</tr>
+						))}
 					</tbody>
 				</table>
 			</div>
