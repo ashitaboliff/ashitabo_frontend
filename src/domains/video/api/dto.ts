@@ -33,20 +33,16 @@ export type RawPlaylistItem = {
 	link: string
 	liveDate: string
 	videos: RawVideo[]
-	createdAt: string | Date
-	updatedAt: string | Date
+	createdAt: string | Date | null
+	updatedAt: string | Date | null
 }
 
 export const mapRawPlaylistItem = (raw: RawPlaylistItem): PlaylistItem => ({
 	...raw,
 	videos: raw.videos?.map(mapRawVideo) ?? [],
-	createdAt: toDate(raw.createdAt),
-	updatedAt: toDate(raw.updatedAt),
+	createdAt: toDate(raw.createdAt ?? new Date()),
+	updatedAt: toDate(raw.updatedAt ?? new Date()),
 })
-
-export const mapRawPlaylistItems = (
-	raw: RawPlaylistItem[] | null | undefined,
-): PlaylistItem[] => (raw ? raw.map(mapRawPlaylistItem) : [])
 
 export type RawPlaylistDoc = {
 	type: 'playlist'
@@ -55,14 +51,14 @@ export type RawPlaylistDoc = {
 	link: string
 	liveDate: string
 	videoId: string
-	createdAt: string | Date
-	updatedAt: string | Date
+	createdAt: string | Date | null
+	updatedAt: string | Date | null
 }
 
 export const mapRawPlaylistDoc = (raw: RawPlaylistDoc): PlaylistDoc => ({
 	...raw,
-	createdAt: toDate(raw.createdAt),
-	updatedAt: toDate(raw.updatedAt),
+	createdAt: toDate(raw.createdAt ?? new Date()),
+	updatedAt: toDate(raw.updatedAt ?? new Date()),
 })
 
 export const mapRawPlaylistDocs = (

@@ -73,9 +73,10 @@ const YoutubeManagement = ({
 		setDetailPlaylist(null)
 	}, [])
 
-	const lastUpdatedText = playlists[0]?.updatedAt
-		? formatDateSlash(playlists[0].updatedAt)
-		: '不明'
+	const lastUpdatedText =
+		playlists.length > 0 && playlists[0].updatedAt
+			? formatDateSlash(playlists[0].updatedAt)
+			: '不明'
 
 	const isBusy = isLoading || isPending
 
