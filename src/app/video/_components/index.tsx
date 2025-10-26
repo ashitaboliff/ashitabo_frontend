@@ -7,6 +7,7 @@ import type {
 	Video,
 	YoutubeSearchQuery,
 } from '@/domains/video/model/videoTypes'
+import { buildYoutubeQueryString } from '@/domains/video/query/youtubeQuery'
 import { gkktt } from '@/shared/lib/fonts'
 import Pagination from '@/shared/ui/atoms/Pagination'
 import RadioSortGroup from '@/shared/ui/atoms/RadioSortGroup'
@@ -16,32 +17,33 @@ import type { ApiError } from '@/types/responseTypes'
 import VideoItem from './VideoItem'
 import VideoSearchForm from './VideoSearchForm'
 
-const defaultSearchQuery: YoutubeSearchQuery = {
-	liveOrBand: 'band',
-	bandName: '',
-	liveName: '',
-	sort: 'new',
-	page: 1,
-	videoPerPage: 15,
-}
-
 interface Props {
-	initialYoutubeDetails: Video[] | PlaylistDoc[]
-	initialPageMax: number
-	initialError?: ApiError
+	readonly youtubeDetails: Video[] | PlaylistDoc[]
+	readonly pageMax: number
+	readonly error?: ApiError
+	readonly defaultQuery: YoutubeSearchQuery
+	readonly initialQuery: YoutubeSearchQuery
+	readonly extraSearchParams?: string
 }
 
 const VideoListPage = ({
-	initialYoutubeDetails,
-	initialPageMax,
-	initialError,
+	youtubeDetails,
+	pageMax,
+	error,
+	defaultQuery,
+	initialQuery,
+	extraSearchParams,
 }: Props) => {
 	const {
 		query: currentQuery,
 		isSearching,
 		updateQuery,
 		isPending,
-	} = useYoutubeSearchQuery(defaultSearchQuery)
+	} = useYoutubeSearchQuery({
+		defaultQuery,
+		initialQuery,
+		extraSearchParams,
+	})
 
 	const skeletonKeys = useMemo(
 		() =>
@@ -52,29 +54,35 @@ const VideoListPage = ({
 		[currentQuery.videoPerPage],
 	)
 
+	const shareQueryString = buildYoutubeQueryString(
+		currentQuery,
+		defaultQuery,
+		extraSearchParams,
+	)
+
+	const shareUrl = shareQueryString ? `/video?${shareQueryString}` : '/video'
+
 	const handleSearch = (searchQuery: Partial<YoutubeSearchQuery>) => {
 		updateQuery({ ...searchQuery, page: 1 })
 	}
 
-	const pageMax = initialPageMax
-	const youtubeDetails = initialYoutubeDetails
 	const isBand = currentQuery.liveOrBand === 'band'
 	const bandDetails = isBand ? (youtubeDetails as Video[]) : []
 	const playlistDetails = !isBand ? (youtubeDetails as PlaylistDoc[]) : []
-	const error = initialError
-	const isLoading = isPending
 
 	return (
-		<div className="container mx-auto px-2 sm:px-4 py-6">
+		<div className="container mx-auto px-2 sm:px-4">
 			<div
 				className={`text-3xl sm:text-4xl font-bold ${gkktt.className} text-center mb-6`}
 			>
 				過去ライブ映像
 			</div>
 			<VideoSearchForm
-				defaultQuery={defaultSearchQuery}
+				currentQuery={currentQuery}
 				isSearching={isSearching}
 				onSearch={handleSearch}
+				onReset={() => updateQuery(defaultQuery)}
+				shareUrl={shareUrl}
 			/>
 			<div className="flex flex-col items-center justify-center gap-y-4">
 				<div className="flex flex-row items-center justify-end w-full gap-2 sm:gap-4 mb-2 px-1">
@@ -113,7 +121,7 @@ const VideoListPage = ({
 
 				<FeedbackMessage source={error} defaultVariant="error" />
 
-				{isLoading ? (
+				{isPending ? (
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
 						{skeletonKeys.map((placeholderKey) => (
 							<div

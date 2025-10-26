@@ -1,61 +1,65 @@
 'use client'
 
 import { useRouter } from 'next-nprogress-bar'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { createPlaylistAction } from '@/domains/video/api/videoActions'
-import type { PlaylistItem } from '@/domains/video/model/videoTypes'
+import { useCallback, useMemo, useState } from 'react'
+import { postSyncPlaylistAction } from '@/domains/video/api/videoActions'
+import { useYoutubeSearchQuery } from '@/domains/video/hooks/useYoutubeSearchQuery'
+import type {
+	PlaylistDoc,
+	YoutubeSearchQuery,
+} from '@/domains/video/model/videoTypes'
 import { useFeedback } from '@/shared/hooks/useFeedback'
-import { usePagedResource } from '@/shared/hooks/usePagedResource'
 import Pagination from '@/shared/ui/atoms/Pagination'
 import SelectField from '@/shared/ui/atoms/SelectField'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
+import Popup from '@/shared/ui/molecules/Popup'
 import { formatDateJa, formatDateSlash } from '@/shared/utils/dateFormat'
+import type { ApiError } from '@/types/responseTypes'
 
 interface Props {
-	readonly playlists: PlaylistItem[] | undefined | null
+	readonly playlists: PlaylistDoc[]
+	readonly total: number
+	readonly defaultQuery: YoutubeSearchQuery
+	readonly initialQuery: YoutubeSearchQuery
+	readonly extraSearchParams?: string
+	readonly error?: ApiError
 }
 
-const YoutubeManagement = ({ playlists }: Props) => {
+const perPageOptions = {
+	'10件': 10,
+	'20件': 20,
+	'50件': 50,
+	'100件': 100,
+} as const
+
+const YoutubeManagement = ({
+	playlists,
+	total,
+	defaultQuery,
+	initialQuery,
+	extraSearchParams,
+	error,
+}: Props) => {
 	const router = useRouter()
 	const actionFeedback = useFeedback()
 	const [isLoading, setIsLoading] = useState(false)
-	const [detailPlaylist, setDetailPlaylist] = useState<PlaylistItem | null>(
-		null,
-	)
-	const detailDialogRef = useRef<HTMLDialogElement>(null)
+	const [detailPlaylist, setDetailPlaylist] = useState<PlaylistDoc | null>(null)
 
-	const {
-		state: { page, perPage },
-		pageCount,
-		setPage,
-		setPerPage,
-		setTotalCount,
-	} = usePagedResource<'default'>({
-		initialPerPage: 10,
-		initialSort: 'default',
+	const { query, updateQuery, isPending } = useYoutubeSearchQuery({
+		defaultQuery,
+		initialQuery,
+		extraSearchParams,
 	})
 
-	useEffect(() => {
-		setTotalCount(playlists?.length ?? 0)
-	}, [playlists, setTotalCount])
-
-	useEffect(() => {
-		if (detailPlaylist) {
-			detailDialogRef.current?.showModal()
-		} else {
-			detailDialogRef.current?.close()
-		}
-	}, [detailPlaylist])
-
-	const indexOfLastPlaylist = page * perPage
-	const indexOfFirstPlaylist = indexOfLastPlaylist - perPage
-	const currentPlaylist =
-		playlists?.slice(indexOfFirstPlaylist, indexOfLastPlaylist) ?? []
+	const totalPages = useMemo(() => {
+		if (query.videoPerPage <= 0) return 1
+		return Math.max(1, Math.ceil(total / query.videoPerPage) || 1)
+	}, [query.videoPerPage, total])
 
 	const handleFetchPlaylist = useCallback(async () => {
 		actionFeedback.clearFeedback()
 		setIsLoading(true)
-		const res = await createPlaylistAction()
+		const res = await postSyncPlaylistAction()
 		if (res.ok) {
 			actionFeedback.showSuccess('プレイリストを取得しました。')
 			router.refresh()
@@ -65,13 +69,15 @@ const YoutubeManagement = ({ playlists }: Props) => {
 		setIsLoading(false)
 	}, [actionFeedback, router])
 
-	const closeDetailDialog = useCallback(() => {
+	const closeDetail = useCallback(() => {
 		setDetailPlaylist(null)
 	}, [])
 
-	const lastUpdatedText = playlists?.[0]?.updatedAt
+	const lastUpdatedText = playlists[0]?.updatedAt
 		? formatDateSlash(playlists[0].updatedAt)
 		: '不明'
+
+	const isBusy = isLoading || isPending
 
 	return (
 		<div className="flex flex-col items-center justify-center gap-y-2">
@@ -90,21 +96,24 @@ const YoutubeManagement = ({ playlists }: Props) => {
 				</button>
 			</div>
 			<FeedbackMessage source={actionFeedback.feedback} />
+			<FeedbackMessage source={error} />
 
 			<div className="overflow-x-auto w-full flex flex-col justify-center gap-y-2">
-				<div className="flex flex-row items-center justify-between">
+				<div className="flex flex-col gap-y-2 sm:flex-row sm:items-center sm:justify-between">
 					<div className="text-sm">更新日: {lastUpdatedText}</div>
 					<div className="flex flex-row items-center">
-						<p className="text-sm whitespace-nowrap">表示件数:</p>
+						<p className="text-sm whitespace-nowrap mr-2">表示件数:</p>
 						<SelectField
-							value={perPage}
-							onChange={(e) => {
-								const next = Number(e.target.value)
-								setPerPage(next)
-								setPage(1)
-							}}
-							options={{ '10件': 10, '20件': 20, '50件': 50, '100件': 100 }}
+							value={query.videoPerPage}
+							onChange={(e) =>
+								updateQuery({
+									videoPerPage: Number(e.target.value),
+									page: 1,
+								})
+							}
+							options={perPageOptions}
 							name="playlistPerPage"
+							disabled={isBusy}
 						/>
 					</div>
 				</div>
@@ -112,104 +121,104 @@ const YoutubeManagement = ({ playlists }: Props) => {
 					<thead>
 						<tr>
 							<th>タイトル</th>
-							<th>タグ</th>
 						</tr>
 					</thead>
 					<tbody>
-						{currentPlaylist.map((playlist) => (
-							<tr
-								key={playlist.playlistId}
-								onClick={() => setDetailPlaylist(playlist)}
-								className="cursor-pointer"
-							>
-								<td>{playlist.title}</td>
+						{playlists.length === 0 ? (
+							<tr>
+								<td className="text-center py-4">
+									プレイリストが見つかりませんでした。
+								</td>
 							</tr>
-						))}
+						) : (
+							playlists.map((playlist) => (
+								<tr
+									key={playlist.playlistId}
+									onClick={() => setDetailPlaylist(playlist)}
+									className="cursor-pointer"
+								>
+									<td>{playlist.title}</td>
+								</tr>
+							))
+						)}
 					</tbody>
 				</table>
 			</div>
-			<Pagination
-				currentPage={page}
-				totalPages={pageCount}
-				onPageChange={(newPage) => setPage(newPage)}
-			/>
+			{totalPages > 1 ? (
+				<Pagination
+					currentPage={query.page}
+					totalPages={totalPages}
+					onPageChange={(page) => updateQuery({ page })}
+				/>
+			) : null}
 			<div className="flex flex-row justify-center mt-2">
 				<button
 					type="button"
 					className="btn btn-outline"
 					onClick={() => router.push('/admin')}
+					disabled={isBusy}
 				>
 					戻る
 				</button>
 			</div>
 
-			<dialog
-				ref={detailDialogRef}
-				className="modal"
-				onClose={closeDetailDialog}
+			<Popup
+				id="youtube-playlist-detail"
+				title="プレイリスト詳細"
+				open={detailPlaylist !== null}
+				onClose={closeDetail}
+				className="text-sm"
 			>
-				<div className="modal-box text-sm space-y-3">
-					<h3 className="font-bold text-lg">プレイリスト詳細</h3>
-					<div className="space-y-2">
-						<div className="flex gap-x-1">
-							<div className="font-bold basis-1/4">プレイリストID:</div>
-							<div className="basis-3/4 break-all">
-								{detailPlaylist?.playlistId ?? '不明'}
-							</div>
-						</div>
-						<div className="flex gap-x-1">
-							<div className="font-bold basis-1/4">タイトル:</div>
-							<div className="basis-3/4">{detailPlaylist?.title ?? '不明'}</div>
-						</div>
-						<div className="flex gap-x-1">
-							<div className="font-bold basis-1/4">リンク:</div>
-							<div className="basis-3/4 break-all">
-								{detailPlaylist?.link ? (
-									<a
-										href={detailPlaylist.link}
-										target="_blank"
-										rel="noreferrer"
-									>
-										{detailPlaylist.link}
-									</a>
-								) : (
-									'不明'
-								)}
-							</div>
-						</div>
-						<div className="flex gap-x-1">
-							<div className="font-bold basis-1/4">作成日:</div>
-							<div className="basis-3/4">
-								{detailPlaylist?.createdAt
-									? formatDateJa(detailPlaylist.createdAt)
-									: '不明'}
-							</div>
-						</div>
-						<div className="flex gap-x-1">
-							<div className="font-bold basis-1/4">更新日:</div>
-							<div className="basis-3/4">
-								{detailPlaylist?.updatedAt
-									? formatDateJa(detailPlaylist.updatedAt)
-									: '不明'}
-							</div>
+				<div className="space-y-2">
+					<div className="flex gap-x-1">
+						<div className="font-bold basis-1/4">プレイリストID:</div>
+						<div className="basis-3/4 break-all">
+							{detailPlaylist?.playlistId ?? '不明'}
 						</div>
 					</div>
-					<div className="flex justify-center">
-						<button
-							type="button"
-							className="btn btn-primary"
-							onClick={closeDetailDialog}
-						>
-							閉じる
-						</button>
+					<div className="flex gap-x-1">
+						<div className="font-bold basis-1/4">タイトル:</div>
+						<div className="basis-3/4">{detailPlaylist?.title ?? '不明'}</div>
+					</div>
+					<div className="flex gap-x-1">
+						<div className="font-bold basis-1/4">リンク:</div>
+						<div className="basis-3/4 break-all">
+							{detailPlaylist?.link ? (
+								<a href={detailPlaylist.link} target="_blank" rel="noreferrer">
+									{detailPlaylist.link}
+								</a>
+							) : (
+								'不明'
+							)}
+						</div>
+					</div>
+					<div className="flex gap-x-1">
+						<div className="font-bold basis-1/4">作成日:</div>
+						<div className="basis-3/4">
+							{detailPlaylist?.createdAt
+								? formatDateJa(detailPlaylist.createdAt)
+								: '不明'}
+						</div>
+					</div>
+					<div className="flex gap-x-1">
+						<div className="font-bold basis-1/4">更新日:</div>
+						<div className="basis-3/4">
+							{detailPlaylist?.updatedAt
+								? formatDateJa(detailPlaylist.updatedAt)
+								: '不明'}
+						</div>
 					</div>
 				</div>
-				<form method="dialog" className="modal-backdrop">
-					<button type="button" onClick={closeDetailDialog}>
-						close
+				<div className="flex justify-center mt-4">
+					<button
+						type="button"
+						className="btn btn-primary"
+						onClick={closeDetail}
+					>
+						閉じる
 					</button>
-				</form>
-			</dialog>
+				</div>
+			</Popup>
 		</div>
 	)
 }

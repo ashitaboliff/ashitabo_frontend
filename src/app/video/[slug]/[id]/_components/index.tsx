@@ -20,7 +20,7 @@ const VideoDetailPage = (props: Props) => {
 		const videoId = detail.videoId
 
 		return (
-			<div className="container mx-auto px-2 sm:px-4 py-6">
+			<div className="container mx-auto px-2 sm:px-4">
 				<div className="flex flex-col items-center">
 					<div
 						className={`text-3xl sm:text-4xl font-bold text-center mt-6 mb-4 ${gkktt.className}`}
@@ -114,7 +114,7 @@ const VideoDetailPage = (props: Props) => {
 	const firstVideoId = detail.videos?.[0]?.videoId
 
 	return (
-		<div className="container mx-auto px-2 sm:px-4 py-6">
+		<div className="container mx-auto px-2 sm:px-4">
 			<div className="flex flex-col items-center">
 				<div
 					className={`text-3xl sm:text-4xl font-bold text-center mt-6 mb-4 ${gkktt.className}`}

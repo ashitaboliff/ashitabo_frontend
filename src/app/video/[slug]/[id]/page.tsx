@@ -8,7 +8,7 @@ import {
 } from '@/domains/video/api/videoActions'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 
-type Params = Promise<{ slug: string; id: string }>
+type Params = Promise<{ slug: 'live' | 'band'; id: string }>
 type Props = { params: Params }
 
 const getPlaylist = cache(async (id: string) => {
@@ -32,11 +32,10 @@ export async function generateMetadata(
 	_parent: ResolvingMetadata,
 ): Promise<Metadata> {
 	const { id, slug } = await params
-	const liveOrBand = id.startsWith('PL') && id.length > 12 ? 'live' : 'band'
-	let title = liveOrBand === 'live' ? 'ライブ動画詳細' : 'バンド動画詳細'
-	let description = `あしたぼの${liveOrBand}動画 (${id}) の詳細ページです。`
+	let title = slug === 'live' ? 'ライブ動画詳細' : 'バンド動画詳細'
+	let description = `あしたぼの${slug}動画 (${id}) の詳細ページです。`
 
-	if (liveOrBand === 'live') {
+	if (slug === 'live') {
 		const playlistData = await getPlaylist(id)
 		if (playlistData) {
 			title = playlistData.title
@@ -62,15 +61,14 @@ export async function generateMetadata(
 }
 
 const Page = async ({ params }: Props) => {
-	const { id } = await params
-	const liveOrBand = id.startsWith('PL') && id.length > 12 ? 'live' : 'band'
+	const { id, slug } = await params
 
-	if (liveOrBand === 'live') {
+	if (slug === 'live') {
 		const playlist = await getPlaylist(id)
 		if (!playlist) {
 			return notFound()
 		}
-		return <VideoDetailPage detail={playlist} liveOrBand={liveOrBand} />
+		return <VideoDetailPage detail={playlist} liveOrBand={slug} />
 	}
 
 	const video = await getVideo(id)
@@ -83,11 +81,7 @@ const Page = async ({ params }: Props) => {
 	}
 
 	return (
-		<VideoDetailPage
-			detail={video}
-			liveOrBand={liveOrBand}
-			playlist={playlist}
-		/>
+		<VideoDetailPage detail={video} liveOrBand={slug} playlist={playlist} />
 	)
 }
 

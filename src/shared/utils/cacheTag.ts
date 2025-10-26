@@ -1,4 +1,4 @@
-export function recordJoinSorted<T extends Record<string, any>>(
+export function recordJoinSorted<T extends Record<string, unknown>>(
 	obj: T,
 ): string {
 	return (Object.keys(obj) as Array<keyof T>)

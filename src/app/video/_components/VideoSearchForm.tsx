@@ -1,6 +1,5 @@
 'use client'
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { type FormEvent, useId, useState } from 'react'
 import type { YoutubeSearchQuery } from '@/domains/video/model/videoTypes'
 import ShareButton from '@/shared/ui/atoms/ShareButton'
@@ -9,37 +8,25 @@ import Popup from '@/shared/ui/molecules/Popup'
 import TextSearchField from '@/shared/ui/molecules/TextSearchField'
 
 interface Props {
-	defaultQuery: YoutubeSearchQuery
+	currentQuery: YoutubeSearchQuery
 	isSearching: boolean
 	onSearch: (query: Partial<YoutubeSearchQuery>) => void
+	onReset: () => void
+	shareUrl: string
 }
 
-const VideoSearchForm = ({ defaultQuery, isSearching, onSearch }: Props) => {
-	const router = useRouter()
-	const pathname = usePathname()
-	const searchParams = useSearchParams()
+const VideoSearchForm = ({
+	currentQuery,
+	isSearching,
+	onSearch,
+	onReset,
+	shareUrl,
+}: Props) => {
 	const [isPopupOpen, setIsPopupOpen] = useState(false)
 	const [isUsagePopupOpen, setIsUsagePopupOpen] = useState(false)
 	const [formKey, setFormKey] = useState<number>(0)
 	const searchPopupId = useId()
 	const usagePopupId = useId()
-
-	const getCurrentQuery = (): YoutubeSearchQuery => {
-		const params = new URLSearchParams(searchParams.toString())
-		return {
-			liveOrBand:
-				(params.get('liveOrBand') as 'live' | 'band') ??
-				defaultQuery.liveOrBand,
-			bandName: params.get('bandName') ?? defaultQuery.bandName,
-			liveName: params.get('liveName') ?? defaultQuery.liveName,
-			sort: (params.get('sort') as 'new' | 'old') ?? defaultQuery.sort,
-			page: Number(params.get('page')) || defaultQuery.page,
-			videoPerPage:
-				Number(params.get('videoPerPage')) || defaultQuery.videoPerPage,
-		}
-	}
-
-	const currentQuery = getCurrentQuery()
 
 	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		setIsPopupOpen(false)
@@ -56,8 +43,7 @@ const VideoSearchForm = ({ defaultQuery, isSearching, onSearch }: Props) => {
 	const handleReset = () => {
 		setFormKey((prev) => prev + 1)
 		setIsPopupOpen(false)
-		router.replace('/video')
-		onSearch(defaultQuery)
+		onReset()
 	}
 
 	return (
@@ -71,7 +57,7 @@ const VideoSearchForm = ({ defaultQuery, isSearching, onSearch }: Props) => {
 					<RiQuestionLine size={25} />
 				</button>
 				<button
-					className={`btn btn-outline w-64 ${isSearching ? 'btn-tetiary' : ''}`}
+					className={`btn btn-outline w-64 ${isSearching ? 'btn-accent' : ''}`}
 					onClick={() => setIsPopupOpen(true)}
 					type="button"
 				>
@@ -83,7 +69,7 @@ const VideoSearchForm = ({ defaultQuery, isSearching, onSearch }: Props) => {
 				<ShareButton
 					title="ライブ映像をシェアする"
 					text="あしたぼライブ映像を共有しよう"
-					url={`${pathname}?${searchParams.toString()}`}
+					url={shareUrl}
 				/>
 			</div>
 			<Popup

@@ -56,9 +56,7 @@ const UsagePage = async () => {
 
 const Page = async () => {
 	return (
-		<AuthPage requireProfile requireRole="ADMIN">
-			{() => <UsagePage />}
-		</AuthPage>
+		<UsagePage />
 	)
 }
 
