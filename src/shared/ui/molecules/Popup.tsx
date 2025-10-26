@@ -115,7 +115,7 @@ const Popup = ({
 			aria-modal={open ? true : undefined}
 		>
 			<div
-				className={`modal-box bg-base-100 relative mx-auto ${maxWClass} ${noPadding ? 'paddingless' : ''} ${className ?? ''}`}
+				className={`modal-box bg-base-100 relative mx-auto overflow-hidden ${maxWClass} ${noPadding ? 'paddingless' : ''} ${className ?? ''}`}
 				style={maxWStyle}
 			>
 				<h2

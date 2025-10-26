@@ -1,56 +1,43 @@
-export interface Video {
+export type Video = {
+	type: 'video' // live or bandでband側
+	videoId: string
 	title: string
 	link: string
-	videoId: string
 	liveDate: string
 	playlistId: string
-	createdAt?: Date
-	updatedAt?: Date
-	tags?: string[]
+	playlistTitle: string
+	createdAt: Date | null
+	updatedAt: Date | null
 }
 
-export interface Playlist {
+export type PlaylistItem = {
+	type: 'playlist' // live or bandでlive側
 	playlistId: string
 	title: string
 	link: string
 	liveDate: string
 	videos: Video[]
-	createdAt?: Date
-	updatedAt?: Date
-	tags?: string[]
+	createdAt: Date | null
+	updatedAt: Date | null
 }
 
-export interface Token {
-	google_id: string
-	created_at: Date
-	updated_at: Date
-	email: string
-	access_token: string
-	refresh_token: string
-	token_expiry: Date
-	is_deleted: boolean
+export type PlaylistDoc = {
+	type: 'playlist'
+	playlistId: string
+	title: string
+	link: string
+	liveDate: string
+	videoId: string
+	createdAt: Date | null
+	updatedAt: Date | null
 }
 
 export type liveOrBand = 'live' | 'band'
 
-export interface YoutubeDetail {
-	id: string // playlistId or videoId
-	title: string
-	link: string
-	tags: string[]
-	liveDate: string
-	playlistId?: string
-	videoId?: string
-	playlistTitle?: string
-	liveOrBand: liveOrBand
-}
-
-export interface YoutubeSearchQuery {
+export type YoutubeSearchQuery = {
 	liveOrBand: liveOrBand
 	bandName?: string
 	liveName?: string
-	tag?: string[]
-	tagSearchMode?: 'and' | 'or' // タグ検索モードを追加
 	sort: 'new' | 'old'
 	page: number
 	videoPerPage: number

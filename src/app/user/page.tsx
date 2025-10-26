@@ -4,9 +4,9 @@ import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 import { gachaConfigs } from '@/domains/gacha/config/gachaConfig'
 import type { CarouselPackDataItem } from '@/domains/gacha/model/gachaTypes'
 import { ensureSignedResourceUrls } from '@/domains/gacha/services/signedGachaResourceCache'
+import { getUserProfile } from '@/domains/user/api/userActions'
 import type { Profile } from '@/domains/user/model/userTypes'
 import { createMetaData } from '@/shared/hooks/useMetaData'
-import { apiGet } from '@/shared/lib/api/crud'
 import { logError } from '@/shared/utils/logger'
 
 export async function metadata() {
@@ -29,10 +29,7 @@ const UserPageServer = async () => {
 				const [profile, gachaCarouselData] = await Promise.all([
 					(async (): Promise<Profile | null> => {
 						if (!session.user.hasProfile) return null
-						const profileRes = await apiGet<Profile>(
-							`/users/${session.user.id}/profile`,
-							{ cache: 'no-store' },
-						)
+						const profileRes = await getUserProfile(session.user.id)
 						return profileRes.ok ? (profileRes.data ?? null) : null
 					})(),
 					(async (): Promise<CarouselPackDataItem[]> => {

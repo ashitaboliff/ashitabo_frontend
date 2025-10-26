@@ -1,12 +1,7 @@
 import BanBookingCreate from '@/app/admin/forbidden/new/_components'
-import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 
 const Page = async () => {
-	return (
-		<AuthPage requireProfile requireRole="ADMIN">
-			{() => <BanBookingCreate />}
-		</AuthPage>
-	)
+	return <BanBookingCreate />
 }
 
 export default Page

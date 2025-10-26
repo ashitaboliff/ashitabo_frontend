@@ -1,8 +1,7 @@
 import { notFound } from 'next/navigation'
 import ProfileEdit from '@/app/user/edit/_components'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
-import type { Profile } from '@/domains/user/model/userTypes'
-import { apiGet } from '@/shared/lib/api/crud'
+import { getUserProfile } from '@/domains/user/api/userActions'
 
 export async function metadata() {
 	return {
@@ -20,10 +19,7 @@ const userPage = async () => {
 				if (!session || !session.user.hasProfile) {
 					return notFound()
 				}
-				const profileRes = await apiGet<Profile>(
-					`/users/${session.user.id}/profile`,
-					{ cache: 'no-store' },
-				)
+				const profileRes = await getUserProfile(session.user.id)
 				if (!profileRes.ok || !profileRes.data) {
 					return notFound()
 				}

@@ -213,10 +213,9 @@
 }
 
 .secret-particle {
-	width: 10px; /* サイズ調整 */
-	height: 10px;
-	/* backgroundColorはJSで動的に設定 */
-	box-shadow: 0 0 12px 3px currentColor; /* 現在の色で発光 */
+	width: 15px;
+	height: 15px;
+	box-shadow: 0 0 12px 3px currentColor;
 }
 
 
@@ -229,6 +228,10 @@
 	.btn.btn-outline.btn-base:hover {
 		border-color: var(--color-accent);
 		color: var(--color-accent);
+	}
+	input.btn.btn-tetiary {
+		background-color: var(--color-tetiary-light);
+		color: var(--color-bg-white);
 	}
 	input.btn.btn-tetiary:checked {
 		background-color: var(--color-tetiary-light);

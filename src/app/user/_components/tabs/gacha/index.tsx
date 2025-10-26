@@ -73,7 +73,6 @@ const UserGachaLogs = ({ session, initialData }: Props) => {
 						]}
 						currentSort={sort}
 						onSortChange={setSort}
-						buttonClassName="btn-outline"
 					/>
 				</div>
 				<GachaLogList

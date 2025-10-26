@@ -1,16 +1,16 @@
 interface SortOption<T extends string> {
-	value: T
-	label: string
+	readonly value: T
+	readonly label: string
 }
 
 interface RadioSortGroupProps<T extends string> {
-	name: string
-	options: SortOption<T>[]
-	currentSort: T
-	onSortChange: (newSort: T) => void
-	className?: string
-	buttonClassName?: string
-	size?: 'sm' | 'md' | 'lg'
+	readonly name: string
+	readonly options: SortOption<T>[]
+	readonly currentSort: T
+	readonly onSortChange: (newSort: T) => void
+	readonly className?: string
+	readonly buttonClassName?: string
+	readonly size?: 'xs' | 'sm' | 'md' | 'lg'
 }
 
 const RadioSortGroup = <T extends string>({
@@ -19,7 +19,7 @@ const RadioSortGroup = <T extends string>({
 	currentSort,
 	onSortChange,
 	className = '',
-	buttonClassName = '',
+	buttonClassName = 'btn-outline checked:btn-accent',
 	size = 'sm',
 }: RadioSortGroupProps<T>) => {
 	return (

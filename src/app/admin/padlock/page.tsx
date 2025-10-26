@@ -1,21 +1,14 @@
 import { notFound } from 'next/navigation'
 import PadLockEdit from '@/app/admin/padlock/_components'
 import { getAllPadLocksAction } from '@/domains/admin/api/adminActions'
-import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 
 const Page = async () => {
-	return (
-		<AuthPage requireProfile requireRole="ADMIN">
-			{async () => {
-				const padLocks = await getAllPadLocksAction()
-				if (!padLocks.ok) {
-					return notFound()
-				}
+	const padLocks = await getAllPadLocksAction()
+	if (!padLocks.ok) {
+		return notFound()
+	}
 
-				return <PadLockEdit padLocks={padLocks.data} />
-			}}
-		</AuthPage>
-	)
+	return <PadLockEdit padLocks={padLocks.data} />
 }
 
 export default Page

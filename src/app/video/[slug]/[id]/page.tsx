@@ -1,16 +1,15 @@
 import type { Metadata, ResolvingMetadata } from 'next'
 import { notFound } from 'next/navigation'
 import { cache } from 'react'
-import VideoDetailPage from '@/app/video/[id]/_components/VideoDetailPage' // 修正
-import { getAuthDetails } from '@/domains/auth/api/authActions'
+import VideoDetailPage from '@/app/video/[slug]/[id]/_components'
 import {
 	getPlaylistByIdAction,
 	getVideoByIdAction,
 } from '@/domains/video/api/videoActions'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 
-type PageParams = Promise<{ id: string }>
-type PageProps = { params: PageParams }
+type Params = Promise<{ slug: 'live' | 'band'; id: string }>
+type Props = { params: Params }
 
 const getPlaylist = cache(async (id: string) => {
 	const res = await getPlaylistByIdAction(id)
@@ -29,21 +28,19 @@ const getVideo = cache(async (id: string) => {
 })
 
 export async function generateMetadata(
-	{ params }: { params: PageParams },
+	{ params }: { params: Params },
 	_parent: ResolvingMetadata,
 ): Promise<Metadata> {
-	const { id } = await params
-	const liveOrBand = id.startsWith('PL') && id.length > 12 ? 'live' : 'band'
-	let title = liveOrBand === 'live' ? 'ライブ動画詳細' : 'バンド動画詳細'
-	let description = `あしたぼの${liveOrBand}動画 (${id}) の詳細ページです。`
+	const { id, slug } = await params
+	let title = slug === 'live' ? 'ライブ動画詳細' : 'バンド動画詳細'
+	let description = `あしたぼの${slug}動画 (${id}) の詳細ページです。`
 
-	if (liveOrBand === 'live') {
+	if (slug === 'live') {
 		const playlistData = await getPlaylist(id)
 		if (playlistData) {
 			title = playlistData.title
 				? `${playlistData.title} | ライブ動画`
 				: `ライブ動画 ${id}`
-			// Playlist type does not have a description property, using title for description
 			description = `あしたぼのライブ動画 (${playlistData.title || id}) の詳細ページです。`
 		}
 	} else {
@@ -52,7 +49,6 @@ export async function generateMetadata(
 			title = videoData.title
 				? `${videoData.title} | バンド動画`
 				: `バンド動画 ${id}`
-			// Video type does not have a direct description property, using title for description
 			description = `あしたぼのバンド動画 (${videoData.title || id}) の詳細ページです。`
 		}
 	}
@@ -60,27 +56,19 @@ export async function generateMetadata(
 	return createMetaData({
 		title,
 		description,
-		pathname: `/video/${id}`,
+		pathname: `/video/${slug}/${id}`,
 	})
 }
 
-const Page = async ({ params }: PageProps) => {
-	const { session } = await getAuthDetails()
-	const { id } = await params
-	const liveOrBand = id.startsWith('PL') && id.length > 12 ? 'live' : 'band'
+const Page = async ({ params }: Props) => {
+	const { id, slug } = await params
 
-	if (liveOrBand === 'live') {
+	if (slug === 'live') {
 		const playlist = await getPlaylist(id)
 		if (!playlist) {
 			return notFound()
 		}
-		return (
-			<VideoDetailPage
-				detail={playlist}
-				liveOrBand={liveOrBand}
-				session={session}
-			/>
-		)
+		return <VideoDetailPage detail={playlist} liveOrBand={slug} />
 	}
 
 	const video = await getVideo(id)
@@ -93,12 +81,7 @@ const Page = async ({ params }: PageProps) => {
 	}
 
 	return (
-		<VideoDetailPage
-			detail={video}
-			liveOrBand={liveOrBand}
-			session={session}
-			playlist={playlist}
-		/>
+		<VideoDetailPage detail={video} liveOrBand={slug} playlist={playlist} />
 	)
 }
 

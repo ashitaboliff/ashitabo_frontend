@@ -1,50 +1,49 @@
 'use client'
 
 import { useMemo } from 'react'
-import { useSession } from '@/domains/auth/hooks/useSession'
 import { useYoutubeSearchQuery } from '@/domains/video/hooks/useYoutubeSearchQuery'
 import type {
-	YoutubeDetail,
+	PlaylistDoc,
+	Video,
 	YoutubeSearchQuery,
 } from '@/domains/video/model/videoTypes'
+import { buildYoutubeQueryString } from '@/domains/video/query/youtubeQuery'
 import { gkktt } from '@/shared/lib/fonts'
 import Pagination from '@/shared/ui/atoms/Pagination'
+import RadioSortGroup from '@/shared/ui/atoms/RadioSortGroup'
 import SelectField from '@/shared/ui/atoms/SelectField'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import type { ApiError } from '@/types/responseTypes'
 import VideoItem from './VideoItem'
 import VideoSearchForm from './VideoSearchForm'
 
-const defaultSearchQuery: YoutubeSearchQuery = {
-	liveOrBand: 'band',
-	bandName: '',
-	liveName: '',
-	tag: [],
-	tagSearchMode: 'or', // デフォルトはOR検索
-	sort: 'new',
-	page: 1,
-	videoPerPage: 15,
-}
-
 interface Props {
-	initialYoutubeDetails: YoutubeDetail[]
-	initialPageMax: number
-	initialError?: ApiError
+	readonly youtubeDetails: Video[] | PlaylistDoc[]
+	readonly pageMax: number
+	readonly error?: ApiError
+	readonly defaultQuery: YoutubeSearchQuery
+	readonly initialQuery: YoutubeSearchQuery
+	readonly extraSearchParams?: string
 }
 
 const VideoListPage = ({
-	initialYoutubeDetails,
-	initialPageMax,
-	initialError,
+	youtubeDetails,
+	pageMax,
+	error,
+	defaultQuery,
+	initialQuery,
+	extraSearchParams,
 }: Props) => {
-	const { data: session } = useSession() // session を取得
-
 	const {
 		query: currentQuery,
 		isSearching,
 		updateQuery,
 		isPending,
-	} = useYoutubeSearchQuery(defaultSearchQuery)
+	} = useYoutubeSearchQuery({
+		defaultQuery,
+		initialQuery,
+		extraSearchParams,
+	})
 
 	const skeletonKeys = useMemo(
 		() =>
@@ -55,26 +54,35 @@ const VideoListPage = ({
 		[currentQuery.videoPerPage],
 	)
 
+	const shareQueryString = buildYoutubeQueryString(
+		currentQuery,
+		defaultQuery,
+		extraSearchParams,
+	)
+
+	const shareUrl = shareQueryString ? `/video?${shareQueryString}` : '/video'
+
 	const handleSearch = (searchQuery: Partial<YoutubeSearchQuery>) => {
 		updateQuery({ ...searchQuery, page: 1 })
 	}
 
-	const pageMax = initialPageMax
-	const youtubeDetails = initialYoutubeDetails
-	const error = initialError
-	const isLoading = isPending
+	const isBand = currentQuery.liveOrBand === 'band'
+	const bandDetails = isBand ? (youtubeDetails as Video[]) : []
+	const playlistDetails = !isBand ? (youtubeDetails as PlaylistDoc[]) : []
 
 	return (
-		<div className="container mx-auto px-2 sm:px-4 py-6">
+		<div className="container mx-auto px-2 sm:px-4">
 			<div
 				className={`text-3xl sm:text-4xl font-bold ${gkktt.className} text-center mb-6`}
 			>
 				過去ライブ映像
 			</div>
 			<VideoSearchForm
-				defaultQuery={defaultSearchQuery}
+				currentQuery={currentQuery}
 				isSearching={isSearching}
 				onSearch={handleSearch}
+				onReset={() => updateQuery(defaultQuery)}
+				shareUrl={shareUrl}
 			/>
 			<div className="flex flex-col items-center justify-center gap-y-4">
 				<div className="flex flex-row items-center justify-end w-full gap-2 sm:gap-4 mb-2 px-1">
@@ -98,32 +106,22 @@ const VideoListPage = ({
 						<p className="text-xs-custom sm:text-sm whitespace-nowrap">
 							並び順:
 						</p>
-						<div className="flex flex-row gap-x-1 sm:gap-x-2">
-							<input
-								type="radio"
-								name="sort"
-								value="new"
-								checked={currentQuery.sort === 'new'}
-								className="btn btn-tetiary btn-xs sm:btn-sm"
-								aria-label="新しい順"
-								onChange={() => updateQuery({ sort: 'new' })}
-							/>
-							<input
-								type="radio"
-								name="sort"
-								value="old"
-								checked={currentQuery.sort === 'old'}
-								className="btn btn-tetiary btn-xs sm:btn-sm"
-								aria-label="古い順"
-								onChange={() => updateQuery({ sort: 'old' })}
-							/>
-						</div>
+						<RadioSortGroup
+							name="videoSort"
+							currentSort={currentQuery.sort}
+							onSortChange={(sort) => updateQuery({ sort })}
+							options={[
+								{ label: '新しい順', value: 'new' },
+								{ label: '古い順', value: 'old' },
+							]}
+							size="xs"
+						/>
 					</div>
 				</div>
 
 				<FeedbackMessage source={error} defaultVariant="error" />
 
-				{isLoading ? (
+				{isPending ? (
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
 						{skeletonKeys.map((placeholderKey) => (
 							<div
@@ -137,16 +135,23 @@ const VideoListPage = ({
 							</div>
 						))}
 					</div>
-				) : youtubeDetails.length > 0 ? (
+				) : youtubeDetails?.length > 0 ? (
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-						{youtubeDetails.map((youtubeDetail) => (
-							<VideoItem
-								session={session}
-								key={youtubeDetail.id}
-								youtubeDetail={youtubeDetail}
-								liveOrBand={currentQuery.liveOrBand}
-							/>
-						))}
+						{isBand
+							? bandDetails.map((detail) => (
+									<VideoItem
+										key={detail.videoId}
+										youtubeDetail={detail}
+										liveOrBand="band"
+									/>
+								))
+							: playlistDetails.map((detail) => (
+									<VideoItem
+										key={detail.playlistId}
+										youtubeDetail={detail}
+										liveOrBand="live"
+									/>
+								))}
 					</div>
 				) : (
 					<div className="text-base-content w-full text-center py-10">

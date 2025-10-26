@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 
 export async function metadata() {
@@ -14,5 +15,9 @@ export default function RootLayout({
 }: Readonly<{
 	children: ReactNode
 }>) {
-	return <>{children}</>
+	return (
+		<AuthPage requireProfile requireRole="ADMIN">
+			{() => children}
+		</AuthPage>
+	)
 }

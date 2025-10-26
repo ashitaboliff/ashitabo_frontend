@@ -1,14 +1,19 @@
+'use server'
+
+import { revalidateTag } from 'next/cache'
 import {
-	mapRawPlaylist,
-	mapRawPlaylists,
+	mapRawPlaylistDocs,
+	mapRawPlaylistItem,
 	mapRawVideo,
-	type RawPlaylist,
+	mapRawVideos,
+	type RawPlaylistDoc,
+	type RawPlaylistItem,
 	type RawVideo,
 } from '@/domains/video/api/dto'
 import type {
-	Playlist,
+	PlaylistDoc,
+	PlaylistItem,
 	Video,
-	YoutubeDetail,
 	YoutubeSearchQuery,
 } from '@/domains/video/model/videoTypes'
 import { apiGet, apiPost } from '@/shared/lib/api/crud'
@@ -17,40 +22,79 @@ import {
 	okResponse,
 	withFallbackMessage,
 } from '@/shared/lib/api/helper'
-import { type ApiResponse, StatusCode } from '@/types/responseTypes'
+import { recordJoinSorted } from '@/shared/utils/cacheTag'
+import type { ApiResponse } from '@/types/responseTypes'
 
-export const searchYoutubeDetailsAction = async (
+export const searchVideoAction = async (
 	query: YoutubeSearchQuery,
-): Promise<ApiResponse<{ results: YoutubeDetail[]; totalCount: number }>> => {
-	const res = await apiGet<{
-		results: YoutubeDetail[]
-		totalCount: number
-	}>('/video/search', {
-		searchParams: {
-			liveOrBand: query.liveOrBand,
-			bandName: query.bandName,
-			liveName: query.liveName,
-			sort: query.sort,
-			page: query.page,
-			videoPerPage: query.videoPerPage,
-			tagSearchMode: query.tagSearchMode,
-			tag: query.tag && query.tag.length > 0 ? query.tag : undefined,
+): Promise<ApiResponse<{ items: Video[]; total: number }>> => {
+	const res = await apiGet<{ items: RawVideo[]; total: number }>(
+		'/video/search',
+		{
+			searchParams: {
+				liveOrBand: query.liveOrBand,
+				bandName: query.bandName,
+				liveName: query.liveName,
+				sort: query.sort,
+				page: query.page.toString(),
+				videoPerPage: query.videoPerPage.toString(),
+			},
+			next: {
+				revalidate: 60 * 60,
+				tags: ['videos', `video-search-${recordJoinSorted(query)}`],
+			},
 		},
-		next: { revalidate: 30, tags: ['video-search'] },
-	})
+	)
 
-	if (!res.ok) {
-		return withFallbackMessage(res, '動画検索に失敗しました。')
-	}
+	return mapSuccess(
+		res,
+		(raw) => ({
+			items: mapRawVideos(raw.items),
+			total: raw.total,
+		}),
+		'検索に失敗しました。',
+	)
+}
 
-	return res
+export const searchPlaylistAction = async (
+	query: YoutubeSearchQuery,
+): Promise<ApiResponse<{ items: PlaylistDoc[]; total: number }>> => {
+	const res = await apiGet<{ items: RawPlaylistDoc[]; total: number }>(
+		'/video/search',
+		{
+			searchParams: {
+				liveOrBand: query.liveOrBand,
+				bandName: query.bandName,
+				liveName: query.liveName,
+				sort: query.sort,
+				page: query.page.toString(),
+				videoPerPage: query.videoPerPage.toString(),
+			},
+			next: {
+				revalidate: 60 * 60,
+				tags: ['videos', `playlist-search-${recordJoinSorted(query)}`],
+			},
+		},
+	)
+
+	return mapSuccess(
+		res,
+		(raw) => ({
+			items: mapRawPlaylistDocs(raw.items),
+			total: raw.total,
+		}),
+		'検索に失敗しました。',
+	)
 }
 
 export const getVideoByIdAction = async (
 	videoId: string,
 ): Promise<ApiResponse<Video>> => {
 	const res = await apiGet<RawVideo>(`/video/videos/${videoId}`, {
-		next: { revalidate: 300, tags: ['videos', `video:${videoId}`] },
+		next: {
+			revalidate: 7 * 24 * 60 * 60,
+			tags: ['videos', `video-${videoId}`],
+		},
 	})
 
 	return mapSuccess(res, mapRawVideo, '動画の取得に失敗しました。')
@@ -58,96 +102,77 @@ export const getVideoByIdAction = async (
 
 export const getPlaylistByIdAction = async (
 	playlistId: string,
-): Promise<ApiResponse<Playlist>> => {
-	const res = await apiGet<RawPlaylist>(`/video/playlists/${playlistId}`, {
+): Promise<ApiResponse<PlaylistItem>> => {
+	const res = await apiGet<RawPlaylistItem>(`/video/playlists/${playlistId}`, {
 		next: {
-			revalidate: 600,
-			tags: ['video-playlists', `playlist:${playlistId}`],
+			revalidate: 7 * 24 * 60 * 60,
+			tags: ['videos', `playlist-${playlistId}`],
 		},
 	})
 
-	return mapSuccess(res, mapRawPlaylist, 'プレイリストの取得に失敗しました。')
+	return mapSuccess(
+		res,
+		mapRawPlaylistItem,
+		'プレイリストの取得に失敗しました。',
+	)
 }
 
-export const getPlaylistAction = async (): Promise<ApiResponse<Playlist[]>> => {
-	const res = await apiGet<RawPlaylist[]>('/video/playlists', {
-		next: { revalidate: 600, tags: ['video-playlists'] },
-	})
+export const getPlaylistAction = async (): Promise<
+	ApiResponse<PlaylistDoc[]>
+> => {
+	const res = await apiGet<{ items: RawPlaylistDoc[]; total: number }>(
+		'/video/search',
+		{
+			searchParams: {
+				liveOrBand: 'live',
+				page: '1',
+				videoPerPage: '200',
+			},
+			next: { revalidate: 7 * 24 * 60 * 60, tags: ['videos'] },
+		},
+	)
 
 	if (!res.ok) {
 		return withFallbackMessage(res, 'プレイリスト一覧の取得に失敗しました。')
 	}
 
-	return okResponse(mapRawPlaylists(res.data))
+	return okResponse(mapRawPlaylistDocs(res.data.items))
 }
 
-export const getAccessTokenAction = async (): Promise<ApiResponse<null>> => {
-	return {
-		ok: false,
-		status: StatusCode.NOT_FOUND,
-		message: 'Access token not configured',
-	}
+type PlaylistWebhook = {
+	ok: boolean
+	playlist: string
+	video: string
 }
 
-export const getAuthUrl = async (): Promise<ApiResponse<string>> => {
-	return {
-		ok: true,
-		status: StatusCode.OK,
-		data: '/api/video/oauth',
-	}
-}
+const YOUTUBE_IDS_TAG = (type: 'video' | 'playlist') => `youtube-${type}-ids`
 
-export const createPlaylistAction = async (): Promise<ApiResponse<string>> => {
-	return {
-		ok: true,
-		status: StatusCode.OK,
-		data: 'Playlist sync placeholder executed.',
-	}
-}
-
-export const revalidateYoutubeTag = async (): Promise<ApiResponse<null>> => {
-	return {
-		ok: true,
-		status: StatusCode.NO_CONTENT,
-		data: null,
-	}
-}
-
-export const updateTagsAction = async ({
-	userId,
-	id,
-	tags,
-	liveOrBand,
-}: {
-	userId: string
-	id: string
-	tags: string[]
-	liveOrBand: 'live' | 'band'
-}): Promise<ApiResponse<string>> => {
-	const res = await apiPost<null>('/video/tags', {
-		body: {
-			id,
-			tags,
-			liveOrBand,
-			userId,
-		},
+export const postSyncPlaylistAction = async (): Promise<
+	ApiResponse<PlaylistWebhook>
+> => {
+	const res = await apiPost<PlaylistWebhook>('/video/webhook', {
+		body: {},
 	})
 
-	if (!res.ok) {
-		return withFallbackMessage(res, 'タグの更新に失敗しました。')
+	if (res.ok) {
+		revalidateTag('videos')
+		revalidateTag(YOUTUBE_IDS_TAG('video'))
+		revalidateTag(YOUTUBE_IDS_TAG('playlist'))
 	}
 
-	return {
-		ok: true,
-		status: StatusCode.OK,
-		data: 'updated',
-	}
+	return withFallbackMessage(res, 'プレイリストの作成に失敗しました。')
 }
 
-export const getYoutubeIds = async (): Promise<string[]> => {
+export const getYoutubeIds = async (
+	type: 'video' | 'playlist',
+): Promise<string[]> => {
 	const response = await apiGet<string[]>('/video/ids', {
+		searchParams: { type },
+		next: {
+			revalidate: 24 * 60 * 60,
+			tags: [YOUTUBE_IDS_TAG(type)],
+		},
 		cache: 'no-store',
-		next: { revalidate: 24 * 60 * 60, tags: ['youtube-ids'] },
 	})
 
 	if (response.ok && Array.isArray(response.data)) {

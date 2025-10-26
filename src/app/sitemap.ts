@@ -14,11 +14,22 @@ const getBookingsMap = async (): Promise<MetadataRoute.Sitemap> => {
 }
 
 const getYoutubeMap = async (): Promise<MetadataRoute.Sitemap> => {
-	const youtubeIds = await getYoutubeIds()
-	return youtubeIds.map((id) => ({
-		url: `${URL}/video/${id}`,
+	const [videoIds, playlistIds] = await Promise.all([
+		getYoutubeIds('video'),
+		getYoutubeIds('playlist'),
+	])
+
+	const playlistEntries = playlistIds.map((id) => ({
+		url: `${URL}/video/live/${id}`,
 		priority: 0.5,
 	}))
+
+	const videoEntries = videoIds.map((id) => ({
+		url: `${URL}/video/band/${id}`,
+		priority: 0.5,
+	}))
+
+	return [...playlistEntries, ...videoEntries]
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

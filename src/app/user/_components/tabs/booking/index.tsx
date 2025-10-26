@@ -73,7 +73,6 @@ const UserBookingLogs = ({ session, initialData }: Props) => {
 						]}
 						currentSort={sort}
 						onSortChange={setSort}
-						buttonClassName="btn-outline"
 					/>
 				</div>
 				<div className="overflow-x-auto">

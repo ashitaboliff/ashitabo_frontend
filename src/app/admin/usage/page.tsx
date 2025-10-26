@@ -55,11 +55,7 @@ const UsagePage = async () => {
 }
 
 const Page = async () => {
-	return (
-		<AuthPage requireProfile requireRole="ADMIN">
-			{() => <UsagePage />}
-		</AuthPage>
-	)
+	return <UsagePage />
 }
 
 export default Page
