@@ -137,7 +137,6 @@ export const createDeniedBookingAction = async (
 	values: DeniedBookingFormValues,
 ): Promise<ApiResponse<string>> => {
 	const request = buildDeniedBookingRequestBody(values)
-	console.log(request)
 	if (!request.success) {
 		return request.error
 	}
