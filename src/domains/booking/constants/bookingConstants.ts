@@ -1,4 +1,4 @@
-export const FORBIDDEN_BOOKING = 'ForbiddenBooking'
+export const DENIED_BOOKING = 'DeniedBooking'
 
 export const BOOKING_CALENDAR_TAG = 'booking-calendar'
 export const BOOKING_CALENDAR_SWR_KEY = 'booking-calendar'

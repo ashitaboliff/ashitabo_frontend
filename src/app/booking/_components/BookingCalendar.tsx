@@ -5,13 +5,13 @@ import { useRouter } from 'next-nprogress-bar'
 import { useMemo } from 'react'
 import {
 	ABLE_BOOKING_DAYS,
-	FORBIDDEN_BOOKING,
+	DENIED_BOOKING,
 } from '@/domains/booking/constants/bookingConstants'
 import type { BookingResponse } from '@/domains/booking/model/bookingTypes'
 import {
 	AvailableCell,
 	BookingInfoCell,
-	ForbiddenCell,
+	DeniedCell,
 } from '@/domains/booking/ui/CalendarCellContent'
 import CalendarFrame from '@/shared/ui/molecules/CalendarFrame'
 import { DateToDayISOstring, toDateKey } from '@/shared/utils'
@@ -61,11 +61,11 @@ const BookingCalendar = ({ bookingDate, timeList }: Props) => {
 					}
 				}
 
-				if (booking.registName === FORBIDDEN_BOOKING) {
+				if (booking.registName === DENIED_BOOKING) {
 					return {
 						key: cellKey,
 						className: baseClass,
-						content: <ForbiddenCell label={booking.name} />,
+						content: <DeniedCell label={booking.name} />,
 					}
 				}
 

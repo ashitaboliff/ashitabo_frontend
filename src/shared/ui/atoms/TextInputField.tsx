@@ -33,7 +33,16 @@ type TextInputFieldProps = {
 	defaultValue?: string
 	autocomplete?: string
 	required?: boolean
-	maxLength?: number // Add maxLength prop
+	maxLength?: number
+	inputMode?:
+		| 'none'
+		| 'text'
+		| 'tel'
+		| 'url'
+		| 'email'
+		| 'numeric'
+		| 'decimal'
+		| 'search'
 }
 
 const TextInputField = ({
@@ -52,7 +61,8 @@ const TextInputField = ({
 	defaultValue,
 	autocomplete,
 	required,
-	maxLength, // Destructure maxLength
+	maxLength,
+	inputMode,
 	...props
 }: TextInputFieldProps) => {
 	return (
@@ -75,7 +85,8 @@ const TextInputField = ({
 				onChange={onChange}
 				defaultValue={defaultValue}
 				required={required}
-				maxLength={maxLength} // Pass maxLength to input element
+				maxLength={maxLength}
+				inputMode={inputMode}
 				{...register}
 				{...props}
 				autoComplete={autocomplete}

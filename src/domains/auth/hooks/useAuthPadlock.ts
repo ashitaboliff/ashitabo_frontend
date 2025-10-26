@@ -1,7 +1,10 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { padLockAction } from '@/domains/auth/api/authActions'
+import {
+	padLockAction,
+	revalidateUserAction,
+} from '@/domains/auth/api/authActions'
 import { useCsrfToken } from '@/domains/auth/hooks/useCsrfToken'
 import { usePasswordForm } from '@/domains/auth/hooks/usePasswordForm'
 import { useFeedback } from '@/shared/hooks/useFeedback'
@@ -83,6 +86,7 @@ export const useAuthPadlock = ({
 			return
 		}
 		form.requestSubmit()
+		revalidateUserAction()
 	}, [
 		csrfToken,
 		effectiveCallbackUrl,

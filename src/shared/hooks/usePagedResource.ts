@@ -4,6 +4,7 @@ export interface UsePagedResourceOptions<S> {
 	initialPage?: number
 	initialPerPage: number
 	initialSort: S
+	initialTotalCount?: number
 }
 
 interface PagedState<S> {
@@ -55,12 +56,13 @@ export const usePagedResource = <S>({
 	initialPage = 1,
 	initialPerPage,
 	initialSort,
+	initialTotalCount = 0,
 }: UsePagedResourceOptions<S>) => {
 	const [state, dispatch] = useReducer(pagedReducer<S>, {
 		page: Math.max(1, initialPage),
 		perPage: Math.max(1, initialPerPage),
 		sort: initialSort,
-		totalCount: 0,
+		totalCount: initialTotalCount,
 	})
 
 	const pageCount = useMemo(

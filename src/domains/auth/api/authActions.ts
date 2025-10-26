@@ -7,6 +7,11 @@ import { makeAuthDetails } from '@/domains/auth/utils/sessionInfo'
 import type { ProfileFormValues } from '@/domains/user/model/profileSchema'
 import type { Profile } from '@/domains/user/model/userTypes'
 import { apiGet, apiPost, apiPut } from '@/shared/lib/api/crud'
+import {
+	createdResponse,
+	okResponse,
+	withFallbackMessage,
+} from '@/shared/lib/api/helper'
 import type { ApiResponse } from '@/types/responseTypes'
 import type { Session } from '@/types/session'
 
@@ -69,9 +74,18 @@ export const createProfileAction = async ({
 	userId: string
 	body: ProfileFormValues
 }): Promise<ApiResponse<Profile>> => {
-	return apiPost<Profile>(`/users/${userId}/profile`, {
+	const res = await apiPost<Profile>(`/users/${userId}/profile`, {
 		body,
 	})
+
+	if (!res.ok) {
+		return withFallbackMessage(res, 'ユーザープロフィールの作成に失敗しました')
+	}
+
+	revalidateTag(`user-profile-${userId}`)
+	revalidateTag(`users`)
+
+	return createdResponse(res.data)
 }
 
 export const putProfileAction = async ({
@@ -85,9 +99,18 @@ export const putProfileAction = async ({
 		body,
 	})
 
-	revalidateTag(`user-profile-${userId}`)
+	if (!res.ok) {
+		return withFallbackMessage(res, 'ユーザープロフィールの更新に失敗しました')
+	}
 
-	return res
+	revalidateTag(`user-profile-${userId}`)
+	revalidateTag(`users`)
+
+	return okResponse(res.data)
+}
+
+export const revalidateUserAction = async (): Promise<void> => {
+	revalidateTag('users')
 }
 
 export type PadlockResponse = {
@@ -99,7 +122,13 @@ export type PadlockResponse = {
 export const padLockAction = async (
 	password: string,
 ): Promise<ApiResponse<PadlockResponse>> => {
-	return apiPost<PadlockResponse>('/auth/padlock', {
+	const res = await apiPost<PadlockResponse>('/auth/padlock', {
 		body: { password },
 	})
+
+	if (!res.ok) {
+		return withFallbackMessage(res, 'パスワードロックに失敗しました')
+	}
+
+	return okResponse(res.data)
 }

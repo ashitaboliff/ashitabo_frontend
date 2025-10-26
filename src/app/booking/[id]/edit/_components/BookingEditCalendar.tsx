@@ -5,14 +5,14 @@ import type { UseFormSetValue } from 'react-hook-form'
 import {
 	ABLE_BOOKING_DAYS,
 	BOOKING_TIME_LIST,
-	FORBIDDEN_BOOKING,
+	DENIED_BOOKING,
 } from '@/domains/booking/constants/bookingConstants'
 import type { BookingEditFormValues } from '@/domains/booking/model/bookingSchema'
 import type { BookingResponse } from '@/domains/booking/model/bookingTypes'
 import {
 	AvailableCell,
 	BookingInfoCell,
-	ForbiddenCell,
+	DeniedCell,
 } from '@/domains/booking/ui/CalendarCellContent'
 import CalendarFrame from '@/shared/ui/molecules/CalendarFrame'
 import { DateToDayISOstring } from '@/shared/utils'
@@ -82,11 +82,11 @@ const BookingEditCalendar = ({
 					}
 				}
 
-				if (booking.registName === FORBIDDEN_BOOKING) {
+				if (booking.registName === DENIED_BOOKING) {
 					return {
 						key,
 						className,
-						content: <ForbiddenCell />,
+						content: <DeniedCell />,
 					}
 				}
 
@@ -109,7 +109,7 @@ const BookingEditCalendar = ({
 				return {
 					key,
 					className,
-					content: <ForbiddenCell />,
+					content: <DeniedCell />,
 				}
 			}}
 		/>
