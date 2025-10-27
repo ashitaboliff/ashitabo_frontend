@@ -2,7 +2,6 @@ import AdminUserPage from '@/app/admin/user/_components'
 import { getAllUserDetailsAction } from '@/domains/admin/api/adminActions'
 import {
 	ADMIN_USER_DEFAULT_QUERY,
-	type AdminUserQuery,
 	buildAdminUserQueryString,
 	parseAdminUserQuery,
 } from '@/domains/admin/query/adminUserQuery'

@@ -19,16 +19,14 @@ export const useQueryState = <T extends Record<string, unknown>>({
 }: UseQueryStateOptions<T>) => {
 	const router = useRouter()
 	const rawPathname = usePathname()
-	const pathname = useMemo(() => {
-		return explicitPathname
-			? explicitPathname.split('?')[0].split('#')[0]
-			: rawPathname.split('?')[0].split('#')[0]
-	}, [rawPathname, explicitPathname])
+	const pathname = explicitPathname
+		? explicitPathname.split('?')[0].split('#')[0]
+		: rawPathname.split('?')[0].split('#')[0]
 	const [isPending, startTransition] = useTransition()
 
-	const extra = useMemo(() => extraSearchParams ?? '', [extraSearchParams])
+	const extra = extraSearchParams ?? ''
 
-	const query = useMemo(() => initialQuery, [initialQuery])
+	const query = initialQuery
 
 	const updateQuery = useCallback(
 		(patch: Partial<T>) => {
