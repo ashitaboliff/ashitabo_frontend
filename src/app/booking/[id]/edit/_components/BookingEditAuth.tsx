@@ -2,9 +2,12 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next-nprogress-bar'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { authBookingAction } from '@/domains/booking/api/bookingActions'
+import {
+	authBookingAction,
+	type BookingAccessGrant,
+} from '@/domains/booking/api/bookingActions'
 import {
 	type BookingAuthFormValues,
 	bookingAuthSchema,
@@ -21,10 +24,16 @@ import type { Session } from '@/types/session'
 interface Props {
 	readonly session: Session
 	readonly bookingDetail: Booking
-	readonly onSuccess: () => void
+	readonly onSuccess: (grant: BookingAccessGrant) => void
+	readonly initialError?: string | null
 }
 
-const BookingEditAuthForm = ({ session, bookingDetail, onSuccess }: Props) => {
+const BookingEditAuthForm = ({
+	session,
+	bookingDetail,
+	onSuccess,
+	initialError,
+}: Props) => {
 	const router = useRouter()
 	const [showPassword, setShowPassword] = useState(false)
 	const feedback = useFeedback()
@@ -37,6 +46,14 @@ const BookingEditAuthForm = ({ session, bookingDetail, onSuccess }: Props) => {
 		mode: 'onBlur',
 		resolver: zodResolver(bookingAuthSchema),
 	})
+
+	const { showError } = feedback
+
+	useEffect(() => {
+		if (initialError) {
+			showError(initialError, { code: 403 })
+		}
+	}, [initialError, showError])
 
 	if (!bookingDetail) {
 		return <BookingDetailNotFound />
@@ -54,7 +71,7 @@ const BookingEditAuthForm = ({ session, bookingDetail, onSuccess }: Props) => {
 			})
 
 			if (response.ok) {
-				onSuccess()
+				onSuccess(response.data)
 			} else {
 				feedback.showApiError(response)
 			}

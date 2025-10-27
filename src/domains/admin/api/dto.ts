@@ -1,5 +1,5 @@
 import type { PadLock } from '@/domains/admin/model/adminTypes'
-import type { BanBooking } from '@/domains/booking/model/bookingTypes'
+import type { DeniedBooking } from '@/domains/booking/model/bookingTypes'
 import type {
 	AccountRole,
 	Part,
@@ -39,7 +39,7 @@ export interface RawUserDetail {
 	image: string | null
 	createAt: string
 	updateAt: string
-	AccountRole: AccountRole | null
+	accountRole: AccountRole | null
 	role?: Role | null
 	part?: Part[] | null
 }
@@ -53,7 +53,7 @@ export const mapRawUserDetail = (raw: RawUserDetail): UserDetail => ({
 	image: raw.image,
 	createAt: toDate(raw.createAt),
 	updateAt: toDate(raw.updateAt),
-	AccountRole: raw.AccountRole,
+	accountRole: raw.accountRole,
 	role: raw.role ?? undefined,
 	part: raw.part ?? undefined,
 })
@@ -62,7 +62,7 @@ export const mapRawUserDetails = (
 	raw: RawUserDetail[] | null | undefined,
 ): UserDetail[] => (raw ? raw.map(mapRawUserDetail) : [])
 
-export interface RawBanBooking {
+export interface RawDeniedBooking {
 	id: string
 	createdAt: string
 	updatedAt: string
@@ -73,7 +73,7 @@ export interface RawBanBooking {
 	isDeleted?: boolean | null
 }
 
-export const mapRawBanBooking = (raw: RawBanBooking): BanBooking => ({
+export const mapRawDeniedBooking = (raw: RawDeniedBooking): DeniedBooking => ({
 	id: raw.id,
 	createdAt: toDate(raw.createdAt),
 	updatedAt: toDate(raw.updatedAt),
@@ -84,6 +84,6 @@ export const mapRawBanBooking = (raw: RawBanBooking): BanBooking => ({
 	isDeleted: Boolean(raw.isDeleted),
 })
 
-export const mapRawBanBookings = (
-	raw: RawBanBooking[] | null | undefined,
-): BanBooking[] => (raw ? raw.map(mapRawBanBooking) : [])
+export const mapRawDeniedBookings = (
+	raw: RawDeniedBooking[] | null | undefined,
+): DeniedBooking[] => (raw ? raw.map(mapRawDeniedBooking) : [])

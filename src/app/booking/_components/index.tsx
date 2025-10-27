@@ -1,7 +1,7 @@
 'use client'
 
 import { addDays } from 'date-fns'
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import BookingCalendar from '@/app/booking/_components/BookingCalendar'
 import {
 	BOOKING_MAIN_VIEW_MIN_OFFSET_DAYS,
@@ -60,12 +60,6 @@ const BookingMainPage = ({ initialViewDate, type, message }: Props) => {
 			},
 		},
 	})
-
-	useEffect(() => {
-		if (bookingData) {
-			errorFeedback.clearFeedback()
-		}
-	}, [bookingData, errorFeedback])
 
 	const handleRetry = async () => {
 		errorFeedback.clearFeedback()

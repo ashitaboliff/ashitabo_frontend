@@ -5,6 +5,8 @@ export enum StatusCode {
 	CREATED = 201,
 	NO_CONTENT = 204,
 
+	REDIRECT = 303,
+
 	// クライアントエラー系
 	BAD_REQUEST = 400,
 	UNAUTHORIZED = 401,
@@ -22,6 +24,7 @@ export type SuccessStatus =
 	| StatusCode.OK
 	| StatusCode.CREATED
 	| StatusCode.NO_CONTENT
+	| StatusCode.REDIRECT
 
 export type ErrorStatus =
 	| StatusCode.BAD_REQUEST

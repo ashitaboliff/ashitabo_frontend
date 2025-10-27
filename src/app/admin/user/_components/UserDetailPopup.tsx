@@ -8,10 +8,11 @@ import {
 	RoleMap,
 	type UserDetail,
 } from '@/domains/user/model/userTypes'
-import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
+import FeedbackMessage, {
+	type MessageSource,
+} from '@/shared/ui/molecules/FeedbackMessage'
 import Popup from '@/shared/ui/molecules/Popup'
 import { formatDateTimeJaWithUnits } from '@/shared/utils/dateFormat'
-import type { ApiError } from '@/types/responseTypes'
 
 interface Props {
 	readonly open: boolean
@@ -19,9 +20,9 @@ interface Props {
 	readonly selectedUser: UserDetail | null
 	readonly actionLoading: boolean
 	readonly onRoleChange: (id: string, role: AccountRole) => void
-	readonly setIsDeletePopupOpen: (isOpen: boolean) => void
-	readonly actionError: ApiError | null
-	readonly setActionError: (error: ApiError | null) => void
+	readonly onRequestDelete: () => void
+	readonly feedbackSource?: MessageSource
+	readonly onClearFeedback: () => void
 }
 
 const UserDetailPopup = ({
@@ -30,9 +31,9 @@ const UserDetailPopup = ({
 	selectedUser,
 	actionLoading,
 	onRoleChange,
-	setIsDeletePopupOpen,
-	actionError,
-	setActionError,
+	onRequestDelete,
+	feedbackSource,
+	onClearFeedback,
 }: Props) => {
 	const { data: session } = useSession()
 
@@ -43,7 +44,7 @@ const UserDetailPopup = ({
 			open={open}
 			onClose={() => {
 				onClose()
-				setActionError(null)
+				onClearFeedback()
 			}}
 		>
 			{selectedUser && (
@@ -63,8 +64,8 @@ const UserDetailPopup = ({
 						</div>
 						<div className="font-bold">役割:</div>
 						<div>
-							{selectedUser.AccountRole != null
-								? AccountRoleMap[selectedUser.AccountRole]
+							{selectedUser.accountRole != null
+								? AccountRoleMap[selectedUser.accountRole]
 								: '不明'}
 						</div>
 						<div className="font-bold">使用楽器:</div>
@@ -94,8 +95,9 @@ const UserDetailPopup = ({
 							className="btn btn-primary"
 							disabled={
 								actionLoading ||
-								selectedUser.AccountRole === 'ADMIN' ||
-								selectedUser.AccountRole === 'TOPADMIN'
+								session?.user.id === selectedUser.id ||
+								selectedUser.accountRole === 'ADMIN' ||
+								selectedUser.accountRole === 'TOPADMIN'
 							}
 							onClick={() => onRoleChange(selectedUser.id, 'ADMIN')}
 						>
@@ -106,8 +108,8 @@ const UserDetailPopup = ({
 							className="btn btn-error"
 							disabled={actionLoading || session?.user.id === selectedUser.id}
 							onClick={() => {
-								setIsDeletePopupOpen(true)
-								setActionError(null)
+								onClearFeedback()
+								onRequestDelete()
 							}}
 						>
 							削除
@@ -116,7 +118,7 @@ const UserDetailPopup = ({
 							閉じる
 						</button>
 					</div>
-					<FeedbackMessage source={actionError} defaultVariant="error" />
+					<FeedbackMessage source={feedbackSource} defaultVariant="error" />
 				</div>
 			)}
 		</Popup>

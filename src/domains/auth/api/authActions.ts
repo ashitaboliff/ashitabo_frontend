@@ -7,7 +7,13 @@ import { makeAuthDetails } from '@/domains/auth/utils/sessionInfo'
 import type { ProfileFormValues } from '@/domains/user/model/profileSchema'
 import type { Profile } from '@/domains/user/model/userTypes'
 import { apiGet, apiPost, apiPut } from '@/shared/lib/api/crud'
-import type { ApiResponse } from '@/types/responseTypes'
+import {
+	createdResponse,
+	failure,
+	okResponse,
+	withFallbackMessage,
+} from '@/shared/lib/api/helper'
+import { type ApiResponse, StatusCode } from '@/types/responseTypes'
 import type { Session } from '@/types/session'
 
 const CSRF_COOKIE_KEYS = [
@@ -69,9 +75,18 @@ export const createProfileAction = async ({
 	userId: string
 	body: ProfileFormValues
 }): Promise<ApiResponse<Profile>> => {
-	return apiPost<Profile>(`/users/${userId}/profile`, {
+	const res = await apiPost<Profile>(`/users/${userId}/profile`, {
 		body,
 	})
+
+	if (!res.ok) {
+		return withFallbackMessage(res, 'ユーザープロフィールの作成に失敗しました')
+	}
+
+	revalidateTag(`user-profile-${userId}`)
+	revalidateTag(`users`)
+
+	return createdResponse(res.data)
 }
 
 export const putProfileAction = async ({
@@ -85,21 +100,68 @@ export const putProfileAction = async ({
 		body,
 	})
 
-	revalidateTag(`user-profile-${userId}`)
+	if (!res.ok) {
+		return withFallbackMessage(res, 'ユーザープロフィールの更新に失敗しました')
+	}
 
-	return res
+	revalidateTag(`user-profile-${userId}`)
+	revalidateTag(`users`)
+
+	return okResponse(res.data)
+}
+
+export const revalidateUserAction = async (): Promise<void> => {
+	revalidateTag('users')
 }
 
 export type PadlockResponse = {
 	status: 'ok' | 'locked' | 'invalid'
 	minutesRemaining?: number
 	attemptsRemaining?: number
+	token?: string
+	expiresAt?: string
 }
 
 export const padLockAction = async (
 	password: string,
 ): Promise<ApiResponse<PadlockResponse>> => {
-	return apiPost<PadlockResponse>('/auth/padlock', {
+	const res = await apiPost<PadlockResponse>('/auth/padlock', {
 		body: { password },
 	})
+
+	if (!res.ok) {
+		const store = await cookies()
+		store.delete('padlockToken')
+		return withFallbackMessage(res, 'パスワードロックに失敗しました')
+	}
+
+	const data = res.data
+	if (!data || data.status !== 'ok' || typeof data.token !== 'string') {
+		const store = await cookies()
+		store.delete('padlockToken')
+		return failure(
+			StatusCode.INTERNAL_SERVER_ERROR,
+			'部室鍵認証トークンの取得に失敗しました。時間をおいて再度お試しください。',
+		)
+	}
+
+	const store = await cookies()
+	const expires = (() => {
+		if (data.expiresAt) {
+			const parsed = new Date(data.expiresAt)
+			if (!Number.isNaN(parsed.getTime())) {
+				return parsed
+			}
+		}
+		return new Date(Date.now() + 10 * 60 * 1000)
+	})()
+	store.set('padlockToken', data.token, {
+		httpOnly: true,
+		secure: process.env.NODE_ENV === 'production',
+		sameSite: 'lax',
+		path: '/',
+		expires,
+	})
+
+	return okResponse(data)
 }

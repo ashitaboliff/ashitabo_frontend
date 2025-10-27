@@ -1,7 +1,10 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { padLockAction } from '@/domains/auth/api/authActions'
+import {
+	padLockAction,
+	revalidateUserAction,
+} from '@/domains/auth/api/authActions'
 import { useCsrfToken } from '@/domains/auth/hooks/useCsrfToken'
 import { usePasswordForm } from '@/domains/auth/hooks/usePasswordForm'
 import { useFeedback } from '@/shared/hooks/useFeedback'
@@ -21,6 +24,7 @@ export const useAuthPadlock = ({
 	const formRef = useRef<HTMLFormElement>(null)
 	const [isLoading, setIsLoading] = useState(false)
 	const [loadingMessage, setLoadingMessage] = useState('処理中です...')
+	const [padlockToken, setPadlockToken] = useState<string | null>(null)
 
 	const { csrfToken, refreshCsrf } = useCsrfToken(initialCsrfToken)
 	const passwordForm = usePasswordForm()
@@ -52,44 +56,51 @@ export const useAuthPadlock = ({
 		setHiddenInputValue('callbackUrl', effectiveCallbackUrl)
 	}, [effectiveCallbackUrl, setHiddenInputValue])
 
-	const handleSignIn = useCallback(async () => {
-		setLoadingMessage('LINEログインにリダイレクトします...')
-		setIsLoading(true)
-		let token: string | null = null
-		try {
-			token = await refreshCsrf()
-		} catch (error) {
-			logError('Failed to refresh CSRF token before sign-in', error)
-		}
-		if (!token) {
-			token = csrfToken
-		}
-		if (!token) {
-			feedback.showError(
-				'CSRFトークンが取得できませんでした。ページを再読み込みしてからもう一度お試しください。',
-				{ code: 500 },
-			)
-			setIsLoading(false)
-			return
-		}
-		setHiddenInputValue('csrfToken', token)
-		setHiddenInputValue('callbackUrl', effectiveCallbackUrl)
-		const form = formRef.current
-		if (!form) {
-			feedback.showError('サインイン用フォームを初期化できませんでした。', {
-				code: 500,
-			})
-			setIsLoading(false)
-			return
-		}
-		form.requestSubmit()
-	}, [
-		csrfToken,
-		effectiveCallbackUrl,
-		feedback,
-		refreshCsrf,
-		setHiddenInputValue,
-	])
+	const handleSignIn = useCallback(
+		async (options?: { padlockToken?: string | null }) => {
+			setLoadingMessage('LINEログインにリダイレクトします...')
+			setIsLoading(true)
+			let token: string | null = null
+			try {
+				token = await refreshCsrf()
+			} catch (error) {
+				logError('Failed to refresh CSRF token before sign-in', error)
+			}
+			if (!token) {
+				token = csrfToken
+			}
+			if (!token) {
+				feedback.showError(
+					'CSRFトークンが取得できませんでした。ページを再読み込みしてからもう一度お試しください。',
+					{ code: 500 },
+				)
+				setIsLoading(false)
+				return
+			}
+			setHiddenInputValue('csrfToken', token)
+			setHiddenInputValue('callbackUrl', effectiveCallbackUrl)
+			const resolvedPadlockToken = options?.padlockToken ?? padlockToken ?? ''
+			setHiddenInputValue('padlockToken', resolvedPadlockToken)
+			const form = formRef.current
+			if (!form) {
+				feedback.showError('サインイン用フォームを初期化できませんでした。', {
+					code: 500,
+				})
+				setIsLoading(false)
+				return
+			}
+			form.requestSubmit()
+			revalidateUserAction()
+		},
+		[
+			csrfToken,
+			effectiveCallbackUrl,
+			feedback,
+			padlockToken,
+			refreshCsrf,
+			setHiddenInputValue,
+		],
+	)
 
 	const onSubmit = passwordForm.handleSubmit(async (values) => {
 		setLoadingMessage('パスワードを確認しています...')
@@ -99,9 +110,25 @@ export const useAuthPadlock = ({
 		try {
 			const res = await padLockAction(password)
 			if (res.ok) {
-				await handleSignIn()
+				const token = res.data.token ?? null
+				if (!token) {
+					feedback.showError(
+						'部室鍵認証トークンが取得できませんでした。もう一度お試しください。',
+						{
+							code: 500,
+						},
+					)
+					setPadlockToken(null)
+					setIsLoading(false)
+					return
+				}
+				setPadlockToken(token)
+				setHiddenInputValue('padlockToken', token)
+				await handleSignIn({ padlockToken: token })
 				return
 			}
+			setPadlockToken(null)
+			setHiddenInputValue('padlockToken', '')
 			feedback.showApiError(res)
 		} catch (err) {
 			logError('Error during padlock authentication', err)
@@ -109,6 +136,8 @@ export const useAuthPadlock = ({
 				details: err instanceof Error ? err.message : String(err),
 				code: 500,
 			})
+			setPadlockToken(null)
+			setHiddenInputValue('padlockToken', '')
 		} finally {
 			setIsLoading(false)
 		}
@@ -117,7 +146,9 @@ export const useAuthPadlock = ({
 	const handleClear = useCallback(() => {
 		passwordForm.reset()
 		feedback.clearFeedback()
-	}, [feedback, passwordForm])
+		setPadlockToken(null)
+		setHiddenInputValue('padlockToken', '')
+	}, [feedback, passwordForm, setHiddenInputValue])
 
 	const digitError =
 		passwordForm.errors.digit1?.message ??

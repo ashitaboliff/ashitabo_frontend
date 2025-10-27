@@ -1,13 +1,13 @@
+'use server'
+
+import { revalidateTag } from 'next/cache'
 import {
-	mapRawBanBookings,
 	mapRawPadLocks,
 	mapRawUserDetails,
-	type RawBanBooking,
 	type RawPadLock,
 	type RawUserDetail,
 } from '@/domains/admin/api/dto'
-import type { PadLock } from '@/domains/admin/model/adminTypes'
-import type { BanBooking } from '@/domains/booking/model/bookingTypes'
+import type { AdminUserSort, PadLock } from '@/domains/admin/model/adminTypes'
 import type { AccountRole, UserDetail } from '@/domains/user/model/userTypes'
 import { apiDelete, apiGet, apiPost, apiPut } from '@/shared/lib/api/crud'
 import {
@@ -23,7 +23,7 @@ export const getAllPadLocksAction = async (): Promise<
 	ApiResponse<PadLock[]>
 > => {
 	const res = await apiGet<RawPadLock[]>('/admin/padlocks', {
-		next: { revalidate: 120, tags: ['admin-padlocks'] },
+		next: { revalidate: 6 * 30 * 24 * 60 * 60, tags: ['padlocks'] },
 	})
 
 	return mapSuccess(
@@ -40,7 +40,7 @@ export const getAllUserDetailsAction = async ({
 }: {
 	page: number
 	perPage: number
-	sort: 'new' | 'old'
+	sort: AdminUserSort
 }): Promise<ApiResponse<{ users: UserDetail[]; totalCount: number }>> => {
 	const res = await apiGet<{
 		users: RawUserDetail[]
@@ -52,8 +52,8 @@ export const getAllUserDetailsAction = async ({
 			sort,
 		},
 		next: {
-			revalidate: 30,
-			tags: ['admin-users'],
+			revalidate: 7 * 24 * 60 * 60,
+			tags: ['users'],
 		},
 	})
 
@@ -78,6 +78,8 @@ export const deleteUserAction = async ({
 		return withFallbackMessage(res, 'ユーザー削除に失敗しました')
 	}
 
+	revalidateTag('users')
+
 	return okResponse(null)
 }
 
@@ -100,92 +102,9 @@ export const updateUserRoleAction = async ({
 		return noContentResponse()
 	}
 
+	revalidateTag('users')
+
 	return okResponse(null)
-}
-
-export const adminRevalidateTagAction = async (
-	tag: string,
-): Promise<ApiResponse<null>> => {
-	console.info(`Revalidate tag placeholder invoked for ${tag}`)
-	return okResponse(null)
-}
-
-export const createBookingBanDateAction = async ({
-	startDate,
-	startTime,
-	endTime,
-	description,
-}: {
-	startDate: string | string[]
-	startTime: number
-	endTime?: number
-	description: string
-}): Promise<ApiResponse<string>> => {
-	const res = await apiPost<unknown>('/admin/booking-bans', {
-		body: {
-			startDate,
-			startTime,
-			endTime,
-			description,
-		},
-	})
-
-	if (!res.ok) {
-		return withFallbackMessage(res, '予約禁止日の作成に失敗しました')
-	}
-
-	return createdResponse('created')
-}
-
-export const getBanBookingAction = async ({
-	page,
-	perPage,
-	sort,
-	today,
-}: {
-	page: number
-	perPage: number
-	sort: 'new' | 'old' | 'relativeCurrent'
-	today: string
-}): Promise<ApiResponse<{ data: BanBooking[]; totalCount: number }>> => {
-	const res = await apiGet<{
-		data: RawBanBooking[]
-		totalCount: number
-	}>('/admin/booking-bans', {
-		searchParams: {
-			page,
-			perPage,
-			sort,
-			today,
-		},
-		next: {
-			revalidate: 60,
-			tags: ['admin-booking-bans'],
-		},
-	})
-
-	return mapSuccess(
-		res,
-		(data) => ({
-			data: mapRawBanBookings(data.data),
-			totalCount: data.totalCount ?? 0,
-		}),
-		'予約禁止日の取得に失敗しました',
-	)
-}
-
-export const deleteBanBookingAction = async ({
-	id,
-}: {
-	id: string
-}): Promise<ApiResponse<null>> => {
-	const res = await apiDelete<null>(`/admin/booking-bans/${id}`)
-
-	if (!res.ok) {
-		return withFallbackMessage(res, '予約禁止日の削除に失敗しました')
-	}
-
-	return noContentResponse()
 }
 
 export const createPadLockAction = async ({
@@ -203,6 +122,8 @@ export const createPadLockAction = async ({
 		return withFallbackMessage(res, '部室パスワードの作成に失敗しました')
 	}
 
+	revalidateTag('padlocks')
+
 	return createdResponse('created')
 }
 
@@ -216,6 +137,8 @@ export const deletePadLockAction = async ({
 	if (!res.ok) {
 		return withFallbackMessage(res, '部室パスワードの削除に失敗しました')
 	}
+
+	revalidateTag('padlocks')
 
 	return noContentResponse()
 }
