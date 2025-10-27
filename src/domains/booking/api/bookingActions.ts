@@ -23,13 +23,14 @@ import {
 import { apiDelete, apiGet, apiPost, apiPut } from '@/shared/lib/api/crud'
 import {
 	createdResponse,
+	failure,
 	mapSuccess,
 	noContentResponse,
 	okResponse,
 	withFallbackMessage,
 } from '@/shared/lib/api/helper'
 import { toDateKey } from '@/shared/utils'
-import type { ApiResponse } from '@/types/responseTypes'
+import { type ApiResponse, StatusCode } from '@/types/responseTypes'
 
 type BookingPayload = {
 	bookingDate: string
@@ -172,11 +173,13 @@ export const updateBookingAction = async ({
 	userId,
 	booking,
 	today,
+	authToken,
 }: {
 	bookingId: string
 	userId: string
 	booking: BookingPayload
 	today: string
+	authToken?: string | null
 }): Promise<ApiResponse<null>> => {
 	const bookingDateKey = toDateKey(booking.bookingDate)
 	const res = await apiPut<null>(`/booking/${bookingId}`, {
@@ -188,6 +191,7 @@ export const updateBookingAction = async ({
 			name: booking.name,
 			isDeleted: booking.isDeleted ?? false,
 			today,
+			authToken: authToken ?? undefined,
 		},
 	})
 
@@ -207,13 +211,17 @@ export const deleteBookingAction = async ({
 	bookingId,
 	bookingDate,
 	userId,
+	authToken,
 }: {
 	bookingId: string
 	bookingDate: string
 	userId: string
+	authToken?: string | null
 }): Promise<ApiResponse<null>> => {
 	const res = await apiDelete<null>(`/booking/${bookingId}`, {
-		searchParams: { userId },
+		body: {
+			authToken: authToken ?? undefined,
+		},
 	})
 
 	if (!res.ok) {
@@ -237,6 +245,11 @@ export const deleteBookingAction = async ({
 	return noContentResponse()
 }
 
+export type BookingAccessGrant = {
+	token: string
+	expiresAt: string
+}
+
 export const authBookingAction = async ({
 	bookingId,
 	userId,
@@ -245,16 +258,26 @@ export const authBookingAction = async ({
 	bookingId: string
 	userId: string
 	password: string
-}): Promise<ApiResponse<string>> => {
-	const res = await apiPost<unknown>(`/booking/${bookingId}/verify`, {
-		body: { userId, password },
-	})
+}): Promise<ApiResponse<BookingAccessGrant>> => {
+	const res = await apiPost<BookingAccessGrant>(
+		`/booking/${bookingId}/verify`,
+		{
+			body: { userId, password },
+		},
+	)
 
 	if (!res.ok) {
 		return withFallbackMessage(res, '予約の認証に失敗しました。')
 	}
 
-	return okResponse('verified')
+	if (!res.data || typeof res.data.token !== 'string') {
+		return failure(
+			StatusCode.INTERNAL_SERVER_ERROR,
+			'予約操作用トークンの取得に失敗しました。時間をおいて再度お試しください。',
+		)
+	}
+
+	return okResponse(res.data)
 }
 
 export const getBookingIds = async (): Promise<string[]> => {

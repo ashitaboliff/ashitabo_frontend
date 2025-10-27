@@ -47,6 +47,7 @@ const PadLockPage = ({ csrfToken, callbackUrl }: Props) => {
 					name="callbackUrl"
 					defaultValue={effectiveCallbackUrl}
 				/>
+				<input type="hidden" name="padlockToken" defaultValue="" />
 			</form>
 			<div className="card bg-white shadow-lg w-96 h-[30rem] my-6">
 				<figure>

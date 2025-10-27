@@ -1,5 +1,4 @@
 import { Inter } from 'next/font/google'
-import Link from 'next/link'
 import Script from 'next/script'
 import PublicEnv from '@/shared/lib/env/public'
 import { nicomoji } from '@/shared/lib/fonts'
@@ -32,12 +31,6 @@ console.log('%chttps://www.github.com/ashitaboliff/', 'color: #000000; font-size
 				</Script>
 				<ProgressBarProvider>
 					<Header className={nicomoji.className} />
-					<Link
-						href="/blogs/20250724"
-						className="link link-info text-center text-lg font-bold mb-4 block"
-					>
-						✨7月24日 - 画像が見れない件について✨
-					</Link>
 					{children}
 					<Footer />
 				</ProgressBarProvider>

@@ -97,98 +97,96 @@ const DeniedBookingCreatePage = () => {
 	)
 
 	return (
-		<>
-			<div className="flex flex-col items-center justify-center gap-y-3">
-				<div className="flex flex-col items-center text-center gap-y-2">
-					<h1 className="text-2xl font-bold">予約禁止日追加</h1>
-					<p className="text-sm">このページでは予約禁止日の追加が可能です。</p>
-				</div>
-				<form
-					className="flex flex-col space-y-4 w-full max-w-md items-center px-4 sm:px-8"
-					onSubmit={handleSubmit(onSubmit)}
-				>
-					<DeniedBookingTypeSelector register={register} />
-					<DeniedBookingTypeDescription type={type ?? 'single'} />
+		<div className="flex flex-col items-center justify-center gap-y-3">
+			<div className="flex flex-col items-center text-center gap-y-2">
+				<h1 className="text-2xl font-bold">予約禁止日追加</h1>
+				<p className="text-sm">このページでは予約禁止日の追加が可能です。</p>
+			</div>
+			<form
+				className="flex flex-col space-y-4 w-full max-w-md items-center px-4 sm:px-8"
+				onSubmit={handleSubmit(onSubmit)}
+			>
+				<DeniedBookingTypeSelector register={register} />
+				<DeniedBookingTypeDescription type={type ?? 'single'} />
+				<Controller
+					name="startDate"
+					control={control}
+					render={({ field }) => (
+						<CustomDatePicker
+							label="開始日"
+							selectedDate={field.value ?? null}
+							onChange={field.onChange}
+						/>
+					)}
+				/>
+				{type === 'regular' && (
 					<Controller
-						name="startDate"
+						name="endDate"
 						control={control}
 						render={({ field }) => (
 							<CustomDatePicker
-								label="開始日"
+								label="終了日"
 								selectedDate={field.value ?? null}
 								onChange={field.onChange}
 							/>
 						)}
 					/>
-					{type === 'regular' && (
-						<Controller
-							name="endDate"
-							control={control}
-							render={({ field }) => (
-								<CustomDatePicker
-									label="終了日"
-									selectedDate={field.value ?? null}
-									onChange={field.onChange}
-								/>
-							)}
-						/>
-					)}
-					<SelectField
-						label="開始時間"
-						name="startTime"
-						register={register('startTime')}
-						options={BOOKING_TIME_OPTIONS}
-						errorMessage={errors.startTime?.message}
-					/>
-					{type !== 'single' && (
-						<SelectField
-							label="終了時間"
-							name="endTime"
-							register={register('endTime')}
-							options={BOOKING_TIME_OPTIONS}
-							errorMessage={errors.endTime?.message}
-						/>
-					)}
-					{type === 'regular' && (
-						<div className="w-full">
-							<span className="label-text font-semibold">繰り返し</span>
-							<div className="flex flex-row items-center justify-between space-x-2">
-								<div className="whitespace-nowrap text-sm">毎週</div>
-								<SelectField
-									name="dayOfWeek"
-									register={register('dayOfWeek')}
-									options={DAY_OF_WEEK_SELECT_OPTIONS}
-									errorMessage={errors.dayOfWeek?.message}
-								/>
-								<div className="whitespace-nowrap text-sm">曜日</div>
-							</div>
-						</div>
-					)}
-					<TextInputField
-						type="text"
-						register={register('description')}
-						label="説明"
-						errorMessage={errors.description?.message}
-					/>
-					<div className="flex flex-row gap-x-2">
-						<button className="btn btn-primary btn-md" type="submit">
-							送信
-						</button>
-						<button
-							className="btn btn-outline btn-md"
-							type="button"
-							onClick={() => router.push('/admin/denied')}
-						>
-							戻る
-						</button>
-					</div>
-				</form>
-				<FeedbackMessage
-					source={actionFeedback.feedback}
-					defaultVariant="error"
+				)}
+				<SelectField
+					label="開始時間"
+					name="startTime"
+					register={register('startTime')}
+					options={BOOKING_TIME_OPTIONS}
+					errorMessage={errors.startTime?.message}
 				/>
-			</div>
-		</>
+				{type !== 'single' && (
+					<SelectField
+						label="終了時間"
+						name="endTime"
+						register={register('endTime')}
+						options={BOOKING_TIME_OPTIONS}
+						errorMessage={errors.endTime?.message}
+					/>
+				)}
+				{type === 'regular' && (
+					<div className="w-full">
+						<span className="label-text font-semibold">繰り返し</span>
+						<div className="flex flex-row items-center justify-between space-x-2">
+							<div className="whitespace-nowrap text-sm">毎週</div>
+							<SelectField
+								name="dayOfWeek"
+								register={register('dayOfWeek')}
+								options={DAY_OF_WEEK_SELECT_OPTIONS}
+								errorMessage={errors.dayOfWeek?.message}
+							/>
+							<div className="whitespace-nowrap text-sm">曜日</div>
+						</div>
+					</div>
+				)}
+				<TextInputField
+					type="text"
+					register={register('description')}
+					label="説明"
+					errorMessage={errors.description?.message}
+				/>
+				<div className="flex flex-row gap-x-2">
+					<button className="btn btn-primary btn-md" type="submit">
+						送信
+					</button>
+					<button
+						className="btn btn-outline btn-md"
+						type="button"
+						onClick={() => router.push('/admin/denied')}
+					>
+						戻る
+					</button>
+				</div>
+			</form>
+			<FeedbackMessage
+				source={actionFeedback.feedback}
+				defaultVariant="error"
+			/>
+		</div>
 	)
 }
 

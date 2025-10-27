@@ -4,7 +4,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useSWRConfig } from 'swr'
-import { updateBookingAction } from '@/domains/booking/api/bookingActions'
+import {
+	type BookingAccessGrant,
+	updateBookingAction,
+} from '@/domains/booking/api/bookingActions'
 import {
 	type BookingEditFormValues,
 	bookingEditSchema,
@@ -17,6 +20,7 @@ import { mutateBookingCalendarsForDate } from '@/domains/booking/utils/calendarC
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { getCurrentJSTDateString, toDateKey } from '@/shared/utils'
 import { logError } from '@/shared/utils/logger'
+import { StatusCode } from '@/types/responseTypes'
 import type { Session } from '@/types/session'
 import BookingEditCalendarPopup from './BookingEditCalendarPopup'
 import BookingEditFormFields from './BookingEditFormFields'
@@ -28,6 +32,9 @@ interface Props {
 	readonly onSuccess: (updatedBooking: Booking) => void
 	readonly initialBookingResponse: BookingResponse | null
 	readonly initialViewDay: Date
+	readonly bookingAccess: BookingAccessGrant | null
+	readonly requiresAuthToken: boolean
+	readonly onRequireAuth: (message: string) => void
 }
 
 const today = getCurrentJSTDateString({})
@@ -39,6 +46,9 @@ const BookingEditForm = ({
 	onSuccess,
 	initialBookingResponse,
 	initialViewDay,
+	bookingAccess,
+	requiresAuthToken,
+	onRequireAuth,
 }: Props) => {
 	const { mutate } = useSWRConfig()
 	const [calendarOpen, setCalendarOpen] = useState(false)
@@ -72,6 +82,32 @@ const BookingEditForm = ({
 	const onSubmit = async (data: BookingEditFormValues) => {
 		setSubmitStatus('loading')
 		submissionFeedback.clearFeedback()
+		const tokenExpiredMessage =
+			'予約の操作トークンの有効期限が切れています。もう一度認証してください。'
+		const tokenRequiredMessage =
+			'予約を編集するには再度パスワード認証が必要です。'
+		const tokenInvalidMessage =
+			'予約の操作トークンが無効になりました。再度認証してください。'
+
+		if (requiresAuthToken) {
+			if (!bookingAccess) {
+				submissionFeedback.showError(tokenRequiredMessage, {
+					code: StatusCode.FORBIDDEN,
+				})
+				onRequireAuth(tokenRequiredMessage)
+				setSubmitStatus('idle')
+				return
+			}
+			const expiresAt = new Date(bookingAccess.expiresAt).getTime()
+			if (Number.isNaN(expiresAt) || expiresAt <= Date.now()) {
+				submissionFeedback.showError(tokenExpiredMessage, {
+					code: StatusCode.FORBIDDEN,
+				})
+				onRequireAuth(tokenExpiredMessage)
+				setSubmitStatus('idle')
+				return
+			}
+		}
 
 		try {
 			const response = await updateBookingAction({
@@ -85,6 +121,7 @@ const BookingEditForm = ({
 					isDeleted: false,
 				},
 				today,
+				authToken: bookingAccess?.token,
 			})
 
 			if (response.ok) {
@@ -103,9 +140,17 @@ const BookingEditForm = ({
 				})
 				setSubmitStatus('idle')
 				return
+			} else if (
+				response.status === StatusCode.FORBIDDEN &&
+				requiresAuthToken
+			) {
+				onRequireAuth(tokenInvalidMessage)
+				submissionFeedback.showError(tokenInvalidMessage, {
+					code: StatusCode.FORBIDDEN,
+				})
+			} else {
+				submissionFeedback.showApiError(response)
 			}
-
-			submissionFeedback.showApiError(response)
 			setSubmitStatus('idle')
 		} catch (error) {
 			submissionFeedback.showError(

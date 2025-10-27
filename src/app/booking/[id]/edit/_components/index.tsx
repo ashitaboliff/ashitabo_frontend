@@ -3,7 +3,10 @@
 import { useRouter } from 'next-nprogress-bar'
 import { useId, useReducer, useState } from 'react'
 import { useSWRConfig } from 'swr'
-import { deleteBookingAction } from '@/domains/booking/api/bookingActions'
+import {
+	type BookingAccessGrant,
+	deleteBookingAction,
+} from '@/domains/booking/api/bookingActions'
 import type {
 	Booking,
 	BookingResponse,
@@ -18,6 +21,7 @@ import { useFeedback } from '@/shared/hooks/useFeedback'
 import Popup from '@/shared/ui/molecules/Popup'
 import { toDateKey } from '@/shared/utils'
 import { logError } from '@/shared/utils/logger'
+import { StatusCode } from '@/types/responseTypes'
 import type { Session } from '@/types/session'
 import BookingEditAuthForm from './BookingEditAuth'
 import BookingEditForm from './BookingEditForm'
@@ -35,6 +39,7 @@ type Action =
 	| { type: 'CANCEL_EDIT' }
 	| { type: 'EDIT_SUCCESS'; payload: Booking }
 	| { type: 'DELETE_SUCCESS' }
+	| { type: 'REQUIRE_AUTH' }
 
 const reducer = (state: State, action: Action): State => {
 	switch (action.type) {
@@ -46,6 +51,8 @@ const reducer = (state: State, action: Action): State => {
 			return { ...state, mode: 'summary' }
 		case 'EDIT_SUCCESS':
 			return { mode: 'editSuccess', booking: action.payload }
+		case 'REQUIRE_AUTH':
+			return { ...state, mode: 'auth' }
 		default:
 			return state
 	}
@@ -70,6 +77,12 @@ const BookingEdit = ({
 	const [flashMessage, setFlashMessage] = useState<string | null>(null)
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 	const [isDeleting, setIsDeleting] = useState(false)
+	const [bookingAccess, setBookingAccess] = useState<BookingAccessGrant | null>(
+		null,
+	)
+	const [authPromptMessage, setAuthPromptMessage] = useState<string | null>(
+		null,
+	)
 	const deletePopupId = useId()
 
 	const isOwner = bookingDetail.userId === session.user.id
@@ -79,8 +92,39 @@ const BookingEdit = ({
 		booking: bookingDetail,
 	})
 
-	const handleAuthSuccess = () => {
+	const handleAuthSuccess = (grant: BookingAccessGrant) => {
+		setBookingAccess(grant)
+		setAuthPromptMessage(null)
 		dispatch({ type: 'AUTH_SUCCESS' })
+	}
+
+	const isTokenExpired = (grant: BookingAccessGrant | null) => {
+		if (!grant) return true
+		const expiresAt = new Date(grant.expiresAt).getTime()
+		return Number.isNaN(expiresAt) || expiresAt <= Date.now()
+	}
+
+	const requireAuth = (message: string) => {
+		setBookingAccess(null)
+		setAuthPromptMessage(message)
+		dispatch({ type: 'REQUIRE_AUTH' })
+	}
+
+	const ensureAccessToken = (operationLabel: string): string | null => {
+		if (isOwner) {
+			return null
+		}
+		if (!bookingAccess) {
+			const message = `${operationLabel}には再度パスワード認証が必要です。`
+			requireAuth(message)
+			return null
+		}
+		if (isTokenExpired(bookingAccess)) {
+			const message = `${operationLabel}の前に行った認証の有効期限が切れています。もう一度認証してください。`
+			requireAuth(message)
+			return null
+		}
+		return bookingAccess.token
 	}
 
 	const handleEditSuccess = (updatedBooking: Booking) => {
@@ -92,10 +136,15 @@ const BookingEdit = ({
 		deleteFeedback.clearFeedback()
 		setIsDeleting(true)
 		try {
+			const token = ensureAccessToken('予約を削除する')
+			if (!isOwner && !token) {
+				return
+			}
 			const response = await deleteBookingAction({
 				bookingId: state.booking.id,
 				bookingDate: state.booking.bookingDate,
 				userId: session.user.id,
+				authToken: token ?? undefined,
 			})
 
 			if (response.ok) {
@@ -105,6 +154,11 @@ const BookingEdit = ({
 				)
 				router.push('/booking')
 			} else {
+				if (response.status === StatusCode.FORBIDDEN) {
+					requireAuth(
+						'予約の操作トークンが無効になりました。再度認証してください。',
+					)
+				}
 				deleteFeedback.showApiError(response)
 			}
 		} catch (error) {
@@ -197,6 +251,7 @@ const BookingEdit = ({
 					session={session}
 					bookingDetail={state.booking}
 					onSuccess={handleAuthSuccess}
+					initialError={authPromptMessage}
 				/>
 			)}
 
@@ -210,6 +265,9 @@ const BookingEdit = ({
 					onSuccess={handleEditSuccess}
 					initialBookingResponse={initialBookingResponse}
 					initialViewDay={initialViewDay}
+					bookingAccess={bookingAccess}
+					requiresAuthToken={!isOwner}
+					onRequireAuth={(message) => requireAuth(message)}
 				/>
 			)}
 

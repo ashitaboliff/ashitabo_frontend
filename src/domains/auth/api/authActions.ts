@@ -9,10 +9,11 @@ import type { Profile } from '@/domains/user/model/userTypes'
 import { apiGet, apiPost, apiPut } from '@/shared/lib/api/crud'
 import {
 	createdResponse,
+	failure,
 	okResponse,
 	withFallbackMessage,
 } from '@/shared/lib/api/helper'
-import type { ApiResponse } from '@/types/responseTypes'
+import { type ApiResponse, StatusCode } from '@/types/responseTypes'
 import type { Session } from '@/types/session'
 
 const CSRF_COOKIE_KEYS = [
@@ -117,6 +118,8 @@ export type PadlockResponse = {
 	status: 'ok' | 'locked' | 'invalid'
 	minutesRemaining?: number
 	attemptsRemaining?: number
+	token?: string
+	expiresAt?: string
 }
 
 export const padLockAction = async (
@@ -127,8 +130,38 @@ export const padLockAction = async (
 	})
 
 	if (!res.ok) {
+		const store = await cookies()
+		store.delete('padlockToken')
 		return withFallbackMessage(res, 'パスワードロックに失敗しました')
 	}
 
-	return okResponse(res.data)
+	const data = res.data
+	if (!data || data.status !== 'ok' || typeof data.token !== 'string') {
+		const store = await cookies()
+		store.delete('padlockToken')
+		return failure(
+			StatusCode.INTERNAL_SERVER_ERROR,
+			'部室鍵認証トークンの取得に失敗しました。時間をおいて再度お試しください。',
+		)
+	}
+
+	const store = await cookies()
+	const expires = (() => {
+		if (data.expiresAt) {
+			const parsed = new Date(data.expiresAt)
+			if (!Number.isNaN(parsed.getTime())) {
+				return parsed
+			}
+		}
+		return new Date(Date.now() + 10 * 60 * 1000)
+	})()
+	store.set('padlockToken', data.token, {
+		httpOnly: true,
+		secure: process.env.NODE_ENV === 'production',
+		sameSite: 'lax',
+		path: '/',
+		expires,
+	})
+
+	return okResponse(data)
 }

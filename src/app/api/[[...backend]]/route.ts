@@ -28,7 +28,6 @@ const createProxyHeaders = (request: NextRequest) => {
 	if (apiKey) {
 		headers.set('X-API-Key', apiKey)
 	}
-
 	return headers
 }
 
@@ -45,18 +44,62 @@ type RouteContext = { params: Promise<BackendParams> }
 
 const proxyRequest = async (request: NextRequest, context: RouteContext) => {
 	const { backend } = await context.params
-	const targetUrl = buildTargetUrl(backend ?? [], request)
+	const pathSegments = backend ?? []
+	const backendPath = pathSegments.join('/')
+	const targetUrl = buildTargetUrl(pathSegments, request)
 	const outgoingHeaders = createProxyHeaders(request)
-	const cookieHeader = request.headers.get('cookie')
-	if (cookieHeader) {
-		outgoingHeaders.set('cookie', cookieHeader)
+	const isPadlockSignin =
+		backendPath === 'auth/signin/line' &&
+		request.method.toUpperCase() === 'POST'
+	let padlockToken = isPadlockSignin
+		? (request.cookies.get('padlockToken')?.value ?? undefined)
+		: undefined
+
+	const rawCookieHeader = request.headers.get('cookie')
+	if (rawCookieHeader) {
+		const filteredCookie = isPadlockSignin
+			? rawCookieHeader
+					.split(';')
+					.map((part) => part.trim())
+					.filter((part) => !part.toLowerCase().startsWith('padlocktoken='))
+					.join('; ')
+			: rawCookieHeader
+		if (filteredCookie.length > 0) {
+			outgoingHeaders.set('cookie', filteredCookie)
+		} else {
+			outgoingHeaders.delete('cookie')
+		}
 	} else {
 		outgoingHeaders.delete('cookie')
 	}
 
-	let body: ArrayBuffer | undefined
+	let body: BodyInit | undefined
 	if (!['GET', 'HEAD'].includes(request.method)) {
-		body = await request.arrayBuffer()
+		const arrayBuffer = await request.arrayBuffer()
+		let processedBody: BodyInit = arrayBuffer
+		let padlockTokenFromBody: string | undefined
+		if (isPadlockSignin) {
+			try {
+				const bodyText = new TextDecoder().decode(arrayBuffer)
+				const params = new URLSearchParams(bodyText)
+				const tokenValue = params.get('padlockToken') ?? undefined
+				if (tokenValue) {
+					padlockTokenFromBody = tokenValue
+					params.delete('padlockToken')
+					processedBody = new TextEncoder().encode(params.toString())
+				}
+			} catch (error) {
+				console.error('Failed to parse padlock token from body', error)
+			}
+			if (!padlockToken && padlockTokenFromBody) {
+				padlockToken = padlockTokenFromBody
+			}
+		}
+		body = processedBody
+	}
+
+	if (padlockToken) {
+		outgoingHeaders.set('X-Padlock-Token', padlockToken)
 	}
 
 	const backendResponse = await fetch(targetUrl, {
@@ -72,10 +115,16 @@ const proxyRequest = async (request: NextRequest, context: RouteContext) => {
 	responseHeaders.delete('content-encoding')
 	responseHeaders.delete('content-length')
 
-	return new NextResponse(backendResponse.body, {
+	const response = new NextResponse(backendResponse.body, {
 		status: backendResponse.status,
 		headers: responseHeaders,
 	})
+
+	if (isPadlockSignin) {
+		response.cookies.delete('padlockToken')
+	}
+
+	return response
 }
 
 const handleError = (error: unknown) => {
