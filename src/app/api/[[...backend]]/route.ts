@@ -25,8 +25,9 @@ const createProxyHeaders = (request: NextRequest) => {
 	headers.delete('content-length')
 
 	const apiKey = env.API_KEY?.trim()
-	headers.set('X-API-Key', apiKey)
-
+	if (apiKey) {
+		headers.set('X-API-Key', apiKey)
+	}
 	return headers
 }
 
