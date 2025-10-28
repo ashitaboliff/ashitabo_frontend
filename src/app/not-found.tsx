@@ -44,7 +44,6 @@ export default async function NotFound() {
 					alt="404 Not Found"
 					width={400}
 					height={225}
-					unoptimized
 					priority
 				/>
 			</div>
