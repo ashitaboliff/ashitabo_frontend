@@ -21,12 +21,13 @@ import { DateToDayISOstring, toDateKey } from '@/shared/utils'
  * @param booking_date
  * @returns
  */
-interface Props {
+type Props = {
 	readonly bookingDate: BookingResponse
 	readonly timeList: string[]
+	readonly className?: string
 }
 
-const BookingCalendar = ({ bookingDate, timeList }: Props) => {
+const BookingCalendar = ({ bookingDate, timeList, className }: Props) => {
 	const router = useRouter()
 	const dateList = useMemo(() => Object.keys(bookingDate), [bookingDate])
 	const bookingAbleMaxDate = DateToDayISOstring(
@@ -38,6 +39,7 @@ const BookingCalendar = ({ bookingDate, timeList }: Props) => {
 		<CalendarFrame
 			dates={dateList}
 			times={timeList}
+			containerClassName={`flex justify-center ${className}`}
 			renderCell={({ date, timeIndex }) => {
 				const booking = bookingDate[date]?.[timeIndex]
 				const baseClass = 'border border-base-200 p-0'

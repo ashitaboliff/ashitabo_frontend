@@ -66,8 +66,6 @@ const BookingMainPage = ({ initialViewDate, type, message }: Props) => {
 		await mutate()
 	}
 
-	const showSkeleton = isLoading && !bookingData
-
 	return (
 		<>
 			{type && message && <FlashMessage type={type}>{message}</FlashMessage>}
@@ -118,16 +116,17 @@ const BookingMainPage = ({ initialViewDate, type, message }: Props) => {
 						{'>'}
 					</button>
 				</div>
-				{showSkeleton ? (
+				{!bookingData ? (
 					<div className="flex justify-center">
 						<div className="skeleton w-[360px] h-[466px] sm:w-[520px] sm:h-[578px]"></div>
 					</div>
-				) : bookingData ? (
+				) : (
 					<BookingCalendar
 						bookingDate={bookingData}
 						timeList={BOOKING_TIME_LIST}
+						className={isLoading ? 'opacity-30' : undefined}
 					/>
-				) : null}
+				)}
 			</div>
 		</>
 	)
