@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import Image from 'next/image'
 import Link from 'next/link'
 import { getImageUrl } from '@/shared/lib/r2'
 
@@ -39,12 +38,11 @@ export default async function NotFound() {
 	return (
 		<div className="flex flex-col items-center justify-center text-center">
 			<div className="mb-8">
-				<Image
+				<img
 					src={getImageUrl(selectedImage)}
 					alt="404 Not Found"
 					width={400}
 					height={225}
-					priority
 				/>
 			</div>
 			<h1 className="text-4xl font-bold mb-4">Page Not Found</h1>
