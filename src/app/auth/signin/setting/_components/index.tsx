@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next-nprogress-bar'
+import { useRouter } from 'next/navigation'
 import AuthLoadingIndicator from '@/domains/auth/ui/AuthLoadingIndicator'
 import { useProfileForm } from '@/domains/user/hooks/useProfileForm'
 import { signOutUser } from '@/domains/user/hooks/useSignOut'

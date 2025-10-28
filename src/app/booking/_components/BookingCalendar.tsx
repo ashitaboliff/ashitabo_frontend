@@ -1,7 +1,7 @@
 'use client'
 
 import { addDays } from 'date-fns'
-import { useRouter } from 'next-nprogress-bar'
+import { useRouter } from 'next/navigation'
 import { useMemo } from 'react'
 import {
 	ABLE_BOOKING_DAYS,

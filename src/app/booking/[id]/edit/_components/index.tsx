@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next-nprogress-bar'
+import { useRouter } from 'next/navigation'
 import { useId, useReducer, useState } from 'react'
 import { useSWRConfig } from 'swr'
 import {
