@@ -12,7 +12,7 @@ import type { BookingResponse } from '@/domains/booking/model/bookingTypes'
 import { BookingErrorMessage } from '@/domains/booking/ui/BookingActionFeedback'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import Popup from '@/shared/ui/molecules/Popup'
-import type { ApiError } from '@/types/responseTypes'
+import type { ApiError } from '@/types/response'
 import BookingEditCalendar from './BookingEditCalendar'
 
 interface Props {

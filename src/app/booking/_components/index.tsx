@@ -18,7 +18,7 @@ import FlashMessage, {
 	type NoticeType,
 } from '@/shared/ui/molecules/FlashMessage'
 import { formatMonthDay, formatWeekday } from '@/shared/utils/dateFormat'
-import type { ApiError } from '@/types/responseTypes'
+import type { ApiError } from '@/types/response'
 
 interface Props {
 	readonly initialViewDate: string

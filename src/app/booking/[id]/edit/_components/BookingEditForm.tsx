@@ -20,7 +20,7 @@ import { mutateBookingCalendarsForDate } from '@/domains/booking/utils/calendarC
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { getCurrentJSTDateString, toDateKey } from '@/shared/utils'
 import { logError } from '@/shared/utils/logger'
-import { StatusCode } from '@/types/responseTypes'
+import { StatusCode } from '@/types/response'
 import type { Session } from '@/types/session'
 import BookingEditCalendarPopup from './BookingEditCalendarPopup'
 import BookingEditFormFields from './BookingEditFormFields'

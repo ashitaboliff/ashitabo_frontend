@@ -6,7 +6,7 @@ import {
 	parseYoutubeQuery,
 } from '@/domains/video/query/youtubeQuery'
 import { logError } from '@/shared/utils/logger'
-import type { ApiError } from '@/types/responseTypes'
+import type { ApiError } from '@/types/response'
 
 type Props = {
 	readonly searchParams: Promise<Record<string, string | string[] | undefined>>
