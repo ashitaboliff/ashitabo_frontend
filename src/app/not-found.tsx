@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { getImageUrl } from '@/shared/lib/r2'
+// import { getImageUrl } from '@/shared/lib/r2'
 
 export const metadata: Metadata = {
 	title: '404',
@@ -38,12 +38,7 @@ export default async function NotFound() {
 	return (
 		<div className="flex flex-col items-center justify-center text-center">
 			<div className="mb-8">
-				<img
-					src={getImageUrl(selectedImage)}
-					alt="404 Not Found"
-					width={400}
-					height={225}
-				/>
+				<img src={selectedImage} alt="404 Not Found" width={400} height={225} />
 			</div>
 			<h1 className="text-4xl font-bold mb-4">Page Not Found</h1>
 			<p className="text-lg mb-2">お探しのページは見つかりませんでした。</p>
