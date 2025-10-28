@@ -45,6 +45,8 @@ const nextConfig = {
 	images: {
 		remotePatterns: imageRemotePatterns,
 	},
+	turbopack: {},
+	reactCompiler: true,
 }
 
 export default withBundleAnalyzer(nextConfig)

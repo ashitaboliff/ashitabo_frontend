@@ -2,13 +2,11 @@ import Image from 'next/image'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 import { getImageUrl } from '@/shared/lib/r2'
 
-export async function metadata() {
-	return createMetaData({
-		title: 'メンテナンス中',
-		description: 'ただいまメンテナンス中です。',
-		url: '/maintenance',
-	})
-}
+export const metadata = createMetaData({
+	title: 'メンテナンス中',
+	description: 'ただいまメンテナンス中です。',
+	url: '/maintenance',
+})
 
 export default function Maintenance() {
 	return (

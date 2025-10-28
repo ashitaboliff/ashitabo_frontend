@@ -3,12 +3,10 @@ import ProfileEdit from '@/app/user/edit/_components'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 import { getUserProfile } from '@/domains/user/api/userActions'
 
-export async function metadata() {
-	return {
-		title: 'プロフィール編集',
-		description: 'プロフィールを編集します',
-		url: '/user/edit',
-	}
+export const metadata = {
+	title: 'プロフィール編集',
+	description: 'プロフィールを編集します',
+	url: '/user/edit',
 }
 
 const userPage = async () => {

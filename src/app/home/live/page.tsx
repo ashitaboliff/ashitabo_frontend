@@ -5,14 +5,12 @@ import { getImageUrl } from '@/shared/lib/r2'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export async function metadata() {
-	return createMetaData({
-		title: 'ライブ予定 | あしたぼホームページ',
-		description:
-			'あしたぼのライブ予定です。あしたぼ関係のライブ情報を随時更新していきます。見に来てね。',
-		url: '/home/live',
-	})
-}
+export const metadata = createMetaData({
+	title: 'ライブ予定 | あしたぼホームページ',
+	description:
+		'あしたぼのライブ予定です。あしたぼ関係のライブ情報を随時更新していきます。見に来てね。',
+	url: '/home/live',
+})
 
 const Page = async () => {
 	return (

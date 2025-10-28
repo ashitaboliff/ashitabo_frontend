@@ -6,13 +6,11 @@ import {
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 
-export async function metadata() {
-	return createMetaData({
-		title: '部室鍵認証 | あしたぼホームページ',
-		description: '部室鍵認証ページです。部室の鍵を入力してください。',
-		url: '/auth/padlock',
-	})
-}
+export const metadata = createMetaData({
+	title: '部室鍵認証 | あしたぼホームページ',
+	description: '部室鍵認証ページです。部室の鍵を入力してください。',
+	url: '/auth/padlock',
+})
 
 const Page = async () => {
 	const csrfToken = await getPadlockCsrfToken()

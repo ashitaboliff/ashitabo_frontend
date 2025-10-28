@@ -148,6 +148,6 @@ export const handleRequest = (request: NextRequest): NextResponse => {
 	return NextResponse.next()
 }
 
-export default function middleware(request: NextRequest) {
+export default function proxy(request: NextRequest) {
 	return handleRequest(request)
 }
