@@ -38,8 +38,8 @@ const adminLinks = [
 
 const AdminMain = () => {
 	return (
-		<div className="flex flex-col items-center justify-center p-4">
-			<div className="text-2xl font-bold">三役用管理ページ</div>
+		<div className="flex flex-col items-center justify-center">
+			<div className="text-2xl font-bold my-4">三役用管理ページ</div>
 			<div className="overflow-x-auto">
 				<table className="table table-lg">
 					<tbody>
@@ -47,7 +47,7 @@ const AdminMain = () => {
 							<tr key={link.href} className="hover:bg-base-200">
 								<td className="w-12">{link.icon}</td>
 								<td>
-									<Link href={link.href} className="text-lg font-medium">
+									<Link href={link.href} className="text-lg">
 										{link.label}
 									</Link>
 								</td>
@@ -56,6 +56,9 @@ const AdminMain = () => {
 					</tbody>
 				</table>
 			</div>
+			<Link href="/" className="mt-4 btn btn-outline">
+				ホームに戻る
+			</Link>
 		</div>
 	)
 }
