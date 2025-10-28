@@ -83,8 +83,8 @@ export const createProfileAction = async ({
 		return withFallbackMessage(res, 'ユーザープロフィールの作成に失敗しました')
 	}
 
-	revalidateTag(`user-profile-${userId}`)
-	revalidateTag(`users`)
+	revalidateTag(`user-profile-${userId}`, 'max')
+	revalidateTag(`users`, 'max')
 
 	return createdResponse(res.data)
 }
@@ -104,14 +104,14 @@ export const putProfileAction = async ({
 		return withFallbackMessage(res, 'ユーザープロフィールの更新に失敗しました')
 	}
 
-	revalidateTag(`user-profile-${userId}`)
-	revalidateTag(`users`)
+	revalidateTag(`user-profile-${userId}`, 'max')
+	revalidateTag(`users`, 'max')
 
 	return okResponse(res.data)
 }
 
 export const revalidateUserAction = async (): Promise<void> => {
-	revalidateTag('users')
+	revalidateTag('users', 'max')
 }
 
 export type PadlockResponse = {

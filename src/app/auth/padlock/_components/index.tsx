@@ -52,10 +52,11 @@ const PadLockPage = ({ csrfToken, callbackUrl }: Props) => {
 			<div className="card bg-white shadow-lg w-96 h-[30rem] my-6">
 				<figure>
 					<Image
-						src={getImageUrl('/home/activity/activity-2.jpg')}
+						src={getImageUrl('/utils/padlock.webp')}
 						alt="padlock"
 						width={384}
 						height={250}
+						unoptimized
 					/>
 				</figure>
 				<div className="flex flex-col items-center justify-center gap-y-2 p-4">

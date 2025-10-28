@@ -8,13 +8,11 @@ import { logError } from '@/shared/utils/logger'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export async function metadata() {
-	return createMetaData({
-		title: 'おしらせ | あしたぼホームページ',
-		description: 'あしたぼホームページからのおしらせです。',
-		url: '/blogs',
-	})
-}
+export const metadata = createMetaData({
+	title: 'おしらせ | あしたぼホームページ',
+	description: 'あしたぼホームページからのおしらせです。',
+	url: '/blogs',
+})
 
 interface PostMeta {
 	slug: string

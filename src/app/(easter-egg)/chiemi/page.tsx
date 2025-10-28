@@ -5,18 +5,18 @@ const Page = async () => (
 	<EasterEgg
 		background="linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet)"
 		centerImage={{
-			src: getImageUrl('/shikishi/chie1.png'),
+			src: getImageUrl('/shikishi/chie1.webp'),
 			alt: 'center',
 		}}
 		message="ちえみさん卒業おめでとう"
 		cornerImages={[
 			{
-				src: getImageUrl('/shikishi/chie2.png'),
+				src: getImageUrl('/shikishi/chie2.webp'),
 				alt: 'corner',
 				style: { top: 0, right: 0 },
 			},
 			{
-				src: getImageUrl('/shikishi/chie3.png'),
+				src: getImageUrl('/shikishi/chie3.webp'),
 				alt: 'corner',
 				style: { bottom: 0, left: 0 },
 			},

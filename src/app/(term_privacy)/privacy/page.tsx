@@ -5,13 +5,11 @@ import rehypeRaw from 'rehype-raw'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 import { LuCalendar, LuCalendarSync } from '@/shared/ui/icons'
 
-export async function metadata() {
-	return createMetaData({
-		title: 'プライバシーポリシー | あしたぼホームページ',
-		description: 'あしたぼホームページのプライバシーポリシーです。',
-		url: '/privacy',
-	})
-}
+export const metadata = createMetaData({
+	title: 'プライバシーポリシー | あしたぼホームページ',
+	description: 'あしたぼホームページのプライバシーポリシーです。',
+	url: '/privacy',
+})
 
 const Page = async () => {
 	const filePath = path.join(

@@ -2,13 +2,11 @@ import SigninPage from '@/app/auth/signin/_components'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 
-export async function metadata() {
-	return createMetaData({
-		title: 'サインイン | あしたぼホームページ',
-		description: 'あしたぼホームページのサインインページです。',
-		url: '/auth/signin',
-	})
-}
+export const metadata = createMetaData({
+	title: 'サインイン | あしたぼホームページ',
+	description: 'あしたぼホームページのサインインページです。',
+	url: '/auth/signin',
+})
 
 /**
  * セッションがない場合、このページを表示

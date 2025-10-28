@@ -128,9 +128,9 @@ export const getBookingByUserIdAction = async ({
 const revalidateBookingCalendarsForDate = (date: string) => {
 	const ranges = getBookingCalendarRangesForDate(date)
 	ranges.forEach(({ startDate, endDate }) => {
-		revalidateTag(buildBookingCalendarTag(startDate, endDate))
+		revalidateTag(buildBookingCalendarTag(startDate, endDate), 'max')
 	})
-	revalidateTag(BOOKING_CALENDAR_TAG)
+	revalidateTag(BOOKING_CALENDAR_TAG, 'max')
 }
 
 export const createBookingAction = async ({
@@ -161,8 +161,8 @@ export const createBookingAction = async ({
 		return withFallbackMessage(res, '予約の作成に失敗しました。')
 	}
 
-	revalidateTag('booking')
-	revalidateTag(`booking-user-${userId}`)
+	revalidateTag('booking', 'max')
+	revalidateTag(`booking-user-${userId}`, 'max')
 	revalidateBookingCalendarsForDate(bookingDateKey)
 
 	return createdResponse({ id: res.data.id })
@@ -199,9 +199,9 @@ export const updateBookingAction = async ({
 		return withFallbackMessage(res, '予約の更新に失敗しました。')
 	}
 
-	revalidateTag('booking')
-	revalidateTag(`booking-detail-${bookingId}`)
-	revalidateTag(`booking-user-${userId}`)
+	revalidateTag('booking', 'max')
+	revalidateTag(`booking-detail-${bookingId}`, 'max')
+	revalidateTag(`booking-user-${userId}`, 'max')
 	revalidateBookingCalendarsForDate(bookingDateKey)
 
 	return noContentResponse()
@@ -230,9 +230,9 @@ export const deleteBookingAction = async ({
 
 	const bookingDateKey = toDateKey(bookingDate)
 
-	revalidateTag('booking')
-	revalidateTag(`booking-detail-${bookingId}`)
-	revalidateTag(`booking-user-${userId}`)
+	revalidateTag('booking', 'max')
+	revalidateTag(`booking-detail-${bookingId}`, 'max')
+	revalidateTag(`booking-user-${userId}`, 'max')
 	revalidateBookingCalendarsForDate(bookingDateKey)
 
 	const cookieStore = await cookies()

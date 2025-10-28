@@ -4,12 +4,10 @@ import { getUserIdWithNames } from '@/domains/schedule/api/scheduleActions'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 import { logError } from '@/shared/utils/logger'
 
-export async function metadata() {
-	return createMetaData({
-		title: '日程調整新規作成',
-		url: '/schedule/new',
-	})
-}
+export const metadata = createMetaData({
+	title: '日程調整新規作成',
+	url: '/schedule/new',
+})
 
 const Page = async () => {
 	return (

@@ -3,12 +3,10 @@ import BookingLogs from '@/app/booking/logs/_components'
 import { getAllBookingAction } from '@/domains/booking/api/bookingActions'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 
-export async function metadata() {
-	return createMetaData({
-		title: 'コマ表予約ログ | あしたぼホームページ',
-		url: '/booking/logs',
-	})
-}
+export const metadata = createMetaData({
+	title: 'コマ表予約ログ | あしたぼホームページ',
+	url: '/booking/logs',
+})
 
 const BookingLog = async () => {
 	const bookingLog = await getAllBookingAction()
