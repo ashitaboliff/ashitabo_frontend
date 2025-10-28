@@ -1,6 +1,6 @@
 import { failure, noContentResponse } from '@/shared/lib/api/helper'
 import { logError } from '@/shared/utils/logger'
-import { type ApiResponse, StatusCode } from '@/types/responseTypes'
+import { type ApiResponse, StatusCode } from '@/types/response'
 import type { Session } from '@/types/session'
 
 const CSRF_ENDPOINT = '/api/auth/csrf'

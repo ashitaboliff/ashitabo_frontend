@@ -13,7 +13,7 @@ import {
 	okResponse,
 	withFallbackMessage,
 } from '@/shared/lib/api/helper'
-import { type ApiResponse, StatusCode } from '@/types/responseTypes'
+import { type ApiResponse, StatusCode } from '@/types/response'
 import type { Session } from '@/types/session'
 
 const CSRF_COOKIE_KEYS = [

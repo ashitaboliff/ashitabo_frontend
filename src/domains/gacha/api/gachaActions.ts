@@ -19,7 +19,7 @@ import {
 	okResponse,
 	withFallbackMessage,
 } from '@/shared/lib/api/helper'
-import type { ApiResponse } from '@/types/responseTypes'
+import type { ApiResponse } from '@/types/response'
 
 export const getGachaByUserIdAction = async ({
 	userId,

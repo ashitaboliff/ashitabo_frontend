@@ -30,7 +30,7 @@ import {
 	withFallbackMessage,
 } from '@/shared/lib/api/helper'
 import { toDateKey } from '@/shared/utils'
-import { type ApiResponse, StatusCode } from '@/types/responseTypes'
+import { type ApiResponse, StatusCode } from '@/types/response'
 
 type BookingPayload = {
 	bookingDate: string

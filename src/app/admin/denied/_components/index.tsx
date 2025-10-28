@@ -19,7 +19,7 @@ import FlashMessage, {
 	type NoticeType,
 } from '@/shared/ui/molecules/FlashMessage'
 import { logError } from '@/shared/utils/logger'
-import type { ApiError } from '@/types/responseTypes'
+import type { ApiError } from '@/types/response'
 import DeniedBookingDeleteDialog from './DeniedBookingDeleteDialog'
 import DeniedBookingDetailDialog from './DeniedBookingDetailDialog'
 import DeniedBookingList from './DeniedBookingList'

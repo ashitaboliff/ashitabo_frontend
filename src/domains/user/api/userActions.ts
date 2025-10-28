@@ -3,7 +3,7 @@
 import type { Profile, UserForSelect } from '@/domains/user/model/userTypes'
 import { apiGet } from '@/shared/lib/api/crud'
 import { failure, okResponse } from '@/shared/lib/api/helper'
-import type { ApiResponse } from '@/types/responseTypes'
+import type { ApiResponse } from '@/types/response'
 
 export const getUsersForSelect = async (): Promise<
 	ApiResponse<UserForSelect[]>

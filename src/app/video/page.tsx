@@ -12,7 +12,7 @@ import {
 } from '@/domains/video/query/youtubeQuery'
 import Loading from '@/shared/ui/atoms/Loading'
 import { logError } from '@/shared/utils/logger'
-import type { ApiError } from '@/types/responseTypes'
+import type { ApiError } from '@/types/response'
 
 type Props = {
 	readonly searchParams: Promise<{

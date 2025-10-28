@@ -11,7 +11,7 @@ import { invalidateGachaPreviewCache } from '@/domains/gacha/hooks/useGachaPrevi
 import type { RarityType } from '@/domains/gacha/model/gachaTypes'
 import Gacha, { type GachaItem } from '@/domains/gacha/services/gacha'
 import CardAnimation from '@/domains/gacha/ui/animations/CardAnimation'
-import type { ApiResponse } from '@/types/responseTypes'
+import type { ApiResponse } from '@/types/response'
 
 interface GachaResultProps {
 	readonly version: string

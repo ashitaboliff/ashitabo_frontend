@@ -1,5 +1,5 @@
 import type { Part } from '@/domains/user/model/userTypes'
-import type { ApiResponse } from '@/types/responseTypes'
+import type { ApiResponse } from '@/types/response'
 
 export type { Part }
 

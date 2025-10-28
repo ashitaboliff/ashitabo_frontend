@@ -6,7 +6,7 @@ import {
 	parseAdminUserQuery,
 } from '@/domains/admin/query/adminUserQuery'
 import type { UserDetail } from '@/domains/user/model/userTypes'
-import type { ApiError } from '@/types/responseTypes'
+import type { ApiError } from '@/types/response'
 
 type Props = {
 	readonly searchParams: Promise<Record<string, string | string[] | undefined>>
