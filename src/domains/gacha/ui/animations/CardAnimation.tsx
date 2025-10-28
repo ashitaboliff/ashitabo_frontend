@@ -10,6 +10,7 @@ import {
 	rarityAnimations,
 } from '@/domains/gacha/ui/animations/rarityAnimations'
 import Sparkle from '@/domains/gacha/ui/effects/Sparkle'
+import ImageWithFallback from '@/shared/ui/atoms/ImageWithFallback'
 
 gsap.registerPlugin(useGSAP)
 
@@ -127,7 +128,7 @@ export const CardAnimation = ({
 			/>
 			<div ref={cardRef} className="w-full h-full transform-style-3d relative">
 				<div className="absolute w-full h-full backface-hidden rounded-lg overflow-hidden">
-					<img
+					<ImageWithFallback
 						src={frontImageSignedUrl}
 						alt={`ガチャ結果-${GachaRarityMap[rarity]}-おもて面`}
 						className="w-full h-full object-cover"
@@ -174,6 +175,7 @@ export const CardAnimation = ({
 							return (
 								<Sparkle
 									key={starId}
+									gradientId={id}
 									size={currentSize}
 									color={starColor}
 									style={{
