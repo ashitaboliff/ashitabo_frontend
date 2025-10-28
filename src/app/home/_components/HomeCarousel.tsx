@@ -1,37 +1,38 @@
 import Image from 'next/image'
+import { getImageUrl } from '@/shared/lib/r2'
 
 const list = [
 	{
-		src: '/home/homepage_1.jpg',
-		alt: '信州大学工学部・教育学部・長野県立大学軽音サークルあしたぼ',
+		src: getImageUrl('/home/page/1.webp'),
+		alt: '信州大学工学部・教育学部・長野県立大学軽音サークルあしたぼの公式ホームページトップ画像1枚目',
 	},
 	{
-		src: '/home/homepage_2.jpg',
-		alt: '信州大学工学部・教育学部・長野県立大学軽音サークルあしたぼ',
+		src: getImageUrl('/home/page/2.webp'),
+		alt: '信州大学工学部・教育学部・長野県立大学軽音サークルあしたぼの公式ホームページトップ画像2枚目',
 	},
 	{
-		src: '/home/homepage_3.jpg',
-		alt: '信州大学工学部・教育学部・長野県立大学軽音サークルあしたぼ',
+		src: getImageUrl('/home/page/3.webp'),
+		alt: '信州大学工学部・教育学部・長野県立大学軽音サークルあしたぼの公式ホームページトップ画像3枚目',
 	},
 	{
-		src: '/home/homepage_4.jpg',
-		alt: '信州大学工学部・教育学部・長野県立大学軽音サークルあしたぼ',
+		src: getImageUrl('/home/page/4.webp'),
+		alt: '信州大学工学部・教育学部・長野県立大学軽音サークルあしたぼの公式ホームページトップ画像4枚目',
 	},
 	{
-		src: '/home/homepage_5.jpg',
-		alt: '信州大学工学部・教育学部・長野県立大学軽音サークルあしたぼ',
+		src: getImageUrl('/home/page/5.webp'),
+		alt: '信州大学工学部・教育学部・長野県立大学軽音サークルあしたぼの公式ホームページトップ画像5枚目',
 	},
 	{
-		src: '/home/homepage_6.jpg',
-		alt: '信州大学工学部・教育学部・長野県立大学軽音サークルあしたぼ',
+		src: getImageUrl('/home/page/6.webp'),
+		alt: '信州大学工学部・教育学部・長野県立大学軽音サークルあしたぼの公式ホームページトップ画像6枚目',
 	},
 	{
-		src: '/home/homepage_7.jpg',
-		alt: '信州大学工学部・教育学部・長野県立大学軽音サークルあしたぼ',
+		src: getImageUrl('/home/page/7.webp'),
+		alt: '信州大学工学部・教育学部・長野県立大学軽音サークルあしたぼの公式ホームページトップ画像7枚目',
 	},
 	{
-		src: '/home/homepage_8.jpg',
-		alt: '信州大学工学部・教育学部・長野県立大学軽音サークルあしたぼ',
+		src: getImageUrl('/home/page/8.webp'),
+		alt: '信州大学工学部・教育学部・長野県立大学軽音サークルあしたぼの公式ホームページトップ画像8枚目',
 	},
 ]
 
@@ -57,6 +58,7 @@ const Carousel = () => {
 							height={675}
 							className="object-cover w-full h-auto"
 							priority={index === 0}
+							unoptimized
 						/>
 						<div className="absolute left-2 right-2 top-1/2 flex -translate-y-1/2 transform justify-between">
 							<a href={`#${previousSlideId}`} className="btn btn-offwhite">

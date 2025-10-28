@@ -1,9 +1,9 @@
+import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Inter } from 'next/font/google'
 import Script from 'next/script'
 import PublicEnv from '@/shared/lib/env/public'
 import { nicomoji } from '@/shared/lib/fonts'
-import { Analytics } from "@vercel/analytics/next"
-import { SpeedInsights } from "@vercel/speed-insights/next"
 import './globals.css'
 import type { ReactNode } from 'react'
 import { createMetaData } from '@/shared/hooks/useMetaData'

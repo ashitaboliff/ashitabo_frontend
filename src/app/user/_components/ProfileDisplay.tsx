@@ -22,6 +22,7 @@ const ProfileDisplay = ({ session, profile }: Props) => {
 				width={150}
 				height={150}
 				className="rounded-full object-cover w-24 h-24 md:w-36 md:h-36"
+				priority
 			/>
 			<div className="flex flex-col items-center md:items-start justify-center">
 				<div className="text-2xl md:text-4xl font-bold">{displayName}</div>

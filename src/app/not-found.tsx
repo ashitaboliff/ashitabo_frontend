@@ -1,28 +1,28 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import { getImageUrl } from '@/shared/lib/r2'
 
 export const metadata: Metadata = {
 	title: '404',
 }
 
 const NotFoundImages: { id: number; src: string; score: number }[] = [
-	{ id: 1, src: '/404-11.png', score: 150 },
-	{ id: 2, src: '/404-12.png', score: 200 },
-	{ id: 3, src: '/404-14.png', score: 100 },
-	{ id: 4, src: '/404-4.png', score: 150 },
-	{ id: 5, src: '/404-5.png', score: 10 },
-	{ id: 6, src: '/404-6.png', score: 100 },
-	{ id: 7, src: '/404-7.png', score: 30 },
-	{ id: 8, src: '/404-8.png', score: 120 },
-	{ id: 9, src: '/404-9.png', score: 5 },
-	{ id: 10, src: '/404-10.png', score: 135 },
+	{ id: 1, src: '/error/404/01.webp', score: 150 },
+	{ id: 2, src: '/error/404/02.webp', score: 200 },
+	{ id: 3, src: '/error/404/03.webp', score: 100 },
+	{ id: 4, src: '/error/404/04.webp', score: 150 },
+	{ id: 5, src: '/error/404/05.webp', score: 10 },
+	{ id: 6, src: '/error/404/06.webp', score: 100 },
+	{ id: 7, src: '/error/404/07.webp', score: 30 },
+	{ id: 8, src: '/error/404/08.webp', score: 120 },
+	{ id: 9, src: '/error/404/09.webp', score: 5 },
+	{ id: 10, src: '/error/404/10.webp', score: 135 },
 ]
 
 export default async function NotFound() {
-	// ランダムに画像を選択する
 	const selectImage = async () => {
-		const random = Math.floor(Math.random() * 1000) // 0~999の乱数
+		const random = Math.floor(Math.random() * 1000)
 		let cumulativeScore = 0
 
 		for (const image of NotFoundImages) {
@@ -31,7 +31,7 @@ export default async function NotFound() {
 				return image.src
 			}
 		}
-		return NotFoundImages[0].src // フォールバック（安全策）
+		return NotFoundImages[0].src
 	}
 
 	const selectedImage = await selectImage()
@@ -40,10 +40,11 @@ export default async function NotFound() {
 		<div className="flex flex-col items-center justify-center text-center">
 			<div className="mb-8">
 				<Image
-					src={selectedImage}
+					src={getImageUrl(selectedImage)}
 					alt="404 Not Found"
 					width={400}
 					height={225}
+					unoptimized
 					priority
 				/>
 			</div>

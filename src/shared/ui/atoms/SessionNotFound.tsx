@@ -1,16 +1,18 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { getImageUrl } from '@/shared/lib/r2'
 
 export default async function SessionForbidden() {
 	return (
 		<div className="flex flex-col items-center justify-center text-center">
 			<div className="mb-8">
 				<Image
-					src={'/utils/403Error.png'}
+					src={getImageUrl('/error/403.webp')}
 					alt="403 Forbidden"
 					width={400}
 					height={225}
 					priority
+					unoptimized
 				/>
 			</div>
 			<h1 className="text-4xl font-bold mb-4">403 Forbidden Page</h1>

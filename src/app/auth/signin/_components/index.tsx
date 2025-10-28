@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { useRouter } from 'next-nprogress-bar'
 import PublicEnv from '@/shared/lib/env/public'
 import { nicomoji } from '@/shared/lib/fonts'
+import { getImageUrl } from '@/shared/lib/r2'
 
 const SigninPage = () => {
 	const router = useRouter()
@@ -12,7 +13,13 @@ const SigninPage = () => {
 		<div className="flex flex-col items-center justify-center">
 			<div className="flex flex-col items-center justify-center card bg-white shadow-lg w-72 h-96 my-6">
 				<figure>
-					<Image src="/login.jpg" alt="login" width={300} height={250} />
+					<Image
+						src={getImageUrl('/utils/login.webp')}
+						alt="login"
+						width={300}
+						height={250}
+						unoptimized
+					/>
 				</figure>
 				<div className="flex flex-col items-center justify-center gap-y-2 p-4">
 					<div className={`text-3xl ${nicomoji.className}`}>利用登録</div>
