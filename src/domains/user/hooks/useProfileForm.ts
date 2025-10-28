@@ -20,7 +20,7 @@ import {
 import type { Profile } from '@/domains/user/model/userTypes'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { logError } from '@/shared/utils/logger'
-import { StatusCode } from '@/types/responseTypes'
+import { StatusCode } from '@/types/response'
 
 export type ProfileFormMode = 'create' | 'edit'
 

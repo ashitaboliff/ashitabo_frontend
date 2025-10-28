@@ -8,7 +8,7 @@ import {
 import type { DeniedBooking } from '@/domains/booking/model/bookingTypes'
 import useFlashMessage from '@/shared/hooks/useFlashMessage'
 import { getCurrentJSTDateString } from '@/shared/utils'
-import type { ApiError } from '@/types/responseTypes'
+import type { ApiError } from '@/types/response'
 
 type Props = {
 	readonly searchParams: Promise<Record<string, string | string[] | undefined>>

@@ -13,7 +13,7 @@ import Pagination from '@/shared/ui/atoms/Pagination'
 import RadioSortGroup from '@/shared/ui/atoms/RadioSortGroup'
 import SelectField from '@/shared/ui/atoms/SelectField'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
-import type { ApiError } from '@/types/responseTypes'
+import type { ApiError } from '@/types/response'
 import VideoItem from './VideoItem'
 import VideoSearchForm from './VideoSearchForm'
 

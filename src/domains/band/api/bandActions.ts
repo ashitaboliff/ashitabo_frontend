@@ -15,7 +15,7 @@ import {
 	okResponse,
 	withFallbackMessage,
 } from '@/shared/lib/api/helper'
-import { type ApiResponse, StatusCode } from '@/types/responseTypes'
+import { type ApiResponse, StatusCode } from '@/types/response'
 
 export const getBandDetailsAction = async (
 	bandId: string,

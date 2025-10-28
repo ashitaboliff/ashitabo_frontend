@@ -14,7 +14,7 @@ import SelectField from '@/shared/ui/atoms/SelectField'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import Popup from '@/shared/ui/molecules/Popup'
 import { formatDateJa, formatDateSlash } from '@/shared/utils/dateFormat'
-import type { ApiError } from '@/types/responseTypes'
+import type { ApiError } from '@/types/response'
 
 interface Props {
 	readonly playlists: PlaylistDoc[]

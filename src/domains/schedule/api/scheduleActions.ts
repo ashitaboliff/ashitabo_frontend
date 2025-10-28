@@ -14,7 +14,7 @@ import {
 	mapSuccess,
 	withFallbackMessage,
 } from '@/shared/lib/api/helper'
-import { type ApiResponse, StatusCode } from '@/types/responseTypes'
+import { type ApiResponse, StatusCode } from '@/types/response'
 
 export const getScheduleByIdAction = async (
 	scheduleId: string,

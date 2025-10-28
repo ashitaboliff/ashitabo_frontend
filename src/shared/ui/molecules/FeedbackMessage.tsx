@@ -1,7 +1,7 @@
 import { isValidElement, type ReactNode } from 'react'
 import Message, { type MessageVariant } from '@/shared/ui/atoms/Message'
 import type { FeedbackMessageType } from '@/types/feedback'
-import type { ApiError } from '@/types/responseTypes'
+import type { ApiError } from '@/types/response'
 
 export type MessageSource =
 	| FeedbackMessageType

@@ -23,7 +23,7 @@ import {
 	withFallbackMessage,
 } from '@/shared/lib/api/helper'
 import { recordJoinSorted } from '@/shared/utils/cacheTag'
-import type { ApiResponse } from '@/types/responseTypes'
+import type { ApiResponse } from '@/types/response'
 
 export const searchVideoAction = async (
 	query: YoutubeSearchQuery,

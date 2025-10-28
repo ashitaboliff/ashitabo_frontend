@@ -7,7 +7,7 @@ import {
 	type ErrorStatus,
 	StatusCode,
 	type SuccessStatus,
-} from '@/types/responseTypes'
+} from '@/types/response'
 
 export type QueryValue =
 	| string
