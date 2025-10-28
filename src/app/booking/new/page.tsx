@@ -2,12 +2,10 @@ import BookingCreate from '@/app/booking/new/_components'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 
-export async function metadata() {
-	return createMetaData({
-		title: 'コマ表新規予約 | あしたぼホームページ',
-		url: '/booking/new',
-	})
-}
+export const metadata = createMetaData({
+	title: 'コマ表新規予約 | あしたぼホームページ',
+	url: '/booking/new',
+})
 
 interface Props {
 	searchParams: Promise<{ [key: string]: string | string[] | undefined }>

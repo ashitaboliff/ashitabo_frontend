@@ -78,7 +78,7 @@ export const deleteUserAction = async ({
 		return withFallbackMessage(res, 'ユーザー削除に失敗しました')
 	}
 
-	revalidateTag('users')
+	revalidateTag('users', 'max')
 
 	return okResponse(null)
 }
@@ -102,7 +102,7 @@ export const updateUserRoleAction = async ({
 		return noContentResponse()
 	}
 
-	revalidateTag('users')
+	revalidateTag('users', 'max')
 
 	return okResponse(null)
 }
@@ -122,7 +122,7 @@ export const createPadLockAction = async ({
 		return withFallbackMessage(res, '部室パスワードの作成に失敗しました')
 	}
 
-	revalidateTag('padlocks')
+	revalidateTag('padlocks', 'max')
 
 	return createdResponse('created')
 }
@@ -138,7 +138,7 @@ export const deletePadLockAction = async ({
 		return withFallbackMessage(res, '部室パスワードの削除に失敗しました')
 	}
 
-	revalidateTag('padlocks')
+	revalidateTag('padlocks', 'max')
 
 	return noContentResponse()
 }

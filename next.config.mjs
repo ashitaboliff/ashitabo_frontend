@@ -3,6 +3,10 @@ const imageRemotePatterns = [
 		protocol: 'https',
 		hostname: 'profile.line-scdn.net',
 	},
+	{
+		protocol: 'https',
+		hostname: 'cdn.ashitabo.net',
+	},
 ]
 
 const appUrl = process.env.NEXT_PUBLIC_API_URL
@@ -41,6 +45,8 @@ const nextConfig = {
 	images: {
 		remotePatterns: imageRemotePatterns,
 	},
+	turbopack: {},
+	reactCompiler: true,
 }
 
 export default withBundleAnalyzer(nextConfig)

@@ -20,7 +20,8 @@ jobs:
       cancel-in-progress: true
     strategy:
       matrix:
-        command: [check, ts, ci-build]
+        command: [check, ts, build]
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,5 +36,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Ran ${{ matrix.command }}
+      - name: Set up environment variables
+        # ここで最低限のダミー値を設定
+        run: |
+          echo "NEXT_PUBLIC_APP_URL=https://example.com" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_API_URL=https://api.example.com" >> $GITHUB_ENV
+          echo "NODE_ENV=production" >> $GITHUB_ENV
+          echo "API_KEY=dummy-ci-key" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_GA_ID=" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_ADS_ID=" >> $GITHUB_ENV
+          echo "MAINTENANCE_MODE=" >> $GITHUB_ENV
+          echo "MAINTENANCE_WHITELIST=" >> $GITHUB_ENV
+
+      - name: Run ${{ matrix.command }}
         run: npm run ${{ matrix.command }}

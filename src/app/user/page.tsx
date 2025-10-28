@@ -9,13 +9,11 @@ import type { Profile } from '@/domains/user/model/userTypes'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 import { logError } from '@/shared/utils/logger'
 
-export async function metadata() {
-	return createMetaData({
-		title: 'ユーザーページ',
-		description: '自分のした予約などを確認できます',
-		url: '/user',
-	})
-}
+export const metadata = createMetaData({
+	title: 'ユーザーページ',
+	description: '自分のした予約などを確認できます',
+	url: '/user',
+})
 
 const UserPageServer = async () => {
 	return (

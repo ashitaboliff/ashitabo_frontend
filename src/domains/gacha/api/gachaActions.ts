@@ -111,8 +111,8 @@ export const createUserGachaResultAction = async ({
 		return withFallbackMessage(res, 'ガチャ記録の保存に失敗しました。')
 	}
 
-	revalidateTag(`gacha-user-${userId}`)
-	revalidateTag(`gacha-id-${userId}-${gachaSrc}`)
+	revalidateTag(`gacha-user-${userId}`, 'max')
+	revalidateTag(`gacha-id-${userId}-${gachaSrc}`, 'max')
 
 	return createdResponse('created')
 }

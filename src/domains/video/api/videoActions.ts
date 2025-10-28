@@ -155,9 +155,9 @@ export const postSyncPlaylistAction = async (): Promise<
 	})
 
 	if (res.ok) {
-		revalidateTag('videos')
-		revalidateTag(YOUTUBE_IDS_TAG('video'))
-		revalidateTag(YOUTUBE_IDS_TAG('playlist'))
+		revalidateTag('videos', 'max')
+		revalidateTag(YOUTUBE_IDS_TAG('video'), 'max')
+		revalidateTag(YOUTUBE_IDS_TAG('playlist'), 'max')
 	}
 
 	return withFallbackMessage(res, 'プレイリストの作成に失敗しました。')

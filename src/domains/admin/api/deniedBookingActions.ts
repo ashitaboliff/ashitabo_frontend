@@ -149,7 +149,7 @@ export const createDeniedBookingAction = async (
 		return withFallbackMessage(res, '予約禁止日の作成に失敗しました')
 	}
 
-	revalidateTag('denied-bookings')
+	revalidateTag('denied-bookings', 'max')
 
 	const cookieStore = await cookies()
 	cookieStore.set(
@@ -212,7 +212,7 @@ export const deleteDeniedBookingAction = async ({
 		return withFallbackMessage(res, '予約禁止日の削除に失敗しました')
 	}
 
-	revalidateTag('denied-bookings')
+	revalidateTag('denied-bookings', 'max')
 
 	return noContentResponse()
 }
