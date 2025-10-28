@@ -20,17 +20,17 @@ const NotFoundImages: { id: number; src: string; score: number }[] = [
 ]
 
 export default function NotFound() {
-	const random = Math.floor(Math.random() * 1000)
-	let cumulativeScore = 0
+	// const random = Math.floor(Math.random() * 1000)
+	// let cumulativeScore = 0
 	let selectedImage = NotFoundImages[0].src
 
-	for (const image of NotFoundImages) {
-		cumulativeScore += image.score
-		if (random < cumulativeScore) {
-			selectedImage = image.src
-			break
-		}
-	}
+	// for (const image of NotFoundImages) {
+	// 	cumulativeScore += image.score
+	// 	if (random < cumulativeScore) {
+	// 		selectedImage = image.src
+	// 		break
+	// 	}
+	// }
 
 	return (
 		<div className="flex flex-col items-center justify-center text-center">
