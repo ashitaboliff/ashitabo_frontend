@@ -2,6 +2,8 @@ import { Inter } from 'next/font/google'
 import Script from 'next/script'
 import PublicEnv from '@/shared/lib/env/public'
 import { nicomoji } from '@/shared/lib/fonts'
+import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import './globals.css'
 import type { ReactNode } from 'react'
 import { createMetaData } from '@/shared/hooks/useMetaData'
@@ -29,6 +31,8 @@ export default async function RootLayout({
 console.log('%cRespect for 変態糞学生', 'color: #ff0000; font-size: 20px; padding: 5px; font-weight: bold; font-style: italic;');
 console.log('%chttps://www.github.com/ashitaboliff/', 'color: #000000; font-size: 14px; padding: 5px; text-decoration: underline;');`}
 				</Script>
+				<Analytics />
+				<SpeedInsights />
 				<ProgressBarProvider>
 					<Header className={nicomoji.className} />
 					{children}

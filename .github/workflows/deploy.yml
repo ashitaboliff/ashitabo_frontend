@@ -1,0 +1,111 @@
+name: Deploy (production)
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  Deploy:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: frontend-prod-${{ github.ref }}
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+
+      - name: Deploy to Vercel
+        run: vercel --prod --token ${{ secrets.VERCEL_TOKEN }} --confirm --scope ${{ secrets.VERCEL_ORG_ID }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      - name: Notify Discord (production release)
+        if: success()
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          GITHUB_REF: ${{ github.ref }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+        run: |
+          if [ -z "${DISCORD_WEBHOOK}" ]; then
+            echo "DISCORD_WEBHOOK is not configured; skipping notification."
+            exit 0
+          fi
+
+          short_sha="${GITHUB_SHA::7}"
+          branch="${GITHUB_REF##*/}"
+          commit_url="https://github.com/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
+          run_url="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          description="Frontend production deploy completed for commit [${short_sha}](${commit_url})."
+          commit_title=$(git log -1 --pretty=%s)
+          commit_body=$(git log -1 --pretty=%b)
+          if [ ${#commit_body} -gt 900 ]; then
+            commit_body="${commit_body:0:897}..."
+          fi
+          repository_url="https://github.com/${GITHUB_REPOSITORY}"
+          actor_url="https://github.com/${GITHUB_ACTOR}"
+          avatar_url="${actor_url}.png"
+
+          payload=$(jq -n \
+            --arg username "あしたぼホームページ CI/CD" \
+            --arg title "フロントエンドデプロイ通知" \
+            --arg description "$description" \
+            --arg actor "$GITHUB_ACTOR" \
+            --arg actor_url "$actor_url" \
+            --arg avatar_url "$avatar_url" \
+            --arg branch "$branch" \
+            --arg environment "Production" \
+            --arg run_url "$run_url" \
+            --arg repo "$GITHUB_REPOSITORY" \
+            --arg repository_url "$repository_url" \
+            --arg timestamp "$timestamp" \
+            --arg commit_url "$commit_url" \
+            --arg commit_title "$commit_title" \
+            --arg commit_body "$commit_body" \
+            '{
+              username: $username,
+              embeds: [
+                {
+                  title: $title,
+                  description: $description,
+                  url: $run_url,
+                  color: 15105570,
+                  timestamp: $timestamp,
+                  author: {
+                    name: $actor,
+                    url: $actor_url,
+                    icon_url: $avatar_url
+                  },
+                  footer: {
+                    text: "Ashitabo Deploy Pipeline · \($environment)",
+                    icon_url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+                  },
+                  fields: (
+                    [
+                      {name: "Repository", value: "[\($repo)](\($repository_url))", inline: true},
+                      {name: "Branch", value: $branch, inline: true},
+                      {name: "Environment", value: $environment, inline: true},
+                      {name: "Commit", value: "[\($commit_title)](\($commit_url))", inline: false},
+                      {name: "Workflow Run", value: "[Open run](\($run_url))", inline: false}
+                    ] +
+                    (if ($commit_body | length) > 0 then [{name: "Notes", value: $commit_body, inline: false}] else [] end)
+                  )
+                }
+              ]
+            }')
+
+          curl -s -H "Content-Type: application/json" -X POST -d "$payload" "$DISCORD_WEBHOOK"
