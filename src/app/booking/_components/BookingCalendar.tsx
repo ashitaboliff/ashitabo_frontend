@@ -39,7 +39,9 @@ const BookingCalendar = ({ bookingDate, timeList, className }: Props) => {
 		<CalendarFrame
 			dates={dateList}
 			times={timeList}
-			containerClassName={className ? `flex justify-center ${className}` : 'flex justify-center'}
+			containerClassName={
+				className ? `flex justify-center ${className}` : 'flex justify-center'
+			}
 			renderCell={({ date, timeIndex }) => {
 				const booking = bookingDate[date]?.[timeIndex]
 				const baseClass = 'border border-base-200 p-0'
