@@ -7,7 +7,6 @@ import { nicomoji } from '@/shared/lib/fonts'
 import './globals.css'
 import type { ReactNode } from 'react'
 import { createMetaData } from '@/shared/hooks/useMetaData'
-import ProgressBarProvider from '@/shared/ui/atoms/ProgressBarProvider'
 import Footer from '@/shared/ui/layout/Footer'
 import Header from '@/shared/ui/layout/Header'
 
@@ -33,11 +32,9 @@ console.log('%chttps://www.github.com/ashitaboliff/', 'color: #000000; font-size
 				</Script>
 				<Analytics />
 				<SpeedInsights />
-				<ProgressBarProvider>
-					<Header className={nicomoji.className} />
-					{children}
-					<Footer />
-				</ProgressBarProvider>
+				<Header className={nicomoji.className} />
+				{children}
+				<Footer />
 				<Script
 					src={`https://www.googletagmanager.com/gtag/js?id=${PublicEnv.NEXT_PUBLIC_GA_ID}`}
 					strategy="afterInteractive"

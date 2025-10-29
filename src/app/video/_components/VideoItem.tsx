@@ -1,7 +1,7 @@
 'use client'
 
 import { YouTubeEmbed } from '@next/third-parties/google'
-import { useRouter } from 'next-nprogress-bar'
+import { useRouter } from 'next/navigation'
 import type { PlaylistDoc, Video } from '@/domains/video/model/videoTypes'
 
 type BandItemProps = {

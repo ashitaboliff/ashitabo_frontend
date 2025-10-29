@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next-nprogress-bar'
+import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
 import PadlockCreateDialog from '@/app/admin/padlock/_components/PadlockCreateDialog'
 import PadlockDeleteDialog from '@/app/admin/padlock/_components/PadlockDeleteDialog'

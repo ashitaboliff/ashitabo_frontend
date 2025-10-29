@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useRouter } from 'next-nprogress-bar'
+import { useRouter } from 'next/navigation'
 import PublicEnv from '@/shared/lib/env/public'
 import { nicomoji } from '@/shared/lib/fonts'
 import { getImageUrl } from '@/shared/lib/r2'

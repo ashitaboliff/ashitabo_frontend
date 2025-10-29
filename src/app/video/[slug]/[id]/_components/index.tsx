@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next-nprogress-bar'
+import { useRouter } from 'next/navigation'
 import YouTube from 'react-youtube'
 import type { PlaylistItem, Video } from '@/domains/video/model/videoTypes'
 import { useWindowOpen } from '@/shared/hooks/useBrowserApis'

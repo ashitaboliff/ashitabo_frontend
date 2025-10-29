@@ -119,11 +119,8 @@ const BookingEditCalendarPopup = ({
 						bookingTime={bookingTime}
 						setCalendarOpen={handleSelectClose}
 						setValue={setValue}
+						className={isLoading ? 'opacity-30' : undefined}
 					/>
-				) : isLoading ? (
-					<div className="flex justify-center">
-						<div className="skeleton h-96 w-96"></div>
-					</div>
 				) : (
 					<p className="text-sm text-center text-error">
 						予約枠を取得できませんでした。時間をおいて再度お試しください。

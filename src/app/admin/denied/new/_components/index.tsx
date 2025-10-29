@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter } from 'next-nprogress-bar'
+import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
 import { Controller, type UseFormRegister, useForm } from 'react-hook-form'
 import { createDeniedBookingAction } from '@/domains/admin/api/deniedBookingActions'
