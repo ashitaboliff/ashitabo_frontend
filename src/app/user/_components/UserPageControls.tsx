@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next-nprogress-bar'
+import { useRouter } from 'next/navigation'
 import { type ReactNode, useCallback, useState } from 'react'
 import { signOutUser as signOutAction } from '@/domains/user/hooks/useSignOut'
 import { useFeedback } from '@/shared/hooks/useFeedback'

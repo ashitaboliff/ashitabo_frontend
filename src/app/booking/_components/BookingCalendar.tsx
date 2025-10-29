@@ -1,7 +1,7 @@
 'use client'
 
 import { addDays } from 'date-fns'
-import { useRouter } from 'next-nprogress-bar'
+import { useRouter } from 'next/navigation'
 import { useMemo } from 'react'
 import {
 	ABLE_BOOKING_DAYS,
@@ -21,12 +21,13 @@ import { DateToDayISOstring, toDateKey } from '@/shared/utils'
  * @param booking_date
  * @returns
  */
-interface Props {
+type Props = {
 	readonly bookingDate: BookingResponse
 	readonly timeList: string[]
+	readonly className?: string
 }
 
-const BookingCalendar = ({ bookingDate, timeList }: Props) => {
+const BookingCalendar = ({ bookingDate, timeList, className }: Props) => {
 	const router = useRouter()
 	const dateList = useMemo(() => Object.keys(bookingDate), [bookingDate])
 	const bookingAbleMaxDate = DateToDayISOstring(
@@ -38,6 +39,9 @@ const BookingCalendar = ({ bookingDate, timeList }: Props) => {
 		<CalendarFrame
 			dates={dateList}
 			times={timeList}
+			containerClassName={
+				className ? `flex justify-center ${className}` : 'flex justify-center'
+			}
 			renderCell={({ date, timeIndex }) => {
 				const booking = bookingDate[date]?.[timeIndex]
 				const baseClass = 'border border-base-200 p-0'

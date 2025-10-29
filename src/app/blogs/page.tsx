@@ -17,7 +17,7 @@ export const metadata = createMetaData({
 interface PostMeta {
 	slug: string
 	title: string
-	createdAt?: string // Optional, depends on frontmatter
+	createdAt?: string
 }
 
 async function getAllPostsMeta(): Promise<PostMeta[]> {
@@ -27,7 +27,7 @@ async function getAllPostsMeta(): Promise<PostMeta[]> {
 		filenames = fs.readdirSync(postsDirectory)
 	} catch (error) {
 		logError('Error reading posts directory', error)
-		return [] // Return empty if directory doesn't exist or other error
+		return []
 	}
 
 	const postsMeta: PostMeta[] = []
@@ -37,9 +37,6 @@ async function getAllPostsMeta(): Promise<PostMeta[]> {
 			const filePath = path.join(postsDirectory, filename)
 			try {
 				const source = fs.readFileSync(filePath, 'utf8')
-				// We only need frontmatter here, so compileMDX is a bit heavy,
-				// but it's the recommended way with next-mdx-remote/rsc to get frontmatter.
-				// A lighter frontmatter parser could be used if performance becomes an issue.
 				const { frontmatter } = await compileMDX<{
 					title: string
 					createdAt?: string
@@ -49,12 +46,11 @@ async function getAllPostsMeta(): Promise<PostMeta[]> {
 				})
 				postsMeta.push({
 					slug: filename.replace(/\.mdx$/, ''),
-					title: frontmatter.title || '無題の記事', // Fallback title
+					title: frontmatter.title || '無題の記事',
 					createdAt: frontmatter.createdAt,
 				})
 			} catch (error) {
 				logError(`Error processing frontmatter for ${filename}`, error)
-				// Optionally add a post with an error state or skip it
 				postsMeta.push({
 					slug: filename.replace(/\.mdx$/, ''),
 					title: `Error: ${filename}`,
@@ -63,14 +59,13 @@ async function getAllPostsMeta(): Promise<PostMeta[]> {
 		}
 	}
 
-	// Sort posts by createdAt date if available, newest first
 	postsMeta.sort((a, b) => {
 		if (a.createdAt && b.createdAt) {
 			return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
 		}
-		if (a.createdAt) return -1 // a comes first
-		if (b.createdAt) return 1 // b comes first
-		return 0 // no change in order
+		if (a.createdAt) return -1
+		if (b.createdAt) return 1
+		return 0
 	})
 
 	return postsMeta

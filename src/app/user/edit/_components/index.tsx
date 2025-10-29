@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { useProfileForm } from '@/domains/user/hooks/useProfileForm'
 import { expectedYearMap } from '@/domains/user/model/profileSchema'
 import { PartOptions, type Profile } from '@/domains/user/model/userTypes'
@@ -14,6 +15,7 @@ interface Props {
 }
 
 const ProfileEdit = ({ profile }: Props) => {
+	const router = useRouter()
 	const { form, onSubmit, feedback } = useProfileForm({ mode: 'edit', profile })
 	const submitFeedback = feedback.feedback
 
@@ -111,9 +113,16 @@ const ProfileEdit = ({ profile }: Props) => {
 					</>
 				)}
 
-				<div className="flex justify-center">
+				<div className="flex flex-row gap-2 justify-center">
 					<button type="submit" className="btn btn-primary">
 						保存
+					</button>
+					<button
+						type="button"
+						className="btn btn-outline"
+						onClick={() => router.back()}
+					>
+						戻る
 					</button>
 				</div>
 			</form>

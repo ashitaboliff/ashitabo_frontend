@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next-nprogress-bar'
+import { useRouter } from 'next/navigation'
 
 const ScheduleMainPage = () => {
 	const router = useRouter()

@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next-nprogress-bar'
+import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
 import { deleteDeniedBookingAction } from '@/domains/admin/api/deniedBookingActions'
 import type { DeniedBookingSort } from '@/domains/admin/model/adminTypes'

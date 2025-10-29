@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next-nprogress-bar'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useSession } from '@/domains/auth/hooks/useSession'
 import AuthIssueLayout from '@/domains/auth/ui/AuthIssueLayout'

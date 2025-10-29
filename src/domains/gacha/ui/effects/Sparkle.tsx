@@ -10,14 +10,26 @@ interface SparkleProps {
 	style?: CSSProperties
 	className?: string
 	rarity: RarityType
+	gradientId: string
 }
 
+/**
+ * カードの星型エフェクトコンポーネント
+ * @param size 星のサイズ
+ * @param color 星の色
+ * @param style 追加のスタイル
+ * @param className 追加のクラス名
+ * @param rarity レアリティ
+ * @param gradientId グラデーションid
+ * @returns
+ */
 const Sparkle = ({
 	size,
 	color,
 	style = {},
 	className,
 	rarity,
+	gradientId,
 }: SparkleProps) => {
 	const sparkleRef = useRef<SVGSVGElement>(null)
 
@@ -68,7 +80,7 @@ const Sparkle = ({
 			) : (
 				<polygon
 					points="50,0 65,40 100,50 65,60 50,100 35,60 0,50 35,40"
-					fill="url(#goldGradient)"
+					fill={`url(#${gradientId})`}
 				/>
 			)}
 		</svg>

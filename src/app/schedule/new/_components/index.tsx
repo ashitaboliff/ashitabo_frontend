@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { eachDayOfInterval } from 'date-fns'
-import { useRouter } from 'next-nprogress-bar'
+import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form'
 import { createScheduleAction } from '@/domains/schedule/api/scheduleActions'
