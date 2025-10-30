@@ -1,21 +1,27 @@
 'use client'
 
 import { useCallback, useState } from 'react'
+import { formatErrorMessage } from '@/shared/lib/error'
 import type { FeedbackMessageType } from '@/types/feedback'
 import type { ApiError } from '@/types/response'
 
-const normalizeApiError = (error: ApiError): FeedbackMessageType => ({
-	kind: 'error',
-	message: error.message,
-	title: 'エラーが発生しました',
-	code: error.status,
-	details:
-		typeof error.details === 'string'
-			? error.details
-			: error.details
-				? JSON.stringify(error.details)
-				: undefined,
-})
+const normalizeApiError = (error: ApiError): FeedbackMessageType => {
+	const formatted = formatErrorMessage(
+		error.status,
+		error.message,
+		error.details,
+	)
+
+	return {
+		kind: 'error',
+		title: formatted.title,
+		message: formatted.action
+			? `${formatted.message} ${formatted.action}`
+			: formatted.message,
+		code: error.status,
+		details: formatted.details,
+	}
+}
 
 export const useFeedback = (initial?: FeedbackMessageType | null) => {
 	const [feedback, setFeedback] = useState<FeedbackMessageType | null>(
