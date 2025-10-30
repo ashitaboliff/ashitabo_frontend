@@ -1,4 +1,5 @@
 import { isValidElement, type ReactNode } from 'react'
+import { formatErrorMessage } from '@/shared/lib/error'
 import Message, { type MessageVariant } from '@/shared/ui/atoms/Message'
 import type { FeedbackMessageType } from '@/types/feedback'
 import type { ApiError } from '@/types/response'
@@ -54,26 +55,27 @@ const FeedbackMessage = ({
 	}
 
 	if (isApiError(source)) {
-		const details =
-			typeof source.details === 'string'
-				? source.details
-				: source.details
-					? JSON.stringify(source.details)
-					: null
+		const formatted = formatErrorMessage(
+			source.status,
+			source.message,
+			source.details,
+		)
 		return (
 			<Message
 				variant="error"
 				className={className}
 				showIcon={showIcon}
 				iconClassName={iconClassName}
-				title="エラーが発生しました"
+				title={formatted.title}
 			>
-				<p>
-					{source.status ? `(${source.status}) ` : ''}
-					{source.message}
-				</p>
-				{details ? (
-					<p className="text-xs opacity-80 break-words">{details}</p>
+				<p>{formatted.message}</p>
+				{formatted.action ? (
+					<p className="mt-1 font-medium">{formatted.action}</p>
+				) : null}
+				{formatted.details ? (
+					<p className="text-xs opacity-80 break-words mt-2">
+						{formatted.details}
+					</p>
 				) : null}
 			</Message>
 		)
@@ -89,9 +91,11 @@ const FeedbackMessage = ({
 				iconClassName={iconClassName}
 				title={source.title}
 			>
-				{source.message}
+				<p>{source.message}</p>
 				{source.details ? (
-					<p className="text-xs opacity-80 break-words">{source.details}</p>
+					<p className="text-xs opacity-80 break-words mt-2">
+						{source.details}
+					</p>
 				) : null}
 			</Message>
 		)
