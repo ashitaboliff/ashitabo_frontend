@@ -7,14 +7,53 @@ import { makeAuthDetails } from '@/domains/auth/utils/sessionInfo'
 import type { ProfileFormValues } from '@/domains/user/model/profileSchema'
 import type { Profile } from '@/domains/user/model/userTypes'
 import { apiGet, apiPost, apiPut } from '@/shared/lib/api/crud'
-import {
-	createdResponse,
-	failure,
-	okResponse,
-	withFallbackMessage,
-} from '@/shared/lib/api/helper'
+import { createdResponse, failure, okResponse } from '@/shared/lib/api/helper'
+import { getGenericStatusMessage } from '@/shared/lib/error'
 import { type ApiResponse, StatusCode } from '@/types/response'
 import type { Session } from '@/types/session'
+
+/**
+ * パドロック認証のエラーメッセージを生成
+ */
+const getPadlockErrorMessage = (status: number): string => {
+	switch (status) {
+		case StatusCode.BAD_REQUEST:
+			return 'パスワードを入力してください。'
+		case StatusCode.UNAUTHORIZED:
+		case StatusCode.FORBIDDEN:
+			return 'パスワードが正しくありません。正しいパスワードを入力してください。'
+		default:
+			return getGenericStatusMessage(status)
+	}
+}
+
+/**
+ * プロフィール作成のエラーメッセージを生成
+ */
+const getCreateProfileErrorMessage = (status: number): string => {
+	switch (status) {
+		case StatusCode.BAD_REQUEST:
+			return 'プロフィール情報に不備があります。入力内容を確認してください。'
+		case StatusCode.CONFLICT:
+			return 'プロフィールは既に作成されています。'
+		default:
+			return getGenericStatusMessage(status)
+	}
+}
+
+/**
+ * プロフィール更新のエラーメッセージを生成
+ */
+const getUpdateProfileErrorMessage = (status: number): string => {
+	switch (status) {
+		case StatusCode.BAD_REQUEST:
+			return 'プロフィール情報に不備があります。入力内容を確認してください。'
+		case StatusCode.NOT_FOUND:
+			return 'プロフィールが見つかりませんでした。'
+		default:
+			return getGenericStatusMessage(status)
+	}
+}
 
 const CSRF_COOKIE_KEYS = [
 	'authjs.csrf-token',
@@ -80,7 +119,10 @@ export const createProfileAction = async ({
 	})
 
 	if (!res.ok) {
-		return withFallbackMessage(res, 'ユーザープロフィールの作成に失敗しました')
+		return {
+			...res,
+			message: getCreateProfileErrorMessage(res.status),
+		}
 	}
 
 	revalidateTag(`user-profile-${userId}`, 'max')
@@ -101,7 +143,10 @@ export const putProfileAction = async ({
 	})
 
 	if (!res.ok) {
-		return withFallbackMessage(res, 'ユーザープロフィールの更新に失敗しました')
+		return {
+			...res,
+			message: getUpdateProfileErrorMessage(res.status),
+		}
 	}
 
 	revalidateTag(`user-profile-${userId}`, 'max')
@@ -132,7 +177,10 @@ export const padLockAction = async (
 	if (!res.ok) {
 		const store = await cookies()
 		store.delete('padlockToken')
-		return withFallbackMessage(res, 'パスワードロックに失敗しました')
+		return {
+			...res,
+			message: getPadlockErrorMessage(res.status),
+		}
 	}
 
 	const data = res.data

@@ -1,5 +1,1 @@
-export {
-	type FormattedErrorMessage,
-	formatErrorAsString,
-	formatErrorMessage,
-} from './errorFormatter'
+export { getGenericStatusMessage } from './statusMessages'
