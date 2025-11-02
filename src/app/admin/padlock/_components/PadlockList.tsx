@@ -25,9 +25,9 @@ const PadlockList = ({
 	onSelect,
 }: PadlockListProps) => {
 	return (
-		<div className="overflow-x-auto w-full flex flex-col justify-center gap-y-2">
-			<div className="flex flex-row items-center ml-auto space-x-2 w-full max-w-xs">
-				<p className="text-sm whitespace-nowrap">表示件数:</p>
+		<div className="flex w-full flex-col justify-center gap-y-2 overflow-x-auto">
+			<div className="ml-auto flex w-full max-w-xs flex-row items-center space-x-2">
+				<p className="whitespace-nowrap text-sm">表示件数:</p>
 				<SelectField
 					value={perPage}
 					onChange={(event) => onPerPageChange(Number(event.target.value))}
@@ -35,7 +35,7 @@ const PadlockList = ({
 					name="padLocksPerPage"
 				/>
 			</div>
-			<table className="table table-zebra table-sm w-full">
+			<table className="table-zebra table-sm table w-full">
 				<thead>
 					<tr>
 						<th></th>
@@ -47,7 +47,7 @@ const PadlockList = ({
 				<tbody>
 					{padLocks.length === 0 ? (
 						<tr>
-							<td colSpan={4} className="text-center py-6 text-sm">
+							<td colSpan={4} className="py-6 text-center text-sm">
 								パスワードが登録されていません。
 							</td>
 						</tr>

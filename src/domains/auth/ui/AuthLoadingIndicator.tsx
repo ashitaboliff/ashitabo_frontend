@@ -4,9 +4,9 @@ interface Props {
 
 const AuthLoadingIndicator = ({ message = '処理中です...' }: Props) => {
 	return (
-		<div className="fixed inset-0 bg-black/30 flex flex-col items-center justify-center z-50">
+		<div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/30">
 			<div className="loading loading-spinner loading-lg"></div>
-			<p className="text-white text-lg mt-4">{message}</p>
+			<p className="mt-4 text-lg text-white">{message}</p>
 		</div>
 	)
 }

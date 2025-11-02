@@ -66,7 +66,7 @@ const TextInputField = ({
 	...props
 }: TextInputFieldProps) => {
 	return (
-		<div className="flex flex-col w-full">
+		<div className="flex w-full flex-col">
 			{label && (
 				<LabelInputField
 					label={label}
@@ -79,7 +79,7 @@ const TextInputField = ({
 				type={type}
 				id={labelId}
 				placeholder={placeholder}
-				className={`input w-full pr-10 bg-white ${className}`}
+				className={`input w-full bg-white pr-10 ${className}`}
 				disabled={disabled}
 				value={value}
 				onChange={onChange}
@@ -94,7 +94,7 @@ const TextInputField = ({
 
 			{errorMessage && (
 				<div className="label">
-					<span className="text-error label-text-alt">{errorMessage}</span>
+					<span className="label-text-alt text-error">{errorMessage}</span>
 				</div>
 			)}
 		</div>

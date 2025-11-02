@@ -33,7 +33,7 @@ const PadLockPage = ({ csrfToken, callbackUrl }: Props) => {
 	})
 
 	return (
-		<div className="flex flex-col items-center justify-center space-y-2 h-full">
+		<div className="flex h-full flex-col items-center justify-center space-y-2">
 			{isLoading && <AuthLoadingIndicator message={loadingMessage} />}
 			<form
 				ref={formRef}
@@ -49,7 +49,7 @@ const PadLockPage = ({ csrfToken, callbackUrl }: Props) => {
 				/>
 				<input type="hidden" name="padlockToken" defaultValue="" />
 			</form>
-			<div className="card bg-white shadow-lg w-96 h-[30rem] my-6">
+			<div className="card my-6 h-[30rem] w-96 bg-white shadow-lg">
 				<figure>
 					<Image
 						src={getImageUrl('/utils/padlock.webp')}
@@ -60,7 +60,7 @@ const PadLockPage = ({ csrfToken, callbackUrl }: Props) => {
 					/>
 				</figure>
 				<div className="flex flex-col items-center justify-center gap-y-2 p-4">
-					<div className="text-base font-bold mx-2 text-center">
+					<div className="mx-2 text-center font-bold text-base">
 						部室のパスワードを入力してください
 					</div>
 					<PadlockForm
@@ -77,7 +77,7 @@ const PadLockPage = ({ csrfToken, callbackUrl }: Props) => {
 			<div className="space-y-2">
 				<FeedbackMessage source={feedbackMessage} />
 				{digitError ? (
-					<p className="text-sm text-error text-center">{digitError}</p>
+					<p className="text-center text-error text-sm">{digitError}</p>
 				) : null}
 			</div>
 		</div>

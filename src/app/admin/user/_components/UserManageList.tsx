@@ -15,7 +15,7 @@ const UserManageList = ({ users, onUserItemClick }: Props) => {
 	if (users.length === 0) {
 		return (
 			<tr>
-				<td colSpan={5} className="text-center py-6 text-sm">
+				<td colSpan={5} className="py-6 text-center text-sm">
 					ユーザー情報はありません。
 				</td>
 			</tr>

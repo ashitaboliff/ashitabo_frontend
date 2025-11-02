@@ -90,7 +90,7 @@ const RatioPopup = ({ gkktt }: { gkktt: { className: string } }) => {
 						)
 						return (
 							<Tab key={versionKey} label={versionConfig.title}>
-								<div className="flex flex-col items-center space-y-2 text-sm max-h-[60vh] overflow-y-auto p-1">
+								<div className="flex max-h-[60vh] flex-col items-center space-y-2 overflow-y-auto p-1 text-sm">
 									{processedCategories.map((category, catIndex) => {
 										const displayName =
 											rarityDisplayNameMap[category.name as RarityType] ||
@@ -106,13 +106,13 @@ const RatioPopup = ({ gkktt }: { gkktt: { className: string } }) => {
 										return (
 											<Fragment key={category.name}>
 												<div className={titleClassName}>{displayName}</div>
-												<div className="flex flex-row my-2 w-full">
+												<div className="my-2 flex w-full flex-row">
 													<Image
 														src={getImageUrl(`/gacha/preset/${imageName}.webp`)}
 														width={72}
 														height={104}
 														alt={displayName}
-														className="basis-1/4 bg-base-content rounded-sm mr-4 object-contain"
+														className="mr-4 basis-1/4 rounded-sm bg-base-content object-contain"
 														unoptimized
 													/>
 													<div
@@ -140,7 +140,7 @@ const RatioPopup = ({ gkktt }: { gkktt: { className: string } }) => {
 						)
 					})}
 				</Tabs>
-				<div className="flex flex-row justify-center gap-x-4 mt-4">
+				<div className="mt-4 flex flex-row justify-center gap-x-4">
 					<button
 						type="button"
 						className="btn btn-outline"

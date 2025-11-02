@@ -76,9 +76,9 @@ const BlogsPage = async () => {
 
 	return (
 		<div
-			className={`container mx-auto flex flex-col items-center justify-center p-4 gap-y-3 ${inter.className}`}
+			className={`container mx-auto flex flex-col items-center justify-center gap-y-3 p-4 ${inter.className}`}
 		>
-			<h1 className="text-3xl font-bold mb-6">おしらせ一覧</h1>
+			<h1 className="mb-6 font-bold text-3xl">おしらせ一覧</h1>
 			{posts.length > 0 ? (
 				<ul className="space-y-3">
 					{posts.map((post) => (
@@ -89,7 +89,7 @@ const BlogsPage = async () => {
 							>
 								{post.title}
 								{post.createdAt && (
-									<span className="text-sm text-gray-500 ml-2">
+									<span className="ml-2 text-gray-500 text-sm">
 										({new Date(post.createdAt).toLocaleDateString('ja-JP')})
 									</span>
 								)}

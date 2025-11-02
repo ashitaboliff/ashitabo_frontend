@@ -99,17 +99,17 @@ const MultiSelectField = <TValue extends string | number = string>({
 			>
 				<button
 					type="button"
-					className={`select bg-white w-full text-left ${className ?? ''}`}
+					className={`select w-full bg-white text-left ${className ?? ''}`}
 					onClick={toggle}
 					aria-expanded={isOpen}
 				>
 					{displaySelected}
 				</button>
-				<div className="dropdown-content menu bg-white rounded-box z-[20] min-w-[210px] w-1/2 p-2 shadow relative">
-					<ul className="space-y-2 max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 pb-4">
+				<div className="dropdown-content menu relative z-[20] w-1/2 min-w-[210px] rounded-box bg-white p-2 shadow">
+					<ul className="scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 max-h-60 space-y-2 overflow-y-auto pb-4">
 						{Object.entries(options).map(([optionLabel, optionValue]) => (
 							<li key={`li-${String(optionValue)}`}>
-								<label className="flex items-center space-x-2 cursor-pointer p-1 hover:bg-base-200 rounded-md">
+								<label className="flex cursor-pointer items-center space-x-2 rounded-md p-1 hover:bg-base-200">
 									<input
 										type="checkbox"
 										checked={selectedValues.includes(optionValue as TValue)}
@@ -122,7 +122,7 @@ const MultiSelectField = <TValue extends string | number = string>({
 						))}
 					</ul>
 					{Object.keys(options).length > 8 && (
-						<div className="absolute bottom-0 left-0 w-full h-10 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
+						<div className="pointer-events-none absolute bottom-0 left-0 h-10 w-full bg-gradient-to-t from-white to-transparent"></div>
 					)}
 				</div>
 			</div>

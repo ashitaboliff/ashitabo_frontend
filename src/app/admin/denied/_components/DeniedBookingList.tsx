@@ -17,7 +17,7 @@ const DeniedBookingList = ({
 	if (deniedBookings.length === 0) {
 		return (
 			<tr>
-				<td colSpan={4} className="text-center py-6 text-sm">
+				<td colSpan={4} className="py-6 text-center text-sm">
 					予約禁止日はありません。
 				</td>
 			</tr>

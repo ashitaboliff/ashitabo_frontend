@@ -39,7 +39,7 @@ const BookingEditFormFields = ({
 		/>
 		<form onSubmit={onSubmit} className="space-y-2 p-4">
 			<div className="flex flex-row justify-between gap-2">
-				<div className="flex flex-col space-y-2 grow">
+				<div className="flex grow flex-col space-y-2">
 					<TextInputField
 						label="日付"
 						register={register('bookingDate')}

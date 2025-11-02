@@ -278,7 +278,7 @@ export default function MemberManagementModal({
 			onClose={onClose}
 		>
 			<div className="modal-box w-11/12 max-w-3xl">
-				<h3 className="font-bold text-lg mb-4">
+				<h3 className="mb-4 font-bold text-lg">
 					メンバー管理: {currentBandDetails?.name || initialBand?.name}
 				</h3>
 
@@ -297,11 +297,11 @@ export default function MemberManagementModal({
 				) : null}
 
 				{/* Add Member Section */}
-				<div className="mb-6 p-4 border rounded-md">
-					<h4 className="font-semibold mb-2">新しいメンバーを追加</h4>
+				<div className="mb-6 rounded-md border p-4">
+					<h4 className="mb-2 font-semibold">新しいメンバーを追加</h4>
 					<form
 						onSubmit={handleSearchUsers}
-						className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3 items-end"
+						className="mb-3 grid grid-cols-1 items-end gap-2 sm:grid-cols-3"
 					>
 						<TextInputField
 							type="text"
@@ -340,8 +340,8 @@ export default function MemberManagementModal({
 					</form>
 
 					{searchResults.length > 0 && (
-						<div className="max-h-60 overflow-y-auto mb-3">
-							<ul className="menu bg-base-200 rounded-box">
+						<div className="mb-3 max-h-60 overflow-y-auto">
+							<ul className="menu rounded-box bg-base-200">
 								{searchResults.map((user) => (
 									<li key={user.id}>
 										<button
@@ -351,7 +351,7 @@ export default function MemberManagementModal({
 												setSearchResults([])
 												setSearchQuery(user.name || user.userId || '')
 											}}
-											className="flex items-center gap-2 w-full text-left hover:bg-base-300 rounded-md p-2"
+											className="flex w-full items-center gap-2 rounded-md p-2 text-left hover:bg-base-300"
 										>
 											<div className="flex items-center gap-2">
 												<Image
@@ -423,7 +423,7 @@ export default function MemberManagementModal({
 
 				{/* Current Members Section */}
 				<div className="mb-4">
-					<h4 className="font-semibold mb-2">
+					<h4 className="mb-2 font-semibold">
 						現在のメンバー ({currentBandDetails?.members?.length || 0}人)
 					</h4>
 					{currentBandDetails?.members &&
@@ -432,9 +432,9 @@ export default function MemberManagementModal({
 							{currentBandDetails.members.map((member) => (
 								<li
 									key={member.id}
-									className="p-3 border rounded-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2"
+									className="flex flex-col items-start justify-between gap-2 rounded-md border p-3 sm:flex-row sm:items-center"
 								>
-									<div className="flex items-center gap-3 flex-grow">
+									<div className="flex flex-grow items-center gap-3">
 										<Image
 											src={member.user.image || '/utils/default-avatar.png'}
 											alt={member.user.name || 'avatar'}
@@ -470,7 +470,7 @@ export default function MemberManagementModal({
 											)}
 										</div>
 									</div>
-									<div className="flex gap-2 mt-2 sm:mt-0 flex-shrink-0">
+									<div className="mt-2 flex flex-shrink-0 gap-2 sm:mt-0">
 										{editingMember?.id === member.id ? (
 											<>
 												<button

@@ -15,8 +15,8 @@ export default async function SessionForbidden() {
 					unoptimized
 				/>
 			</div>
-			<h1 className="text-4xl font-bold mb-4">403 Forbidden Page</h1>
-			<p className="text-lg mb-2">
+			<h1 className="mb-4 font-bold text-4xl">403 Forbidden Page</h1>
+			<p className="mb-2 text-lg">
 				認証の必要なページです。以下よりログイン、もしくは利用登録を行ってください。
 			</p>
 			<div className="flex flex-row gap-x-2">

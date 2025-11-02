@@ -66,15 +66,15 @@ const list = [
 
 const Footer = () => {
 	return (
-		<footer className="footer bg-white mt-8 flex flex-col items-center">
-			<nav className="py-8 px-4 md:p-8 pb-0 w-full max-w-screen-lg mx-auto justify-center relative">
-				<div className="absolute w-full flex justify-center mt-36 md:mt-8">
+		<footer className="footer mt-8 flex flex-col items-center bg-white">
+			<nav className="relative mx-auto w-full max-w-screen-lg justify-center px-4 py-8 pb-0 md:p-8">
+				<div className="absolute mt-36 flex w-full justify-center md:mt-8">
 					<HomePageBar />
 				</div>
-				<ul className="grid gap-4 p-4 bg-white/80 z-10 grid-cols-2 md:grid-cols-4">
+				<ul className="z-10 grid grid-cols-2 gap-4 bg-white/80 p-4 md:grid-cols-4">
 					{list.map(({ title, list }) => (
 						<li key={title} className="text-center">
-							<h2 className="font-bold text-base text-neutral-content border-l-4 border-tetiary-light pl-2">
+							<h2 className="border-tetiary-light border-l-4 pl-2 font-bold text-base text-neutral-content">
 								{title}
 							</h2>
 							{list.map(({ url, title }) =>
@@ -82,7 +82,7 @@ const Footer = () => {
 									<a
 										key={title}
 										href={url}
-										className="block mt-2 text-sm link link-hover"
+										className="link link-hover mt-2 block text-sm"
 										target="_blank"
 										rel="noopener noreferrer"
 									>
@@ -92,7 +92,7 @@ const Footer = () => {
 									<Link
 										key={title}
 										href={url}
-										className="block mt-2 text-sm link link-hover"
+										className="link link-hover mt-2 block text-sm"
 									>
 										{title}
 									</Link>
@@ -103,7 +103,7 @@ const Footer = () => {
 				</ul>
 			</nav>
 
-			<span className="py-6 block text-center text-xs-custom">
+			<span className="block py-6 text-center text-xs-custom">
 				Copyright © {new Date().getFullYear()}{' '}
 				<a href="/" className="hover:underline">
 					あしたぼ

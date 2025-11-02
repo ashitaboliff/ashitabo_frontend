@@ -11,7 +11,7 @@ const SigninPage = () => {
 
 	return (
 		<div className="flex flex-col items-center justify-center">
-			<div className="flex flex-col items-center justify-center card bg-white shadow-lg w-72 h-96 my-6">
+			<div className="card my-6 flex h-96 w-72 flex-col items-center justify-center bg-white shadow-lg">
 				<figure>
 					<Image
 						src={getImageUrl('/utils/login.webp')}
@@ -35,10 +35,10 @@ const SigninPage = () => {
 					</button>
 				</div>
 			</div>
-			<div className="text-error text-center">
+			<div className="text-center text-error">
 				<p>※ 利用登録にはあしたぼの部室パスワードが必要です</p>
 			</div>
-			<div className="text-sm text-base-content mt-4">
+			<div className="mt-4 text-base-content text-sm">
 				登録した場合は、{' '}
 				<a
 					href={`${PublicEnv.NEXT_PUBLIC_APP_URL}/terms`}

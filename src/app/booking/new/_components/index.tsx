@@ -174,9 +174,9 @@ const BookingCreate = ({
 	const nameValue = watch('name')
 
 	return (
-		<div className="justify-center max-w-md mx-auto p-4 bg-white shadow-md rounded-lg">
-			<h2 className="text-2xl font-bold text-center mb-8">新規予約</h2>
-			<div className="max-w-md mx-auto space-y-4">
+		<div className="mx-auto max-w-md justify-center rounded-lg bg-white p-4 shadow-md">
+			<h2 className="mb-8 text-center font-bold text-2xl">新規予約</h2>
+			<div className="mx-auto max-w-md space-y-4">
 				<form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
 					<TextInputField
 						label="日付"
@@ -244,7 +244,7 @@ const BookingCreate = ({
 						open={popupOpen}
 						onClose={() => setPopupOpen(false)}
 					>
-						<h3 className="text-lg font-semibold text-center">
+						<h3 className="text-center font-semibold text-lg">
 							以下の内容で予約が完了しました
 						</h3>
 						<p className="text-center">
@@ -264,7 +264,7 @@ const BookingCreate = ({
 							currentPlayCount={gachaPlayCountToday}
 							onGachaSuccess={() => onGachaPlayedSuccessfully()}
 						/>
-						<div className="flex flex-col sm:flex-row justify-center gap-2 pt-2">
+						<div className="flex flex-col justify-center gap-2 pt-2 sm:flex-row">
 							<button
 								type="button"
 								className="btn btn-primary"
@@ -285,7 +285,7 @@ const BookingCreate = ({
 									className="btn btn-outline"
 								/>
 							) : (
-								<span className="text-sm text-center text-gray-500">
+								<span className="text-center text-gray-500 text-sm">
 									シェアURLを取得できませんでした。
 								</span>
 							)}

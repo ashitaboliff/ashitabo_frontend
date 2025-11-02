@@ -12,7 +12,7 @@ interface Props {
 
 const UserPageLayout = ({ session, profile, children }: Props) => {
 	return (
-		<div className="container mx-auto p-4 flex flex-col items-center">
+		<div className="container mx-auto flex flex-col items-center p-4">
 			<ProfileDisplay session={session} profile={profile} />
 			<UserPageControls session={session}>{children}</UserPageControls>
 		</div>

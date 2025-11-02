@@ -35,7 +35,7 @@ const DeniedBookingDetailDialog = ({
 			{deniedBooking && (
 				<div className="flex flex-col space-y-2 text-sm">
 					{deniedBooking.isDeleted && (
-						<div className="text-error font-bold">削除済み</div>
+						<div className="font-bold text-error">削除済み</div>
 					)}
 					<div className="grid grid-cols-2 gap-2">
 						<div className="font-bold">日付:</div>
@@ -67,7 +67,7 @@ const DeniedBookingDetailDialog = ({
 								: ''}
 						</div>
 					</div>
-					<div className="flex flex-row gap-x-2 justify-center">
+					<div className="flex flex-row justify-center gap-x-2">
 						<button
 							type="button"
 							className="btn btn-error"

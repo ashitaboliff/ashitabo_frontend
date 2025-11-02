@@ -12,7 +12,7 @@ const LinkWithArrow = ({
 	className?: string
 }) => {
 	return (
-		<Link href={href} className={`flex items-center w-full ${className}`}>
+		<Link href={href} className={`flex w-full items-center ${className}`}>
 			<span className="mr-2">{children}</span>
 			<LuArrowRight className="text-lg" />
 		</Link>
