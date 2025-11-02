@@ -13,12 +13,10 @@ export const useAdInitialization = (slot: string, placement?: string): void => {
 	useEffect(() => {
 		try {
 			// adsbygoogle is defined by Google's script
-			// biome-ignore lint/suspicious/noExplicitAny: Google AdSense API requires window.adsbygoogle
-			const windowAny = window as any
-			if (!windowAny.adsbygoogle) {
-				windowAny.adsbygoogle = []
+			if (!window.adsbygoogle) {
+				window.adsbygoogle = []
 			}
-			windowAny.adsbygoogle.push({})
+			window.adsbygoogle.push({})
 
 			// 広告表示イベントを発火
 			dispatchAdDisplayedEvent({ slot, placement })

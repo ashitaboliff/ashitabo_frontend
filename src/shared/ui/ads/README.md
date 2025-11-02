@@ -10,6 +10,33 @@ Google AdSenseの広告を表示するためのコンポーネント群です。
 NEXT_PUBLIC_ADSENSE_CLIENT_ID="ca-pub-XXXXXXXXXXXXXXXX"
 ```
 
+## セットアップ（推奨）
+
+アプリケーション全体でAdSenseを使用する場合、レイアウトファイルで一度だけ設定します。
+
+```tsx
+// app/layout.tsx
+import { AdSenseProvider, AdSenseScript } from '@/shared/ui/ads'
+
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <body>
+        <AdSenseProvider clientId={process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID!}>
+          {children}
+        </AdSenseProvider>
+        <AdSenseScript />
+      </body>
+    </html>
+  )
+}
+```
+
+### セットアップの利点
+
+1. **AdSenseScript**: スクリプトを1回だけ読み込み、重複を防ぐ
+2. **AdSenseProvider**: `clientId`を各コンポーネントで指定する必要がなくなる
+
 ## 基本的な使い方
 
 ### 1. 単体広告コンポーネント（AdSense）
@@ -19,7 +46,19 @@ NEXT_PUBLIC_ADSENSE_CLIENT_ID="ca-pub-XXXXXXXXXXXXXXXX"
 ```tsx
 import { AdSense } from '@/shared/ui/ads'
 
+// AdSenseProviderを使用している場合（推奨）
 function MyPage() {
+  return (
+    <AdSense
+      adSlot="1234567890"
+      adFormat="auto"
+      placement="article-top"
+    />
+  )
+}
+
+// clientIdを直接指定する場合
+function MyPageAlt() {
   return (
     <AdSense
       clientId={process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID!}
@@ -33,7 +72,7 @@ function MyPage() {
 
 #### プロパティ
 
-- `clientId` (必須): AdSenseクライアントID（例: `ca-pub-XXXXXXXXXXXXXXXX`）
+- `clientId` (オプション): AdSenseクライアントID（例: `ca-pub-XXXXXXXXXXXXXXXX`） - 省略時はAdSenseProviderから取得
 - `adSlot` (必須): 広告スロットID
 - `adFormat` (オプション): 広告フォーマット（`auto`、`rectangle`、`vertical`、`horizontal`、`fluid`）デフォルト: `auto`
 - `adLayout` (オプション): 広告レイアウト（`in-article` または `undefined`）
@@ -67,7 +106,20 @@ const adConfig: AdConfigMap = {
   },
 }
 
+// AdSenseProviderを使用している場合（推奨）
 function MyPage() {
+  return (
+    <div>
+      <AdSenseManager
+        placement="articleTop"
+        adConfig={adConfig}
+      />
+    </div>
+  )
+}
+
+// clientIdを直接指定する場合
+function MyPageAlt() {
   return (
     <div>
       <AdSenseManager
@@ -82,7 +134,7 @@ function MyPage() {
 
 #### プロパティ
 
-- `clientId` (必須): AdSenseクライアントID
+- `clientId` (オプション): AdSenseクライアントID - 省略時はAdSenseProviderから取得
 - `placement` (必須): 配置名（`adConfig`で定義したキー）
 - `adConfig` (必須): 広告配置の設定マップ
 - `enableClickDetection` (オプション): クリック検知を有効化（デフォルト: `false`）

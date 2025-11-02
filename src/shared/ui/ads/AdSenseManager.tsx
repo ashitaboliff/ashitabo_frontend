@@ -7,8 +7,8 @@ import AdSense from './AdSense'
  * AdSenseManagerコンポーネントのプロパティ
  */
 interface AdSenseManagerProps {
-	/** AdSenseクライアントID */
-	clientId: string
+	/** AdSenseクライアントID - 省略時はAdSenseProviderから取得 */
+	clientId?: string
 	/** 配置名 */
 	placement: string
 	/** 広告配置の設定マップ */
@@ -30,6 +30,13 @@ interface AdSenseManagerProps {
  *   inFeed: { slot: "3333333333", format: "fluid", layout: "in-article" },
  * }
  *
+ * // AdSenseProviderでラップされている場合（推奨）
+ * <AdSenseManager
+ *   placement="articleTop"
+ *   adConfig={adConfig}
+ * />
+ *
+ * // clientIdを直接指定する場合
  * <AdSenseManager
  *   clientId={process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID!}
  *   placement="articleTop"
