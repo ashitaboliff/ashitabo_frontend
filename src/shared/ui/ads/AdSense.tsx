@@ -41,7 +41,7 @@ interface AdSenseProps {
  *
  * // clientIdを直接指定する場合
  * <AdSense
- *   clientId={process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID!}
+ *   clientId={process.env.NEXT_PUBLIC_ADS_ID!}
  *   adSlot="1234567890"
  *   adFormat="auto"
  *   placement="article-top"

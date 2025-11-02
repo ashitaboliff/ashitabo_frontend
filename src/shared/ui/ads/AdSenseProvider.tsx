@@ -20,12 +20,13 @@ const AdSenseContext = createContext<AdSenseContextValue | null>(null)
  * ```tsx
  * // app/layout.tsx
  * import { AdSenseProvider } from '@/shared/ui/ads'
+ * import PublicEnv from '@/shared/lib/env/public'
  *
  * export default function RootLayout({ children }) {
  *   return (
  *     <html>
  *       <body>
- *         <AdSenseProvider clientId={process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID!}>
+ *         <AdSenseProvider clientId={PublicEnv.NEXT_PUBLIC_ADS_ID || ''}>
  *           {children}
  *         </AdSenseProvider>
  *       </body>

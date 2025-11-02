@@ -9,6 +9,7 @@ import type { ReactNode } from 'react'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 import Footer from '@/shared/ui/layout/Footer'
 import Header from '@/shared/ui/layout/Header'
+import { AdSenseProvider } from '@/shared/ui/ads'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -32,9 +33,11 @@ console.log('%chttps://www.github.com/ashitaboliff/', 'color: #000000; font-size
 				</Script>
 				<Analytics />
 				<SpeedInsights />
-				<Header className={nicomoji.className} />
-				{children}
-				<Footer />
+				<AdSenseProvider clientId={PublicEnv.NEXT_PUBLIC_ADS_ID || ''}>
+					<Header className={nicomoji.className} />
+					{children}
+					<Footer />
+				</AdSenseProvider>
 				<Script
 					src={`https://www.googletagmanager.com/gtag/js?id=${PublicEnv.NEXT_PUBLIC_GA_ID}`}
 					strategy="afterInteractive"

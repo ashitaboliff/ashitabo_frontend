@@ -7,7 +7,7 @@ Google AdSenseの広告を表示するためのコンポーネント群です。
 `.env.local` ファイルに以下の環境変数を設定してください：
 
 ```env
-NEXT_PUBLIC_ADSENSE_CLIENT_ID="ca-pub-XXXXXXXXXXXXXXXX"
+NEXT_PUBLIC_ADS_ID="ca-pub-XXXXXXXXXXXXXXXX"
 ```
 
 ## セットアップ（推奨）
@@ -16,16 +16,17 @@ NEXT_PUBLIC_ADSENSE_CLIENT_ID="ca-pub-XXXXXXXXXXXXXXXX"
 
 ```tsx
 // app/layout.tsx
-import { AdSenseProvider, AdSenseScript } from '@/shared/ui/ads'
+import { AdSenseProvider } from '@/shared/ui/ads'
+import PublicEnv from '@/shared/lib/env/public'
 
 export default function RootLayout({ children }) {
   return (
     <html>
       <body>
-        <AdSenseProvider clientId={process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID!}>
+        <AdSenseProvider clientId={PublicEnv.NEXT_PUBLIC_ADS_ID || ''}>
           {children}
         </AdSenseProvider>
-        <AdSenseScript />
+        {/* AdSenseスクリプトは既にlayout.tsxで読み込まれています */}
       </body>
     </html>
   )
@@ -34,8 +35,8 @@ export default function RootLayout({ children }) {
 
 ### セットアップの利点
 
-1. **AdSenseScript**: スクリプトを1回だけ読み込み、重複を防ぐ
-2. **AdSenseProvider**: `clientId`を各コンポーネントで指定する必要がなくなる
+1. **AdSenseProvider**: `clientId`を各コンポーネントで指定する必要がなくなる
+2. **スクリプト読み込み**: layout.tsxで一度だけ読み込まれ、重複を防ぐ
 
 ## 基本的な使い方
 
@@ -61,7 +62,7 @@ function MyPage() {
 function MyPageAlt() {
   return (
     <AdSense
-      clientId={process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID!}
+      clientId={process.env.NEXT_PUBLIC_ADS_ID!}
       adSlot="1234567890"
       adFormat="auto"
       placement="article-top"
@@ -201,9 +202,8 @@ export default function ArticlePage() {
     <article>
       <h1>記事タイトル</h1>
       
-      {/* 記事上部の広告 */}
+      {/* 記事上部の広告 - AdSenseProviderを使用しているためclientIdは不要 */}
       <AdSenseManager
-        clientId={process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID!}
         placement="articleTop"
         adConfig={adConfig}
       />
@@ -212,7 +212,6 @@ export default function ArticlePage() {
       
       {/* 記事中央の広告 */}
       <AdSenseManager
-        clientId={process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID!}
         placement="articleMiddle"
         adConfig={adConfig}
       />
@@ -221,7 +220,6 @@ export default function ArticlePage() {
       
       {/* 記事下部の広告 */}
       <AdSenseManager
-        clientId={process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID!}
         placement="articleBottom"
         adConfig={adConfig}
       />

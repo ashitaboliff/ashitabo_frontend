@@ -38,7 +38,7 @@ interface AdSenseManagerProps {
  *
  * // clientIdを直接指定する場合
  * <AdSenseManager
- *   clientId={process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID!}
+ *   clientId={process.env.NEXT_PUBLIC_ADS_ID!}
  *   placement="articleTop"
  *   adConfig={adConfig}
  * />
