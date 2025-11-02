@@ -81,7 +81,7 @@ const VideoSearchForm = ({
 				<form
 					key={formKey}
 					onSubmit={handleSubmit}
-					className="flex flex-col gap-y-2 justify-center max-w-sm m-auto"
+					className="m-auto flex max-w-sm flex-col justify-center gap-y-2"
 				>
 					<div className="flex flex-row justify-center gap-x-2">
 						<input
@@ -89,7 +89,7 @@ const VideoSearchForm = ({
 							name="liveOrBand"
 							value="live"
 							defaultChecked={currentQuery.liveOrBand === 'live'}
-							className={`btn w-5/12 checked:btn-accent btn-outline`}
+							className={`btn checked:btn-accent btn-outline w-5/12`}
 							aria-label="再生リスト"
 						/>
 						<input
@@ -97,7 +97,7 @@ const VideoSearchForm = ({
 							name="liveOrBand"
 							value="band"
 							defaultChecked={currentQuery.liveOrBand === 'band'}
-							className={`btn w-5/12 checked:btn-accent btn-outline`}
+							className={`btn checked:btn-accent btn-outline w-5/12`}
 							aria-label="動画"
 						/>
 					</div>
@@ -143,7 +143,7 @@ const VideoSearchForm = ({
 				onClose={() => setIsUsagePopupOpen(false)}
 			>
 				<div className="flex flex-col gap-y-2">
-					<div className="text-base gap">
+					<div className="gap text-base">
 						<div className="my-2">
 							<p className="font-bold text-lg">ライブ名: </p>
 							Youtubeのプレイリストタイトルになっているライブ名での検索です

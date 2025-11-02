@@ -21,7 +21,7 @@ const Tags = ({
 							? `/video?liveOrBand=${liveOrBand}&tag=${encodeURIComponent(tag)}`
 							: undefined
 					}
-					className={`text-info whitespace-nowrap ${effectiveSize} px-1 ${isLink ? 'hover:underline' : ''}`}
+					className={`whitespace-nowrap text-info ${effectiveSize} px-1 ${isLink ? 'hover:underline' : ''}`}
 				>
 					# {tag}
 				</a>

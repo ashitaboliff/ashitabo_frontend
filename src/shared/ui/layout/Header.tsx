@@ -16,7 +16,7 @@ const Layout = async ({ className }: { className?: string }) => {
 			<input id={drawerId} type="checkbox" className="drawer-toggle" />
 			<div className="drawer-content flex flex-col">
 				<div
-					className={`navbar bg-white mb-5 border-b-2 border-base-300 ${
+					className={`navbar mb-5 border-base-300 border-b-2 bg-white ${
 						className || ''
 					}`}
 				>
@@ -30,7 +30,7 @@ const Layout = async ({ className }: { className?: string }) => {
 					</div>
 					<div className="navbar-center">
 						<Link href="/home">
-							<p className="text-3xl text-center">あしたぼホームページ</p>
+							<p className="text-center text-3xl">あしたぼホームページ</p>
 						</Link>
 					</div>
 					<div className="navbar-end md:pr-5">
@@ -44,7 +44,7 @@ const Layout = async ({ className }: { className?: string }) => {
 					aria-label="close sidebar"
 					className="drawer-overlay"
 				></label>
-				<ul className="menu p-4 w-64 min-h-full bg-base-100 text-base-content border-r-2 border-base-100">
+				<ul className="menu min-h-full w-64 border-base-100 border-r-2 bg-base-100 p-4 text-base-content">
 					<li className="text-lg">
 						<Link href="/home">
 							<IoHomeOutline />

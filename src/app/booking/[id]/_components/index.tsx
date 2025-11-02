@@ -31,7 +31,7 @@ const BookingDetail = ({ bookingDetail }: Props) => {
 				registName={bookingDetail.registName}
 				name={bookingDetail.name}
 			/>
-			<div className="flex flex-col sm:flex-row justify-center items-center gap-2 w-full max-w-md">
+			<div className="flex w-full max-w-md flex-col items-center justify-center gap-2 sm:flex-row">
 				<button
 					type="button"
 					className="btn btn-primary w-full sm:w-1/3"
@@ -57,7 +57,7 @@ const BookingDetail = ({ bookingDetail }: Props) => {
 					isOnlyLine
 				/>
 			</div>
-			<div className="mt-4 flex justify-center w-full max-w-md">
+			<div className="mt-4 flex w-full max-w-md justify-center">
 				<button
 					type="button"
 					className="btn btn-ghost w-full sm:w-auto"

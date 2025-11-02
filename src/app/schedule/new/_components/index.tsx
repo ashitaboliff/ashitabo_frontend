@@ -158,8 +158,8 @@ const ScheduleCreatePage = ({ session, initialUsers }: Props) => {
 			: ''
 
 	return (
-		<div className="flex flex-col items-center justify-center py-6 bg-white rounded-lg shadow-md">
-			<h1 className="text-2xl font-bold mb-4">日程調整作成</h1>
+		<div className="flex flex-col items-center justify-center rounded-lg bg-white py-6 shadow-md">
+			<h1 className="mb-4 font-bold text-2xl">日程調整作成</h1>
 			<div className="w-full max-w-xl space-y-4">
 				<FeedbackMessage source={messageFeedback.feedback} />
 				<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -176,7 +176,7 @@ const ScheduleCreatePage = ({ session, initialUsers }: Props) => {
 						name="description"
 						errorMessage={errors.description?.message}
 					/>
-					<label className="cursor-pointer label gap-x-2 justify-start items-center">
+					<label className="label cursor-pointer items-center justify-start gap-x-2">
 						<input
 							type="checkbox"
 							{...register('isTimeExtended')}
@@ -187,7 +187,7 @@ const ScheduleCreatePage = ({ session, initialUsers }: Props) => {
 					<p className="text-sm">
 						コマ表の時間を超えた予定調整が可能になります。
 					</p>
-					<label className="cursor-pointer label gap-x-2 justify-start items-center">
+					<label className="label cursor-pointer items-center justify-start gap-x-2">
 						<input
 							type="checkbox"
 							{...register('isMentionChecked')}
@@ -246,7 +246,7 @@ const ScheduleCreatePage = ({ session, initialUsers }: Props) => {
 							/>
 						)}
 					/>
-					<div className="flex flex-col sm:flex-row gap-2">
+					<div className="flex flex-col gap-2 sm:flex-row">
 						<button
 							className="btn btn-primary btn-md"
 							type="submit"
@@ -265,8 +265,8 @@ const ScheduleCreatePage = ({ session, initialUsers }: Props) => {
 				</form>
 
 				{createdSchedule && (
-					<div className="mt-6 rounded-md border border-base-200 bg-base-100 p-4 space-y-2">
-						<h2 className="text-lg font-semibold">作成した日程</h2>
+					<div className="mt-6 space-y-2 rounded-md border border-base-200 bg-base-100 p-4">
+						<h2 className="font-semibold text-lg">作成した日程</h2>
 						<p>タイトル: {createdSchedule.title}</p>
 						<p>
 							日程:
@@ -293,7 +293,7 @@ const ScheduleCreatePage = ({ session, initialUsers }: Props) => {
 									.join(', ')}
 							</p>
 						)}
-						<div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-end pt-2">
+						<div className="flex flex-col gap-2 pt-2 sm:flex-row sm:items-center sm:justify-end">
 							{shareUrl ? (
 								<ShareButton
 									url={shareUrl}
@@ -307,7 +307,7 @@ const ScheduleCreatePage = ({ session, initialUsers }: Props) => {
 									isFullButton
 								/>
 							) : (
-								<p className="text-sm text-gray-500">
+								<p className="text-gray-500 text-sm">
 									シェアURLを取得できませんでした。
 								</p>
 							)}

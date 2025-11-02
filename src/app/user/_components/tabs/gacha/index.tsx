@@ -51,10 +51,10 @@ const UserGachaLogs = ({ session, initialData }: Props) => {
 	}
 
 	return (
-		<div className="flex flex-col justify-center mt-4">
+		<div className="mt-4 flex flex-col justify-center">
 			<div className="flex flex-col gap-y-2">
-				<div className="flex flex-row items-center ml-auto space-x-2 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
-					<p className="text-sm whitespace-nowrap">表示件数:</p>
+				<div className="ml-auto flex w-full flex-row items-center space-x-2 sm:w-1/2 md:w-1/3 lg:w-1/4">
+					<p className="whitespace-nowrap text-sm">表示件数:</p>
 					<SelectField<number>
 						name="gachaLogsPerPage"
 						options={{ '15件': 15, '25件': 25, '35件': 35 }}
@@ -62,7 +62,7 @@ const UserGachaLogs = ({ session, initialData }: Props) => {
 						onChange={handleLogsPerPageChange}
 					/>
 				</div>
-				<div className="flex flex-row gap-x-2 my-2">
+				<div className="my-2 flex flex-row gap-x-2">
 					<RadioSortGroup
 						name="gacha_sort_options"
 						options={[
@@ -85,7 +85,7 @@ const UserGachaLogs = ({ session, initialData }: Props) => {
 					initialData={page === 1 ? initialData : undefined}
 				/>
 				{pageCount > 1 && totalCount > 0 && (
-					<div className="mt-4 mx-auto">
+					<div className="mx-auto mt-4">
 						<Pagination
 							currentPage={page}
 							totalPages={pageCount}
@@ -103,12 +103,12 @@ const UserGachaLogs = ({ session, initialData }: Props) => {
 				/>
 			)}
 			{isPopupLoading && (
-				<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
 					<span className="loading loading-spinner loading-lg"></span>
 				</div>
 			)}
 			{previewError && (
-				<div className="text-red-500 text-center mt-2">
+				<div className="mt-2 text-center text-red-500">
 					ガチャプレビューの取得に失敗しました。
 				</div>
 			)}

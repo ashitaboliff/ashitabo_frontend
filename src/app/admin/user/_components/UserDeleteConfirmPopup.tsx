@@ -35,8 +35,8 @@ const UserDeleteConfirmPopup = ({
 				onClearFeedback()
 			}}
 		>
-			<div className="flex flex-col space-y-2 text-sm items-center">
-				<div className="text-error font-bold">本当に削除しますか?</div>
+			<div className="flex flex-col items-center space-y-2 text-sm">
+				<div className="font-bold text-error">本当に削除しますか?</div>
 				<div>この操作は取り消せません。</div>
 				<div className="flex flex-row justify-center gap-x-2">
 					<button

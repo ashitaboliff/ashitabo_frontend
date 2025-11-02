@@ -42,7 +42,7 @@ const GenericTableBody = <T extends object>({
 		}
 		return (
 			<tr>
-				<td colSpan={colSpan} className="text-center py-10">
+				<td colSpan={colSpan} className="py-10 text-center">
 					{loadingMessage}
 				</td>
 			</tr>
@@ -52,7 +52,7 @@ const GenericTableBody = <T extends object>({
 	if (error) {
 		return (
 			<tr>
-				<td colSpan={colSpan} className="text-center text-error py-10">
+				<td colSpan={colSpan} className="py-10 text-center text-error">
 					{errorMessagePrefix}: {error.message}
 				</td>
 			</tr>
@@ -63,7 +63,7 @@ const GenericTableBody = <T extends object>({
 		if (noDataCustomMessage) {
 			return (
 				<tr>
-					<td colSpan={colSpan} className="text-center py-10">
+					<td colSpan={colSpan} className="py-10 text-center">
 						{noDataCustomMessage}
 					</td>
 				</tr>
@@ -71,7 +71,7 @@ const GenericTableBody = <T extends object>({
 		}
 		return (
 			<tr>
-				<td colSpan={colSpan} className="text-center py-10">
+				<td colSpan={colSpan} className="py-10 text-center">
 					{emptyDataMessage}
 				</td>
 			</tr>

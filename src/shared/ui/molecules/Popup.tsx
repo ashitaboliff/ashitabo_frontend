@@ -115,19 +115,19 @@ const Popup = ({
 			aria-modal={open ? true : undefined}
 		>
 			<div
-				className={`modal-box bg-base-100 relative mx-auto overflow-hidden ${maxWClass} ${noPadding ? 'paddingless' : ''} ${className ?? ''}`}
+				className={`modal-box relative mx-auto overflow-hidden bg-base-100 ${maxWClass} ${noPadding ? 'paddingless' : ''} ${className ?? ''}`}
 				style={maxWStyle}
 			>
 				<h2
 					id={titleId}
-					className={`text-center mb-4 text-xl font-bold ${noPadding ? 'pt-6' : ''}`}
+					className={`mb-4 text-center font-bold text-xl ${noPadding ? 'pt-6' : ''}`}
 				>
 					{title}
 				</h2>
 				{isCloseButton && (
 					<form
 						method="dialog"
-						className="absolute right-2 top-2"
+						className="absolute top-2 right-2"
 						onSubmit={closeDialog}
 					>
 						<button

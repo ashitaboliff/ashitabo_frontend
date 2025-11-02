@@ -25,22 +25,22 @@ const UsagePage = async () => {
 	})
 
 	return (
-		<div className="container mx-auto bg-white p-4 pb-8 rounded-lg">
-			<h1 className="text-4xl font-bold text-center mt-4">
+		<div className="container mx-auto rounded-lg bg-white p-4 pb-8">
+			<h1 className="mt-4 text-center font-bold text-4xl">
 				管理者ページの使い方
 			</h1>
 			<div className="flex flex-col items-end">
-				<div className="text-center mt-4 flex flex-row items-center gap-x-2">
+				<div className="mt-4 flex flex-row items-center gap-x-2 text-center">
 					<LuCalendarSync />
 					{frontmatter.updatedAt}
 				</div>
-				<p className="text-center flex flex-row items-center gap-x-2">
+				<p className="flex flex-row items-center gap-x-2 text-center">
 					<LuCalendar />
 					{frontmatter.createdAt}
 				</p>
 			</div>
-			<div className="mt-8 prose max-w-none">{content}</div>
-			<div className="flex flex-row justify-center mt-5 gap-5">
+			<div className="prose mt-8 max-w-none">{content}</div>
+			<div className="mt-5 flex flex-row justify-center gap-5">
 				<a className="btn btn-outline" href="/admin">
 					ホームに戻る
 				</a>

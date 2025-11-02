@@ -82,8 +82,8 @@ const YoutubeManagement = ({
 
 	return (
 		<div className="flex flex-col items-center justify-center gap-y-2">
-			<h1 className="text-2xl font-bold">Youtube動画管理</h1>
-			<p className="text-sm text-center">
+			<h1 className="font-bold text-2xl">Youtube動画管理</h1>
+			<p className="text-center text-sm">
 				このページではあしたぼホームページとYoutubeの非公開動画の同期・管理を行えます。
 			</p>
 			<div className="flex flex-row gap-x-2">
@@ -99,11 +99,11 @@ const YoutubeManagement = ({
 			<FeedbackMessage source={actionFeedback.feedback} />
 			<FeedbackMessage source={error} />
 
-			<div className="overflow-x-auto w-full flex flex-col justify-center gap-y-2">
+			<div className="flex w-full flex-col justify-center gap-y-2 overflow-x-auto">
 				<div className="flex flex-col gap-y-2 sm:flex-row sm:items-center sm:justify-between">
 					<div className="text-sm">更新日: {lastUpdatedText}</div>
 					<div className="flex flex-row items-center">
-						<p className="text-sm whitespace-nowrap mr-2">表示件数:</p>
+						<p className="mr-2 whitespace-nowrap text-sm">表示件数:</p>
 						<SelectField
 							value={query.videoPerPage}
 							onChange={(e) =>
@@ -118,7 +118,7 @@ const YoutubeManagement = ({
 						/>
 					</div>
 				</div>
-				<table className="table table-zebra table-sm w-full max-w-3xl self-center">
+				<table className="table-zebra table-sm table w-full max-w-3xl self-center">
 					<thead>
 						<tr>
 							<th>タイトル</th>
@@ -127,7 +127,7 @@ const YoutubeManagement = ({
 					<tbody>
 						{playlists.length === 0 ? (
 							<tr>
-								<td className="text-center py-4">
+								<td className="py-4 text-center">
 									プレイリストが見つかりませんでした。
 								</td>
 							</tr>
@@ -152,7 +152,7 @@ const YoutubeManagement = ({
 					onPageChange={(page) => updateQuery({ page })}
 				/>
 			) : null}
-			<div className="flex flex-row justify-center mt-2">
+			<div className="mt-2 flex flex-row justify-center">
 				<button
 					type="button"
 					className="btn btn-outline"
@@ -172,17 +172,17 @@ const YoutubeManagement = ({
 			>
 				<div className="space-y-2">
 					<div className="flex gap-x-1">
-						<div className="font-bold basis-1/4">プレイリストID:</div>
+						<div className="basis-1/4 font-bold">プレイリストID:</div>
 						<div className="basis-3/4 break-all">
 							{detailPlaylist?.playlistId ?? '不明'}
 						</div>
 					</div>
 					<div className="flex gap-x-1">
-						<div className="font-bold basis-1/4">タイトル:</div>
+						<div className="basis-1/4 font-bold">タイトル:</div>
 						<div className="basis-3/4">{detailPlaylist?.title ?? '不明'}</div>
 					</div>
 					<div className="flex gap-x-1">
-						<div className="font-bold basis-1/4">リンク:</div>
+						<div className="basis-1/4 font-bold">リンク:</div>
 						<div className="basis-3/4 break-all">
 							{detailPlaylist?.link ? (
 								<a href={detailPlaylist.link} target="_blank" rel="noreferrer">
@@ -194,7 +194,7 @@ const YoutubeManagement = ({
 						</div>
 					</div>
 					<div className="flex gap-x-1">
-						<div className="font-bold basis-1/4">作成日:</div>
+						<div className="basis-1/4 font-bold">作成日:</div>
 						<div className="basis-3/4">
 							{detailPlaylist?.createdAt
 								? formatDateJa(detailPlaylist.createdAt)
@@ -202,7 +202,7 @@ const YoutubeManagement = ({
 						</div>
 					</div>
 					<div className="flex gap-x-1">
-						<div className="font-bold basis-1/4">更新日:</div>
+						<div className="basis-1/4 font-bold">更新日:</div>
 						<div className="basis-3/4">
 							{detailPlaylist?.updatedAt
 								? formatDateJa(detailPlaylist.updatedAt)
@@ -210,7 +210,7 @@ const YoutubeManagement = ({
 						</div>
 					</div>
 				</div>
-				<div className="flex justify-center mt-4">
+				<div className="mt-4 flex justify-center">
 					<button
 						type="button"
 						className="btn btn-primary"

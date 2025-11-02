@@ -45,9 +45,9 @@ export default async function NotFound() {
 					height={225}
 				/>
 			</div>
-			<h1 className="text-4xl font-bold mb-4">Page Not Found</h1>
-			<p className="text-lg mb-2">お探しのページは見つかりませんでした。</p>
-			<p className="text-xxs mb-6">
+			<h1 className="mb-4 font-bold text-4xl">Page Not Found</h1>
+			<p className="mb-2 text-lg">お探しのページは見つかりませんでした。</p>
+			<p className="mb-6 text-xxs">
 				※画像はランダムですがサーバ負荷の原因なのでリロードしないでください
 				<br />
 				リロードしまくった人間はIPアドレスから特定してサーバ代を請求します。

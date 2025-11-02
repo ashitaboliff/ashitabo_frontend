@@ -41,7 +41,7 @@ const CustomHeader = ({
 	]
 
 	return (
-		<div className="flex justify-between items-center px-2 py-1">
+		<div className="flex items-center justify-between px-2 py-1">
 			<button
 				type="button"
 				onClick={decreaseMonth}
@@ -54,7 +54,7 @@ const CustomHeader = ({
 				<select
 					value={getYear(date)}
 					onChange={({ target: { value } }) => changeYear(Number(value))}
-					className="border border-base-200 rounded-md p-1"
+					className="rounded-md border border-base-200 p-1"
 				>
 					{years.map((option) => (
 						<option key={option} value={option}>
@@ -65,7 +65,7 @@ const CustomHeader = ({
 				<select
 					value={getMonth(date)}
 					onChange={({ target: { value } }) => changeMonth(Number(value))}
-					className="border border-base-200 rounded-md p-1"
+					className="rounded-md border border-base-200 p-1"
 				>
 					{months.map((option, index) => (
 						<option key={option} value={index}>

@@ -119,28 +119,28 @@ export const CardAnimation = ({
 
 	return (
 		<div
-			className="relative w-[18.75rem] h-[25rem]"
+			className="relative h-[25rem] w-[18.75rem]"
 			style={{ perspective: '1000px' }}
 		>
 			<div
 				ref={effectContainerRef}
-				className="absolute inset-0 pointer-events-none z-10 overflow-hidden"
+				className="pointer-events-none absolute inset-0 z-10 overflow-hidden"
 			/>
-			<div ref={cardRef} className="w-full h-full transform-style-3d relative">
-				<div className="absolute w-full h-full backface-hidden rounded-lg overflow-hidden">
+			<div ref={cardRef} className="transform-style-3d relative h-full w-full">
+				<div className="backface-hidden absolute h-full w-full overflow-hidden rounded-lg">
 					<ImageWithFallback
 						src={frontImageSignedUrl}
 						alt={`ガチャ結果-${GachaRarityMap[rarity]}-おもて面`}
-						className="w-full h-full object-cover"
+						className="h-full w-full object-cover"
 						onLoad={() => handleImageLoad()}
 						decoding="auto"
 					/>
 				</div>
-				<div className="absolute w-full h-full backface-hidden rotateY-180 rounded-lg overflow-hidden">
+				<div className="backface-hidden rotateY-180 absolute h-full w-full overflow-hidden rounded-lg">
 					<img
 						src="/backimage.webp"
 						alt={`ガチャ結果-${GachaRarityMap[rarity]}-うら面`}
-						className="w-full h-full object-cover"
+						className="h-full w-full object-cover"
 						onLoad={() => handleImageLoad()}
 						decoding="auto"
 					/>
@@ -150,7 +150,7 @@ export const CardAnimation = ({
 			{['SUPER_RARE', 'SS_RARE', 'ULTRA_RARE', 'SECRET_RARE'].includes(
 				rarity,
 			) && (
-				<div className="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
+				<div className="pointer-events-none absolute top-0 left-0 z-0 h-full w-full">
 					{rarity !== 'SECRET_RARE' && (
 						<svg width="0" height="0" aria-hidden="true" focusable="false">
 							<title>Rare card gradient definition</title>

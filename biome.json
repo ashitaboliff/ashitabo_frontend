@@ -25,6 +25,9 @@
       "recommended": true,
       "performance": {
         "noImgElement": "off"
+      },
+      "nursery": {
+        "useSortedClasses": "on"
       }
     },
     "domains": {

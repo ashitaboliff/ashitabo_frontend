@@ -46,9 +46,9 @@ const FlashMessage = ({
 	if (!visible) return null
 
 	return (
-		<div className="fixed inset-x-0 top-0 z-50 flex justify-center pointer-events-none">
+		<div className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center">
 			<div
-				className={`transform will-change-transform mt-4 pointer-events-auto ${inView ? 'translate-y-0 ease-out duration-[350ms]' : '-translate-y-full ease-in duration-[280ms]'}`}
+				className={`pointer-events-auto mt-4 transform will-change-transform ${inView ? 'translate-y-0 duration-[350ms] ease-out' : '-translate-y-full duration-[280ms] ease-in'}`}
 			>
 				<Message
 					variant={type}

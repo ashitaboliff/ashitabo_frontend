@@ -114,7 +114,7 @@ const UserSelectPopupComponent = ({
 						<button
 							key={user.id}
 							type="button"
-							className={`w-full text-left p-2 hover:bg-gray-100 cursor-pointer ${
+							className={`w-full cursor-pointer p-2 text-left hover:bg-gray-100 ${
 								isSelected ? 'bg-gray-50 opacity-70' : ''
 							}`}
 							onClick={handleClick}
@@ -133,16 +133,16 @@ const UserSelectPopupComponent = ({
 													'hidden',
 												)
 											}}
-											className="rounded-full bg-white mr-2"
+											className="mr-2 rounded-full bg-white"
 										/>
 									) : (
-										<LuUserRound className="w-8 h-8 text-base-300 rounded-full bg-white mr-2" />
+										<LuUserRound className="mr-2 h-8 w-8 rounded-full bg-white text-base-300" />
 									)}
-									<LuUserRound className="w-8 h-8 text-base-300 hidden rounded-full bg-white mr-2" />
+									<LuUserRound className="mr-2 hidden h-8 w-8 rounded-full bg-white text-base-300" />
 									<div className="flex flex-col">
 										<span className="font-semibold">{user.name}</span>
 										{user.profile?.name && (
-											<span className="text-sm text-gray-600">
+											<span className="text-gray-600 text-sm">
 												{user.profile.name}
 											</span>
 										)}
@@ -151,13 +151,13 @@ const UserSelectPopupComponent = ({
 										)}
 									</div>
 								</div>
-								{isSelected && <LuCheck className="w-6 h-6 text-primary" />}
+								{isSelected && <LuCheck className="h-6 w-6 text-primary" />}
 							</div>
 						</button>
 					)
 				})}
 			</div>
-			<div className="p-4 border-t bg-white flex justify-between items-center">
+			<div className="flex items-center justify-between border-t bg-white p-4">
 				<div className="flex-1">
 					{selectedUsers.length > 0 ? (
 						<div className="avatar-group -space-x-6 h-14">
@@ -170,7 +170,7 @@ const UserSelectPopupComponent = ({
 										className="flex flex-col items-center"
 										onClick={() => user.id && handleUserSelect(user.id)}
 									>
-										<div className="rounded-full bg-white avatar">
+										<div className="avatar rounded-full bg-white">
 											{user.image ? (
 												<Image
 													src={user.image}
@@ -185,15 +185,15 @@ const UserSelectPopupComponent = ({
 													}}
 												/>
 											) : (
-												<LuUserRound className="w-12 h-12 text-base-300" />
+												<LuUserRound className="h-12 w-12 text-base-300" />
 											)}
-											<LuUserRound className="w-12 h-12 text-base-300 hidden" />
+											<LuUserRound className="hidden h-12 w-12 text-base-300" />
 										</div>
 										<div
 											className="tooltip tooltip-bottom -mt-6"
 											data-tip={user.name}
 										>
-											<span className="text-xxs bg-white text-gray-800 rounded-full border p-1">
+											<span className="rounded-full border bg-white p-1 text-gray-800 text-xxs">
 												{user.profile?.name || user.name}
 											</span>
 										</div>
@@ -202,8 +202,8 @@ const UserSelectPopupComponent = ({
 							})}
 						</div>
 					) : (
-						<div className="h-14 flex items-center">
-							<span className="text-sm text-gray-500">
+						<div className="flex h-14 items-center">
+							<span className="text-gray-500 text-sm">
 								ユーザーを選択してください
 							</span>
 						</div>
@@ -213,7 +213,7 @@ const UserSelectPopupComponent = ({
 					<button
 						type="button"
 						onClick={handleConfirm}
-						className="ml-4 btn btn-primary btn-sm"
+						className="btn btn-primary btn-sm ml-4"
 					>
 						決定する
 					</button>

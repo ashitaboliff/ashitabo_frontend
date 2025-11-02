@@ -98,12 +98,12 @@ const DeniedBookingCreatePage = () => {
 
 	return (
 		<div className="flex flex-col items-center justify-center gap-y-3">
-			<div className="flex flex-col items-center text-center gap-y-2">
-				<h1 className="text-2xl font-bold">予約禁止日追加</h1>
+			<div className="flex flex-col items-center gap-y-2 text-center">
+				<h1 className="font-bold text-2xl">予約禁止日追加</h1>
 				<p className="text-sm">このページでは予約禁止日の追加が可能です。</p>
 			</div>
 			<form
-				className="flex flex-col space-y-4 w-full max-w-md items-center px-4 sm:px-8"
+				className="flex w-full max-w-md flex-col items-center space-y-4 px-4 sm:px-8"
 				onSubmit={handleSubmit(onSubmit)}
 			>
 				<DeniedBookingTypeSelector register={register} />

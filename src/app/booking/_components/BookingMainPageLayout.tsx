@@ -18,7 +18,7 @@ const MainPageLayout = async () => {
 	const modalId = `booking-rule-modal-${randomUUID()}`
 
 	return (
-		<div className="flex justify-center space-x-2 mx-2">
+		<div className="mx-2 flex justify-center space-x-2">
 			<BookingRefreshButton />
 			<Modal
 				id={modalId}

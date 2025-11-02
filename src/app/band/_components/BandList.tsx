@@ -106,7 +106,7 @@ export default function BandList({ currentUserId }: Props) {
 
 	if (isLoading) {
 		return (
-			<div className="flex justify-center items-center py-10">
+			<div className="flex items-center justify-center py-10">
 				<span className="loading loading-lg loading-spinner text-primary"></span>
 			</div>
 		)
@@ -127,17 +127,17 @@ export default function BandList({ currentUserId }: Props) {
 			</div>
 
 			{error && !bands && (
-				<div className="text-center py-10 text-error">
+				<div className="py-10 text-center text-error">
 					バンド一覧の取得に失敗しました。時間をおいて再度お試しください。
 				</div>
 			)}
 
 			{(!bands || bands.length === 0) && !isLoading && !error && (
-				<div className="text-center py-10">
-					<p className="text-lg text-gray-500">
+				<div className="py-10 text-center">
+					<p className="text-gray-500 text-lg">
 						まだ参加しているバンドはありません。
 					</p>
-					<p className="text-sm text-gray-400 mt-2">
+					<p className="mt-2 text-gray-400 text-sm">
 						新しいバンドを作成してみましょう！
 					</p>
 				</div>

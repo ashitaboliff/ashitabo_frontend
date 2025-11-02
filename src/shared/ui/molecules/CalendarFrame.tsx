@@ -40,7 +40,7 @@ const defaultTimeCellClass =
 	'border border-base-200 p-1 sm:p-2 w-11 h-13 sm:w-16 sm:h-16 break-words'
 
 const defaultHeader = (date: string) => (
-	<p className="text-xs-custom sm:text-sm text-base-content">
+	<p className="text-base-content text-xs-custom sm:text-sm">
 		{formatMonthDay(date)}
 		<br />
 		{formatWeekday(date, { enclosed: true })}
@@ -50,7 +50,7 @@ const defaultHeader = (date: string) => (
 const defaultTime = (time: string) => {
 	const [start = '', end = ''] = time.split('~')
 	return (
-		<p className="text-xs-custom sm:text-sm text-base-content break-words">
+		<p className="break-words text-base-content text-xs-custom sm:text-sm">
 			{start}~
 			<br />
 			{end}
