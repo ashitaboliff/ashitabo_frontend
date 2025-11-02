@@ -5,6 +5,7 @@ const envSchema = z.object({
 	NEXT_PUBLIC_API_URL: z.url(),
 	NEXT_PUBLIC_GA_ID: z.string().optional(),
 	NEXT_PUBLIC_ADS_ID: z.string().optional(),
+	NEXT_PUBLIC_ADSENSE_CLIENT_ID: z.string().optional(),
 	NODE_ENV: z.enum(['development', 'production']),
 	MAINTENANCE_MODE: z.string().optional(),
 	MAINTENANCE_WHITELIST: z.string().optional(),
