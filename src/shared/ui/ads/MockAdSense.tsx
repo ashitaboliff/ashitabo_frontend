@@ -57,7 +57,7 @@ const MockAdSense = ({
 
 	// adSlotの数値からモック広告を選択（一貫性を保つため）
 	const adIndex =
-		Number.parseInt(adSlot.slice(-1)) % mockAds.length || mockAds.length - 1
+		Number.parseInt(adSlot.slice(-1), 10) % mockAds.length || mockAds.length - 1
 	const mockAd = mockAds[adIndex]
 
 	const handleClick = () => {
@@ -84,32 +84,24 @@ const MockAdSense = ({
 	}
 
 	return (
-		<div
-			className={`${mockAd.bgColor} ${mockAd.borderColor} border-2 rounded-lg ${getHeightClass()} cursor-pointer transition-all hover:scale-105 hover:shadow-lg flex flex-col items-center justify-center p-4`}
+		<button
+			type="button"
+			className={`${mockAd.bgColor} ${mockAd.borderColor} rounded-lg border-2 ${getHeightClass()} flex cursor-pointer flex-col items-center justify-center p-4 transition-all hover:scale-105 hover:shadow-lg`}
 			onClick={handleClick}
 			style={adStyle}
-			role="button"
-			tabIndex={0}
-			onKeyDown={(e) => {
-				if (e.key === 'Enter' || e.key === ' ') {
-					handleClick()
-				}
-			}}
 		>
 			<div className="text-center">
-				<div className="text-xs text-gray-500 mb-2">
-					[開発環境] モック広告
-				</div>
-				<div className="font-bold text-gray-800 mb-1">{mockAd.title}</div>
-				<div className="text-sm text-gray-600">{mockAd.description}</div>
-				<div className="text-xs text-gray-400 mt-2">
+				<div className="mb-2 text-gray-500 text-xs">[開発環境] モック広告</div>
+				<div className="mb-1 font-bold text-gray-800">{mockAd.title}</div>
+				<div className="text-gray-600 text-sm">{mockAd.description}</div>
+				<div className="mt-2 text-gray-400 text-xs">
 					Slot: {adSlot} | Format: {adFormat}
 				</div>
 				{placement && (
-					<div className="text-xs text-gray-400">Placement: {placement}</div>
+					<div className="text-gray-400 text-xs">Placement: {placement}</div>
 				)}
 			</div>
-		</div>
+		</button>
 	)
 }
 

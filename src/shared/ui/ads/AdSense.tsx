@@ -69,6 +69,40 @@ const useClientId = (clientId?: string): string => {
 	return effectiveClientId
 }
 
+/**
+ * 本番環境用の実際のAdSenseコンポーネント
+ */
+const RealAdSense = ({
+	clientId,
+	adSlot,
+	adFormat = 'auto',
+	adLayout,
+	adStyle,
+	placement,
+	enableClickDetection = false,
+	clickThreshold = 3000,
+}: AdSenseProps) => {
+	// clientIdを取得
+	const effectiveClientId = useClientId(clientId)
+
+	// 広告初期化
+	useAdInitialization(adSlot, placement)
+
+	// クリック検知（オプション）
+	useAdClickDetection(enableClickDetection, adSlot, placement, clickThreshold)
+
+	return (
+		<ins
+			className="adsbygoogle"
+			style={{ display: 'block', textAlign: 'center', ...adStyle }}
+			data-ad-client={effectiveClientId}
+			data-ad-slot={adSlot}
+			data-ad-format={adFormat}
+			data-ad-layout={adLayout}
+		/>
+	)
+}
+
 const AdSense = ({
 	clientId,
 	adSlot,
@@ -93,23 +127,16 @@ const AdSense = ({
 		)
 	}
 
-	// clientIdを取得
-	const effectiveClientId = useClientId(clientId)
-
-	// 広告初期化
-	useAdInitialization(adSlot, placement)
-
-	// クリック検知（オプション）
-	useAdClickDetection(enableClickDetection, adSlot, placement, clickThreshold)
-
 	return (
-		<ins
-			className="adsbygoogle"
-			style={{ display: 'block', textAlign: 'center', ...adStyle }}
-			data-ad-client={effectiveClientId}
-			data-ad-slot={adSlot}
-			data-ad-format={adFormat}
-			data-ad-layout={adLayout}
+		<RealAdSense
+			clientId={clientId}
+			adSlot={adSlot}
+			adFormat={adFormat}
+			adLayout={adLayout}
+			adStyle={adStyle}
+			placement={placement}
+			enableClickDetection={enableClickDetection}
+			clickThreshold={clickThreshold}
 		/>
 	)
 }
