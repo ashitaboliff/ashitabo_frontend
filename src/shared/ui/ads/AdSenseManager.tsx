@@ -3,11 +3,7 @@
 import type { AdConfigMap } from '@/shared/lib/ads'
 import AdSense from './AdSense'
 
-/**
- * AdSenseManagerコンポーネントのプロパティ
- */
 interface AdSenseManagerProps {
-	/** AdSenseクライアントID - 省略時はAdSenseProviderから取得 */
 	clientId?: string
 	/** 配置名 */
 	placement: string
