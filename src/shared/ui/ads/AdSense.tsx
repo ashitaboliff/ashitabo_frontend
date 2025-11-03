@@ -4,6 +4,7 @@ import type { CSSProperties } from 'react'
 import type { AdFormat, AdLayout } from '@/shared/lib/ads'
 import { useAdClickDetection, useAdInitialization } from '@/shared/lib/ads'
 import { useAdSenseContext } from './AdSenseProvider'
+import MockAdSense from './MockAdSense'
 
 /**
  * AdSenseコンポーネントのプロパティ
@@ -78,6 +79,20 @@ const AdSense = ({
 	enableClickDetection = false,
 	clickThreshold = 3000,
 }: AdSenseProps) => {
+	// 開発環境ではモック広告を表示
+	const isDevelopment = process.env.NODE_ENV === 'development'
+
+	if (isDevelopment) {
+		return (
+			<MockAdSense
+				adSlot={adSlot}
+				adFormat={adFormat}
+				adStyle={adStyle}
+				placement={placement}
+			/>
+		)
+	}
+
 	// clientIdを取得
 	const effectiveClientId = useClientId(clientId)
 

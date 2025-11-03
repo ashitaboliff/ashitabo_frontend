@@ -10,6 +10,18 @@ Google AdSenseの広告を表示するためのコンポーネント群です。
 NEXT_PUBLIC_ADS_ID="ca-pub-XXXXXXXXXXXXXXXX"
 ```
 
+## 開発環境でのモック広告
+
+**開発環境（`NODE_ENV=development`）では自動的にモック広告が表示されます。**
+
+モック広告の特徴：
+- クリックで異なるページに遷移する（ホーム、予約、動画、スケジュールなど）
+- 広告スロットIDに応じて異なる色とリンク先が表示される
+- 実際のAdSense APIを呼び出さないため、動作確認が容易
+- 広告のフォーマットや配置をテスト可能
+
+本番環境（`NODE_ENV=production`）では実際のGoogle AdSense広告が表示されます。
+
 ## セットアップ（推奨）
 
 アプリケーション全体でAdSenseを使用する場合、レイアウトファイルで一度だけ設定します。
@@ -37,6 +49,7 @@ export default function RootLayout({ children }) {
 
 1. **AdSenseProvider**: `clientId`を各コンポーネントで指定する必要がなくなる
 2. **スクリプト読み込み**: layout.tsxで一度だけ読み込まれ、重複を防ぐ
+3. **開発環境対応**: 自動的にモック広告が表示され、テストが容易
 
 ## 基本的な使い方
 
