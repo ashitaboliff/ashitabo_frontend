@@ -68,7 +68,7 @@ const BookingCalendar = ({ bookingDate, timeList, className }: Props) => {
 				if (booking.registName === DENIED_BOOKING) {
 					return {
 						key: cellKey,
-						className: baseClass,
+						className: disabledClass,
 						content: <DeniedCell label={booking.name} />,
 					}
 				}
