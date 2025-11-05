@@ -70,7 +70,7 @@ const GachaMainPopup = ({
 			isCloseButton={false}
 			className="h-[90vh] overflow-y-auto"
 		>
-			<div className="flex flex-col gap-y-4 justify-center">
+			<div className="flex flex-col justify-center gap-y-4">
 				{currentStep === 'select' && (
 					<GachaPackCarousel
 						onPackSelect={handlePackSelected}
@@ -79,7 +79,7 @@ const GachaMainPopup = ({
 				)}
 
 				{currentStep === 'pending' && (
-					<div className="flex flex-col items-center justify-center h-64">
+					<div className="flex h-64 flex-col items-center justify-center">
 						<span className="loading loading-spinner loading-lg"></span>
 					</div>
 				)}
@@ -107,7 +107,7 @@ const GachaMainPopup = ({
 
 				{currentStep !== 'result' && (
 					<div
-						className={`text-center text-sm text-base-content mt-4 ${gachaPlayCountToday >= MAX_GACHA_PLAYS_PER_DAY ? 'text-error' : ''}`}
+						className={`mt-4 text-center text-base-content text-sm ${gachaPlayCountToday >= MAX_GACHA_PLAYS_PER_DAY ? 'text-error' : ''}`}
 					>
 						今日のガチャプレイ回数: {gachaPlayCountToday} /{' '}
 						{MAX_GACHA_PLAYS_PER_DAY}

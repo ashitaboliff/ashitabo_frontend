@@ -83,7 +83,7 @@ const MemberRecruitmentForm = () => {
 	return (
 		<form
 			onSubmit={handleSubmit(onSubmit)}
-			className="flex flex-col w-full space-y-4"
+			className="flex w-full flex-col space-y-4"
 		>
 			<fieldset disabled className="space-y-4 disabled:opacity-50">
 				<TextInputField

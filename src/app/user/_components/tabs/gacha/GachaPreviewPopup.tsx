@@ -19,16 +19,16 @@ const GachaPreviewPopup = ({ open, onClose, gachaItem, count }: Props) => {
 	const renderCardContent = () => {
 		if (!gachaItem) {
 			return (
-				<div className="flex flex-col items-center justify-center h-[25rem]">
+				<div className="flex h-[25rem] flex-col items-center justify-center">
 					<p className="text-error">ガチャ情報がありません。</p>
 				</div>
 			)
 		}
 		if (!gachaItem.signedGachaSrc) {
 			return (
-				<div className="flex flex-col items-center justify-center h-[25rem]">
+				<div className="flex h-[25rem] flex-col items-center justify-center">
 					<p className="text-error">画像URLがありません。</p>
-					<p className="text-xs text-neutral-content">({gachaItem.gachaSrc})</p>
+					<p className="text-neutral-content text-xs">({gachaItem.gachaSrc})</p>
 				</div>
 			)
 		}
@@ -49,8 +49,8 @@ const GachaPreviewPopup = ({ open, onClose, gachaItem, count }: Props) => {
 			maxWidth="3xl"
 			isCloseButton={false}
 		>
-			<div className="flex flex-col gap-y-2 justify-center">
-				<div className="flex flex-col items-center h-[25rem] my-2">
+			<div className="flex flex-col justify-center gap-y-2">
+				<div className="my-2 flex h-[25rem] flex-col items-center">
 					{renderCardContent()}
 				</div>
 				{gachaItem && (

@@ -37,7 +37,7 @@ interface Props {
 	readonly onRequireAuth: (message: string) => void
 }
 
-const today = getCurrentJSTDateString({})
+const today = getCurrentJSTDateString()
 
 const BookingEditForm = ({
 	bookingDetail,
@@ -172,10 +172,10 @@ const BookingEditForm = ({
 	return (
 		<div className="space-y-6 pt-4">
 			<div className="text-center">
-				<h2 className="text-2xl font-bold">予約編集</h2>
+				<h2 className="font-bold text-2xl">予約編集</h2>
 			</div>
 
-			<div className="max-w-md mx-auto space-y-4">
+			<div className="mx-auto max-w-md space-y-4">
 				<BookingEditFormFields
 					register={register}
 					errors={errors}

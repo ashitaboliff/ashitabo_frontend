@@ -23,7 +23,7 @@ export const useGachaPlayManager = (options?: UseGachaPlayManagerOptions) => {
 		useState<boolean>(false)
 
 	useEffect(() => {
-		const today = getCurrentJSTDateString({})
+		const today = getCurrentJSTDateString()
 		const storedDate = localStorage.getItem('gachaLastPlayedDate')
 		const storedCount = parseInt(
 			localStorage.getItem('gachaPlayCountToday') || '0',
@@ -53,7 +53,7 @@ export const useGachaPlayManager = (options?: UseGachaPlayManagerOptions) => {
 	}, [canPlayGacha])
 
 	const handlePlayGacha = useCallback(() => {
-		const today = getCurrentJSTDateString({})
+		const today = getCurrentJSTDateString()
 		let currentCount = 0
 		// localStorageから最新情報を取得して再チェック
 		const storedDate = localStorage.getItem('gachaLastPlayedDate')
@@ -84,7 +84,7 @@ export const useGachaPlayManager = (options?: UseGachaPlayManagerOptions) => {
 	}, [])
 
 	const onGachaPlayedSuccessfully = useCallback(() => {
-		const today = getCurrentJSTDateString({})
+		const today = getCurrentJSTDateString()
 		setGachaPlayCountToday((prev) => {
 			const next = prev + 1
 			localStorage.setItem('gachaPlayCountToday', next.toString())

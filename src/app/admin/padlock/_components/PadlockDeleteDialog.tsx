@@ -23,7 +23,7 @@ const PadlockDeleteDialog = ({
 	>
 		<div className="space-y-4">
 			<p>本当に削除しますか？この操作は取り消せません。</p>
-			<div className="flex gap-2 justify-center">
+			<div className="flex justify-center gap-2">
 				<button
 					type="button"
 					className="btn btn-error"

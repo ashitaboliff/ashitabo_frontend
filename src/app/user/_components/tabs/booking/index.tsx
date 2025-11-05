@@ -49,11 +49,11 @@ const UserBookingLogs = ({ session, initialData }: Props) => {
 	}
 
 	return (
-		<div className="flex flex-col justify-center mt-4">
+		<div className="mt-4 flex flex-col justify-center">
 			{' '}
 			<div className="flex flex-col">
-				<div className="flex flex-row items-center ml-auto space-x-2 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
-					<p className="text-sm whitespace-nowrap">表示件数:</p>
+				<div className="ml-auto flex w-full flex-row items-center space-x-2 sm:w-1/2 md:w-1/3 lg:w-1/4">
+					<p className="whitespace-nowrap text-sm">表示件数:</p>
 					<SelectField<number>
 						name="logsPerPage"
 						options={{ '10件': 10, '20件': 20, '30件': 30 }}
@@ -63,7 +63,7 @@ const UserBookingLogs = ({ session, initialData }: Props) => {
 						}}
 					/>
 				</div>
-				<div className="flex flex-row gap-x-2 my-2">
+				<div className="my-2 flex flex-row gap-x-2">
 					{' '}
 					<RadioSortGroup
 						name="booking_sort_options"
@@ -76,7 +76,7 @@ const UserBookingLogs = ({ session, initialData }: Props) => {
 					/>
 				</div>
 				<div className="overflow-x-auto">
-					<table className="table table-zebra table-sm w-full justify-center my-2">
+					<table className="table-zebra table-sm my-2 table w-full justify-center">
 						<thead>
 							<tr>
 								<th className="font-bold">予約日</th>
@@ -99,7 +99,7 @@ const UserBookingLogs = ({ session, initialData }: Props) => {
 					</table>
 				</div>
 				{pageCount > 1 && totalCount > 0 && (
-					<div className="mt-4 mx-auto">
+					<div className="mx-auto mt-4">
 						<Pagination
 							currentPage={page}
 							totalPages={pageCount}
@@ -133,7 +133,7 @@ const UserBookingLogs = ({ session, initialData }: Props) => {
 								<div className="font-bold">更新日:</div>
 								<div>{formatDateTimeJa(popupData.updatedAt)}</div>
 							</div>
-							<div className="flex justify-center space-x-2 mt-4">
+							<div className="mt-4 flex justify-center space-x-2">
 								{' '}
 								<button
 									type="button"

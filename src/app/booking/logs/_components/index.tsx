@@ -33,12 +33,12 @@ const BookingLogs = ({ bookingLog }: Props) => {
 	const currentLogs = bookingLog?.slice(indexOfFirstLog, indexOfLastLog) ?? []
 
 	return (
-		<div className="container mx-auto px-2 sm:px-4 py-8">
-			<div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-				<h1 className="text-2xl sm:text-3xl font-bold">予約ログ</h1>
-				<div className="flex flex-col xs:flex-row items-center gap-2 sm:gap-4 w-full sm:w-auto">
-					<div className="flex items-center gap-2 w-full xs:w-auto">
-						<span className="text-sm whitespace-nowrap">表示件数:</span>
+		<div className="container mx-auto px-2 py-8 sm:px-4">
+			<div className="mb-6 flex flex-col items-center justify-between gap-4 sm:flex-row">
+				<h1 className="font-bold text-2xl sm:text-3xl">予約ログ</h1>
+				<div className="flex w-full xs:flex-row flex-col items-center gap-2 sm:w-auto sm:gap-4">
+					<div className="flex w-full xs:w-auto items-center gap-2">
+						<span className="whitespace-nowrap text-sm">表示件数:</span>
 						<SelectField
 							value={logsPerPage}
 							onChange={(e) => {
@@ -54,52 +54,52 @@ const BookingLogs = ({ bookingLog }: Props) => {
 			</div>
 
 			{currentLogs.length > 0 ? (
-				<div className="overflow-x-auto shadow-md rounded-lg">
-					<table className="table table-zebra w-full">
+				<div className="overflow-x-auto rounded-lg shadow-md">
+					<table className="table-zebra table w-full">
 						<thead className="bg-base-200">
 							<tr>
-								<th className="p-3 text-left text-xs-custom sm:text-sm font-semibold tracking-wider w-10 sm:w-12"></th>
-								<th className="p-3 text-left text-xs-custom sm:text-sm font-semibold tracking-wider">
+								<th className="w-10 p-3 text-left font-semibold text-xs-custom tracking-wider sm:w-12 sm:text-sm"></th>
+								<th className="p-3 text-left font-semibold text-xs-custom tracking-wider sm:text-sm">
 									予約日
 								</th>
-								<th className="p-3 text-left text-xs-custom sm:text-sm font-semibold tracking-wider hidden sm:table-cell">
+								<th className="hidden p-3 text-left font-semibold text-xs-custom tracking-wider sm:table-cell sm:text-sm">
 									時間
 								</th>
-								<th className="p-3 text-left text-xs-custom sm:text-sm font-semibold tracking-wider">
+								<th className="p-3 text-left font-semibold text-xs-custom tracking-wider sm:text-sm">
 									バンド名
 								</th>
-								<th className="p-3 text-left text-xs-custom sm:text-sm font-semibold tracking-wider hidden md:table-cell">
+								<th className="hidden p-3 text-left font-semibold text-xs-custom tracking-wider sm:text-sm md:table-cell">
 									責任者
 								</th>
 							</tr>
 						</thead>
-						<tbody className="bg-base-100 divide-y divide-base-300">
+						<tbody className="divide-y divide-base-300 bg-base-100">
 							{currentLogs.map((log) => (
 								<tr
 									key={log.id}
-									className="hover:bg-base-200 cursor-pointer transition-colors duration-200"
+									className="cursor-pointer transition-colors duration-200 hover:bg-base-200"
 									onClick={() => {
 										setIsPopupOpen(true)
 										setPopupData(log)
 									}}
 								>
-									<td className="p-3 whitespace-nowrap text-center">
+									<td className="whitespace-nowrap p-3 text-center">
 										{log.isDeleted && (
 											<div className="tooltip tooltip-error" data-tip="削除済">
 												<TiDeleteOutline className="text-error" size={20} />
 											</div>
 										)}
 									</td>
-									<td className="p-3 whitespace-nowrap text-xs-custom sm:text-sm">
+									<td className="whitespace-nowrap p-3 text-xs-custom sm:text-sm">
 										{formatDateSlashWithWeekday(log.bookingDate)}
 									</td>
-									<td className="p-3 whitespace-nowrap text-xs-custom sm:text-sm hidden sm:table-cell">
+									<td className="hidden whitespace-nowrap p-3 text-xs-custom sm:table-cell sm:text-sm">
 										{BOOKING_TIME_LIST[log.bookingTime]}
 									</td>
-									<td className="p-3 text-xs-custom sm:text-sm break-words">
+									<td className="break-words p-3 text-xs-custom sm:text-sm">
 										{log.registName}
 									</td>
-									<td className="p-3 whitespace-nowrap text-xs-custom sm:text-sm hidden md:table-cell">
+									<td className="hidden whitespace-nowrap p-3 text-xs-custom sm:text-sm md:table-cell">
 										{log.name}
 									</td>
 								</tr>
@@ -108,9 +108,9 @@ const BookingLogs = ({ bookingLog }: Props) => {
 					</table>
 				</div>
 			) : (
-				<div className="text-center py-10 card bg-base-100 shadow">
+				<div className="card bg-base-100 py-10 text-center shadow">
 					<div className="card-body">
-						<p className="text-xl text-base-content/70">
+						<p className="text-base-content/70 text-xl">
 							予約ログはありません。
 						</p>
 					</div>
@@ -168,7 +168,7 @@ const BookingLogs = ({ bookingLog }: Props) => {
 							item.value ? (
 								<div
 									key={item.label}
-									className="grid grid-cols-1 sm:grid-cols-3 gap-1 py-2 border-b border-base-300 last:border-b-0"
+									className="grid grid-cols-1 gap-1 border-base-300 border-b py-2 last:border-b-0 sm:grid-cols-3"
 								>
 									<dt className="font-semibold text-base-content/80 sm:col-span-1">
 										{item.label}:

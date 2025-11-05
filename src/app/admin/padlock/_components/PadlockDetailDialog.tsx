@@ -27,9 +27,9 @@ const PadlockDetailDialog = ({
 			{padLock ? (
 				<div className="flex flex-col items-center space-y-3 text-sm">
 					{padLock.isDeleted ? (
-						<div className="text-error font-bold">削除済み</div>
+						<div className="font-bold text-error">削除済み</div>
 					) : null}
-					<div className="grid grid-cols-2 gap-2 w-full">
+					<div className="grid w-full grid-cols-2 gap-2">
 						<div className="font-bold">管理名:</div>
 						<div>{padLock.name}</div>
 						<div className="font-bold">作成日:</div>

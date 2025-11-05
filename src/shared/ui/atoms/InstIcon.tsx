@@ -31,7 +31,7 @@ const InstIcon = ({ part, size }: { part: Part[]; size?: number }) => {
 	return (
 		<div className="flex flex-wrap justify-around">
 			<div
-				className={`grid md:flex md:flex-row gap-1 w-full ${gridColumnsClass}`}
+				className={`grid w-full gap-1 md:flex md:flex-row ${gridColumnsClass}`}
 			>
 				{sortedParts.map((p) => (
 					<div key={p} className="tooltip" data-tip={PartMap[p as Part]}>

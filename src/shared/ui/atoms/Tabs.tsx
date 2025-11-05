@@ -47,14 +47,14 @@ export const Tabs = ({ children }: TabsProps) => {
 
 	return (
 		<div className="mt-2">
-			<div className="flex justify-center space-x-4 border-b border-neutral-200">
+			<div className="flex justify-center space-x-4 border-neutral-200 border-b">
 				{tabChildren.map((child, index) => {
 					const isActive = index === activeIndex
 					return (
 						<button
 							type="button"
 							key={`${child.key ?? 'tab'}-${index}`}
-							className={`py-2 px-4 text-lg ${
+							className={`px-4 py-2 text-lg ${
 								isActive
 									? 'border-b-2 text-accent'
 									: 'text-base-content hover:text-accent'

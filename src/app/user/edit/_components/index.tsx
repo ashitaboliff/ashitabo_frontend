@@ -32,15 +32,15 @@ const ProfileEdit = ({ profile }: Props) => {
 	const isStudent = selectedRole === 'STUDENT'
 
 	return (
-		<div className="flex flex-col items-center justify-center p-4 bg-white shadow-lg rounded-lg">
+		<div className="flex flex-col items-center justify-center rounded-lg bg-white p-4 shadow-lg">
 			{isSubmitting && <Loading />}
-			<h1 className="text-2xl font-bold mb-4">プロフィール編集</h1>
+			<h1 className="mb-4 font-bold text-2xl">プロフィール編集</h1>
 			<FeedbackMessage
 				source={submitFeedback}
 				className="mb-4 w-full max-w-xs"
 			/>
 			<form
-				className="flex flex-col space-y-4 w-full max-w-xs"
+				className="flex w-full max-w-xs flex-col space-y-4"
 				onSubmit={handleSubmit(onSubmit)}
 			>
 				<TextInputField
@@ -73,7 +73,7 @@ const ProfileEdit = ({ profile }: Props) => {
 					</label>
 				</div>
 				{errors.role && (
-					<span className="text-xs text-error">{errors.role.message}</span>
+					<span className="text-error text-xs">{errors.role.message}</span>
 				)}
 
 				<MultiSelectField
@@ -113,7 +113,7 @@ const ProfileEdit = ({ profile }: Props) => {
 					</>
 				)}
 
-				<div className="flex flex-row gap-2 justify-center">
+				<div className="flex flex-row justify-center gap-2">
 					<button type="submit" className="btn btn-primary">
 						保存
 					</button>

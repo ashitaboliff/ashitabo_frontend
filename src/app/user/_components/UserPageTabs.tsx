@@ -66,7 +66,7 @@ const UserPageTabs = ({ session, gachaCarouselData }: Props) => {
 			label: <GiCardRandom size={30} />,
 			content: (
 				<div className="flex flex-col gap-4">
-					<div className="flex flex-col sm:flex-row justify-center gap-2 w-full items-center">
+					<div className="flex w-full flex-col items-center justify-center gap-2 sm:flex-row">
 						<button
 							type="button"
 							className="btn btn-primary w-full sm:w-auto"
@@ -78,7 +78,7 @@ const UserPageTabs = ({ session, gachaCarouselData }: Props) => {
 						<RatioPopup gkktt={gkktt} />
 					</div>
 					{gachaMessage && (
-						<div className="text-error text-center text-sm">{gachaMessage}</div>
+						<div className="text-center text-error text-sm">{gachaMessage}</div>
 					)}
 					<GachaLogs session={session} />
 				</div>
@@ -89,7 +89,7 @@ const UserPageTabs = ({ session, gachaCarouselData }: Props) => {
 			label: <GiGuitarHead size={30} />,
 			content: (
 				<div className="flex flex-col items-center">
-					<p className="text-sm text-center mt-2">
+					<p className="mt-2 text-center text-sm">
 						バンド機能を追加予定！まだ出来てないよ～
 					</p>
 				</div>

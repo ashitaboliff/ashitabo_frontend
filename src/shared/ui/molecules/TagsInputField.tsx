@@ -123,7 +123,7 @@ const TagInputField = ({
 						}
 
 						return (
-							<div className="flex flex-wrap gap-2 py-2 rounded-md items-center">
+							<div className="flex flex-wrap items-center gap-2 rounded-md py-2">
 								<div className="flex flex-wrap gap-2">
 									{currentControlledTags.map((tag: string) => (
 										<div
@@ -155,7 +155,7 @@ const TagInputField = ({
 									onChange={handleInputChange}
 									onKeyDown={handleKeyDownController}
 									placeholder={placeholder}
-									className="input flex-grow bg-white text-sm sm:text-base min-w-[150px]"
+									className="input min-w-[150px] flex-grow bg-white text-sm sm:text-base"
 									onBlur={() => {
 										// 入力値がある場合のみタグを追加
 										if (inputValue.trim()) {
@@ -173,7 +173,7 @@ const TagInputField = ({
 				/>
 			) : (
 				// controlがない場合のレンダリング (ローカルのtagsステートを使用)
-				<div className="flex flex-wrap gap-2 py-2 rounded-md items-center">
+				<div className="flex flex-wrap items-center gap-2 rounded-md py-2">
 					<div className="flex flex-wrap gap-2">
 						{tags.map((tag) => (
 							<div
@@ -203,7 +203,7 @@ const TagInputField = ({
 							}
 						}}
 						placeholder={placeholder}
-						className="input flex-grow bg-white text-sm sm:text-base min-w-[150px]"
+						className="input min-w-[150px] flex-grow bg-white text-sm sm:text-base"
 						onBlur={() => {
 							if (inputValue.trim()) {
 								addTagInternal(inputValue, tags, onChange)

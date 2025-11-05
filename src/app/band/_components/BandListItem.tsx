@@ -31,16 +31,16 @@ export default function BandListItem({
 
 	// A simple way to check if the current user is a member, for potential UI differences
 	return (
-		<div className="card bg-base-100 shadow-xl mb-4">
+		<div className="card mb-4 bg-base-100 shadow-xl">
 			<div className="card-body">
-				<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3">
-					<h2 className="card-title text-xl font-semibold mb-2 sm:mb-0">
+				<div className="mb-3 flex flex-col items-start justify-between sm:flex-row sm:items-center">
+					<h2 className="card-title mb-2 font-semibold text-xl sm:mb-0">
 						{band.name}
 						{isCurrentUserMember && (
 							<span className="badge badge-primary badge-sm ml-2">所属中</span>
 						)}
 					</h2>
-					<div className="flex gap-2 flex-wrap">
+					<div className="flex flex-wrap gap-2">
 						<button
 							onClick={() => onEditBand(band)}
 							className="btn btn-sm btn-outline btn-info"
@@ -69,15 +69,15 @@ export default function BandListItem({
 				</div>
 
 				<div>
-					<h3 className="text-md font-medium mb-2">
+					<h3 className="mb-2 font-medium text-md">
 						メンバー ({band.members.length}人):
 					</h3>
 					{band.members.length > 0 ? (
-						<div className="flex flex-wrap gap-3 items-center">
+						<div className="flex flex-wrap items-center gap-3">
 							{displayMembers.map((member: BandMemberDetails) => (
 								<div
 									key={member.id}
-									className="flex items-center gap-2 p-2 bg-base-200 rounded-lg"
+									className="flex items-center gap-2 rounded-lg bg-base-200 p-2"
 									title={`${member.user.name} (${member.part})`}
 								>
 									<Image
@@ -88,21 +88,21 @@ export default function BandListItem({
 										className="rounded-full"
 									/>
 									<div>
-										<p className="text-sm font-medium truncate max-w-28">
+										<p className="max-w-28 truncate font-medium text-sm">
 											{member.user.name}
 										</p>
-										<p className="text-xs text-gray-500">{member.part}</p>
+										<p className="text-gray-500 text-xs">{member.part}</p>
 									</div>
 								</div>
 							))}
 							{remainingMembersCount > 0 && (
-								<div className="text-sm text-gray-500 self-center">
+								<div className="self-center text-gray-500 text-sm">
 									+ 他{remainingMembersCount}人
 								</div>
 							)}
 						</div>
 					) : (
-						<p className="text-sm text-gray-500">
+						<p className="text-gray-500 text-sm">
 							このバンドにはまだメンバーがいません。
 						</p>
 					)}

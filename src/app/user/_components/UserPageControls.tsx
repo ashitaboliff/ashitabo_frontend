@@ -54,7 +54,7 @@ const UserPageControls = ({ session, children }: Props) => {
 
 	return (
 		<>
-			<div className="flex flex-col gap-3 w-full md:w-1/2 lg:w-1/3 mb-6">
+			<div className="mb-6 flex w-full flex-col gap-3 md:w-1/2 lg:w-1/3">
 				<button
 					type="button"
 					className="btn btn-outline btn-primary"
@@ -93,11 +93,11 @@ const UserPageControls = ({ session, children }: Props) => {
 
 			<div className="w-full">{children}</div>
 
-			<div className="w-full md:w-1/2 lg:w-1/3 mt-4">
+			<div className="mt-4 w-full md:w-1/2 lg:w-1/3">
 				<FeedbackMessage source={signOutMessage} />
 			</div>
 
-			<div className="flex flex-col sm:flex-row justify-center gap-4 mt-6 w-full md:w-1/2 lg:w-1/3">
+			<div className="mt-6 flex w-full flex-col justify-center gap-4 sm:flex-row md:w-1/2 lg:w-1/3">
 				<button
 					type="button"
 					className="btn btn-error btn-outline w-full sm:w-1/2"

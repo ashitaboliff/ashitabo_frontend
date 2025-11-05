@@ -24,23 +24,23 @@ const AuthIssueLayout = ({
 	return (
 		<div className={`flex items-center justify-center p-4 ${className}`.trim()}>
 			<div className="card w-full max-w-xl bg-base-100 shadow-xl">
-				<div className="card-body text-center gap-6">
+				<div className="card-body gap-6 text-center">
 					<div className="flex flex-col items-center gap-4">
 						{icon ? <div className="text-5xl text-primary">{icon}</div> : null}
 						<div>
-							<h1 className="text-2xl font-bold text-base-content mb-2">
+							<h1 className="mb-2 font-bold text-2xl text-base-content">
 								{title}
 							</h1>
-							<div className="text-base text-base-content/80 whitespace-pre-line">
+							<div className="whitespace-pre-line text-base text-base-content/80">
 								{message}
 							</div>
 							{details ? (
-								<p className="mt-4 text-sm text-base-content/60 whitespace-pre-line">
+								<p className="mt-4 whitespace-pre-line text-base-content/60 text-sm">
 									{details}
 								</p>
 							) : null}
 							{code ? (
-								<p className="mt-2 text-xs font-mono text-base-content/50">
+								<p className="mt-2 font-mono text-base-content/50 text-xs">
 									エラーコード: {code}
 								</p>
 							) : null}
@@ -48,7 +48,7 @@ const AuthIssueLayout = ({
 					</div>
 					{children}
 					{actions ? (
-						<div className="card-actions flex flex-col sm:flex-row justify-center gap-3">
+						<div className="card-actions flex flex-col justify-center gap-3 sm:flex-row">
 							{actions}
 						</div>
 					) : null}

@@ -14,7 +14,7 @@ export type DeniedBooking = {
 	id: string
 	createdAt: Date
 	updatedAt: Date
-	startDate: Date
+	startDate: string
 	startTime: number
 	endTime: number | null
 	description: string

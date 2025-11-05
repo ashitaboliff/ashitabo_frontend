@@ -128,7 +128,7 @@ const AdminUserPage = ({
 	return (
 		<>
 			<div className="flex flex-col items-center justify-center gap-y-3">
-				<h1 className="text-2xl font-bold">ユーザ管理</h1>
+				<h1 className="font-bold text-2xl">ユーザ管理</h1>
 				<p className="text-sm">
 					このページでは登録ユーザの確認、削除、三役権限の追加が可能です。
 					<br />
@@ -137,9 +137,9 @@ const AdminUserPage = ({
 					また、三役権限の追加もむやみに行わないでください。大いなる責任が伴います。お前らを信用しています。
 				</p>
 				<FeedbackMessage source={initialError ?? globalFeedback.feedback} />
-				<div className="overflow-x-auto w-full flex flex-col justify-center gap-y-2">
-					<div className="flex flex-row items-center ml-auto space-x-2 w-full max-w-xs">
-						<p className="text-sm whitespace-nowrap">表示件数:</p>
+				<div className="flex w-full flex-col justify-center gap-y-2 overflow-x-auto">
+					<div className="ml-auto flex w-full max-w-xs flex-row items-center space-x-2">
+						<p className="whitespace-nowrap text-sm">表示件数:</p>
 						<SelectField
 							value={query.perPage}
 							onChange={(event) =>
@@ -158,7 +158,7 @@ const AdminUserPage = ({
 							onSortChange={(sort) => updateQuery({ sort })}
 						/>
 					</div>
-					<table className="table table-zebra table-sm w-full">
+					<table className="table-zebra table-sm table w-full">
 						<thead>
 							<tr>
 								<th>LINE登録名</th>

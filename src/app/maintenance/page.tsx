@@ -21,9 +21,9 @@ export default function Maintenance() {
 					unoptimized
 				/>
 			</div>
-			<h1 className="text-4xl font-bold mb-4">メンテナンス中</h1>
-			<p className="text-lg mb-2">ただいまメンテナンス中です。</p>
-			<p className="text-xxs mb-6">しばらくお待ちください。</p>
+			<h1 className="mb-4 font-bold text-4xl">メンテナンス中</h1>
+			<p className="mb-2 text-lg">ただいまメンテナンス中です。</p>
+			<p className="mb-6 text-xxs">しばらくお待ちください。</p>
 		</div>
 	)
 }

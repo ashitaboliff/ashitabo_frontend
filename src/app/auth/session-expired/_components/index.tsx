@@ -75,7 +75,7 @@ const SessionExpiredClient = () => {
 			icon={<LuClockAlert />}
 		>
 			{status === 'loading' ? (
-				<div className="flex items-center justify-center gap-2 text-sm text-base-content/70">
+				<div className="flex items-center justify-center gap-2 text-base-content/70 text-sm">
 					<span className="loading loading-spinner loading-sm"></span>
 					<span>セッション状態を確認中...</span>
 				</div>

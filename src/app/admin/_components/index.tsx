@@ -39,9 +39,9 @@ const adminLinks = [
 const AdminMain = () => {
 	return (
 		<div className="flex flex-col items-center justify-center">
-			<div className="text-2xl font-bold my-4">三役用管理ページ</div>
+			<div className="my-4 font-bold text-2xl">三役用管理ページ</div>
 			<div className="overflow-x-auto">
-				<table className="table table-lg">
+				<table className="table-lg table">
 					<tbody>
 						{adminLinks.map((link) => (
 							<tr key={link.href} className="hover:bg-base-200">
@@ -56,7 +56,7 @@ const AdminMain = () => {
 					</tbody>
 				</table>
 			</div>
-			<Link href="/" className="mt-4 btn btn-outline">
+			<Link href="/" className="btn btn-outline mt-4">
 				ホームに戻る
 			</Link>
 		</div>

@@ -56,11 +56,11 @@ const Carousel = () => {
 							alt={image.alt}
 							width={900}
 							height={675}
-							className="object-cover w-full h-auto"
+							className="h-auto w-full object-cover"
 							priority={index === 0}
 							unoptimized
 						/>
-						<div className="absolute left-2 right-2 top-1/2 flex -translate-y-1/2 transform justify-between">
+						<div className="-translate-y-1/2 absolute top-1/2 right-2 left-2 flex transform justify-between">
 							<a href={`#${previousSlideId}`} className="btn btn-offwhite">
 								❮
 							</a>

@@ -34,7 +34,7 @@ const GearIcon = ({ className }: { className?: string }) => (
 
 export default function ComingSoonPage() {
 	return (
-		<div className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] text-center py-10 animate-fadeIn">
+		<div className="flex min-h-[calc(100vh-4rem)] animate-fadeIn flex-col items-center justify-center py-10 text-center">
 			{/* Adjust min-h if you have a fixed header/footer height, 4rem is an example for a 64px header */}
 			<style jsx global>{`
 				@keyframes fadeIn {
@@ -64,27 +64,27 @@ export default function ComingSoonPage() {
 			`}</style>
 
 			<div className="mb-12">
-				<GearIcon className="w-24 h-24 text-primary gear-spin" />
+				<GearIcon className="gear-spin h-24 w-24 text-primary" />
 			</div>
 
-			<h1 className="text-5xl md:text-6xl font-bold text-primary mb-6">
+			<h1 className="mb-6 font-bold text-5xl text-primary md:text-6xl">
 				鋭意製作中！
 			</h1>
-			<p className="text-lg md:text-xl text-base-content mb-4 max-w-md">
+			<p className="mb-4 max-w-md text-base-content text-lg md:text-xl">
 				新しい素晴らしい機能やコンテンツを準備しています。
 			</p>
-			<p className="text-lg md:text-xl text-base-content mb-10 max-w-md">
+			<p className="mb-10 max-w-md text-base-content text-lg md:text-xl">
 				もうしばらくお待ちください！
 			</p>
 
-			<div className="w-full max-w-xs mb-10">
+			<div className="mb-10 w-full max-w-xs">
 				<progress className="progress progress-primary w-full"></progress>
-				<p className="text-sm text-accent mt-2">進捗: 2% ...たぶん！</p>
+				<p className="mt-2 text-accent text-sm">進捗: 2% ...たぶん！</p>
 			</div>
 
 			<Link
 				href="/home"
-				className="btn btn-primary btn-wide shadow-lg hover:shadow-xl transition-shadow duration-300"
+				className="btn btn-primary btn-wide shadow-lg transition-shadow duration-300 hover:shadow-xl"
 			>
 				ホームに戻る
 			</Link>

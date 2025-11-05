@@ -6,7 +6,7 @@ import { getCurrentJSTDateString } from '@/shared/utils'
 const Page = async () => {
 	const { type, message } = await useFlashMessage({ key: 'booking:flash' })
 
-	const initialViewDate = new Date(getCurrentJSTDateString({ yesterday: true }))
+	const initialViewDate = new Date(getCurrentJSTDateString({ offsetDays: -1 }))
 
 	return (
 		<>

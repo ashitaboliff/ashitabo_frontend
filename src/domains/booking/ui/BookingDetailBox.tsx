@@ -40,7 +40,7 @@ const BookingDetailBox = ({
 	]
 
 	return (
-		<div className="card w-full max-w-md bg-base-100 shadow-xl mx-auto my-4">
+		<div className="card mx-auto my-4 w-full max-w-md bg-base-100 shadow-xl">
 			<div className="card-body">
 				<h2 className="card-title justify-center text-2xl">予約詳細</h2>
 				<div className="divider my-1"></div>
@@ -48,12 +48,12 @@ const BookingDetailBox = ({
 					{data.map((item) => (
 						<div
 							key={item.label}
-							className="grid grid-cols-1 sm:grid-cols-3 gap-1 items-center py-2 border-b border-base-300 last:border-b-0"
+							className="grid grid-cols-1 items-center gap-1 border-base-300 border-b py-2 last:border-b-0 sm:grid-cols-3"
 						>
 							<dt className="font-semibold text-base-content sm:col-span-1">
 								{item.label}
 							</dt>
-							<dd className="text-base-content sm:col-span-2 break-words">
+							<dd className="break-words text-base-content sm:col-span-2">
 								{item.value}
 							</dd>
 						</div>

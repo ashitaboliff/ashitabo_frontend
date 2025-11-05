@@ -24,9 +24,9 @@ const LabelInputField = ({
 						className="btn btn-ghost btn-xs p-0"
 						aria-label="追加情報"
 					>
-						<InfoIcon className="w-4 h-4" aria-hidden="true" />
+						<InfoIcon className="h-4 w-4" aria-hidden="true" />
 					</button>
-					<div className="card dropdown-content card-sm w-48 bg-white shadow rounded-box p-2 z-10">
+					<div className="card dropdown-content card-sm z-10 w-48 rounded-box bg-white p-2 shadow">
 						<p className="text-sm">{infoDropdown}</p>
 					</div>
 				</div>

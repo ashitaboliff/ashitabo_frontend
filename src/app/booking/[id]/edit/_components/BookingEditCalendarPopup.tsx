@@ -86,8 +86,8 @@ const BookingEditCalendarPopup = ({
 			open={open}
 			onClose={onClose}
 		>
-			<div className="flex flex-col gap-y-2 items-center justify-center">
-				<div className="flex flex-row justify中心 space-x-2">
+			<div className="flex flex-col items-center justify-center gap-y-2">
+				<div className="justify中心 flex flex-row space-x-2">
 					<button
 						type="button"
 						className="btn btn-outline"
@@ -96,7 +96,7 @@ const BookingEditCalendarPopup = ({
 					>
 						{'<'}
 					</button>
-					<div className="text-lg font-bold mx-2 w-60 text-center">
+					<div className="mx-2 w-60 text-center font-bold text-lg">
 						{viewDate.toLocaleDateString()}~
 						{addDays(viewDate, viewRangeDays - 1).toLocaleDateString()}
 					</div>
@@ -122,7 +122,7 @@ const BookingEditCalendarPopup = ({
 						className={isLoading ? 'opacity-30' : undefined}
 					/>
 				) : (
-					<p className="text-sm text-center text-error">
+					<p className="text-center text-error text-sm">
 						予約枠を取得できませんでした。時間をおいて再度お試しください。
 					</p>
 				)}

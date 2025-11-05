@@ -84,7 +84,7 @@ const BookingMainPage = ({ initialViewDate, type, message }: Props) => {
 				</div>
 			)}
 			<div className="flex flex-col justify-center space-x-2">
-				<div className="flex justify-between items-center mb-4 m-auto">
+				<div className="m-auto mb-4 flex items-center justify-between">
 					<button
 						type="button"
 						className="btn btn-outline"
@@ -93,7 +93,7 @@ const BookingMainPage = ({ initialViewDate, type, message }: Props) => {
 					>
 						{'<'}
 					</button>
-					<div className="text-md sm:text-lg font-bold w-64 sm:w-72 text-center">
+					<div className="w-64 text-center font-bold text-md sm:w-72 sm:text-lg">
 						{`${formatMonthDay(viewDate, {
 							pad: false,
 							separator: '/',
@@ -118,7 +118,7 @@ const BookingMainPage = ({ initialViewDate, type, message }: Props) => {
 				</div>
 				{!bookingData ? (
 					<div className="flex justify-center">
-						<div className="skeleton w-[360px] h-[466px] sm:w-[520px] sm:h-[578px]"></div>
+						<div className="skeleton h-[466px] w-[360px] sm:h-[578px] sm:w-[520px]"></div>
 					</div>
 				) : (
 					<BookingCalendar
