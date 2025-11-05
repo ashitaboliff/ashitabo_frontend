@@ -47,7 +47,7 @@ const TextareaInputField = ({
 	...props
 }: TextareaInputFieldProps) => {
 	return (
-		<div className="flex flex-col w-full">
+		<div className="flex w-full flex-col">
 			{label && (
 				<LabelInputField
 					label={label}
@@ -59,7 +59,7 @@ const TextareaInputField = ({
 				id={labelId}
 				name={name}
 				placeholder={placeholder}
-				className={`textarea w-full pr-10 bg-white ${className}`}
+				className={`textarea w-full bg-white pr-10 ${className}`}
 				disabled={disabled}
 				value={value}
 				defaultValue={defaultValue} // 追加: defaultValue を設定

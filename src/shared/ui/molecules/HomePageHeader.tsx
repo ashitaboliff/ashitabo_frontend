@@ -6,13 +6,13 @@ import HomePageBar from '@/shared/ui/atoms/HomePageBar'
 const HomePageHeader = () => {
 	return (
 		<div
-			className={`flex flex-col items-center relative mb-8 ${gkktt.className}`}
+			className={`relative mb-8 flex flex-col items-center ${gkktt.className}`}
 		>
-			<div className={`absolute w-full flex justify-center`}>
+			<div className={`absolute flex w-full justify-center`}>
 				<HomePageBar />
 			</div>
-			<div className="flex flex-col items-center justify-center mt-4 bg-white/60 z-10">
-				<h2 className={`text-xl whitespace-nowrap`}>
+			<div className="z-10 mt-4 flex flex-col items-center justify-center bg-white/60">
+				<h2 className={`whitespace-nowrap text-xl`}>
 					信州大学工学部・教育学部・長野県立大学
 				</h2>
 				<h2 className={`text-xl`}>軽音サークル</h2>

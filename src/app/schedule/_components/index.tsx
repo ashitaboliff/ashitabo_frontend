@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation'
 const ScheduleMainPage = () => {
 	const router = useRouter()
 	return (
-		<div className="flex flex-col justify-center items-center gap-y-4">
-			<p className="text-2xl font-bold">日程調整</p>
+		<div className="flex flex-col items-center justify-center gap-y-4">
+			<p className="font-bold text-2xl">日程調整</p>
 			<p>
 				バンドでの練習日やライブ日、その他あしたぼ内部での日程調整に使ってください
 			</p>

@@ -73,7 +73,7 @@ const VideoListPage = ({
 	return (
 		<div className="container mx-auto px-2 sm:px-4">
 			<div
-				className={`text-3xl sm:text-4xl font-bold ${gkktt.className} text-center mb-6`}
+				className={`font-bold text-3xl sm:text-4xl ${gkktt.className} mb-6 text-center`}
 			>
 				過去ライブ映像
 			</div>
@@ -85,9 +85,9 @@ const VideoListPage = ({
 				shareUrl={shareUrl}
 			/>
 			<div className="flex flex-col items-center justify-center gap-y-4">
-				<div className="flex flex-row items-center justify-end w-full gap-2 sm:gap-4 mb-2 px-1">
+				<div className="mb-2 flex w-full flex-row items-center justify-end gap-2 px-1 sm:gap-4">
 					<div className="flex items-center space-x-2">
-						<p className="text-xs-custom sm:text-sm whitespace-nowrap">
+						<p className="whitespace-nowrap text-xs-custom sm:text-sm">
 							表示件数:
 						</p>
 						<SelectField
@@ -103,7 +103,7 @@ const VideoListPage = ({
 						/>
 					</div>
 					<div className="flex items-center space-x-2">
-						<p className="text-xs-custom sm:text-sm whitespace-nowrap">
+						<p className="whitespace-nowrap text-xs-custom sm:text-sm">
 							並び順:
 						</p>
 						<RadioSortGroup
@@ -122,21 +122,21 @@ const VideoListPage = ({
 				<FeedbackMessage source={error} defaultVariant="error" />
 
 				{isPending ? (
-					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+					<div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
 						{skeletonKeys.map((placeholderKey) => (
 							<div
 								key={placeholderKey}
-								className="flex flex-col items-center p-4 border rounded-lg shadow-sm w-full"
+								className="flex w-full flex-col items-center rounded-lg border p-4 shadow-sm"
 							>
-								<div className="skeleton h-48 w-full mb-2"></div>
-								<div className="skeleton h-6 w-3/4 mb-1"></div>
-								<div className="skeleton h-5 w-1/2 mb-1"></div>
+								<div className="skeleton mb-2 aspect-[16/9] w-full"></div>
+								<div className="skeleton mb-1 h-6 w-3/4"></div>
+								<div className="skeleton mb-1 h-5 w-1/2"></div>
 								<div className="skeleton h-5 w-1/3"></div>
 							</div>
 						))}
 					</div>
 				) : youtubeDetails?.length > 0 ? (
-					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+					<div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
 						{isBand
 							? bandDetails.map((detail) => (
 									<VideoItem
@@ -154,7 +154,7 @@ const VideoListPage = ({
 								))}
 					</div>
 				) : (
-					<div className="text-base-content w-full text-center py-10">
+					<div className="w-full py-10 text-center text-base-content">
 						該当する動画がありません
 					</div>
 				)}

@@ -15,12 +15,12 @@ const inter = Inter({ subsets: ['latin'] })
 
 const Page = async () => {
 	return (
-		<div className="flex flex-col gap-y-4 mt-6">
-			<h1 className="text-4xl text-center">あしたぼの活動内容</h1>
+		<div className="mt-6 flex flex-col gap-y-4">
+			<h1 className="text-center text-4xl">あしたぼの活動内容</h1>
 			<div
-				className={`flex flex-col justify-start px-6 pb-4 ${inter.className} bg-white rounded-lg shadow`}
+				className={`flex flex-col justify-start px-6 pb-4 ${inter.className} rounded-lg bg-white shadow`}
 			>
-				<h2 className="text-xl font-bold my-4">1.サークルの概要</h2>
+				<h2 className="my-4 font-bold text-xl">1.サークルの概要</h2>
 				<div className="text-base">
 					あしたぼは
 					<span className="font-bold">信州大学工学部</span>・
@@ -31,14 +31,14 @@ const Page = async () => {
 					<br />
 					大学から楽器を始めた部員も多く、初心者の方でも気軽に参加できます！
 				</div>
-				<div className="relative w-full h-64">
+				<div className="relative h-64 w-full">
 					<Image
 						src={getImageUrl('/home/activity/activity-5.webp')}
 						unoptimized
 						alt="あしたぼの活動風景"
 						width={240}
 						height={180}
-						className="rounded-lg mt-2 shadow absolute top-0 left-1/2 -translate-x-20 translate-y-14 object-cover"
+						className="-translate-x-20 absolute top-0 left-1/2 mt-2 translate-y-14 rounded-lg object-cover shadow"
 					/>
 					<Image
 						src={getImageUrl('/home/activity/activity-12.webp')}
@@ -46,10 +46,10 @@ const Page = async () => {
 						alt="あしたぼの活動風景"
 						width={240}
 						height={180}
-						className="rounded-lg mt-2 shadow absolute top-1/2 right-1/2 transform translate-x-14 -translate-y-28 -rotate-12"
+						className="-translate-y-28 -rotate-12 absolute top-1/2 right-1/2 mt-2 translate-x-14 transform rounded-lg shadow"
 					/>
 				</div>
-				<h2 className="text-xl font-bold my-4">2.活動内容</h2>
+				<h2 className="my-4 font-bold text-xl">2.活動内容</h2>
 				<div className="text-base">
 					あしたぼでの活動は、主に<span className="font-bold">ライブ</span>と
 					<span className="font-bold">部会</span>の2つです
@@ -70,14 +70,14 @@ const Page = async () => {
 					<br />
 					先輩や後輩、同期との貴重な交流の場となっています！
 				</div>
-				<div className="relative w-full h-64">
+				<div className="relative h-64 w-full">
 					<Image
 						src={getImageUrl('/home/activity/activity-11.webp')}
 						unoptimized
 						alt="信州大学工学部軽音サークルあしたぼの活動風景"
 						width={240}
 						height={180}
-						className="rounded-lg mt-2 shadow absolute top-1/2 left-1/2 transform -translate-x-14 -translate-y-28 rotate-12"
+						className="-translate-x-14 -translate-y-28 absolute top-1/2 left-1/2 mt-2 rotate-12 transform rounded-lg shadow"
 					/>
 					<Image
 						src={getImageUrl('/home/activity/activity-10.webp')}
@@ -85,15 +85,15 @@ const Page = async () => {
 						alt="信州大学工学部軽音サークルあしたぼの活動風景"
 						width={240}
 						height={180}
-						className="rounded-lg mt-2 shadow absolute top-0 right-1/2 translate-x-20 translate-y-14 object-cover"
+						className="absolute top-0 right-1/2 mt-2 translate-x-20 translate-y-14 rounded-lg object-cover shadow"
 					/>
 				</div>
-				<h2 className="text-xl font-bold my-4">3.年間ライブ日程</h2>
+				<h2 className="my-4 font-bold text-xl">3.年間ライブ日程</h2>
 				<div className="text-base">
 					年間のざっくりとした予定は以下の通りです
 					<br />
 					ここに掲載していないライブもたくさんあるので詳細は
-					<Link href="/home/live" className="text-accent link link-hover">
+					<Link href="/home/live" className="link link-hover text-accent">
 						こちら
 					</Link>
 					をご確認ください
@@ -114,14 +114,14 @@ const Page = async () => {
 					<span className="font-bold">3月</span>：ラスコン
 					<br />
 				</div>
-				<div className="relative w-full h-64">
+				<div className="relative h-64 w-full">
 					<Image
 						src={getImageUrl('/home/activity/activity-8.webp')}
 						unoptimized
 						alt="信州大学工学部軽音サークルあしたぼの活動風景"
 						width={240}
 						height={180}
-						className="rounded-lg mt-2 shadow absolute top-0 left-1/2 -translate-x-20 translate-y-14 object-cover"
+						className="-translate-x-20 absolute top-0 left-1/2 mt-2 translate-y-14 rounded-lg object-cover shadow"
 					/>
 					<Image
 						src={getImageUrl('/home/activity/activity-7.webp')}
@@ -129,10 +129,10 @@ const Page = async () => {
 						alt="信州大学工学部軽音サークルあしたぼの活動風景"
 						width={240}
 						height={180}
-						className="rounded-lg mt-2 shadow absolute top-1/2 right-1/2 transform translate-x-14 -translate-y-28 -rotate-12"
+						className="-translate-y-28 -rotate-12 absolute top-1/2 right-1/2 mt-2 translate-x-14 transform rounded-lg shadow"
 					/>
 				</div>
-				<h2 className="text-xl font-bold my-4">4.各種SNS</h2>
+				<h2 className="my-4 font-bold text-xl">4.各種SNS</h2>
 				<div className="text-base">
 					あしたぼの活動は、Twitter、Instagram、YouTubeで発信しています
 					<br />
@@ -168,14 +168,14 @@ const Page = async () => {
 						</Link>
 					</div>
 				</div>
-				<div className="relative w-full h-64">
+				<div className="relative h-64 w-full">
 					<Image
 						src={getImageUrl('/home/activity/activity-4.webp')}
 						unoptimized
 						alt="信州大学工学部軽音サークルあしたぼの活動風景"
 						width={120}
 						height={90}
-						className="rounded-lg mt-2 shadow absolute top-1/2 left-1/2 -translate-x-1 -translate-y-2 object-cover -rotate-45"
+						className="-translate-x-1 -translate-y-2 -rotate-45 absolute top-1/2 left-1/2 mt-2 rounded-lg object-cover shadow"
 					/>
 					<Image
 						src={getImageUrl('/home/activity/activity-2.webp')}
@@ -183,7 +183,7 @@ const Page = async () => {
 						alt="信州大学工学部軽音サークルあしたぼの活動風景"
 						width={120}
 						height={90}
-						className="rounded-lg mt-2 shadow absolute top-1/2 right-1/2 transform -translate-y-28 -rotate-12"
+						className="-translate-y-28 -rotate-12 absolute top-1/2 right-1/2 mt-2 transform rounded-lg shadow"
 					/>
 					<Image
 						src={getImageUrl('/home/activity/activity-1.webp')}
@@ -191,7 +191,7 @@ const Page = async () => {
 						alt="信州大学工学部軽音サークルあしたぼの活動風景"
 						width={120}
 						height={90}
-						className="rounded-lg mt-2 shadow absolute top-1/2 right-1/2 -translate-x-4 object-cover rotate-12"
+						className="-translate-x-4 absolute top-1/2 right-1/2 mt-2 rotate-12 rounded-lg object-cover shadow"
 					/>
 					<Image
 						src={getImageUrl('/home/activity/activity-9.webp')}
@@ -199,7 +199,7 @@ const Page = async () => {
 						alt="信州大学工学部軽音サークルあしたぼの活動風景"
 						width={120}
 						height={90}
-						className="rounded-lg mt-2 shadow absolute top-1/2 left-1/2 translate-x-5 -translate-y-28 -rotate-6"
+						className="-translate-y-28 -rotate-6 absolute top-1/2 left-1/2 mt-2 translate-x-5 rounded-lg shadow"
 					/>
 					<Image
 						src={getImageUrl('/home/activity/activity-6.webp')}
@@ -207,12 +207,12 @@ const Page = async () => {
 						alt="信州大学工学部軽音サークルあしたぼの活動風景"
 						width={120}
 						height={90}
-						className="rounded-lg mt-2 shadow absolute top-1/2 left-1/2 -translate-x-20 -translate-y-14 object-cover"
+						className="-translate-x-20 -translate-y-14 absolute top-1/2 left-1/2 mt-2 rounded-lg object-cover shadow"
 					/>
 				</div>
 				<div className="flex flex-row justify-center">
 					<Link
-						className="btn btn-outline w-44 mt-4"
+						className="btn btn-outline mt-4 w-44"
 						href="/home"
 						rel="noopener noreferrer"
 					>

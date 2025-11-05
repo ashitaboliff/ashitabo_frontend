@@ -26,7 +26,7 @@ const CustomDatePicker = ({
 	const inputId = useId()
 
 	return (
-		<div className="flex flex-col w-full">
+		<div className="flex w-full flex-col">
 			{label && (
 				<label className="label" htmlFor={inputId}>
 					{label}
@@ -47,7 +47,7 @@ const CustomDatePicker = ({
 				)}
 				minDate={minDate}
 				dateFormat="yyyy/MM/dd"
-				className="border border-base-300 rounded-md p-2 w-full bg-white"
+				className="w-full rounded-md border border-base-300 bg-white p-2"
 				calendarClassName="bg-white"
 			/>
 			<InputFieldError errorMessage={errorMessage} />

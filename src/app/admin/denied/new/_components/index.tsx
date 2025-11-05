@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
 import { Controller, type UseFormRegister, useForm } from 'react-hook-form'
+import { useSWRConfig } from 'swr'
 import { createDeniedBookingAction } from '@/domains/admin/api/deniedBookingActions'
 import { deniedBookingFormSchema } from '@/domains/admin/model/adminSchema'
 import {
@@ -13,6 +14,7 @@ import {
 	type DeniedBookingType,
 } from '@/domains/admin/model/adminTypes'
 import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
+import { mutateAllBookingCalendars } from '@/domains/booking/utils/calendarCache'
 import { DAY_OF_WEEK_OPTIONS } from '@/shared/constants/week'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import CustomDatePicker from '@/shared/ui/atoms/DatePicker'
@@ -58,6 +60,7 @@ const DAY_OF_WEEK_SELECT_OPTIONS = DAY_OF_WEEK_OPTIONS.reduce(
 const DeniedBookingCreatePage = () => {
 	const router = useRouter()
 	const actionFeedback = useFeedback()
+	const { mutate } = useSWRConfig()
 
 	const {
 		register,
@@ -79,6 +82,7 @@ const DeniedBookingCreatePage = () => {
 			try {
 				const res = await createDeniedBookingAction(data)
 				if (res.ok) {
+					await mutateAllBookingCalendars(mutate)
 					router.push('/admin/denied')
 				} else {
 					actionFeedback.showApiError(res)
@@ -93,17 +97,17 @@ const DeniedBookingCreatePage = () => {
 				)
 			}
 		},
-		[actionFeedback, router],
+		[actionFeedback, router, mutate],
 	)
 
 	return (
 		<div className="flex flex-col items-center justify-center gap-y-3">
-			<div className="flex flex-col items-center text-center gap-y-2">
-				<h1 className="text-2xl font-bold">予約禁止日追加</h1>
+			<div className="flex flex-col items-center gap-y-2 text-center">
+				<h1 className="font-bold text-2xl">予約禁止日追加</h1>
 				<p className="text-sm">このページでは予約禁止日の追加が可能です。</p>
 			</div>
 			<form
-				className="flex flex-col space-y-4 w-full max-w-md items-center px-4 sm:px-8"
+				className="flex w-full max-w-md flex-col items-center space-y-4 px-4 sm:px-8"
 				onSubmit={handleSubmit(onSubmit)}
 			>
 				<DeniedBookingTypeSelector register={register} />

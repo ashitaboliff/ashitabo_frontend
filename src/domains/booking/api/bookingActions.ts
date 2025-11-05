@@ -2,6 +2,7 @@
 
 import { revalidateTag } from 'next/cache'
 import { cookies } from 'next/headers'
+import { revalidateBookingCalendarsForDate } from '@/domains/booking/api/bookingRevalidate'
 import {
 	mapRawBooking,
 	mapRawBookingList,
@@ -16,10 +17,7 @@ import type {
 	BookingLog,
 	BookingResponse,
 } from '@/domains/booking/model/bookingTypes'
-import {
-	buildBookingCalendarTag,
-	getBookingCalendarRangesForDate,
-} from '@/domains/booking/utils/calendarCache'
+import { buildBookingCalendarTag } from '@/domains/booking/utils/calendarCache'
 import { apiDelete, apiGet, apiPost, apiPut } from '@/shared/lib/api/crud'
 import {
 	createdResponse,
@@ -193,14 +191,6 @@ export const getBookingByUserIdAction = async ({
 	)
 }
 
-const revalidateBookingCalendarsForDate = (date: string) => {
-	const ranges = getBookingCalendarRangesForDate(date)
-	ranges.forEach(({ startDate, endDate }) => {
-		revalidateTag(buildBookingCalendarTag(startDate, endDate), 'max')
-	})
-	revalidateTag(BOOKING_CALENDAR_TAG, 'max')
-}
-
 export const createBookingAction = async ({
 	userId,
 	booking,
@@ -232,9 +222,9 @@ export const createBookingAction = async ({
 		}
 	}
 
-	revalidateTag('booking', 'max')
-	revalidateTag(`booking-user-${userId}`, 'max')
-	revalidateBookingCalendarsForDate(bookingDateKey)
+	await revalidateTag('booking', 'max')
+	await revalidateTag(`booking-user-${userId}`, 'max')
+	await revalidateBookingCalendarsForDate(bookingDateKey)
 
 	return createdResponse({ id: res.data.id })
 }
@@ -273,10 +263,10 @@ export const updateBookingAction = async ({
 		}
 	}
 
-	revalidateTag('booking', 'max')
-	revalidateTag(`booking-detail-${bookingId}`, 'max')
-	revalidateTag(`booking-user-${userId}`, 'max')
-	revalidateBookingCalendarsForDate(bookingDateKey)
+	await revalidateTag('booking', 'max')
+	await revalidateTag(`booking-detail-${bookingId}`, 'max')
+	await revalidateTag(`booking-user-${userId}`, 'max')
+	await revalidateBookingCalendarsForDate(bookingDateKey)
 
 	return noContentResponse()
 }
@@ -307,10 +297,10 @@ export const deleteBookingAction = async ({
 
 	const bookingDateKey = toDateKey(bookingDate)
 
-	revalidateTag('booking', 'max')
-	revalidateTag(`booking-detail-${bookingId}`, 'max')
-	revalidateTag(`booking-user-${userId}`, 'max')
-	revalidateBookingCalendarsForDate(bookingDateKey)
+	await revalidateTag('booking', 'max')
+	await revalidateTag(`booking-detail-${bookingId}`, 'max')
+	await revalidateTag(`booking-user-${userId}`, 'max')
+	await revalidateBookingCalendarsForDate(bookingDateKey)
 
 	const cookieStore = await cookies()
 	cookieStore.set(

@@ -9,7 +9,7 @@
     "start": "next start",
     "ts": "tsc --noEmit",
     "check": "biome check .",
-    "check:fix": "biome check --write .",
+    "check:fix": "biome check --write --unsafe . --max-diagnostics 500",
     "lint": "biome lint .",
     "lint:fix": "biome lint --write .",
     "format": "biome format .",
@@ -33,7 +33,6 @@
     "react-datepicker": "^7.6.0",
     "react-dom": "^19.2.0",
     "react-hook-form": "^7.63.0",
-    "react-youtube": "^10.1.0",
     "swr": "^2.3.3",
     "zod": "^4.1.12"
   },

@@ -6,10 +6,10 @@ import HomePageButton from '@/app/home/_components/HomePageButton'
 
 const HomeButton = async () => {
 	return (
-		<div className="grid gap-4 pt-2 grid-cols-1 md:grid-cols-2 xl:scale-130 xl:origin-top">
+		<div className="grid grid-cols-1 gap-4 pt-2 md:grid-cols-2 xl:origin-top xl:scale-130">
 			{/* Row 1 */}
-			<div className="relative flex flex-row justify-center xl:justify-end w-auto h-36">
-				<div className="absolute place-items-end -z-10">
+			<div className="relative flex h-36 w-auto flex-row justify-center xl:justify-end">
+				<div className="-z-10 absolute place-items-end">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
@@ -49,8 +49,8 @@ const HomeButton = async () => {
 			</div>
 
 			{/* Row 2 */}
-			<div className="relative flex flex-row justify-center xl:justify-start w-auto h-36">
-				<div className="absolute place-items-end -z-10">
+			<div className="relative flex h-36 w-auto flex-row justify-center xl:justify-start">
+				<div className="-z-10 absolute place-items-end">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"

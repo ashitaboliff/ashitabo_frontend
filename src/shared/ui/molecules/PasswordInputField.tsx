@@ -36,14 +36,14 @@ const PasswordInputField = ({
 				<input
 					id={labelId}
 					{...register}
-					className={`input w-full pr-10 bg-white ${className}`}
+					className={`input w-full bg-white pr-10 ${className}`}
 					type={showPassword ? 'text' : 'password'}
 					placeholder="パスワード"
 					autoComplete="off"
 				/>
 				<button
 					type="button"
-					className="absolute inset-y-0 right-0 flex items-center px-2 z-20"
+					className="absolute inset-y-0 right-0 z-20 flex items-center px-2"
 					onClick={handleClickShowPassword}
 					onMouseDown={handleMouseDownPassword}
 				>
@@ -56,7 +56,7 @@ const PasswordInputField = ({
 			</div>
 			{errorMessage && (
 				<div className="label">
-					<span className="text-error label-text-alt">{errorMessage}</span>
+					<span className="label-text-alt text-error">{errorMessage}</span>
 				</div>
 			)}
 		</div>

@@ -10,8 +10,8 @@ const BookingDetailNotFound = () => {
 	const router = useRouter()
 
 	return (
-		<div className="p-4 flex flex-col items-center justify-center">
-			<div className="p-4 flex flex-col justify-center gap-2">
+		<div className="flex flex-col items-center justify-center p-4">
+			<div className="flex flex-col justify-center gap-2 p-4">
 				<Message variant="error">
 					<p>
 						予約情報が見つかりませんでした。

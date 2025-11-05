@@ -83,14 +83,14 @@ const GachaLogList = ({
 
 	if (error) {
 		return (
-			<div className="text-center py-10">
+			<div className="py-10 text-center">
 				ガチャ履歴の読み込みに失敗しました: {error.message}
 			</div>
 		)
 	}
 
 	if (!gachaItems.length) {
-		return <div className="text-center py-10">ガチャ履歴はありません。</div>
+		return <div className="py-10 text-center">ガチャ履歴はありません。</div>
 	}
 
 	return (
@@ -104,7 +104,7 @@ const GachaLogList = ({
 						<button
 							type="button"
 							key={gachaItem.id}
-							className="w-full aspect-[3/4] rounded bg-base-200 animate-pulse"
+							className="aspect-[3/4] w-full animate-pulse rounded bg-base-200"
 							onClick={() => onGachaItemClick(gachaItem.gachaSrc)}
 							aria-label={`ガチャ画像プレビュー-${gachaItem.gachaSrc}`}
 						/>
@@ -115,7 +115,7 @@ const GachaLogList = ({
 						key={gachaItem.id}
 						src={signedSrc}
 						alt={`ガチャ画像プレビュー-${gachaItem.gachaSrc}`}
-						className="w-full h-auto object-cover rounded cursor-pointer"
+						className="h-auto w-full cursor-pointer rounded object-cover"
 						decoding="auto"
 						width={180}
 						height={240}

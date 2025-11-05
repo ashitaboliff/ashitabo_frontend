@@ -16,10 +16,10 @@ interface BookingInfoCellProps {
 
 export const BookingInfoCell = ({ registName, name }: BookingInfoCellProps) => (
 	<div className={CALENDAR_CELL_CONTENT_CLASS}>
-		<p className="text-xxxs sm:text-xs-custom text-base-content font-bold">
+		<p className="font-bold text-base-content text-xxxs sm:text-xs-custom">
 			{truncateWithEllipsis(registName, 21)}
 		</p>
-		<p className="text-xxxs sm:text-xs-custom text-base-content">
+		<p className="text-base-content text-xxxs sm:text-xs-custom">
 			{truncateWithEllipsis(name, 14)}
 		</p>
 	</div>
@@ -33,7 +33,7 @@ export const DeniedCell = ({ label }: DeniedCellProps) => (
 	<div className={CALENDAR_CELL_CONTENT_CLASS}>
 		<HiMiniXMark color="red" size={20} />
 		{label ? (
-			<p className="text-xxxs sm:text-xs-custom text-base-content">{label}</p>
+			<p className="text-base-content text-xxxs sm:text-xs-custom">{label}</p>
 		) : null}
 	</div>
 )

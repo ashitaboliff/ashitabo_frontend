@@ -70,7 +70,7 @@ const PadlockCreateDialog = ({
 					register={register('password')}
 					errorMessage={errors.password?.message}
 				/>
-				<div className="flex flex-row gap-x-2 justify-center">
+				<div className="flex flex-row justify-center gap-x-2">
 					<button
 						type="submit"
 						className="btn btn-primary"

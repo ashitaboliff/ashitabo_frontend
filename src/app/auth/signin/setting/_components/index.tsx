@@ -46,17 +46,17 @@ const SigninSetting = () => {
 	}
 
 	return (
-		<div className="flex flex-col items-center justify-center p-4 bg-white shadow-lg rounded-lg relative">
+		<div className="relative flex flex-col items-center justify-center rounded-lg bg-white p-4 shadow-lg">
 			{isSubmitting && (
 				<AuthLoadingIndicator message="プロフィールを保存しています..." />
 			)}
-			<h1 className="text-2xl font-bold mb-4">ユーザ設定</h1>
+			<h1 className="mb-4 font-bold text-2xl">ユーザ設定</h1>
 			<div className="w-full max-w-xs space-y-3">
 				<FeedbackMessage source={submitFeedback} />
 				<FeedbackMessage source={signOutMessage} />
 			</div>
 			<form
-				className="flex flex-col space-y-4 w-full max-w-xs"
+				className="flex w-full max-w-xs flex-col space-y-4"
 				onSubmit={handleSubmit(onSubmit)}
 			>
 				<TextInputField
@@ -89,7 +89,7 @@ const SigninSetting = () => {
 					</label>
 				</div>
 				{errors.role && (
-					<span className="text-xs text-error">{errors.role.message}</span>
+					<span className="text-error text-xs">{errors.role.message}</span>
 				)}
 
 				<MultiSelectField
@@ -133,7 +133,7 @@ const SigninSetting = () => {
 					</>
 				)}
 
-				<div className="flex flex-col sm:flex-row items-center justify-center gap-2">
+				<div className="flex flex-col items-center justify-center gap-2 sm:flex-row">
 					<button type="submit" className="btn btn-primary w-full sm:w-auto">
 						保存
 					</button>

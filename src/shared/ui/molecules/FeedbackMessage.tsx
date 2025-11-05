@@ -73,7 +73,7 @@ const FeedbackMessage = ({
 					{source.message}
 				</p>
 				{details ? (
-					<p className="text-xs opacity-80 break-words">{details}</p>
+					<p className="break-words text-xs opacity-80">{details}</p>
 				) : null}
 			</Message>
 		)
@@ -91,7 +91,7 @@ const FeedbackMessage = ({
 			>
 				{source.message}
 				{source.details ? (
-					<p className="text-xs opacity-80 break-words">{source.details}</p>
+					<p className="break-words text-xs opacity-80">{source.details}</p>
 				) : null}
 			</Message>
 		)

@@ -90,7 +90,7 @@ export const GachaResult = ({
 
 	if (!createUserRes || isLoadingSignedUrl) {
 		return (
-			<div className="flex flex-col items-center h-[25rem] justify-center">
+			<div className="flex h-[25rem] flex-col items-center justify-center">
 				<div className="loading loading-spinner loading-lg"></div>
 				{!createUserRes && <p className="mt-2">ガチャ結果を保存中...</p>}
 				{createUserRes && isLoadingSignedUrl && (
@@ -102,8 +102,8 @@ export const GachaResult = ({
 
 	if (!createUserRes.ok) {
 		return (
-			<div className="flex flex-col items-center h-[25rem] justify-center">
-				<div className="text-lg text-error my-auto">
+			<div className="flex h-[25rem] flex-col items-center justify-center">
+				<div className="my-auto text-error text-lg">
 					ガチャの保存に失敗しました。
 					{createUserRes.message}
 				</div>
@@ -113,8 +113,8 @@ export const GachaResult = ({
 
 	if (signedUrlError) {
 		return (
-			<div className="flex flex-col items-center h-[25rem] justify-center">
-				<div className="text-lg text-error my-auto">
+			<div className="flex h-[25rem] flex-col items-center justify-center">
+				<div className="my-auto text-error text-lg">
 					画像URLの取得に失敗しました: {signedUrlError.message}
 				</div>
 			</div>
@@ -123,8 +123,8 @@ export const GachaResult = ({
 
 	if (!signedUrl) {
 		return (
-			<div className="flex flex-col items-center h-[25rem] justify-center">
-				<div className="text-lg text-error my-auto">
+			<div className="flex h-[25rem] flex-col items-center justify-center">
+				<div className="my-auto text-error text-lg">
 					画像URLが取得できませんでした。
 				</div>
 			</div>
@@ -132,7 +132,7 @@ export const GachaResult = ({
 	}
 
 	return (
-		<div className="flex flex-col items-center h-[25rem] my-2">
+		<div className="my-2 flex h-[25rem] flex-col items-center">
 			<CardAnimation
 				frontImageSignedUrl={signedUrl}
 				rarity={gachaData.name}

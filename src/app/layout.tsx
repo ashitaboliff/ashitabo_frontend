@@ -7,6 +7,7 @@ import { nicomoji } from '@/shared/lib/fonts'
 import './globals.css'
 import type { ReactNode } from 'react'
 import { createMetaData } from '@/shared/hooks/useMetaData'
+import { AdSenseProvider, AdSenseScript } from '@/shared/ui/ads'
 import Footer from '@/shared/ui/layout/Footer'
 import Header from '@/shared/ui/layout/Header'
 
@@ -32,18 +33,15 @@ console.log('%chttps://www.github.com/ashitaboliff/', 'color: #000000; font-size
 				</Script>
 				<Analytics />
 				<SpeedInsights />
-				<Header className={nicomoji.className} />
-				{children}
-				<Footer />
+				<AdSenseScript />
+				<AdSenseProvider clientId={PublicEnv.NEXT_PUBLIC_ADS_ID || ''}>
+					<Header className={nicomoji.className} />
+					{children}
+					<Footer />
+				</AdSenseProvider>
 				<Script
 					src={`https://www.googletagmanager.com/gtag/js?id=${PublicEnv.NEXT_PUBLIC_GA_ID}`}
 					strategy="afterInteractive"
-				/>
-				<Script
-					async
-					src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${PublicEnv.NEXT_PUBLIC_ADS_ID}`}
-					crossOrigin="anonymous"
-					strategy="lazyOnload"
 				/>
 			</body>
 		</html>

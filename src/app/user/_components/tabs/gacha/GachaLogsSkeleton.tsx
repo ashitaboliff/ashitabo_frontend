@@ -20,7 +20,7 @@ const GachaLogsSkeleton = ({ logsPerPage }: Props) => {
 			className={`grid ${logsPerPage % 3 === 0 ? 'grid-cols-3' : 'grid-cols-5'} gap-2`}
 		>
 			{skeletonIds.map((id) => (
-				<div key={id} className="skeleton w-full aspect-gacha" />
+				<div key={id} className="skeleton aspect-gacha w-full" />
 			))}
 		</div>
 	)

@@ -18,14 +18,13 @@ const MainPageLayout = async () => {
 	const modalId = `booking-rule-modal-${randomUUID()}`
 
 	return (
-		<div className="flex justify-center space-x-2 mx-2">
+		<div className="mx-2 flex justify-center space-x-2">
 			<BookingRefreshButton />
 			<Modal
 				id={modalId}
 				btnText="使い方の表示"
 				btnClass="btn btn-outline btn-md"
-				title="使い方の表示"
-				modalClass="prose prose-h3:text-center max-w-none text-base-content"
+				modalClass="prose prose-h3:text-center max-w-none text-base-content max-h-[80vh] overflow-y-auto"
 			>
 				<MDXRemote source={markdownContent} />
 			</Modal>

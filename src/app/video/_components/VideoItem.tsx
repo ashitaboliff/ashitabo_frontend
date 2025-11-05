@@ -30,23 +30,23 @@ const VideoItem = ({ youtubeDetail, liveOrBand }: Props) => {
 			: `/video/live/${youtubeDetail.playlistId}`
 
 	return (
-		<div className="flex flex-col xl:flex-row items-start p-3 sm:p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow w-full gap-4">
+		<div className="flex w-full flex-col items-start gap-4 rounded-lg border p-3 shadow-sm transition-shadow hover:shadow-md sm:p-4">
 			{videoId && (
 				<button
 					type="button"
-					className="cursor-pointer w-full xl:w-1/3 flex-shrink-0 text-left"
+					className="w-full flex-shrink-0 cursor-pointer text-left"
 					onClick={() => router.push(detailHref)}
 					aria-label={`${displayTitle}の詳細を見る`}
 				>
-					<div className="aspect-video rounded overflow-hidden">
+					<div className="aspect-[16/9] overflow-hidden rounded">
 						<YouTubeEmbed videoid={videoId} />
 					</div>
 				</button>
 			)}
-			<div className="flex flex-col gap-y-2 w-full">
+			<div className="flex w-full flex-col gap-y-2">
 				<button
 					type="button"
-					className="text-left text-lg xl:text-xl font-bold link link-hover"
+					className="link link-hover text-left font-bold text-lg xl:text-xl"
 					onClick={() => router.push(detailHref)}
 				>
 					{displayTitle}
@@ -55,9 +55,9 @@ const VideoItem = ({ youtubeDetail, liveOrBand }: Props) => {
 					<div className="text-sm">ライブ名: {playlistTitle}</div>
 				)}
 				<div className="text-sm">{youtubeDetail.liveDate}</div>
-				<div className="flex flex-wrap gap-2 mt-2">
+				<div className="mt-2 flex flex-wrap gap-2">
 					<button
-						className="btn btn-outline btn-sm text-xs-custom xl:text-sm whitespace-nowrap"
+						className="btn btn-outline btn-sm whitespace-nowrap text-xs-custom xl:text-sm"
 						onClick={() => router.push(detailHref)}
 						type="button"
 					>

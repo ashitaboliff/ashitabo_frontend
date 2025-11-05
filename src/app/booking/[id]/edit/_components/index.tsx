@@ -176,7 +176,7 @@ const BookingEdit = ({
 	}
 
 	const summaryView = (
-		<div className="flex flex-col items-center justify-center w-full">
+		<div className="flex w-full flex-col items-center justify-center">
 			<BookingDetailBox
 				bookingDate={state.booking.bookingDate}
 				bookingTime={state.booking.bookingTime}
@@ -189,7 +189,7 @@ const BookingEdit = ({
 					className="w-full space-y-4 text-center"
 				/>
 			)}
-			<div className="flex flex-col sm:flex-row justify-center gap-2 w-full max-w-md">
+			<div className="flex w-full max-w-md flex-col justify-center gap-2 sm:flex-row">
 				<button
 					type="button"
 					className="btn btn-primary w-full sm:w-1/2"
@@ -211,7 +211,7 @@ const BookingEdit = ({
 					予約を削除
 				</button>
 			</div>
-			<div className="mt-2 flex justify-center w-full max-w-md">
+			<div className="mt-2 flex w-full max-w-md justify-center">
 				<button
 					type="button"
 					className="btn btn-ghost w-full sm:w-auto"
@@ -224,7 +224,7 @@ const BookingEdit = ({
 	)
 
 	const editSuccessView = (
-		<div className="flex flex-col items-center justify-center w-full space-y-4">
+		<div className="flex w-full flex-col items-center justify-center space-y-4">
 			<BookingSuccessMessage
 				feedback={{
 					kind: 'success',
@@ -285,7 +285,7 @@ const BookingEdit = ({
 			>
 				<div className="p-4">
 					<p className="text-center">予約を削除しますか？</p>
-					<div className="flex justify-center gap-4 my-4">
+					<div className="my-4 flex justify-center gap-4">
 						<button
 							type="button"
 							className="btn btn-secondary"
