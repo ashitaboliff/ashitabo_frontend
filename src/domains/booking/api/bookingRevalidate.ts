@@ -37,14 +37,14 @@ export const revalidateBookingCalendarsForDate = async (
 	date: string | string[],
 ) => {
 	if (Array.isArray(date)) {
-		for (const d of date) {
-			revalidateBookingCalendarsForDate(d)
-		}
+		await Promise.all(date.map((d) => revalidateBookingCalendarsForDate(d)))
 		return
 	}
 	const ranges = getBookingCalendarRangesForDate(date)
-	ranges.forEach(({ startDate, endDate }) => {
-		revalidateTag(buildBookingCalendarTag(startDate, endDate), 'max')
-	})
-	revalidateTag(BOOKING_CALENDAR_TAG, 'max')
+	await Promise.all([
+		...ranges.map(({ startDate, endDate }) =>
+			revalidateTag(buildBookingCalendarTag(startDate, endDate), 'max'),
+		),
+		revalidateTag(BOOKING_CALENDAR_TAG, 'max'),
+	])
 }
