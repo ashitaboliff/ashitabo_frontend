@@ -77,7 +77,7 @@ export const mapRawDeniedBooking = (raw: RawDeniedBooking): DeniedBooking => ({
 	id: raw.id,
 	createdAt: toDate(raw.createdAt),
 	updatedAt: toDate(raw.updatedAt),
-	startDate: toDate(raw.startDate),
+	startDate: raw.startDate.split('T')[0],
 	startTime: raw.startTime,
 	endTime: raw.endTime,
 	description: raw.description,

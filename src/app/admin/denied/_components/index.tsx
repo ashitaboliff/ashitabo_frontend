@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
+import { useSWRConfig } from 'swr'
 import { deleteDeniedBookingAction } from '@/domains/admin/api/deniedBookingActions'
 import type { DeniedBookingSort } from '@/domains/admin/model/adminTypes'
 import {
@@ -9,6 +10,7 @@ import {
 	type DeniedBookingQuery,
 } from '@/domains/admin/query/deniedBookingQuery'
 import type { DeniedBooking } from '@/domains/booking/model/bookingTypes'
+import { mutateAllBookingCalendars } from '@/domains/booking/utils/calendarCache'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { useQueryState } from '@/shared/hooks/useQueryState'
 import Pagination from '@/shared/ui/atoms/Pagination'
@@ -66,6 +68,7 @@ const DeniedBookingPage = ({
 	const [isDetailOpen, setIsDetailOpen] = useState(false)
 	const [isDeleteOpen, setIsDeleteOpen] = useState(false)
 	const [isActionLoading, setIsActionLoading] = useState(false)
+	const { mutate } = useSWRConfig()
 
 	const { query, updateQuery, isPending } = useQueryState<DeniedBookingQuery>({
 		queryOptions: createDeniedBookingQueryOptions(defaultQuery),
@@ -102,8 +105,12 @@ const DeniedBookingPage = ({
 		actionFeedback.clearFeedback()
 		globalFeedback.clearFeedback()
 		try {
-			const res = await deleteDeniedBookingAction({ id: selectedBooking.id })
+			const res = await deleteDeniedBookingAction({
+				id: selectedBooking.id,
+				date: selectedBooking.startDate,
+			})
 			if (res.ok) {
+				await mutateAllBookingCalendars(mutate)
 				setIsDeleteOpen(false)
 				setSelectedBooking(null)
 				globalFeedback.showSuccess('予約禁止日を削除しました。')
@@ -119,7 +126,7 @@ const DeniedBookingPage = ({
 		} finally {
 			setIsActionLoading(false)
 		}
-	}, [actionFeedback, router, selectedBooking, globalFeedback])
+	}, [actionFeedback, router, selectedBooking, globalFeedback, mutate])
 
 	const handleCloseDelete = useCallback(() => {
 		setIsDeleteOpen(false)

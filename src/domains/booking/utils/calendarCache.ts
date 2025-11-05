@@ -3,36 +3,11 @@ import type { useSWRConfig } from 'swr'
 import {
 	BOOKING_CALENDAR_SWR_KEY,
 	BOOKING_CALENDAR_TAG,
-	BOOKING_VIEW_RANGE_DAYS,
 } from '@/domains/booking/constants/bookingConstants'
 import { toDateKey } from '@/shared/utils'
 
-type Range = {
-	startDate: string
-	endDate: string
-}
-
 export const buildBookingCalendarTag = (startDate: string, endDate: string) =>
 	`${BOOKING_CALENDAR_TAG}-${startDate}-${endDate}`
-
-export const getBookingCalendarRangesForDate = (
-	date: string,
-	viewRangeDays: number = BOOKING_VIEW_RANGE_DAYS,
-): Range[] => {
-	const normalized = toDateKey(date)
-	const target = parseISO(normalized)
-	const ranges: Range[] = []
-
-	for (let offset = 0; offset < viewRangeDays; offset += 1) {
-		const start = addDays(target, -offset)
-		const end = addDays(start, viewRangeDays)
-		const startDate = toDateKey(start)
-		const endDate = toDateKey(end)
-		ranges.push({ startDate, endDate })
-	}
-
-	return ranges
-}
 
 export const isDateWithinRange = (
 	date: string,
