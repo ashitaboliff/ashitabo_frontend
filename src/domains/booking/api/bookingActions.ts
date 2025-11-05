@@ -2,6 +2,7 @@
 
 import { revalidateTag } from 'next/cache'
 import { cookies } from 'next/headers'
+import { revalidateBookingCalendarsForDate } from '@/domains/booking/api/bookingRevalidate'
 import {
 	mapRawBooking,
 	mapRawBookingList,
@@ -16,10 +17,7 @@ import type {
 	BookingLog,
 	BookingResponse,
 } from '@/domains/booking/model/bookingTypes'
-import {
-	buildBookingCalendarTag,
-	getBookingCalendarRangesForDate,
-} from '@/domains/booking/utils/calendarCache'
+import { buildBookingCalendarTag } from '@/domains/booking/utils/calendarCache'
 import { apiDelete, apiGet, apiPost, apiPut } from '@/shared/lib/api/crud'
 import {
 	createdResponse,
@@ -123,14 +121,6 @@ export const getBookingByUserIdAction = async ({
 		}),
 		'ユーザーの予約一覧の取得に失敗しました。',
 	)
-}
-
-const revalidateBookingCalendarsForDate = (date: string) => {
-	const ranges = getBookingCalendarRangesForDate(date)
-	ranges.forEach(({ startDate, endDate }) => {
-		revalidateTag(buildBookingCalendarTag(startDate, endDate), 'max')
-	})
-	revalidateTag(BOOKING_CALENDAR_TAG, 'max')
 }
 
 export const createBookingAction = async ({

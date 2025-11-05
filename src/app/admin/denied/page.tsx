@@ -41,7 +41,7 @@ const Page = async ({ searchParams }: Props) => {
 		extraSearchParams,
 	)
 
-	const today = getCurrentJSTDateString({})
+	const today = getCurrentJSTDateString()
 
 	let deniedBookings: DeniedBooking[] = []
 	let totalCount = 0

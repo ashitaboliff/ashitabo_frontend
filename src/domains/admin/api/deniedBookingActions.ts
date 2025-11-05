@@ -11,6 +11,7 @@ import type {
 	DeniedBookingFormValues,
 	DeniedBookingSort,
 } from '@/domains/admin/model/adminTypes'
+import { revalidateBookingCalendarsForDate } from '@/domains/booking/api/bookingRevalidate'
 import type { DeniedBooking } from '@/domains/booking/model/bookingTypes'
 import { apiDelete, apiGet, apiPost } from '@/shared/lib/api/crud'
 import {
@@ -149,6 +150,7 @@ export const createDeniedBookingAction = async (
 		return withFallbackMessage(res, '予約禁止日の作成に失敗しました')
 	}
 
+	revalidateBookingCalendarsForDate(request.payload.startDate)
 	revalidateTag('denied-bookings', 'max')
 
 	const cookieStore = await cookies()
@@ -203,8 +205,10 @@ export const getDeniedBookingAction = async ({
 
 export const deleteDeniedBookingAction = async ({
 	id,
+	date,
 }: {
 	id: string
+	date: string
 }): Promise<ApiResponse<null>> => {
 	const res = await apiDelete<null>(`/admin/booking/denials/${id}`)
 
@@ -212,6 +216,7 @@ export const deleteDeniedBookingAction = async ({
 		return withFallbackMessage(res, '予約禁止日の削除に失敗しました')
 	}
 
+	revalidateBookingCalendarsForDate(date)
 	revalidateTag('denied-bookings', 'max')
 
 	return noContentResponse()

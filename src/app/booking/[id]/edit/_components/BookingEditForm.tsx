@@ -37,7 +37,7 @@ interface Props {
 	readonly onRequireAuth: (message: string) => void
 }
 
-const today = getCurrentJSTDateString({})
+const today = getCurrentJSTDateString()
 
 const BookingEditForm = ({
 	bookingDetail,

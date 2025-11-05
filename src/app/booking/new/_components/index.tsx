@@ -31,7 +31,7 @@ import { formatDateSlashWithWeekday } from '@/shared/utils/dateFormat'
 import { logError } from '@/shared/utils/logger'
 import type { Session } from '@/types/session'
 
-const today = getCurrentJSTDateString({})
+const today = getCurrentJSTDateString()
 
 interface Props {
 	readonly session: Session

@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
 import { Controller, type UseFormRegister, useForm } from 'react-hook-form'
+import { useSWRConfig } from 'swr'
 import { createDeniedBookingAction } from '@/domains/admin/api/deniedBookingActions'
 import { deniedBookingFormSchema } from '@/domains/admin/model/adminSchema'
 import {
@@ -13,6 +14,7 @@ import {
 	type DeniedBookingType,
 } from '@/domains/admin/model/adminTypes'
 import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
+import { mutateAllBookingCalendars } from '@/domains/booking/utils/calendarCache'
 import { DAY_OF_WEEK_OPTIONS } from '@/shared/constants/week'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import CustomDatePicker from '@/shared/ui/atoms/DatePicker'
@@ -58,6 +60,7 @@ const DAY_OF_WEEK_SELECT_OPTIONS = DAY_OF_WEEK_OPTIONS.reduce(
 const DeniedBookingCreatePage = () => {
 	const router = useRouter()
 	const actionFeedback = useFeedback()
+	const { mutate } = useSWRConfig()
 
 	const {
 		register,
@@ -79,6 +82,7 @@ const DeniedBookingCreatePage = () => {
 			try {
 				const res = await createDeniedBookingAction(data)
 				if (res.ok) {
+					await mutateAllBookingCalendars(mutate)
 					router.push('/admin/denied')
 				} else {
 					actionFeedback.showApiError(res)
@@ -93,7 +97,7 @@ const DeniedBookingCreatePage = () => {
 				)
 			}
 		},
-		[actionFeedback, router],
+		[actionFeedback, router, mutate],
 	)
 
 	return (
