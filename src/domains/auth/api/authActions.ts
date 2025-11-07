@@ -2,58 +2,19 @@
 
 import { revalidateTag } from 'next/cache'
 import { cookies } from 'next/headers'
+import {
+	getCreateProfileErrorMessage,
+	getPadlockErrorMessage,
+	getUpdateProfileErrorMessage,
+} from '@/domains/auth/api/authErrorMessages'
 import type { AuthDetails } from '@/domains/auth/model/authTypes'
 import { makeAuthDetails } from '@/domains/auth/utils/sessionInfo'
 import type { ProfileFormValues } from '@/domains/user/model/profileSchema'
 import type { Profile } from '@/domains/user/model/userTypes'
 import { apiGet, apiPost, apiPut } from '@/shared/lib/api/crud'
 import { createdResponse, failure, okResponse } from '@/shared/lib/api/helper'
-import { getGenericStatusMessage } from '@/shared/lib/error'
 import { type ApiResponse, StatusCode } from '@/types/response'
 import type { Session } from '@/types/session'
-
-/**
- * パドロック認証のエラーメッセージを生成
- */
-const getPadlockErrorMessage = (status: number): string => {
-	switch (status) {
-		case StatusCode.BAD_REQUEST:
-			return 'パスワードを入力してください。'
-		case StatusCode.UNAUTHORIZED:
-		case StatusCode.FORBIDDEN:
-			return 'パスワードが正しくありません。正しいパスワードを入力してください。'
-		default:
-			return getGenericStatusMessage(status)
-	}
-}
-
-/**
- * プロフィール作成のエラーメッセージを生成
- */
-const getCreateProfileErrorMessage = (status: number): string => {
-	switch (status) {
-		case StatusCode.BAD_REQUEST:
-			return 'プロフィール情報に不備があります。入力内容を確認してください。'
-		case StatusCode.CONFLICT:
-			return 'プロフィールは既に作成されています。'
-		default:
-			return getGenericStatusMessage(status)
-	}
-}
-
-/**
- * プロフィール更新のエラーメッセージを生成
- */
-const getUpdateProfileErrorMessage = (status: number): string => {
-	switch (status) {
-		case StatusCode.BAD_REQUEST:
-			return 'プロフィール情報に不備があります。入力内容を確認してください。'
-		case StatusCode.NOT_FOUND:
-			return 'プロフィールが見つかりませんでした。'
-		default:
-			return getGenericStatusMessage(status)
-	}
-}
 
 const CSRF_COOKIE_KEYS = [
 	'authjs.csrf-token',

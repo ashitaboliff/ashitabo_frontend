@@ -4,16 +4,13 @@ import {
 	type RawSchedule,
 	type RawUserWithName,
 } from '@/domains/schedule/api/dto'
+import { getCreateScheduleErrorMessage } from '@/domains/schedule/api/scheduleErrorMessages'
 import type {
 	Schedule,
 	UserWithName,
 } from '@/domains/schedule/model/scheduleTypes'
 import { apiGet, apiPost } from '@/shared/lib/api/crud'
-import {
-	createdResponse,
-	mapSuccess,
-	withFallbackMessage,
-} from '@/shared/lib/api/helper'
+import { createdResponse, mapSuccess } from '@/shared/lib/api/helper'
 import { type ApiResponse, StatusCode } from '@/types/response'
 
 export const getScheduleByIdAction = async (
@@ -77,7 +74,10 @@ export const createScheduleAction = async ({
 	})
 
 	if (!res.ok) {
-		return withFallbackMessage(res, '日程調整の作成に失敗しました。')
+		return {
+			...res,
+			message: getCreateScheduleErrorMessage(res.status),
+		}
 	}
 
 	const createdId =

@@ -1,8 +1,9 @@
 'use server'
 
+import { getUserErrorMessage } from '@/domains/user/api/userErrorMessages'
 import type { Profile, UserForSelect } from '@/domains/user/model/userTypes'
 import { apiGet } from '@/shared/lib/api/crud'
-import { failure, okResponse } from '@/shared/lib/api/helper'
+import { okResponse } from '@/shared/lib/api/helper'
 import type { ApiResponse } from '@/types/response'
 
 export const getUsersForSelect = async (): Promise<
@@ -17,7 +18,10 @@ export const getUsersForSelect = async (): Promise<
 		return okResponse(response.data)
 	}
 
-	return failure(response.status, 'ユーザー情報の取得に失敗しました。')
+	return {
+		...response,
+		message: getUserErrorMessage(response.status),
+	}
 }
 
 export const getUserProfile = async (
@@ -32,5 +36,8 @@ export const getUserProfile = async (
 		return okResponse(response.data)
 	}
 
-	return failure(response.status, 'ユーザー情報の取得に失敗しました。')
+	return {
+		...response,
+		message: getUserErrorMessage(response.status),
+	}
 }

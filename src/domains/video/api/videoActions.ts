@@ -10,6 +10,10 @@ import {
 	type RawPlaylistItem,
 	type RawVideo,
 } from '@/domains/video/api/dto'
+import {
+	getSyncPlaylistErrorMessage,
+	getVideoErrorMessage,
+} from '@/domains/video/api/videoErrorMessages'
 import type {
 	PlaylistDoc,
 	PlaylistItem,
@@ -17,11 +21,7 @@ import type {
 	YoutubeSearchQuery,
 } from '@/domains/video/model/videoTypes'
 import { apiGet, apiPost } from '@/shared/lib/api/crud'
-import {
-	mapSuccess,
-	okResponse,
-	withFallbackMessage,
-} from '@/shared/lib/api/helper'
+import { mapSuccess, okResponse } from '@/shared/lib/api/helper'
 import { recordJoinSorted } from '@/shared/utils/cacheTag'
 import type { ApiResponse } from '@/types/response'
 
@@ -133,7 +133,10 @@ export const getPlaylistAction = async (): Promise<
 	)
 
 	if (!res.ok) {
-		return withFallbackMessage(res, 'プレイリスト一覧の取得に失敗しました。')
+		return {
+			...res,
+			message: getVideoErrorMessage(res.status),
+		}
 	}
 
 	return okResponse(mapRawPlaylistDocs(res.data.items))
@@ -158,9 +161,13 @@ export const postSyncPlaylistAction = async (): Promise<
 		revalidateTag('videos', 'max')
 		revalidateTag(YOUTUBE_IDS_TAG('video'), 'max')
 		revalidateTag(YOUTUBE_IDS_TAG('playlist'), 'max')
+		return res
 	}
 
-	return withFallbackMessage(res, 'プレイリストの作成に失敗しました。')
+	return {
+		...res,
+		message: getSyncPlaylistErrorMessage(res.status),
+	}
 }
 
 export const getYoutubeIds = async (
