@@ -6,6 +6,10 @@ import {
 	mapRawGachaList,
 	type RawGachaData,
 } from '@/domains/gacha/api/dto'
+import {
+	getCreateGachaErrorMessage,
+	getGachaImageErrorMessage,
+} from '@/domains/gacha/api/gachaErrorMessages'
 import type {
 	GachaData,
 	GachaSort,
@@ -17,7 +21,6 @@ import {
 	failure,
 	mapSuccess,
 	okResponse,
-	withFallbackMessage,
 } from '@/shared/lib/api/helper'
 import type { ApiResponse } from '@/types/response'
 
@@ -108,7 +111,10 @@ export const createUserGachaResultAction = async ({
 	})
 
 	if (!res.ok) {
-		return withFallbackMessage(res, 'ガチャ記録の保存に失敗しました。')
+		return {
+			...res,
+			message: getCreateGachaErrorMessage(res.status),
+		}
 	}
 
 	revalidateTag(`gacha-user-${userId}`, 'max')
@@ -129,11 +135,18 @@ export const getSignedUrlForGachaImageAction = async ({
 		},
 	)
 	if (!res.ok) {
-		return withFallbackMessage(res, '画像URLの生成に失敗しました。')
+		return {
+			...res,
+			message: getGachaImageErrorMessage(res.status),
+		}
 	}
 	const url = res.data.urls[r2Key]
 	if (!url) {
-		return failure(404, '画像URLの生成に失敗しました。')
+		return {
+			ok: false,
+			status: 404,
+			message: '画像URLの生成に失敗しました。',
+		}
 	}
 	return okResponse(url)
 }
@@ -154,7 +167,10 @@ export const getSignedUrlsForGachaImagesAction = async ({
 		},
 	)
 	if (!res.ok) {
-		return withFallbackMessage(res, '画像URLの生成に失敗しました。')
+		return {
+			...res,
+			message: getGachaImageErrorMessage(res.status),
+		}
 	}
 	const payload: Record<string, string> = {}
 	for (const key of uniqueKeys) {

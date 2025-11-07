@@ -2,6 +2,12 @@
 
 import { revalidateTag } from 'next/cache'
 import { cookies } from 'next/headers'
+import {
+	getAuthBookingErrorMessage,
+	getCreateBookingErrorMessage,
+	getDeleteBookingErrorMessage,
+	getUpdateBookingErrorMessage,
+} from '@/domains/booking/api/bookingErrorMessages'
 import { revalidateBookingCalendarsForDate } from '@/domains/booking/api/bookingRevalidate'
 import {
 	mapRawBooking,
@@ -25,7 +31,6 @@ import {
 	mapSuccess,
 	noContentResponse,
 	okResponse,
-	withFallbackMessage,
 } from '@/shared/lib/api/helper'
 import { toDateKey } from '@/shared/utils'
 import { type ApiResponse, StatusCode } from '@/types/response'
@@ -148,7 +153,10 @@ export const createBookingAction = async ({
 	})
 
 	if (!res.ok) {
-		return withFallbackMessage(res, '予約の作成に失敗しました。')
+		return {
+			...res,
+			message: getCreateBookingErrorMessage(res.status),
+		}
 	}
 
 	await revalidateTag('booking', 'max')
@@ -186,7 +194,10 @@ export const updateBookingAction = async ({
 	})
 
 	if (!res.ok) {
-		return withFallbackMessage(res, '予約の更新に失敗しました。')
+		return {
+			...res,
+			message: getUpdateBookingErrorMessage(res.status),
+		}
 	}
 
 	await revalidateTag('booking', 'max')
@@ -215,7 +226,10 @@ export const deleteBookingAction = async ({
 	})
 
 	if (!res.ok) {
-		return withFallbackMessage(res, '予約の削除に失敗しました。')
+		return {
+			...res,
+			message: getDeleteBookingErrorMessage(res.status),
+		}
 	}
 
 	const bookingDateKey = toDateKey(bookingDate)
@@ -257,7 +271,10 @@ export const authBookingAction = async ({
 	)
 
 	if (!res.ok) {
-		return withFallbackMessage(res, '予約の認証に失敗しました。')
+		return {
+			...res,
+			message: getAuthBookingErrorMessage(res.status),
+		}
 	}
 
 	if (!res.data || typeof res.data.token !== 'string') {

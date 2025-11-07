@@ -1,3 +1,10 @@
+import {
+	getAddMemberErrorMessage,
+	getCreateBandErrorMessage,
+	getDeleteBandErrorMessage,
+	getRemoveMemberErrorMessage,
+	getUpdateBandErrorMessage,
+} from '@/domains/band/api/bandErrorMessages'
 import type {
 	AddBandMemberResponse,
 	BandDetails,
@@ -54,7 +61,10 @@ export const createBandAction = async (
 	})
 
 	if (!res.ok) {
-		return withFallbackMessage(res, 'バンドの作成に失敗しました。')
+		return {
+			...res,
+			message: getCreateBandErrorMessage(res.status),
+		}
 	}
 
 	if (!res.data?.id) {
@@ -86,7 +96,10 @@ export const updateBandAction = async (
 	})
 
 	if (!res.ok) {
-		return withFallbackMessage(res, 'バンドの更新に失敗しました。')
+		return {
+			...res,
+			message: getUpdateBandErrorMessage(res.status),
+		}
 	}
 
 	if (res.status === StatusCode.NO_CONTENT) {
@@ -107,7 +120,10 @@ export const deleteBandAction = async (
 	const res = await apiDelete<null>(`/band/${bandId}`)
 
 	if (!res.ok) {
-		return withFallbackMessage(res, 'バンドの削除に失敗しました。')
+		return {
+			...res,
+			message: getDeleteBandErrorMessage(res.status),
+		}
 	}
 
 	return noContentResponse()
@@ -123,7 +139,10 @@ export const addBandMemberAction = async (
 	})
 
 	if (!res.ok) {
-		return withFallbackMessage(res, 'メンバーの追加に失敗しました。')
+		return {
+			...res,
+			message: getAddMemberErrorMessage(res.status),
+		}
 	}
 
 	return createdResponse(null)
@@ -150,7 +169,10 @@ export const removeBandMemberAction = async (
 	const res = await apiDelete<null>(`/band/members/${bandMemberId}`)
 
 	if (!res.ok) {
-		return withFallbackMessage(res, 'メンバーの削除に失敗しました。')
+		return {
+			...res,
+			message: getRemoveMemberErrorMessage(res.status),
+		}
 	}
 
 	return noContentResponse()
