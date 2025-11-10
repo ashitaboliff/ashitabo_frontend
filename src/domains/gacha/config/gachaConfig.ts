@@ -59,4 +59,16 @@ export const gachaConfigs: { [version: string]: GachaVersionConfig } = {
 		title: 'コスプレガーデン',
 		packKey: 'pack/version3.webp',
 	},
+	version4: {
+		categories: [
+			{ name: 'COMMON', probability: 27000, count: 20, prefix: 'C' },
+			{ name: 'RARE', probability: 25000, count: 15, prefix: 'R' },
+			{ name: 'SUPER_RARE', probability: 20000, count: 10, prefix: 'SR' },
+			{ name: 'SS_RARE', probability: 15000, count: 3, prefix: 'SSR' },
+			{ name: 'ULTRA_RARE', probability: 5000, count: 1, prefix: 'UR' },
+			{ name: 'SECRET_RARE', probability: 1, count: 2, prefix: 'SECRET' },
+		],
+		title: 'ポケモンジャングル',
+		packKey: 'pack/version4.webp',
+	},
 }
