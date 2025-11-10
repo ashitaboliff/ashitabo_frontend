@@ -7,7 +7,7 @@ import { nicomoji } from '@/shared/lib/fonts'
 import './globals.css'
 import type { ReactNode } from 'react'
 import { createMetaData } from '@/shared/hooks/useMetaData'
-import { AdSenseProvider, AdSenseScript, AdSense } from '@/shared/ui/ads'
+import { AdSense, AdSenseProvider, AdSenseScript } from '@/shared/ui/ads'
 import Footer from '@/shared/ui/layout/Footer'
 import Header from '@/shared/ui/layout/Header'
 
@@ -37,7 +37,7 @@ console.log('%chttps://www.github.com/ashitaboliff/', 'color: #000000; font-size
 				<AdSenseProvider clientId={PublicEnv.NEXT_PUBLIC_ADS_ID || ''}>
 					<Header className={nicomoji.className} />
 					{children}
-					<AdSense adSlot='fluid'/>
+					<AdSense adSlot="fluid" />
 					<Footer />
 				</AdSenseProvider>
 				<Script
