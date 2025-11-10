@@ -37,7 +37,11 @@ console.log('%chttps://www.github.com/ashitaboliff/', 'color: #000000; font-size
 				<AdSenseProvider clientId={PublicEnv.NEXT_PUBLIC_ADS_ID || ''}>
 					<Header className={nicomoji.className} />
 					{children}
-					<AdSense adSlot="2297104274" adFormat="fluid" />
+					<AdSense
+						adSlot="2297104274"
+						adFormat="fluid"
+						adLayoutKey="-fb+5w+4e-db+86"
+					/>
 					<Footer />
 				</AdSenseProvider>
 				<Script
