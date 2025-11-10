@@ -1,5 +1,7 @@
 import Image from 'next/image'
 import { getImageUrl } from '@/shared/lib/r2'
+import type { CarouselSlide } from '@/shared/ui/atoms/Carousel'
+import Carousel from '@/shared/ui/atoms/Carousel'
 
 const list = [
 	{
@@ -36,43 +38,33 @@ const list = [
 	},
 ]
 
-const Carousel = () => {
+const slides: CarouselSlide[] = list.map((image, index) => ({
+	id: `home-hero-${index}`,
+	node: (
+		<figure className="relative w-full overflow-hidden bg-neutral-100">
+			<Image
+				src={image.src}
+				alt={image.alt}
+				width={1200}
+				height={900}
+				className="h-full w-full object-cover"
+				sizes="(min-width: 1024px) 1024px, 100vw"
+				priority={index === 0}
+				unoptimized
+			/>
+		</figure>
+	),
+}))
+
+const HomeCarousel = () => {
 	return (
-		<div className="carousel w-full">
-			{list.map((image, index) => {
-				const currentSlideId = `slide${index + 1}`
-				const previousSlideId =
-					index === 0 ? `slide${list.length}` : `slide${index}`
-				const nextSlideId =
-					index + 1 === list.length ? 'slide1' : `slide${index + 2}`
-				return (
-					<div
-						id={currentSlideId}
-						className="carousel-item relative w-full"
-						key={image.src}
-					>
-						<Image
-							src={image.src}
-							alt={image.alt}
-							width={900}
-							height={675}
-							className="h-auto w-full object-cover"
-							priority={index === 0}
-							unoptimized
-						/>
-						<div className="-translate-y-1/2 absolute top-1/2 right-2 left-2 flex transform justify-between">
-							<a href={`#${previousSlideId}`} className="btn btn-offwhite">
-								❮
-							</a>
-							<a href={`#${nextSlideId}`} className="btn btn-offwhite">
-								❯
-							</a>
-						</div>
-					</div>
-				)
-			})}
-		</div>
+		<Carousel
+			slides={slides}
+			className="rounded-lg bg-black/5 shadow-lg"
+			interval={4500}
+			pauseOnHover
+		/>
 	)
 }
 
-export default Carousel
+export default HomeCarousel

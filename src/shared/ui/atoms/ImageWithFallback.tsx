@@ -1,5 +1,6 @@
 'use client'
 
+import Image, { type ImageProps } from 'next/image'
 import { type ImgHTMLAttributes, useState } from 'react'
 
 type Props = {
@@ -8,7 +9,7 @@ type Props = {
 	fallback?: string
 } & ImgHTMLAttributes<HTMLImageElement>
 
-const ImageWithFallback = ({
+const ImgWithFallback = ({
 	src,
 	alt = '',
 	fallback = '/fallback.webp',
@@ -23,4 +24,18 @@ const ImageWithFallback = ({
 	return <img src={imgSrc} alt={alt} onError={handleError} {...props} />
 }
 
-export default ImageWithFallback
+export const ImageWithFallback = ({
+	src,
+	fallback = '/fallback.webp',
+	...props
+}: { src: string; fallback?: string } & ImageProps) => {
+	const [imgSrc, setImgSrc] = useState<string>(
+		src && src.trim() !== '' ? src : fallback,
+	)
+
+	const handleError = () => setImgSrc(fallback)
+
+	return <Image src={imgSrc} onError={handleError} {...props} />
+}
+
+export default ImgWithFallback

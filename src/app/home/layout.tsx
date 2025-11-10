@@ -14,10 +14,10 @@ export default function RootLayout({
 	children: ReactNode
 }>) {
 	return (
-		<div>
+		<>
 			<HomePageHeader />
 			{children}
 			<FieldAds />
-		</div>
+		</>
 	)
 }

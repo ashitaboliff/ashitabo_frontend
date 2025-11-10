@@ -1,11 +1,11 @@
 'use client'
 
-import Image from 'next/image'
 import { useMemo } from 'react'
 import useSWR from 'swr'
 import { getGachaByUserIdAction } from '@/domains/gacha/api/gachaActions'
 import { useSignedGachaImages } from '@/domains/gacha/hooks/useSignedGachaImages'
 import type { GachaData, GachaSort } from '@/domains/gacha/model/gachaTypes'
+import { ImageWithFallback } from '@/shared/ui/atoms/ImageWithFallback'
 import GachaLogsSkeleton from './GachaLogsSkeleton'
 
 interface Props {
@@ -111,7 +111,7 @@ const GachaLogList = ({
 					)
 				}
 				return (
-					<Image
+					<ImageWithFallback
 						key={gachaItem.id}
 						src={signedSrc}
 						alt={`ガチャ画像プレビュー-${gachaItem.gachaSrc}`}

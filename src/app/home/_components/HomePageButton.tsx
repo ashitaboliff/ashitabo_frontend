@@ -23,7 +23,7 @@ const HomePageButton = ({
 	text: string
 	patting?: string
 }) => {
-	const maxCharsPerLine = 6 // 1行に収まる文字数
+	const maxCharsPerLine = 6
 	const lines = text.match(new RegExp(`.{1,${maxCharsPerLine}}`, 'g')) || [text]
 	const lineSegments = lines.map((line, index) => ({
 		content: line,

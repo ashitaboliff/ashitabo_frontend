@@ -1,8 +1,8 @@
 'use client'
 
-import Image from 'next/image'
 import { useEffect, useMemo, useState } from 'react'
 import type { CarouselPackDataItem } from '@/domains/gacha/model/gachaTypes'
+import { ImageWithFallback } from '@/shared/ui/atoms/ImageWithFallback'
 
 interface Props {
 	readonly onPackSelect: (version: string) => void
@@ -77,7 +77,7 @@ const GachaPackCarousel = ({ onPackSelect, carouselPackData }: Props) => {
 							className="absolute left-0 z-10 transform cursor-pointer transition-transform"
 							onClick={() => updateIndex('prev')}
 						>
-							<Image
+							<ImageWithFallback
 								src={prevPack.signedPackImageUrl}
 								alt={`${prevPack.version} pack`}
 								width={110}
@@ -94,7 +94,7 @@ const GachaPackCarousel = ({ onPackSelect, carouselPackData }: Props) => {
 
 					{currentPack.signedPackImageUrl ? (
 						<div className="relative z-20 transform cursor-pointer transition-transform">
-							<Image
+							<ImageWithFallback
 								src={currentPack.signedPackImageUrl}
 								alt={`${currentPack.version} pack`}
 								width={250}
@@ -126,7 +126,7 @@ const GachaPackCarousel = ({ onPackSelect, carouselPackData }: Props) => {
 							className="absolute right-0 z-10 transform cursor-pointer transition-transform"
 							onClick={() => updateIndex('next')}
 						>
-							<Image
+							<ImageWithFallback
 								src={nextPack.signedPackImageUrl}
 								alt={`${nextPack.version} pack`}
 								width={110}
