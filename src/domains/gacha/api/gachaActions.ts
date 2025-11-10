@@ -18,7 +18,6 @@ import type {
 import { apiGet, apiPost } from '@/shared/lib/api/crud'
 import {
 	createdResponse,
-	failure,
 	mapSuccess,
 	okResponse,
 } from '@/shared/lib/api/helper'
