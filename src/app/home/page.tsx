@@ -1,9 +1,10 @@
 import HomeButton from '@/app/home/_components/HomeButton'
 import Carousel from '@/app/home/_components/HomeCarousel'
+import { gkktt } from '@/shared/lib/fonts'
 
 const Page = () => {
 	return (
-		<div>
+		<div className={gkktt.className}>
 			<Carousel />
 			<div className="z-10 flex flex-col items-center justify-center bg-white/60">
 				<div className={`whitespace-nowrap text-2xl`}>

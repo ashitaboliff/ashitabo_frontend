@@ -1,8 +1,6 @@
-import { Inter } from 'next/font/google'
 import type { ReactNode } from 'react'
+import { FieldAds } from '@/shared/ui/ads'
 import HomePageHeader from '@/shared/ui/molecules/HomePageHeader'
-
-const _inter = Inter({ subsets: ['latin'] })
 
 export default function RootLayout({
 	children,
@@ -13,6 +11,7 @@ export default function RootLayout({
 		<>
 			<HomePageHeader />
 			{children}
+			<FieldAds />
 		</>
 	)
 }

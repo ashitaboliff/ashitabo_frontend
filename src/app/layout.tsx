@@ -3,11 +3,10 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Inter } from 'next/font/google'
 import Script from 'next/script'
 import PublicEnv from '@/shared/lib/env/public'
-import { nicomoji } from '@/shared/lib/fonts'
 import './globals.css'
 import type { ReactNode } from 'react'
 import { createMetaData } from '@/shared/hooks/useMetaData'
-import { AdSense, AdSenseProvider, AdSenseScript } from '@/shared/ui/ads'
+import { AdSenseProvider, AdSenseScript } from '@/shared/ui/ads'
 import Footer from '@/shared/ui/layout/Footer'
 import Header from '@/shared/ui/layout/Header'
 
@@ -33,15 +32,12 @@ console.log('%chttps://www.github.com/ashitaboliff/', 'color: #000000; font-size
 				</Script>
 				<Analytics />
 				<SpeedInsights />
-				<AdSenseScript />
+				<AdSenseScript adsId={PublicEnv.NEXT_PUBLIC_ADS_ID || ''} />
 				<AdSenseProvider clientId={PublicEnv.NEXT_PUBLIC_ADS_ID || ''}>
-					<Header className={nicomoji.className} />
-					{children}
-					<AdSense
-						adSlot="2297104274"
-						adFormat="fluid"
-						adLayoutKey="-fb+5w+4e-db+86"
-					/>
+					<Header />
+					<main className="container mx-auto mt-24 h-full max-w-screen-lg px-2">
+						{children}
+					</main>
 					<Footer />
 				</AdSenseProvider>
 				<Script

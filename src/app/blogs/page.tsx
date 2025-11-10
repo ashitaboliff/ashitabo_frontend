@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google'
 import Link from 'next/link'
 import { compileMDX } from 'next-mdx-remote/rsc'
 import { createMetaData } from '@/shared/hooks/useMetaData'
+import { FieldAds } from '@/shared/ui/ads'
 import { logError } from '@/shared/utils/logger'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -75,35 +76,38 @@ const BlogsPage = async () => {
 	const posts = await getAllPostsMeta()
 
 	return (
-		<div
-			className={`container mx-auto flex flex-col items-center justify-center gap-y-3 p-4 ${inter.className}`}
-		>
-			<h1 className="mb-6 font-bold text-3xl">おしらせ一覧</h1>
-			{posts.length > 0 ? (
-				<ul className="space-y-3">
-					{posts.map((post) => (
-						<li key={post.slug}>
-							<Link
-								href={`/blogs/${post.slug}`}
-								className="text-lg underline hover:text-secondary"
-							>
-								{post.title}
-								{post.createdAt && (
-									<span className="ml-2 text-gray-500 text-sm">
-										({new Date(post.createdAt).toLocaleDateString('ja-JP')})
-									</span>
-								)}
-							</Link>
-						</li>
-					))}
-				</ul>
-			) : (
-				<p>まだお知らせはありません。</p>
-			)}
-			<Link className="btn btn-outline mt-8" href="/">
-				戻る
-			</Link>
-		</div>
+		<>
+			<div
+				className={`container mx-auto flex flex-col items-center justify-center gap-y-3 p-4 ${inter.className}`}
+			>
+				<h1 className="mb-6 font-bold text-3xl">おしらせ一覧</h1>
+				{posts.length > 0 ? (
+					<ul className="space-y-3">
+						{posts.map((post) => (
+							<li key={post.slug}>
+								<Link
+									href={`/blogs/${post.slug}`}
+									className="text-lg underline hover:text-secondary"
+								>
+									{post.title}
+									{post.createdAt && (
+										<span className="ml-2 text-gray-500 text-sm">
+											({new Date(post.createdAt).toLocaleDateString('ja-JP')})
+										</span>
+									)}
+								</Link>
+							</li>
+						))}
+					</ul>
+				) : (
+					<p>まだお知らせはありません。</p>
+				)}
+				<Link className="btn btn-outline mt-8" href="/">
+					戻る
+				</Link>
+			</div>
+			<FieldAds />
+		</>
 	)
 }
 

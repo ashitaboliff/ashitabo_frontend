@@ -3,6 +3,7 @@ import path from 'node:path'
 import Link from 'next/link'
 import { compileMDX } from 'next-mdx-remote/rsc'
 import { createMetaData } from '@/shared/hooks/useMetaData'
+import { FieldAds } from '@/shared/ui/ads'
 import { LuCalendar, LuCalendarSync } from '@/shared/ui/icons'
 import { logError } from '@/shared/utils/logger'
 
@@ -79,45 +80,51 @@ const BlogPostPage = async ({
 
 	if (!post) {
 		return (
-			<div className="container mx-auto rounded-lg bg-white p-4 pb-8 text-center">
-				<h1 className="mt-8 font-bold text-3xl">記事が見つかりません</h1>
-				<p className="mt-4">指定されたブログ記事は見つかりませんでした。</p>
-				<Link className="btn btn-outline mt-8" href="/blogs">
-					ブログ一覧に戻る
-				</Link>
-			</div>
+			<>
+				<div className="container mx-auto rounded-lg bg-white p-4 pb-8 text-center">
+					<h1 className="mt-8 font-bold text-3xl">記事が見つかりません</h1>
+					<p className="mt-4">指定されたブログ記事は見つかりませんでした。</p>
+					<Link className="btn btn-outline mt-8" href="/blogs">
+						ブログ一覧に戻る
+					</Link>
+				</div>
+				<FieldAds />
+			</>
 		)
 	}
 
 	return (
-		<div className="container mx-auto rounded-lg bg-white p-4 pb-8">
-			<article className="prose lg:prose-xl max-w-none">
-				{' '}
-				<h1 className="mt-4 text-center font-bold text-3xl">
-					{post.frontmatter.title}
-				</h1>
-				<div className="mb-4 flex flex-col items-end">
-					{post.frontmatter.updatedAt && (
-						<div className="mt-2 flex flex-row items-center gap-x-1 text-gray-600 text-sm">
-							<LuCalendarSync />
-							更新日: {post.frontmatter.updatedAt}
-						</div>
-					)}
-					{post.frontmatter.createdAt && (
-						<div className="flex flex-row items-center gap-x-1 text-gray-600 text-sm">
-							<LuCalendar />
-							作成日: {post.frontmatter.createdAt}
-						</div>
-					)}
+		<>
+			<div className="container mx-auto rounded-lg bg-white p-4 pb-8">
+				<article className="prose lg:prose-xl max-w-none">
+					{' '}
+					<h1 className="mt-4 text-center font-bold text-3xl">
+						{post.frontmatter.title}
+					</h1>
+					<div className="mb-4 flex flex-col items-end">
+						{post.frontmatter.updatedAt && (
+							<div className="mt-2 flex flex-row items-center gap-x-1 text-gray-600 text-sm">
+								<LuCalendarSync />
+								更新日: {post.frontmatter.updatedAt}
+							</div>
+						)}
+						{post.frontmatter.createdAt && (
+							<div className="flex flex-row items-center gap-x-1 text-gray-600 text-sm">
+								<LuCalendar />
+								作成日: {post.frontmatter.createdAt}
+							</div>
+						)}
+					</div>
+					<div className="mt-8">{post.content}</div>
+				</article>
+				<div className="mt-8 flex flex-row justify-center gap-5">
+					<Link className="btn btn-outline" href="/blogs">
+						ブログ一覧に戻る
+					</Link>
 				</div>
-				<div className="mt-8">{post.content}</div>
-			</article>
-			<div className="mt-8 flex flex-row justify-center gap-5">
-				<Link className="btn btn-outline" href="/blogs">
-					ブログ一覧に戻る
-				</Link>
 			</div>
-		</div>
+			<FieldAds />
+		</>
 	)
 }
 

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { createMetaData } from '@/shared/hooks/useMetaData'
-import { gkktt } from '@/shared/lib/fonts'
+import { FieldAds } from '@/shared/ui/ads'
 import HomePageHeader from '@/shared/ui/molecules/HomePageHeader'
 
 export const metadata = createMetaData({
@@ -14,9 +14,10 @@ export default function RootLayout({
 	children: ReactNode
 }>) {
 	return (
-		<div className={gkktt.className}>
+		<div>
 			<HomePageHeader />
 			{children}
+			<FieldAds />
 		</div>
 	)
 }
