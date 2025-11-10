@@ -8,6 +8,8 @@ interface MockAdSenseProps {
 	adSlot: string
 	adFormat?: AdFormat
 	adStyle?: CSSProperties
+	adLayout?: string
+	adLayoutKey?: string
 	placement?: string
 }
 
@@ -19,6 +21,8 @@ const MockAdSense = ({
 	adSlot,
 	adFormat = 'auto',
 	adStyle,
+	adLayout,
+	adLayoutKey,
 	placement,
 }: MockAdSenseProps) => {
 	const router = useRouter()
@@ -99,6 +103,12 @@ const MockAdSense = ({
 				</div>
 				{placement && (
 					<div className="text-gray-400 text-xs">Placement: {placement}</div>
+				)}
+				{adLayout && (
+					<div className="text-gray-400 text-xs">Layout: {adLayout}</div>
+				)}
+				{adLayoutKey && (
+					<div className="text-gray-400 text-xs">Layout Key: {adLayoutKey}</div>
 				)}
 			</div>
 		</button>
