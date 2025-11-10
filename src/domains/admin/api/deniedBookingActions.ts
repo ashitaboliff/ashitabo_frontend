@@ -4,6 +4,10 @@ import { eachDayOfInterval, getDay } from 'date-fns'
 import { revalidateTag } from 'next/cache'
 import { cookies } from 'next/headers'
 import {
+	getCreateDeniedBookingErrorMessage,
+	getDeleteDeniedBookingErrorMessage,
+} from '@/domains/admin/api/adminErrorMessages'
+import {
 	mapRawDeniedBookings,
 	type RawDeniedBooking,
 } from '@/domains/admin/api/dto'
@@ -19,7 +23,6 @@ import {
 	failure,
 	mapSuccess,
 	noContentResponse,
-	withFallbackMessage,
 } from '@/shared/lib/api/helper'
 import { toDateKey } from '@/shared/utils'
 import { type ApiResponse, StatusCode } from '@/types/response'
@@ -147,7 +150,10 @@ export const createDeniedBookingAction = async (
 	})
 
 	if (!res.ok) {
-		return withFallbackMessage(res, '予約禁止日の作成に失敗しました')
+		return {
+			...res,
+			message: getCreateDeniedBookingErrorMessage(res.status),
+		}
 	}
 
 	await revalidateBookingCalendarsForDate(request.payload.startDate)
@@ -213,7 +219,10 @@ export const deleteDeniedBookingAction = async ({
 	const res = await apiDelete<null>(`/admin/booking/denials/${id}`)
 
 	if (!res.ok) {
-		return withFallbackMessage(res, '予約禁止日の削除に失敗しました')
+		return {
+			...res,
+			message: getDeleteDeniedBookingErrorMessage(res.status),
+		}
 	}
 
 	await revalidateBookingCalendarsForDate(date)

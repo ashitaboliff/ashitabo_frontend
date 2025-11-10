@@ -2,17 +2,17 @@
 
 import { revalidateTag } from 'next/cache'
 import { cookies } from 'next/headers'
+import {
+	getCreateProfileErrorMessage,
+	getPadlockErrorMessage,
+	getUpdateProfileErrorMessage,
+} from '@/domains/auth/api/authErrorMessages'
 import type { AuthDetails } from '@/domains/auth/model/authTypes'
 import { makeAuthDetails } from '@/domains/auth/utils/sessionInfo'
 import type { ProfileFormValues } from '@/domains/user/model/profileSchema'
 import type { Profile } from '@/domains/user/model/userTypes'
 import { apiGet, apiPost, apiPut } from '@/shared/lib/api/crud'
-import {
-	createdResponse,
-	failure,
-	okResponse,
-	withFallbackMessage,
-} from '@/shared/lib/api/helper'
+import { createdResponse, failure, okResponse } from '@/shared/lib/api/helper'
 import { type ApiResponse, StatusCode } from '@/types/response'
 import type { Session } from '@/types/session'
 
@@ -80,7 +80,10 @@ export const createProfileAction = async ({
 	})
 
 	if (!res.ok) {
-		return withFallbackMessage(res, 'ユーザープロフィールの作成に失敗しました')
+		return {
+			...res,
+			message: getCreateProfileErrorMessage(res.status),
+		}
 	}
 
 	revalidateTag(`user-profile-${userId}`, 'max')
@@ -101,7 +104,10 @@ export const putProfileAction = async ({
 	})
 
 	if (!res.ok) {
-		return withFallbackMessage(res, 'ユーザープロフィールの更新に失敗しました')
+		return {
+			...res,
+			message: getUpdateProfileErrorMessage(res.status),
+		}
 	}
 
 	revalidateTag(`user-profile-${userId}`, 'max')
@@ -132,7 +138,10 @@ export const padLockAction = async (
 	if (!res.ok) {
 		const store = await cookies()
 		store.delete('padlockToken')
-		return withFallbackMessage(res, 'パスワードロックに失敗しました')
+		return {
+			...res,
+			message: getPadlockErrorMessage(res.status),
+		}
 	}
 
 	const data = res.data

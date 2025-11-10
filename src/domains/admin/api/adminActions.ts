@@ -2,6 +2,12 @@
 
 import { revalidateTag } from 'next/cache'
 import {
+	getCreatePadlockErrorMessage,
+	getDeletePadlockErrorMessage,
+	getDeleteUserErrorMessage,
+	getUpdateUserRoleErrorMessage,
+} from '@/domains/admin/api/adminErrorMessages'
+import {
 	mapRawPadLocks,
 	mapRawUserDetails,
 	type RawPadLock,
@@ -15,7 +21,6 @@ import {
 	mapSuccess,
 	noContentResponse,
 	okResponse,
-	withFallbackMessage,
 } from '@/shared/lib/api/helper'
 import { type ApiResponse, StatusCode } from '@/types/response'
 
@@ -75,7 +80,10 @@ export const deleteUserAction = async ({
 	const res = await apiDelete<null>(`/admin/users/${id}`)
 
 	if (!res.ok) {
-		return withFallbackMessage(res, 'ユーザー削除に失敗しました')
+		return {
+			...res,
+			message: getDeleteUserErrorMessage(res.status),
+		}
 	}
 
 	revalidateTag('users', 'max')
@@ -95,7 +103,10 @@ export const updateUserRoleAction = async ({
 	})
 
 	if (!res.ok) {
-		return withFallbackMessage(res, 'ユーザー権限の更新に失敗しました')
+		return {
+			...res,
+			message: getUpdateUserRoleErrorMessage(res.status),
+		}
 	}
 
 	if (res.status === StatusCode.NO_CONTENT) {
@@ -119,7 +130,10 @@ export const createPadLockAction = async ({
 	})
 
 	if (!res.ok) {
-		return withFallbackMessage(res, '部室パスワードの作成に失敗しました')
+		return {
+			...res,
+			message: getCreatePadlockErrorMessage(res.status),
+		}
 	}
 
 	revalidateTag('padlocks', 'max')
@@ -135,7 +149,10 @@ export const deletePadLockAction = async ({
 	const res = await apiDelete<null>(`/admin/padlocks/${id}`)
 
 	if (!res.ok) {
-		return withFallbackMessage(res, '部室パスワードの削除に失敗しました')
+		return {
+			...res,
+			message: getDeletePadlockErrorMessage(res.status),
+		}
 	}
 
 	revalidateTag('padlocks', 'max')
