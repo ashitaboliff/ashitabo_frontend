@@ -1,10 +1,12 @@
 'use client'
 
 import type { ReactNode } from 'react'
+import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
+import type { FeedbackMessageType } from '@/types/feedback'
 
 interface GenericTableBodyProps<T extends object> {
 	isLoading: boolean
-	error?: Error | null
+	error?: FeedbackMessageType | null
 	data?: T[]
 	renderCells: (item: T) => ReactNode
 	onItemClick?: (item: T) => void
@@ -27,7 +29,6 @@ const GenericTableBody = <T extends object>({
 	onItemClick,
 	colSpan,
 	loadingMessage = '読み込み中...',
-	errorMessagePrefix = 'エラーが発生しました',
 	emptyDataMessage = 'データはありません。',
 	itemKeyExtractor,
 	rowClassName = '',
@@ -52,8 +53,8 @@ const GenericTableBody = <T extends object>({
 	if (error) {
 		return (
 			<tr>
-				<td colSpan={colSpan} className="py-10 text-center text-error">
-					{errorMessagePrefix}: {error.message}
+				<td colSpan={colSpan} className="py-6">
+					<FeedbackMessage source={error} />
 				</td>
 			</tr>
 		)

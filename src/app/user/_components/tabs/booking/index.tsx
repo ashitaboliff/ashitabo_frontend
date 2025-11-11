@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
 import type { Booking } from '@/domains/booking/model/bookingTypes'
 import { usePagedResource } from '@/shared/hooks/usePagedResource'
@@ -13,12 +13,11 @@ import { formatDateJa, formatDateTimeJa } from '@/shared/utils/dateFormat'
 import type { Session } from '@/types/session'
 import BookingLogList from './BookingLogList'
 
-interface Props {
+type Props = {
 	readonly session: Session
-	readonly initialData?: { bookings: Booking[]; totalCount: number }
 }
 
-const UserBookingLogs = ({ session, initialData }: Props) => {
+const UserBookingLogs = ({ session }: Props) => {
 	const {
 		state: { page, perPage, sort, totalCount },
 		pageCount,
@@ -34,14 +33,6 @@ const UserBookingLogs = ({ session, initialData }: Props) => {
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 	const [isAddCalendarPopupOpen, setIsAddCalendarPopupOpen] =
 		useState<boolean>(false)
-
-	const userId = session.user.id
-
-	useEffect(() => {
-		if (initialData && totalCount === 0) {
-			setTotalCount(initialData.totalCount)
-		}
-	}, [initialData, setTotalCount, totalCount])
 
 	const handleBookingItemClick = (booking: Booking) => {
 		setPopupData(booking)
@@ -87,25 +78,22 @@ const UserBookingLogs = ({ session, initialData }: Props) => {
 						</thead>
 						<tbody>
 							<BookingLogList
-								userId={userId}
+								userId={session.user.id}
 								currentPage={page}
 								logsPerPage={perPage}
 								sort={sort}
 								onBookingItemClick={handleBookingItemClick}
 								onDataLoaded={setTotalCount}
-								initialData={page === 1 ? initialData : undefined}
 							/>
 						</tbody>
 					</table>
 				</div>
 				{pageCount > 1 && totalCount > 0 && (
-					<div className="mx-auto mt-4">
-						<Pagination
-							currentPage={page}
-							totalPages={pageCount}
-							onPageChange={setPage}
-						/>
-					</div>
+					<Pagination
+						currentPage={page}
+						totalPages={pageCount}
+						onPageChange={setPage}
+					/>
 				)}
 			</div>
 			{popupData && (
@@ -118,8 +106,6 @@ const UserBookingLogs = ({ session, initialData }: Props) => {
 					>
 						<div className="flex flex-col space-y-2 text-sm">
 							<div className="grid grid-cols-2 gap-2">
-								<div className="font-bold">予約ID:</div>
-								<div>{popupData.id}</div>
 								<div className="font-bold">予約日:</div>
 								<div>{formatDateJa(popupData.bookingDate)}</div>
 								<div className="font-bold">予約時間:</div>

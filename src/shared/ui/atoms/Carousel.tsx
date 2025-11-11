@@ -17,6 +17,8 @@ interface CarouselProps {
 	loop?: boolean
 	className?: string
 	style?: CSSProperties
+	nextLabel?: string
+	prevLabel?: string
 	onSlideChange?: (index: number) => void
 }
 
@@ -28,9 +30,19 @@ const Carousel = ({
 	loop = true,
 	className = '',
 	style,
+	nextLabel = 'Next slide',
+	prevLabel = 'Previous slide',
 	onSlideChange,
 }: CarouselProps) => {
-	const { activeIndex, dragOffset, containerProps } = useCarousel({
+	const {
+		activeIndex,
+		dragOffset,
+		next,
+		prev,
+		canGoNext,
+		canGoPrev,
+		containerProps,
+	} = useCarousel({
 		size: slides.length,
 		autoPlay,
 		interval,
@@ -80,6 +92,29 @@ const Carousel = ({
 					</fieldset>
 				))}
 			</div>
+
+			{slides.length > 1 && (
+				<>
+					<button
+						type="button"
+						className="-translate-y-1/2 absolute top-1/2 left-2 rounded-xl bg-white/80 p-4 text-base shadow hover:bg-white"
+						onClick={prev}
+						disabled={!canGoPrev}
+						aria-label={prevLabel}
+					>
+						❮
+					</button>
+					<button
+						type="button"
+						className="-translate-y-1/2 absolute top-1/2 right-2 rounded-xl bg-white/80 p-4 text-base shadow hover:bg-white"
+						onClick={next}
+						disabled={!canGoNext}
+						aria-label={nextLabel}
+					>
+						❯
+					</button>
+				</>
+			)}
 		</div>
 	)
 }

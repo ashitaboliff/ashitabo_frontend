@@ -1,10 +1,9 @@
 'use client'
 
-import { type ChangeEvent, useEffect } from 'react'
 import GachaLogList from '@/app/user/_components/tabs/gacha/GachaLogList'
 import GachaPreviewPopup from '@/app/user/_components/tabs/gacha/GachaPreviewPopup'
 import { useGachaPreview } from '@/domains/gacha/hooks/useGachaPreview'
-import type { GachaData, GachaSort } from '@/domains/gacha/model/gachaTypes'
+import type { GachaSort } from '@/domains/gacha/model/gachaTypes'
 import { usePagedResource } from '@/shared/hooks/usePagedResource'
 import Pagination from '@/shared/ui/atoms/Pagination'
 import RadioSortGroup from '@/shared/ui/atoms/RadioSortGroup'
@@ -13,10 +12,9 @@ import type { Session } from '@/types/session'
 
 interface Props {
 	readonly session: Session
-	readonly initialData?: { gacha: GachaData[]; totalCount: number }
 }
 
-const UserGachaLogs = ({ session, initialData }: Props) => {
+const UserGachaLogs = ({ session }: Props) => {
 	const {
 		state: { page, perPage, sort, totalCount },
 		pageCount,
@@ -38,18 +36,6 @@ const UserGachaLogs = ({ session, initialData }: Props) => {
 		error: previewError,
 	} = useGachaPreview({ session })
 
-	const userId = session.user.id
-
-	useEffect(() => {
-		if (initialData && totalCount === 0) {
-			setTotalCount(initialData.totalCount)
-		}
-	}, [initialData, setTotalCount, totalCount])
-
-	const handleLogsPerPageChange = (event: ChangeEvent<HTMLSelectElement>) => {
-		setPerPage(Number(event.target.value))
-	}
-
 	return (
 		<div className="mt-4 flex flex-col justify-center">
 			<div className="flex flex-col gap-y-2">
@@ -59,7 +45,9 @@ const UserGachaLogs = ({ session, initialData }: Props) => {
 						name="gachaLogsPerPage"
 						options={{ '15件': 15, '25件': 25, '35件': 35 }}
 						value={perPage}
-						onChange={handleLogsPerPageChange}
+						onChange={(event) => {
+							setPerPage(Number(event.target.value))
+						}}
 					/>
 				</div>
 				<div className="my-2 flex flex-row gap-x-2">
@@ -76,22 +64,19 @@ const UserGachaLogs = ({ session, initialData }: Props) => {
 					/>
 				</div>
 				<GachaLogList
-					userId={userId}
+					userId={session.user.id}
 					currentPage={page}
 					logsPerPage={perPage}
 					sort={sort}
 					onGachaItemClick={openGachaPreview}
 					onDataLoaded={setTotalCount}
-					initialData={page === 1 ? initialData : undefined}
 				/>
 				{pageCount > 1 && totalCount > 0 && (
-					<div className="mx-auto mt-4">
-						<Pagination
-							currentPage={page}
-							totalPages={pageCount}
-							onPageChange={setPage}
-						/>
-					</div>
+					<Pagination
+						currentPage={page}
+						totalPages={pageCount}
+						onPageChange={setPage}
+					/>
 				)}
 			</div>
 			{popupData?.gacha && !isPopupLoading && (

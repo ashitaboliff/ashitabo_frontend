@@ -15,7 +15,18 @@ export const metadata = createMetaData({
 	url: '/user',
 })
 
-const UserPageServer = async () => {
+interface UserPageSearchParams {
+	tab?: string
+}
+
+const UserPageServer = async ({
+	searchParams,
+}: {
+	searchParams?: UserPageSearchParams
+}) => {
+	const initialTab =
+		typeof searchParams?.tab === 'string' ? searchParams.tab : undefined
+
 	return (
 		<AuthPage requireProfile={true}>
 			{async (authResult) => {
@@ -68,6 +79,8 @@ const UserPageServer = async () => {
 						<UserPageTabs
 							session={session}
 							gachaCarouselData={gachaCarouselData}
+							profile={profile}
+							initialTab={initialTab}
 						/>
 					</UserPageLayout>
 				)

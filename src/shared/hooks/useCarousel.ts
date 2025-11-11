@@ -13,6 +13,10 @@ interface UseCarouselOptions {
 interface UseCarouselResult {
 	activeIndex: number
 	dragOffset: number
+	next: () => void
+	prev: () => void
+	canGoNext: boolean
+	canGoPrev: boolean
 	containerProps: {
 		onPointerDown: (event: PointerEvent<HTMLDivElement>) => void
 		onPointerMove: (event: PointerEvent<HTMLDivElement>) => void
@@ -195,9 +199,16 @@ export const useCarousel = ({
 		],
 	)
 
+	const canGoPrev = loop || activeIndex > 0
+	const canGoNext = loop || activeIndex < size - 1
+
 	return {
 		activeIndex,
 		dragOffset,
+		next,
+		prev,
+		canGoNext,
+		canGoPrev,
 		containerProps,
 	}
 }

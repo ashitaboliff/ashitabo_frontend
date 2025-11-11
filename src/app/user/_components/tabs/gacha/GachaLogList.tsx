@@ -5,7 +5,10 @@ import useSWR from 'swr'
 import { getGachaByUserIdAction } from '@/domains/gacha/api/gachaActions'
 import { useSignedGachaImages } from '@/domains/gacha/hooks/useSignedGachaImages'
 import type { GachaData, GachaSort } from '@/domains/gacha/model/gachaTypes'
+import { useFeedback } from '@/shared/hooks/useFeedback'
 import { ImageWithFallback } from '@/shared/ui/atoms/ImageWithFallback'
+import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
+import type { ApiError } from '@/types/response'
 import GachaLogsSkeleton from './GachaLogsSkeleton'
 
 interface Props {
@@ -15,7 +18,6 @@ interface Props {
 	readonly sort: GachaSort
 	readonly onGachaItemClick: (gachaSrc: string) => void
 	readonly onDataLoaded: (totalCount: number) => void
-	readonly initialData?: { gacha: GachaData[]; totalCount: number }
 }
 
 const fetchGachas = async ([userId, page, perPage, sort]: [
@@ -41,11 +43,10 @@ const GachaLogList = ({
 	sort,
 	onGachaItemClick,
 	onDataLoaded,
-	initialData,
 }: Props) => {
+	const errorFeedback = useFeedback()
 	const swrKey = [userId, currentPage, logsPerPage, sort]
-	const { data, error, isLoading } = useSWR(swrKey, fetchGachas, {
-		fallbackData: currentPage === 1 ? initialData : undefined,
+	const { data, isLoading } = useSWR(swrKey, fetchGachas, {
 		revalidateOnFocus: false,
 		revalidateOnReconnect: false,
 		revalidateOnMount: true,
@@ -55,6 +56,9 @@ const GachaLogList = ({
 			if (fetchedData) {
 				onDataLoaded(fetchedData.totalCount)
 			}
+		},
+		onError(err: ApiError) {
+			errorFeedback.showApiError(err)
 		},
 	})
 
@@ -81,10 +85,10 @@ const GachaLogList = ({
 		return <GachaLogsSkeleton logsPerPage={logsPerPage} />
 	}
 
-	if (error) {
+	if (errorFeedback.feedback) {
 		return (
 			<div className="py-10 text-center">
-				ガチャ履歴の読み込みに失敗しました: {error.message}
+				<FeedbackMessage source={errorFeedback.feedback} />
 			</div>
 		)
 	}

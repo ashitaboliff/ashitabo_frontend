@@ -118,13 +118,11 @@ const BookingLogs = ({ bookingLog }: Props) => {
 			)}
 
 			{pageMax > 1 && (
-				<div className="mt-8 flex justify-center">
-					<Pagination
-						currentPage={currentPage}
-						totalPages={pageMax}
-						onPageChange={(page) => setCurrentPage(page)}
-					/>
-				</div>
+				<Pagination
+					currentPage={currentPage}
+					totalPages={pageMax}
+					onPageChange={(page) => setCurrentPage(page)}
+				/>
 			)}
 
 			<Popup
