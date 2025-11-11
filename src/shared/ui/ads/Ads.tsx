@@ -29,7 +29,14 @@ const ADS_CONFIG = {
 	MenuDisplay: {
 		slot: '1282872676',
 		format: 'auto',
-		wrapperClassName: 'flex justify-center',
+		wrapperClassName: 'flex justify-center my-2',
+	},
+	Video: {
+		slot: '2716207997',
+		format: 'fluid',
+		layoutKey: '-6u+ec+14-5h+a8',
+		wrapperClassName:
+			'flex w-full rounded-lg border p-3 shadow-sm transition-shadow hover:shadow-md sm:p-4',
 	},
 } as const
 

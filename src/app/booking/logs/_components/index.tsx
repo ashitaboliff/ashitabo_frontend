@@ -2,19 +2,15 @@
 
 import { useState } from 'react'
 import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
-import type { BookingLog } from '@/domains/booking/model/bookingTypes'
+import type { Booking } from '@/domains/booking/model/bookingTypes'
+import BookingDetailPopup from '@/domains/booking/ui/BookingDetailPopup'
 import { TiDeleteOutline } from '@/shared/ui/icons'
 import GenericTable from '@/shared/ui/molecules/GenericTableBody'
 import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayout'
-import Popup from '@/shared/ui/molecules/Popup'
-import {
-	formatDateJaWithWeekday,
-	formatDateSlashWithWeekday,
-	formatDateTimeSlash,
-} from '@/shared/utils/dateFormat'
+import { formatDateSlashWithWeekday } from '@/shared/utils/dateFormat'
 
 interface Props {
-	readonly bookingLog: BookingLog[]
+	readonly bookingLog: Booking[]
 }
 
 const LOGS_PER_PAGE_OPTIONS: Record<string, number> = {
@@ -35,8 +31,8 @@ const headers = [
 const BookingLogs = ({ bookingLog }: Props) => {
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [logsPerPage, setLogsPerPage] = useState(10)
-	const [popupData, setPopupData] = useState<BookingLog | undefined>(
-		bookingLog?.[0] ?? undefined,
+	const [popupData, setPopupData] = useState<Booking | null>(
+		bookingLog?.[0] ?? null,
 	)
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 
@@ -71,7 +67,7 @@ const BookingLogs = ({ bookingLog }: Props) => {
 					onPageChange: setCurrentPage,
 				}}
 			>
-				<GenericTable<BookingLog>
+				<GenericTable<Booking>
 					headers={headers}
 					data={currentLogs}
 					isLoading={false}
@@ -110,74 +106,11 @@ const BookingLogs = ({ bookingLog }: Props) => {
 				/>
 			</PaginatedResourceLayout>
 
-			<Popup
-				id={`popup-${popupData?.id}`}
-				title="予約詳細"
-				maxWidth="lg"
+			<BookingDetailPopup
+				booking={popupData}
 				open={isPopupOpen}
 				onClose={() => setIsPopupOpen(false)}
-			>
-				<div className="p-4 sm:p-6">
-					<dl className="space-y-2 text-sm sm:text-base">
-						{[
-							{ label: '予約ID', value: popupData?.id, break: true },
-							{
-								label: '予約日',
-								value: popupData
-									? formatDateJaWithWeekday(popupData.bookingDate, {
-											space: true,
-										})
-									: '',
-							},
-							{
-								label: '予約時間',
-								value: popupData && BOOKING_TIME_LIST[popupData.bookingTime],
-							},
-							{ label: 'バンド名', value: popupData?.registName, break: true },
-							{ label: '責任者', value: popupData?.name, break: true },
-							{
-								label: '作成日時',
-								value: popupData
-									? formatDateTimeSlash(popupData.createdAt)
-									: '',
-							},
-							{
-								label: '更新日時',
-								value: popupData
-									? formatDateTimeSlash(popupData.updatedAt)
-									: '',
-							},
-						].map((item) =>
-							item.value ? (
-								<div
-									key={item.label}
-									className="grid grid-cols-1 gap-1 border-base-300 border-b py-2 last:border-b-0 sm:grid-cols-3"
-								>
-									<dt className="font-semibold text-base-content/80 sm:col-span-1">
-										{item.label}:
-									</dt>
-									<dd
-										className={`sm:col-span-2 ${item.break ? 'break-all' : 'whitespace-nowrap'}`}
-									>
-										{item.value}
-									</dd>
-								</div>
-							) : null,
-						)}
-					</dl>
-					<div className="mt-6 flex justify-end">
-						<button
-							type="button"
-							className="btn btn-ghost"
-							onClick={() => {
-								setIsPopupOpen(false)
-							}}
-						>
-							閉じる
-						</button>
-					</div>
-				</div>
-			</Popup>
+			/>
 		</div>
 	)
 }

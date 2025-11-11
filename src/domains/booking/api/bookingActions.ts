@@ -12,7 +12,6 @@ import { revalidateBookingCalendarsForDate } from '@/domains/booking/api/booking
 import {
 	mapRawBooking,
 	mapRawBookingList,
-	mapRawBookingLogs,
 	mapRawBookingResponse,
 	type RawBookingData,
 	type RawBookingResponse,
@@ -20,7 +19,6 @@ import {
 import { BOOKING_CALENDAR_TAG } from '@/domains/booking/constants/bookingConstants'
 import type {
 	Booking,
-	BookingLog,
 	BookingResponse,
 } from '@/domains/booking/model/bookingTypes'
 import { buildBookingCalendarTag } from '@/domains/booking/utils/calendarCache'
@@ -69,7 +67,7 @@ export const getBookingByDateAction = async ({
 }
 
 export const getAllBookingAction = async (): Promise<
-	ApiResponse<BookingLog[]>
+	ApiResponse<Booking[]>
 > => {
 	const res = await apiGet<RawBookingData[]>('/booking/logs', {
 		next: { revalidate: 60 * 60, tags: ['booking'] },
@@ -77,7 +75,7 @@ export const getAllBookingAction = async (): Promise<
 
 	return mapSuccess(
 		res,
-		(data) => mapRawBookingLogs(data),
+		(data) => mapRawBookingList(data),
 		'予約履歴の取得に失敗しました。',
 	)
 }

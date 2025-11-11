@@ -2,7 +2,7 @@ import HomeButton from '@/app/home/_components/HomeButton'
 import Carousel from '@/app/home/_components/HomeCarousel'
 import { gkktt } from '@/shared/lib/fonts'
 
-const Page = () => {
+const Page = async () => {
 	return (
 		<div className={gkktt.className}>
 			<Carousel />

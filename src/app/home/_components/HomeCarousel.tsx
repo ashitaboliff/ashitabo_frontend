@@ -60,7 +60,7 @@ const HomeCarousel = () => {
 	return (
 		<Carousel
 			slides={slides}
-			className="rounded-lg bg-black/5 shadow-lg"
+			className="relative z-20 rounded-lg bg-black/5 shadow-lg"
 			interval={4500}
 			pauseOnHover
 		/>

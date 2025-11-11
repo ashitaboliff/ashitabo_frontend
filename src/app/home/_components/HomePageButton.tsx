@@ -33,7 +33,10 @@ const HomePageButton = ({
 		colorList.find((c) => c.name === color)?.color ?? colorList[0].color
 
 	return (
-		<Link href={link} className={`cursor-pointer ${patting} z-20`}>
+		<Link
+			href={link}
+			className={`pointer-events-auto cursor-pointer ${patting} z-20`}
+		>
 			<svg
 				width="110"
 				height="110"

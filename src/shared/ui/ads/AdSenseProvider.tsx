@@ -23,11 +23,7 @@ export const AdSenseProvider = ({
 	clientId: string
 	children: React.ReactNode
 }) => {
-	return (
-		<AdSenseContext.Provider value={{ clientId }}>
-			{children}
-		</AdSenseContext.Provider>
-	)
+	return <AdSenseContext value={{ clientId }}>{children}</AdSenseContext>
 }
 
 /**

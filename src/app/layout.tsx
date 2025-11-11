@@ -33,7 +33,7 @@ export default async function RootLayout({
 	const pathname = new URL(path, `${proto}://${host}`).pathname
 	return (
 		<html lang="ja">
-			<body className={inter.className}>
+			<body className={`overflow-x-hidden ${inter.className}`}>
 				<Script strategy="afterInteractive">
 					{`console.log('%c拙い知識で作ったやつなので、可読性めっちゃ低くて申し訳ないけど頑張ってね！！！ watabegg', 'color: #000000; font-size: 20px; padding: 10px; font-weight: bold;');
 console.log('%cRespect for 変態糞学生', 'color: #ff0000; font-size: 20px; padding: 5px; font-weight: bold; font-style: italic;');

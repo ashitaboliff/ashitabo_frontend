@@ -16,6 +16,8 @@ import { mutateBookingCalendarsForDate } from '@/domains/booking/utils/calendarC
 import { useGachaPlayManager } from '@/domains/gacha/hooks/useGachaPlayManager'
 import GachaResult from '@/domains/gacha/ui/GachaResult'
 import { useFeedback } from '@/shared/hooks/useFeedback'
+import PublicEnv from '@/shared/lib/env/public'
+import { Ads } from '@/shared/ui/ads'
 import ShareButton from '@/shared/ui/atoms/ShareButton'
 import TextInputField from '@/shared/ui/atoms/TextInputField'
 import AddCalendarPopup from '@/shared/ui/molecules/AddCalendarPopup'
@@ -105,10 +107,7 @@ const BookingCreate = ({
 		useGachaPlayManager({ userId: session.user.id })
 
 	const shareUrl = useMemo(() => {
-		if (typeof window === 'undefined' || !createdBooking) {
-			return ''
-		}
-		return `${window.location.origin}/booking/${createdBooking.id}`
+		return `${PublicEnv.NEXT_PUBLIC_APP_URL}/booking/${createdBooking?.id}`
 	}, [createdBooking])
 
 	const onSubmit: SubmitHandler<BookingCreateFormValues> = async (data) => {
@@ -216,6 +215,7 @@ const BookingCreate = ({
 						handleMouseDownPassword={(e) => e.preventDefault()}
 						errorMessage={errors.password?.message}
 					/>
+					<Ads placement="MenuDisplay" />
 					<div className="flex justify-center space-x-4">
 						<button
 							type="submit"

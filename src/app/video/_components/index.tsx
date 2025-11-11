@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { Fragment, useMemo } from 'react'
 import { useYoutubeSearchQuery } from '@/domains/video/hooks/useYoutubeSearchQuery'
 import type {
 	PlaylistDoc,
@@ -8,7 +8,9 @@ import type {
 	YoutubeSearchQuery,
 } from '@/domains/video/model/videoTypes'
 import { buildYoutubeQueryString } from '@/domains/video/query/youtubeQuery'
+import { useAdInsertion } from '@/shared/hooks/useAdInsertion'
 import { gkktt } from '@/shared/lib/fonts'
+import Ads from '@/shared/ui/ads/Ads'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayout'
 import type { ApiError } from '@/types/response'
@@ -34,6 +36,8 @@ const SORT_OPTIONS = [
 	{ label: '新しい順', value: 'new' as const },
 	{ label: '古い順', value: 'old' as const },
 ]
+
+const MAX_VIDEO_ADS = 3
 
 const VideoListPage = ({
 	youtubeDetails,
@@ -78,6 +82,37 @@ const VideoListPage = ({
 	const isBand = currentQuery.liveOrBand === 'band'
 	const bandDetails = isBand ? (youtubeDetails as Video[]) : []
 	const playlistDetails = !isBand ? (youtubeDetails as PlaylistDoc[]) : []
+
+	const bandIds = useMemo(
+		() => bandDetails.map((detail) => detail.videoId),
+		[bandDetails],
+	)
+	const playlistIds = useMemo(
+		() => playlistDetails.map((detail) => detail.playlistId),
+		[playlistDetails],
+	)
+
+	const { shouldRenderAd: shouldRenderBandAd } = useAdInsertion({
+		ids: bandIds,
+		maxAds: MAX_VIDEO_ADS,
+		seedParts: [
+			'band',
+			currentQuery.page,
+			currentQuery.videoPerPage,
+			currentQuery.sort,
+		],
+	})
+
+	const { shouldRenderAd: shouldRenderPlaylistAd } = useAdInsertion({
+		ids: playlistIds,
+		maxAds: MAX_VIDEO_ADS,
+		seedParts: [
+			'playlist',
+			currentQuery.page,
+			currentQuery.videoPerPage,
+			currentQuery.sort,
+		],
+	})
 
 	return (
 		<div className="container mx-auto px-2 sm:px-4">
@@ -136,19 +171,17 @@ const VideoListPage = ({
 				) : youtubeDetails?.length > 0 ? (
 					<div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
 						{isBand
-							? bandDetails.map((detail) => (
-									<VideoItem
-										key={detail.videoId}
-										youtubeDetail={detail}
-										liveOrBand="band"
-									/>
+							? bandDetails.map((detail, index) => (
+									<Fragment key={detail.videoId}>
+										<VideoItem youtubeDetail={detail} liveOrBand="band" />
+										{shouldRenderBandAd(index) && <Ads placement="Video" />}
+									</Fragment>
 								))
-							: playlistDetails.map((detail) => (
-									<VideoItem
-										key={detail.playlistId}
-										youtubeDetail={detail}
-										liveOrBand="live"
-									/>
+							: playlistDetails.map((detail, index) => (
+									<Fragment key={detail.playlistId}>
+										<VideoItem youtubeDetail={detail} liveOrBand="live" />
+										{shouldRenderPlaylistAd(index) && <Ads placement="Video" />}
+									</Fragment>
 								))}
 					</div>
 				) : (

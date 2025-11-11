@@ -77,7 +77,7 @@ const Page = async () => {
 						alt="信州大学工学部軽音サークルあしたぼの活動風景"
 						width={240}
 						height={180}
-						className="-translate-x-14 -translate-y-28 absolute top-1/2 left-1/2 mt-2 rotate-12 transform rounded-lg shadow"
+						className="-translate-x-16 -translate-y-28 absolute top-1/2 left-1/2 mt-2 rotate-12 transform rounded-lg shadow"
 					/>
 					<Image
 						src={getImageUrl('/home/activity/activity-10.webp')}
