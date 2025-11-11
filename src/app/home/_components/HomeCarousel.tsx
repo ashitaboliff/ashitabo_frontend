@@ -45,8 +45,8 @@ const slides: CarouselSlide[] = list.map((image, index) => ({
 			<Image
 				src={image.src}
 				alt={image.alt}
-				width={1200}
-				height={900}
+				width={600}
+				height={400}
 				className="h-full w-full object-cover"
 				sizes="(min-width: 1024px) 1024px, 100vw"
 				priority={index === 0}

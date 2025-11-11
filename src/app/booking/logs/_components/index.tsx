@@ -3,9 +3,9 @@
 import { useState } from 'react'
 import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
 import type { BookingLog } from '@/domains/booking/model/bookingTypes'
-import Pagination from '@/shared/ui/atoms/Pagination'
-import SelectField from '@/shared/ui/atoms/SelectField'
 import { TiDeleteOutline } from '@/shared/ui/icons'
+import GenericTable from '@/shared/ui/molecules/GenericTableBody'
+import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayout'
 import Popup from '@/shared/ui/molecules/Popup'
 import {
 	formatDateJaWithWeekday,
@@ -17,6 +17,21 @@ interface Props {
 	readonly bookingLog: BookingLog[]
 }
 
+const LOGS_PER_PAGE_OPTIONS: Record<string, number> = {
+	'10件': 10,
+	'20件': 20,
+	'50件': 50,
+	'100件': 100,
+}
+
+const headers = [
+	{ key: 'status', label: '' },
+	{ key: 'date', label: '予約日' },
+	{ key: 'time', label: '時間' },
+	{ key: 'band', label: 'バンド名' },
+	{ key: 'owner', label: '責任者' },
+]
+
 const BookingLogs = ({ bookingLog }: Props) => {
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [logsPerPage, setLogsPerPage] = useState(10)
@@ -26,7 +41,7 @@ const BookingLogs = ({ bookingLog }: Props) => {
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 
 	const totalLogs = bookingLog?.length ?? 0
-	const pageMax = Math.ceil(totalLogs / logsPerPage)
+	const pageMax = Math.max(1, Math.ceil(totalLogs / logsPerPage) || 1)
 
 	const indexOfLastLog = currentPage * logsPerPage
 	const indexOfFirstLog = indexOfLastLog - logsPerPage
@@ -36,94 +51,65 @@ const BookingLogs = ({ bookingLog }: Props) => {
 		<div className="container mx-auto px-2 py-8 sm:px-4">
 			<div className="mb-6 flex flex-col items-center justify-between gap-4 sm:flex-row">
 				<h1 className="font-bold text-2xl sm:text-3xl">予約ログ</h1>
-				<div className="flex w-full xs:flex-row flex-col items-center gap-2 sm:w-auto sm:gap-4">
-					<div className="flex w-full xs:w-auto items-center gap-2">
-						<span className="whitespace-nowrap text-sm">表示件数:</span>
-						<SelectField
-							value={logsPerPage}
-							onChange={(e) => {
-								setLogsPerPage(Number(e.target.value))
-								setCurrentPage(1)
-							}}
-							options={{ '10件': 10, '20件': 20, '50件': 50, '100件': 100 }}
-							name="logsPerPage"
-							className="select-sm w-full xs:w-auto"
-						/>
-					</div>
-				</div>
 			</div>
 
-			{currentLogs.length > 0 ? (
-				<div className="overflow-x-auto rounded-lg shadow-md">
-					<table className="table-zebra table w-full">
-						<thead className="bg-base-200">
-							<tr>
-								<th className="w-10 p-3 text-left font-semibold text-xs-custom tracking-wider sm:w-12 sm:text-sm"></th>
-								<th className="p-3 text-left font-semibold text-xs-custom tracking-wider sm:text-sm">
-									予約日
-								</th>
-								<th className="hidden p-3 text-left font-semibold text-xs-custom tracking-wider sm:table-cell sm:text-sm">
-									時間
-								</th>
-								<th className="p-3 text-left font-semibold text-xs-custom tracking-wider sm:text-sm">
-									バンド名
-								</th>
-								<th className="hidden p-3 text-left font-semibold text-xs-custom tracking-wider sm:text-sm md:table-cell">
-									責任者
-								</th>
-							</tr>
-						</thead>
-						<tbody className="divide-y divide-base-300 bg-base-100">
-							{currentLogs.map((log) => (
-								<tr
-									key={log.id}
-									className="cursor-pointer transition-colors duration-200 hover:bg-base-200"
-									onClick={() => {
-										setIsPopupOpen(true)
-										setPopupData(log)
-									}}
-								>
-									<td className="whitespace-nowrap p-3 text-center">
-										{log.isDeleted && (
-											<div className="tooltip tooltip-error" data-tip="削除済">
-												<TiDeleteOutline className="text-error" size={20} />
-											</div>
-										)}
-									</td>
-									<td className="whitespace-nowrap p-3 text-xs-custom sm:text-sm">
-										{formatDateSlashWithWeekday(log.bookingDate)}
-									</td>
-									<td className="hidden whitespace-nowrap p-3 text-xs-custom sm:table-cell sm:text-sm">
-										{BOOKING_TIME_LIST[log.bookingTime]}
-									</td>
-									<td className="break-words p-3 text-xs-custom sm:text-sm">
-										{log.registName}
-									</td>
-									<td className="hidden whitespace-nowrap p-3 text-xs-custom sm:text-sm md:table-cell">
-										{log.name}
-									</td>
-								</tr>
-							))}
-						</tbody>
-					</table>
-				</div>
-			) : (
-				<div className="card bg-base-100 py-10 text-center shadow">
-					<div className="card-body">
-						<p className="text-base-content/70 text-xl">
-							予約ログはありません。
-						</p>
-					</div>
-				</div>
-			)}
-
-			{pageMax > 1 && (
-				<Pagination
-					currentPage={currentPage}
-					totalPages={pageMax}
-					onPageChange={(page) => setCurrentPage(page)}
+			<PaginatedResourceLayout
+				perPage={{
+					label: '表示件数:',
+					name: 'logsPerPage',
+					options: LOGS_PER_PAGE_OPTIONS,
+					value: logsPerPage,
+					onChange: (value) => {
+						setLogsPerPage(value)
+						setCurrentPage(1)
+					},
+				}}
+				pagination={{
+					currentPage,
+					totalPages: pageMax,
+					totalCount: totalLogs,
+					onPageChange: setCurrentPage,
+				}}
+			>
+				<GenericTable<BookingLog>
+					headers={headers}
+					data={currentLogs}
+					isLoading={false}
+					emptyDataMessage="予約ログはありません。"
+					loadingMessage="予約ログを読み込み中です..."
+					onRowClick={(log) => {
+						setIsPopupOpen(true)
+						setPopupData(log)
+					}}
+					itemKeyExtractor={(log) => log.id}
+					tableClassName="table table-zebra w-full"
+					rowClassName="cursor-pointer transition-colors duration-200 hover:bg-base-200"
+					colSpan={headers.length}
+					renderCells={(log) => (
+						<>
+							<td className="w-12 whitespace-nowrap p-3 text-center">
+								{log.isDeleted ? (
+									<div className="tooltip tooltip-error" data-tip="削除済">
+										<TiDeleteOutline className="text-error" size={20} />
+									</div>
+								) : null}
+							</td>
+							<td className="whitespace-nowrap p-3 text-xs-custom sm:text-sm">
+								{formatDateSlashWithWeekday(log.bookingDate)}
+							</td>
+							<td className="hidden whitespace-nowrap p-3 text-xs-custom sm:table-cell sm:text-sm">
+								{BOOKING_TIME_LIST[log.bookingTime]}
+							</td>
+							<td className="break-words p-3 text-xs-custom sm:text-sm">
+								{log.registName}
+							</td>
+							<td className="hidden whitespace-nowrap p-3 text-xs-custom sm:text-sm md:table-cell">
+								{log.name}
+							</td>
+						</>
+					)}
 				/>
-			)}
+			</PaginatedResourceLayout>
 
 			<Popup
 				id={`popup-${popupData?.id}`}

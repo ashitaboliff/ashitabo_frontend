@@ -5,7 +5,7 @@ import { gachaConfigs } from '@/domains/gacha/config/gachaConfig'
 import type { CarouselPackDataItem } from '@/domains/gacha/model/gachaTypes'
 import { ensureSignedResourceUrls } from '@/domains/gacha/services/signedGachaResourceCache'
 import { getUserProfile } from '@/domains/user/api/userActions'
-import type { Profile } from '@/domains/user/model/userTypes'
+import type { AccountRole, Profile } from '@/domains/user/model/userTypes'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 import { logError } from '@/shared/utils/logger'
 
@@ -22,10 +22,10 @@ interface UserPageSearchParams {
 const UserPageServer = async ({
 	searchParams,
 }: {
-	searchParams?: UserPageSearchParams
+	searchParams?: Promise<UserPageSearchParams>
 }) => {
-	const initialTab =
-		typeof searchParams?.tab === 'string' ? searchParams.tab : undefined
+	const params = await searchParams
+	const initialTab = typeof params?.tab === 'string' ? params.tab : undefined
 
 	return (
 		<AuthPage requireProfile={true}>
@@ -74,12 +74,18 @@ const UserPageServer = async ({
 					})(),
 				])
 
+				const userInfo = {
+					name: session.user.name,
+					role: session.user.role as AccountRole | null,
+				}
+
 				return (
 					<UserPageLayout session={session} profile={profile}>
 						<UserPageTabs
 							session={session}
 							gachaCarouselData={gachaCarouselData}
 							profile={profile}
+							userInfo={userInfo}
 							initialTab={initialTab}
 						/>
 					</UserPageLayout>

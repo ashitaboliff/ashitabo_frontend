@@ -1,8 +1,9 @@
 'use client'
 
 import type { PadLock } from '@/domains/admin/model/adminTypes'
-import SelectField from '@/shared/ui/atoms/SelectField'
 import { TiDeleteOutline } from '@/shared/ui/icons'
+import GenericTable from '@/shared/ui/molecules/GenericTableBody'
+import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayout'
 import { formatDateTimeJaWithUnits } from '@/shared/utils/dateFormat'
 
 const PER_PAGE_OPTIONS_LABELS: Record<string, number> = {
@@ -18,6 +19,13 @@ interface PadlockListProps {
 	readonly onSelect: (padLock: PadLock) => void
 }
 
+const headers = [
+	{ key: 'status', label: '' },
+	{ key: 'name', label: '管理名' },
+	{ key: 'created', label: '作成日' },
+	{ key: 'updated', label: '更新日' },
+]
+
 const PadlockList = ({
 	padLocks,
 	perPage,
@@ -25,63 +33,51 @@ const PadlockList = ({
 	onSelect,
 }: PadlockListProps) => {
 	return (
-		<div className="flex w-full flex-col justify-center gap-y-2 overflow-x-auto">
-			<div className="ml-auto flex w-full max-w-xs flex-row items-center space-x-2">
-				<p className="whitespace-nowrap text-sm">表示件数:</p>
-				<SelectField
-					value={perPage}
-					onChange={(event) => onPerPageChange(Number(event.target.value))}
-					options={PER_PAGE_OPTIONS_LABELS}
-					name="padLocksPerPage"
+		<PaginatedResourceLayout
+			perPage={{
+				label: '表示件数:',
+				name: 'padLocksPerPage',
+				options: PER_PAGE_OPTIONS_LABELS,
+				value: perPage,
+				onChange: onPerPageChange,
+			}}
+		>
+			<div className="w-full overflow-x-auto">
+				<GenericTable<PadLock>
+					headers={headers}
+					data={padLocks}
+					isLoading={false}
+					emptyDataMessage="パスワードが登録されていません。"
+					loadingMessage="パスワード一覧を読み込み中です..."
+					onRowClick={onSelect}
+					itemKeyExtractor={(padLock) => padLock.id}
+					tableClassName="table table-zebra table-sm w-full"
+					rowClassName="cursor-pointer"
+					renderCells={(padLock) => (
+						<>
+							<td className="w-14 align-middle">
+								{padLock.isDeleted ? (
+									<span className="badge badge-error">
+										<TiDeleteOutline className="inline" />
+									</span>
+								) : null}
+							</td>
+							<td>{padLock.name}</td>
+							<td>
+								{formatDateTimeJaWithUnits(padLock.createdAt, {
+									hour12: true,
+								})}
+							</td>
+							<td>
+								{formatDateTimeJaWithUnits(padLock.updatedAt, {
+									hour12: true,
+								})}
+							</td>
+						</>
+					)}
 				/>
 			</div>
-			<table className="table-zebra table-sm table w-full">
-				<thead>
-					<tr>
-						<th></th>
-						<th>管理名</th>
-						<th>作成日</th>
-						<th>更新日</th>
-					</tr>
-				</thead>
-				<tbody>
-					{padLocks.length === 0 ? (
-						<tr>
-							<td colSpan={4} className="py-6 text-center text-sm">
-								パスワードが登録されていません。
-							</td>
-						</tr>
-					) : (
-						padLocks.map((padLock) => (
-							<tr
-								key={padLock.id}
-								onClick={() => onSelect(padLock)}
-								className="cursor-pointer"
-							>
-								<td className="align-middle">
-									{padLock.isDeleted ? (
-										<span className="badge badge-error">
-											<TiDeleteOutline className="inline" />
-										</span>
-									) : null}
-								</td>
-								<td>{padLock.name}</td>
-								<td>
-									{formatDateTimeJaWithUnits(padLock.createdAt, {
-										hour12: true,
-									})}
-								</td>
-								<td>
-									{formatDateTimeJaWithUnits(padLock.updatedAt, {
-										hour12: true,
-									})}
-								</td>
-							</tr>
-						))
-					)}
-				</tbody>
-			</table>
-		</div>
+		</PaginatedResourceLayout>
 	)
 }
 

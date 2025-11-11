@@ -48,7 +48,7 @@ const PaginatedResourceLayout = <T extends string>({
 	perPage,
 	sort,
 	pagination,
-	className = 'flex flex-col justify-center space-y-4',
+	className = 'flex flex-col justify-center space-y-4 w-full',
 }: PaginatedResourceLayoutProps<T>) => {
 	const shouldShowPagination = (() => {
 		if (!pagination) return false

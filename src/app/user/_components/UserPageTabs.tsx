@@ -14,7 +14,7 @@ import GachaLogs from '@/app/user/_components/tabs/gacha'
 import ProfileDetailsTab from '@/app/user/_components/tabs/profile/ProfileDetailsTab'
 import { useGachaPlayManager } from '@/domains/gacha/hooks/useGachaPlayManager'
 import type { CarouselPackDataItem } from '@/domains/gacha/model/gachaTypes'
-import type { Profile } from '@/domains/user/model/userTypes'
+import type { AccountRole, Profile } from '@/domains/user/model/userTypes'
 import { gkktt } from '@/shared/lib/fonts'
 import { Tab, Tabs } from '@/shared/ui/atoms/Tabs'
 import {
@@ -56,6 +56,10 @@ interface Props {
 	readonly session: Session
 	readonly gachaCarouselData: CarouselPackDataItem[]
 	readonly profile: Profile | null
+	readonly userInfo?: {
+		name?: string | null
+		role?: AccountRole | null
+	}
 	readonly initialTab?: string
 }
 
@@ -63,6 +67,7 @@ const UserPageTabs = ({
 	session,
 	gachaCarouselData,
 	profile,
+	userInfo,
 	initialTab,
 }: Props) => {
 	const [isGachaPopupOpen, setIsGachaPopupOpen] = useState(false)
@@ -119,7 +124,7 @@ const UserPageTabs = ({
 						<LuUserRound size={24} />
 					</div>
 				),
-				content: <ProfileDetailsTab profile={profile} />,
+				content: <ProfileDetailsTab profile={profile} userInfo={userInfo} />,
 			},
 			{
 				id: 'booking',
@@ -183,6 +188,7 @@ const UserPageTabs = ({
 			gachaPlayCountToday,
 			gachaMessage,
 			handleOpenGachaPopup,
+			userInfo,
 		],
 	)
 

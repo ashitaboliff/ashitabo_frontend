@@ -9,10 +9,8 @@ import type {
 } from '@/domains/video/model/videoTypes'
 import { buildYoutubeQueryString } from '@/domains/video/query/youtubeQuery'
 import { gkktt } from '@/shared/lib/fonts'
-import Pagination from '@/shared/ui/atoms/Pagination'
-import RadioSortGroup from '@/shared/ui/atoms/RadioSortGroup'
-import SelectField from '@/shared/ui/atoms/SelectField'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
+import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayout'
 import type { ApiError } from '@/types/response'
 import VideoItem from './VideoItem'
 import VideoSearchForm from './VideoSearchForm'
@@ -25,6 +23,17 @@ interface Props {
 	readonly initialQuery: YoutubeSearchQuery
 	readonly extraSearchParams?: string
 }
+
+const PER_PAGE_OPTIONS: Record<string, number> = {
+	'15件': 15,
+	'20件': 20,
+	'30件': 30,
+}
+
+const SORT_OPTIONS = [
+	{ label: '新しい順', value: 'new' as const },
+	{ label: '古い順', value: 'old' as const },
+]
 
 const VideoListPage = ({
 	youtubeDetails,
@@ -84,43 +93,32 @@ const VideoListPage = ({
 				onReset={() => updateQuery(defaultQuery)}
 				shareUrl={shareUrl}
 			/>
-			<div className="flex flex-col items-center justify-center gap-y-4">
-				<div className="mb-2 flex w-full flex-row items-center justify-end gap-2 px-1 sm:gap-4">
-					<div className="flex items-center space-x-2">
-						<p className="whitespace-nowrap text-xs-custom sm:text-sm">
-							表示件数:
-						</p>
-						<SelectField
-							value={currentQuery.videoPerPage}
-							onChange={(e) =>
-								updateQuery({
-									videoPerPage: Number(e.target.value),
-									page: 1,
-								})
+			<PaginatedResourceLayout
+				perPage={{
+					label: '表示件数:',
+					name: 'videoPerPage',
+					options: PER_PAGE_OPTIONS,
+					value: currentQuery.videoPerPage,
+					onChange: (value) => updateQuery({ videoPerPage: value, page: 1 }),
+				}}
+				sort={{
+					name: 'videoSort',
+					options: SORT_OPTIONS,
+					value: currentQuery.sort,
+					onChange: (sort) => updateQuery({ sort }),
+				}}
+				pagination={
+					pageMax > 1
+						? {
+								currentPage: currentQuery.page,
+								totalPages: pageMax,
+								totalCount: youtubeDetails.length,
+								onPageChange: (page) => updateQuery({ page }),
 							}
-							options={{ '15件': 15, '20件': 20, '30件': 30 }}
-							name="videoPerPage"
-						/>
-					</div>
-					<div className="flex items-center space-x-2">
-						<p className="whitespace-nowrap text-xs-custom sm:text-sm">
-							並び順:
-						</p>
-						<RadioSortGroup
-							name="videoSort"
-							currentSort={currentQuery.sort}
-							onSortChange={(sort) => updateQuery({ sort })}
-							options={[
-								{ label: '新しい順', value: 'new' },
-								{ label: '古い順', value: 'old' },
-							]}
-							size="xs"
-						/>
-					</div>
-				</div>
-
+						: undefined
+				}
+			>
 				<FeedbackMessage source={error} defaultVariant="error" />
-
 				{isPending ? (
 					<div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
 						{skeletonKeys.map((placeholderKey) => (
@@ -158,14 +156,7 @@ const VideoListPage = ({
 						該当する動画がありません
 					</div>
 				)}
-				{pageMax > 1 && (
-					<Pagination
-						currentPage={currentQuery.page}
-						totalPages={pageMax}
-						onPageChange={(page) => updateQuery({ page })}
-					/>
-				)}
-			</div>
+			</PaginatedResourceLayout>
 		</div>
 	)
 }

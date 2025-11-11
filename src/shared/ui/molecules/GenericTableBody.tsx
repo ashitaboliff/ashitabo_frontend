@@ -1,8 +1,8 @@
 'use client'
 
 import type { ReactNode } from 'react'
+import type { MessageSource } from '@/shared/ui/molecules/FeedbackMessage'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
-import type { FeedbackMessageType } from '@/types/feedback'
 
 interface TableHeader {
 	key: string
@@ -13,7 +13,7 @@ interface GenericTableProps<T extends object> {
 	headers: TableHeader[]
 	data?: T[]
 	isLoading: boolean
-	error?: FeedbackMessageType | null
+	error?: MessageSource
 	renderCells: (item: T) => ReactNode
 	onRowClick?: (item: T) => void
 	tableClassName?: string

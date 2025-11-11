@@ -9,9 +9,9 @@ import type {
 	YoutubeSearchQuery,
 } from '@/domains/video/model/videoTypes'
 import { useFeedback } from '@/shared/hooks/useFeedback'
-import Pagination from '@/shared/ui/atoms/Pagination'
-import SelectField from '@/shared/ui/atoms/SelectField'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
+import GenericTable from '@/shared/ui/molecules/GenericTableBody'
+import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayout'
 import Popup from '@/shared/ui/molecules/Popup'
 import { formatDateJa, formatDateSlash } from '@/shared/utils/dateFormat'
 import type { ApiError } from '@/types/response'
@@ -79,6 +79,14 @@ const YoutubeManagement = ({
 			: '不明'
 
 	const isBusy = isLoading || isPending
+	const headers = [{ key: 'title', label: 'タイトル' }]
+
+	const pagination = {
+		currentPage: query.page,
+		totalPages: totalPages,
+		totalCount: total,
+		onPageChange: (page: number) => updateQuery({ page }),
+	}
 
 	return (
 		<div className="flex flex-col items-center justify-center gap-y-2">
@@ -99,59 +107,40 @@ const YoutubeManagement = ({
 			<FeedbackMessage source={actionFeedback.feedback} />
 			<FeedbackMessage source={error} />
 
-			<div className="flex w-full flex-col justify-center gap-y-2 overflow-x-auto">
+			<PaginatedResourceLayout
+				perPage={{
+					label: '表示件数:',
+					name: 'playlistPerPage',
+					options: perPageOptions,
+					value: query.videoPerPage,
+					onChange: (value) => updateQuery({ videoPerPage: value, page: 1 }),
+				}}
+				pagination={
+					totalPages > 1 ? pagination : { ...pagination, totalPages: 1 }
+				}
+			>
 				<div className="flex flex-col gap-y-2 sm:flex-row sm:items-center sm:justify-between">
 					<div className="text-sm">更新日: {lastUpdatedText}</div>
-					<div className="flex flex-row items-center">
-						<p className="mr-2 whitespace-nowrap text-sm">表示件数:</p>
-						<SelectField
-							value={query.videoPerPage}
-							onChange={(e) =>
-								updateQuery({
-									videoPerPage: Number(e.target.value),
-									page: 1,
-								})
-							}
-							options={perPageOptions}
-							name="playlistPerPage"
-							disabled={isBusy}
-						/>
-					</div>
 				</div>
-				<table className="table-zebra table-sm table w-full max-w-3xl self-center">
-					<thead>
-						<tr>
-							<th>タイトル</th>
-						</tr>
-					</thead>
-					<tbody>
-						{playlists.length === 0 ? (
-							<tr>
-								<td className="py-4 text-center">
-									プレイリストが見つかりませんでした。
-								</td>
-							</tr>
-						) : (
-							playlists.map((playlist) => (
-								<tr
-									key={playlist.playlistId}
-									onClick={() => setDetailPlaylist(playlist)}
-									className="cursor-pointer"
-								>
-									<td>{playlist.title}</td>
-								</tr>
-							))
+				<div className="w-full max-w-3xl self-center overflow-x-auto">
+					<GenericTable<PlaylistDoc>
+						headers={headers}
+						data={playlists}
+						isLoading={isPending}
+						emptyDataMessage="プレイリストが見つかりませんでした。"
+						loadingMessage="プレイリストを読み込み中です..."
+						onRowClick={(playlist) => setDetailPlaylist(playlist)}
+						itemKeyExtractor={(playlist) => playlist.playlistId}
+						tableClassName="table table-zebra table-sm w-full"
+						rowClassName="cursor-pointer"
+						renderCells={(playlist) => (
+							<>
+								<td>{playlist.title}</td>
+							</>
 						)}
-					</tbody>
-				</table>
-			</div>
-			{totalPages > 1 ? (
-				<Pagination
-					currentPage={query.page}
-					totalPages={totalPages}
-					onPageChange={(page) => updateQuery({ page })}
-				/>
-			) : null}
+					/>
+				</div>
+			</PaginatedResourceLayout>
 			<div className="mt-2 flex flex-row justify-center">
 				<button
 					type="button"
