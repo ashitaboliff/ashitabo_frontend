@@ -82,7 +82,6 @@ const BookingLogs = ({ bookingLog }: Props) => {
 						setPopupData(log)
 					}}
 					itemKeyExtractor={(log) => log.id}
-					tableClassName="table table-zebra w-full"
 					rowClassName="cursor-pointer transition-colors duration-200 hover:bg-base-200"
 					colSpan={headers.length}
 					renderCells={(log) => (
@@ -97,13 +96,13 @@ const BookingLogs = ({ bookingLog }: Props) => {
 							<td className="whitespace-nowrap p-3 text-xs-custom sm:text-sm">
 								{formatDateSlashWithWeekday(log.bookingDate)}
 							</td>
-							<td className="hidden whitespace-nowrap p-3 text-xs-custom sm:table-cell sm:text-sm">
+							<td className="whitespace-nowrap p-3 text-xs-custom sm:table-cell sm:text-sm">
 								{BOOKING_TIME_LIST[log.bookingTime]}
 							</td>
 							<td className="break-words p-3 text-xs-custom sm:text-sm">
 								{log.registName}
 							</td>
-							<td className="hidden whitespace-nowrap p-3 text-xs-custom sm:text-sm md:table-cell">
+							<td className="whitespace-nowrap p-3 text-xs-custom sm:text-sm md:table-cell">
 								{log.name}
 							</td>
 						</>

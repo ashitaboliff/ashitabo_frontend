@@ -42,41 +42,38 @@ const PadlockList = ({
 				onChange: onPerPageChange,
 			}}
 		>
-			<div className="w-full overflow-x-auto">
-				<GenericTable<PadLock>
-					headers={headers}
-					data={padLocks}
-					isLoading={false}
-					emptyDataMessage="パスワードが登録されていません。"
-					loadingMessage="パスワード一覧を読み込み中です..."
-					onRowClick={onSelect}
-					itemKeyExtractor={(padLock) => padLock.id}
-					tableClassName="table table-zebra table-sm w-full"
-					rowClassName="cursor-pointer"
-					renderCells={(padLock) => (
-						<>
-							<td className="w-14 align-middle">
-								{padLock.isDeleted ? (
-									<span className="badge badge-error">
-										<TiDeleteOutline className="inline" />
-									</span>
-								) : null}
-							</td>
-							<td>{padLock.name}</td>
-							<td>
-								{formatDateTimeJaWithUnits(padLock.createdAt, {
-									hour12: true,
-								})}
-							</td>
-							<td>
-								{formatDateTimeJaWithUnits(padLock.updatedAt, {
-									hour12: true,
-								})}
-							</td>
-						</>
-					)}
-				/>
-			</div>
+			<GenericTable<PadLock>
+				headers={headers}
+				data={padLocks}
+				isLoading={false}
+				emptyDataMessage="パスワードが登録されていません。"
+				loadingMessage="パスワード一覧を読み込み中です..."
+				onRowClick={onSelect}
+				itemKeyExtractor={(padLock) => padLock.id}
+				rowClassName="cursor-pointer"
+				renderCells={(padLock) => (
+					<>
+						<td className="w-14 align-middle">
+							{padLock.isDeleted ? (
+								<span className="badge badge-error">
+									<TiDeleteOutline className="inline" />
+								</span>
+							) : null}
+						</td>
+						<td>{padLock.name}</td>
+						<td>
+							{formatDateTimeJaWithUnits(padLock.createdAt, {
+								hour12: true,
+							})}
+						</td>
+						<td>
+							{formatDateTimeJaWithUnits(padLock.updatedAt, {
+								hour12: true,
+							})}
+						</td>
+					</>
+				)}
+			/>
 		</PaginatedResourceLayout>
 	)
 }

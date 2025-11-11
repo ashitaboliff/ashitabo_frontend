@@ -176,14 +176,12 @@ const DeniedBookingPage = ({
 						onPageChange: (page) => updateQuery({ page }),
 					}}
 				>
-					<div className="w-full overflow-x-auto">
-						<DeniedBookingList
-							deniedBookings={deniedBookings}
-							onDeniedBookingItemClick={handleSelectBooking}
-							isLoading={isPending}
-							error={initialError}
-						/>
-					</div>
+					<DeniedBookingList
+						deniedBookings={deniedBookings}
+						onDeniedBookingItemClick={handleSelectBooking}
+						isLoading={isPending}
+						error={initialError}
+					/>
 				</PaginatedResourceLayout>
 				<button
 					type="button"

@@ -153,14 +153,12 @@ const AdminUserPage = ({
 						onPageChange: (page) => updateQuery({ page }),
 					}}
 				>
-					<div className="w-full overflow-x-auto">
-						<UserManageList
-							users={users}
-							onUserItemClick={handleSelectUser}
-							isLoading={isPending}
-							error={initialError}
-						/>
-					</div>
+					<UserManageList
+						users={users}
+						onUserItemClick={handleSelectUser}
+						isLoading={isPending}
+						error={initialError}
+					/>
 				</PaginatedResourceLayout>
 				<button
 					type="button"

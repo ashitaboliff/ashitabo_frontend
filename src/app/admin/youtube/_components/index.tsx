@@ -122,24 +122,21 @@ const YoutubeManagement = ({
 				<div className="flex flex-col gap-y-2 sm:flex-row sm:items-center sm:justify-between">
 					<div className="text-sm">更新日: {lastUpdatedText}</div>
 				</div>
-				<div className="w-full max-w-3xl self-center overflow-x-auto">
-					<GenericTable<PlaylistDoc>
-						headers={headers}
-						data={playlists}
-						isLoading={isPending}
-						emptyDataMessage="プレイリストが見つかりませんでした。"
-						loadingMessage="プレイリストを読み込み中です..."
-						onRowClick={(playlist) => setDetailPlaylist(playlist)}
-						itemKeyExtractor={(playlist) => playlist.playlistId}
-						tableClassName="table table-zebra table-sm w-full"
-						rowClassName="cursor-pointer"
-						renderCells={(playlist) => (
-							<>
-								<td>{playlist.title}</td>
-							</>
-						)}
-					/>
-				</div>
+				<GenericTable<PlaylistDoc>
+					headers={headers}
+					data={playlists}
+					isLoading={isPending}
+					emptyDataMessage="プレイリストが見つかりませんでした。"
+					loadingMessage="プレイリストを読み込み中です..."
+					onRowClick={(playlist) => setDetailPlaylist(playlist)}
+					itemKeyExtractor={(playlist) => playlist.playlistId}
+					rowClassName="cursor-pointer"
+					renderCells={(playlist) => (
+						<>
+							<td>{playlist.title}</td>
+						</>
+					)}
+				/>
 			</PaginatedResourceLayout>
 			<div className="mt-2 flex flex-row justify-center">
 				<button
