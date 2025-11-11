@@ -1,9 +1,9 @@
 'use client'
 
 import { useId, useState } from 'react'
-import GachaPackCarousel from '@/app/user/_components/tabs/gacha/GachaPackCarousel'
 import { MAX_GACHA_PLAYS_PER_DAY } from '@/domains/gacha/config/gachaConfig'
 import type { CarouselPackDataItem } from '@/domains/gacha/model/gachaTypes'
+import GachaPackCarousel from '@/domains/gacha/ui/GachaPackCarousel'
 import GachaResult from '@/domains/gacha/ui/GachaResult'
 import Popup from '@/shared/ui/molecules/Popup'
 import type { Session } from '@/types/session'

@@ -26,12 +26,12 @@ import {
 import type { Session } from '@/types/session'
 
 const GachaMainPopup = dynamic(
-	() => import('@/app/user/_components/tabs/gacha/GachaMainPopup'),
+	() => import('@/domains/gacha/ui/GachaMainPopup'),
 	{
 		ssr: false,
 		loading: () => null,
 	},
-) as typeof import('@/app/user/_components/tabs/gacha/GachaMainPopup')['default']
+) as typeof import('@/domains/gacha/ui/GachaMainPopup')['default']
 
 const RatioPopup = dynamic(() => import('@/domains/gacha/ui/RatioPopup'), {
 	ssr: false,
