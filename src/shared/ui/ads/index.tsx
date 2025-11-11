@@ -1,7 +1,5 @@
 export { default as AdSense } from './AdSense'
-export { default as AdSenseManager } from './AdSenseManager'
 export { AdSenseProvider, useAdSenseContext } from './AdSenseProvider'
 export { default as AdSenseScript } from './AdSenseScript'
-export { default as FieldAds } from './FieldAds'
-export { default as MenuAds } from './MenuAds'
+export { default as Ads } from './Ads'
 export { default as MockAdSense } from './MockAdSense'

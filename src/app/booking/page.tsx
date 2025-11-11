@@ -1,7 +1,6 @@
 import BookingMainPage from '@/app/booking/_components'
 import BookingMainPageLayout from '@/app/booking/_components/BookingMainPageLayout'
 import useFlashMessage from '@/shared/hooks/useFlashMessage'
-import { FieldAds } from '@/shared/ui/ads'
 import { getCurrentJSTDateString } from '@/shared/utils'
 
 const Page = async () => {
@@ -17,7 +16,6 @@ const Page = async () => {
 				type={type}
 				message={message}
 			/>
-			<FieldAds />
 		</>
 	)
 }

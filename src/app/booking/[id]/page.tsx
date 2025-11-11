@@ -4,7 +4,6 @@ import { getBookingByIdAction } from '@/domains/booking/api/bookingActions'
 import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
 import BookingDetailNotFound from '@/domains/booking/ui/BookingDetailNotFound'
 import { createMetaData } from '@/shared/hooks/useMetaData'
-import { FieldAds } from '@/shared/ui/ads'
 
 type PageParams = Promise<{ id: string }>
 type PageProps = { params: PageParams }
@@ -43,12 +42,7 @@ const Page = async ({ params }: PageProps) => {
 	if (!bookingDetail.ok || !bookingDetail.data) {
 		return <BookingDetailNotFound />
 	}
-	return (
-		<>
-			<BookingDetail bookingDetail={bookingDetail.data} />
-			<FieldAds />
-		</>
-	)
+	return <BookingDetail bookingDetail={bookingDetail.data} />
 }
 
 export default Page

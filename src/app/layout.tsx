@@ -1,12 +1,13 @@
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Inter } from 'next/font/google'
+import { headers } from 'next/headers'
 import Script from 'next/script'
 import PublicEnv from '@/shared/lib/env/public'
 import './globals.css'
 import type { ReactNode } from 'react'
 import { createMetaData } from '@/shared/hooks/useMetaData'
-import { AdSenseProvider, AdSenseScript } from '@/shared/ui/ads'
+import { AdSenseProvider, AdSenseScript, Ads } from '@/shared/ui/ads'
 import Footer from '@/shared/ui/layout/Footer'
 import Header from '@/shared/ui/layout/Header'
 
@@ -22,6 +23,14 @@ export default async function RootLayout({
 }: Readonly<{
 	children: ReactNode
 }>) {
+	const headersList = await headers()
+	const proto = headersList.get('x-forwarded-proto') ?? 'https'
+	const host =
+		headersList.get('x-forwarded-host') ??
+		headersList.get('host') ??
+		'localhost'
+	const path = headersList.get('x-invoke-path') ?? '/'
+	const pathname = new URL(path, `${proto}://${host}`).pathname
 	return (
 		<html lang="ja">
 			<body className={inter.className}>
@@ -38,6 +47,7 @@ console.log('%chttps://www.github.com/ashitaboliff/', 'color: #000000; font-size
 					<main className="container mx-auto mt-24 h-full max-w-screen-lg px-2">
 						{children}
 					</main>
+					<Ads placement="Field" key={pathname} />
 					<Footer />
 				</AdSenseProvider>
 				<Script

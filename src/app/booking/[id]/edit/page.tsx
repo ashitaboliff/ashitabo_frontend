@@ -15,7 +15,6 @@ import {
 } from '@/domains/booking/constants/bookingConstants'
 import BookingDetailNotFound from '@/domains/booking/ui/BookingDetailNotFound'
 import { createMetaData } from '@/shared/hooks/useMetaData'
-import { FieldAds } from '@/shared/ui/ads'
 import { toDateKey } from '@/shared/utils'
 import { logError } from '@/shared/utils/logger'
 
@@ -54,58 +53,52 @@ const Page = async ({ params }: PageProps) => {
 	const cookieStore = await cookies()
 	const flash = cookieStore.get('booking:flash')?.value
 	return (
-		<>
-			<AuthPage requireProfile={true}>
-				{async (authResult) => {
-					const session = authResult.session
-					if (!session) {
+		<AuthPage requireProfile={true}>
+			{async (authResult) => {
+				const session = authResult.session
+				if (!session) {
+					return null
+				}
+
+				const initialViewDayDate = subDays(new Date(), 1)
+
+				const calendarStartDate = toDateKey(initialViewDayDate)
+				const calendarEndDate = toDateKey(
+					addDays(initialViewDayDate, BOOKING_VIEW_RANGE_DAYS - 1),
+				)
+
+				const { id } = await params
+
+				const [bookingDetail, bookingResponse] = await Promise.all([
+					getBookingByIdAction(id),
+					getBookingByDateAction({
+						startDate: calendarStartDate,
+						endDate: calendarEndDate,
+					}),
+				])
+
+				if (!bookingDetail.ok || !bookingDetail.data) {
+					if (flash) {
 						return null
 					}
+					logError('Failed to get booking detail for edit page', bookingDetail)
+					return <BookingDetailNotFound />
+				}
 
-					const initialViewDayDate = subDays(new Date(), 1)
+				const initialBookingResponse = bookingResponse.ok
+					? bookingResponse.data
+					: null
 
-					const calendarStartDate = toDateKey(initialViewDayDate)
-					const calendarEndDate = toDateKey(
-						addDays(initialViewDayDate, BOOKING_VIEW_RANGE_DAYS - 1),
-					)
-
-					const { id } = await params
-
-					const [bookingDetail, bookingResponse] = await Promise.all([
-						getBookingByIdAction(id),
-						getBookingByDateAction({
-							startDate: calendarStartDate,
-							endDate: calendarEndDate,
-						}),
-					])
-
-					if (!bookingDetail.ok || !bookingDetail.data) {
-						if (flash) {
-							return null
-						}
-						logError(
-							'Failed to get booking detail for edit page',
-							bookingDetail,
-						)
-						return <BookingDetailNotFound />
-					}
-
-					const initialBookingResponse = bookingResponse.ok
-						? bookingResponse.data
-						: null
-
-					return (
-						<BookingEdit
-							bookingDetail={bookingDetail.data}
-							session={session}
-							initialBookingResponse={initialBookingResponse}
-							initialViewDay={initialViewDayDate}
-						/>
-					)
-				}}
-			</AuthPage>
-			<FieldAds />
-		</>
+				return (
+					<BookingEdit
+						bookingDetail={bookingDetail.data}
+						session={session}
+						initialBookingResponse={initialBookingResponse}
+						initialViewDay={initialViewDayDate}
+					/>
+				)
+			}}
+		</AuthPage>
 	)
 }
 
