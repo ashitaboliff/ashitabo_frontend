@@ -1,14 +1,50 @@
 'use client'
 
+import { useEffect } from 'react'
+import useSWR from 'swr'
 import GachaLogList from '@/app/user/_components/tabs/gacha/GachaLogList'
 import GachaPreviewPopup from '@/app/user/_components/tabs/gacha/GachaPreviewPopup'
+import { getGachaByUserIdAction } from '@/domains/gacha/api/gachaActions'
 import { useGachaPreview } from '@/domains/gacha/hooks/useGachaPreview'
-import type { GachaSort } from '@/domains/gacha/model/gachaTypes'
+import type { GachaData, GachaSort } from '@/domains/gacha/model/gachaTypes'
+import { useFeedback } from '@/shared/hooks/useFeedback'
 import { usePagedResource } from '@/shared/hooks/usePagedResource'
-import Pagination from '@/shared/ui/atoms/Pagination'
-import RadioSortGroup from '@/shared/ui/atoms/RadioSortGroup'
-import SelectField from '@/shared/ui/atoms/SelectField'
+import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayout'
 import type { Session } from '@/types/session'
+
+type GachaLogsKey = ['gacha-logs', string, number, number, GachaSort]
+
+type GachaLogsResponse = {
+	gacha: GachaData[]
+	totalCount: number
+}
+
+const gachaLogsFetcher = async ([
+	,
+	userId,
+	page,
+	perPage,
+	sort,
+]: GachaLogsKey) => {
+	const res = await getGachaByUserIdAction({ userId, page, perPage, sort })
+	if (res.ok) {
+		return res.data
+	}
+	throw res
+}
+
+const perPageOptions = {
+	'15件': 15,
+	'25件': 25,
+	'35件': 35,
+}
+
+const sortOptions: { value: GachaSort; label: string }[] = [
+	{ value: 'new', label: '新しい順' },
+	{ value: 'old', label: '古い順' },
+	{ value: 'rare', label: 'レア順' },
+	{ value: 'notrare', label: 'コモン順' },
+]
 
 interface Props {
 	readonly session: Session
@@ -26,6 +62,7 @@ const UserGachaLogs = ({ session }: Props) => {
 		initialPerPage: 15,
 		initialSort: 'new',
 	})
+	const feedback = useFeedback()
 
 	const {
 		isPopupOpen,
@@ -36,49 +73,68 @@ const UserGachaLogs = ({ session }: Props) => {
 		error: previewError,
 	} = useGachaPreview({ session })
 
+	const swrKey: GachaLogsKey = [
+		'gacha-logs',
+		session.user.id,
+		page,
+		perPage,
+		sort,
+	]
+
+	const { data, isLoading } = useSWR<GachaLogsResponse>(
+		swrKey,
+		gachaLogsFetcher,
+		{
+			keepPreviousData: true,
+			revalidateOnFocus: false,
+			revalidateOnReconnect: false,
+			revalidateIfStale: true,
+			dedupingInterval: 60 * 1000,
+			shouldRetryOnError: false,
+			onError(error) {
+				feedback.showApiError(error)
+			},
+		},
+	)
+
+	useEffect(() => {
+		if (data) {
+			setTotalCount(data.totalCount)
+			feedback.clearFeedback()
+		}
+	}, [data, feedback, setTotalCount])
+
 	return (
 		<div className="mt-4 flex flex-col justify-center">
-			<div className="flex flex-col gap-y-2">
-				<div className="ml-auto flex w-full flex-row items-center space-x-2 sm:w-1/2 md:w-1/3 lg:w-1/4">
-					<p className="whitespace-nowrap text-sm">表示件数:</p>
-					<SelectField<number>
-						name="gachaLogsPerPage"
-						options={{ '15件': 15, '25件': 25, '35件': 35 }}
-						value={perPage}
-						onChange={(event) => {
-							setPerPage(Number(event.target.value))
-						}}
-					/>
-				</div>
-				<div className="my-2 flex flex-row gap-x-2">
-					<RadioSortGroup
-						name="gacha_sort_options"
-						options={[
-							{ value: 'new', label: '新しい順' },
-							{ value: 'old', label: '古い順' },
-							{ value: 'rare', label: 'レア順' },
-							{ value: 'notrare', label: 'コモン順' },
-						]}
-						currentSort={sort}
-						onSortChange={setSort}
-					/>
-				</div>
+			<PaginatedResourceLayout
+				perPage={{
+					label: '表示件数:',
+					name: 'gacha_logs_per_page',
+					options: perPageOptions,
+					value: perPage,
+					onChange: setPerPage,
+				}}
+				sort={{
+					name: 'gacha_sort_options',
+					options: sortOptions,
+					value: sort,
+					onChange: setSort,
+				}}
+				pagination={{
+					currentPage: page,
+					totalPages: pageCount,
+					totalCount,
+					onPageChange: setPage,
+				}}
+			>
 				<GachaLogList
-					userId={session.user.id}
-					currentPage={page}
+					gachaItems={data?.gacha}
 					logsPerPage={perPage}
-					sort={sort}
+					isLoading={isLoading && !data}
+					error={feedback.feedback}
 					onGachaItemClick={openGachaPreview}
-					onDataLoaded={setTotalCount}
 				/>
-				{pageCount > 1 && totalCount > 0 && (
-					<Pagination
-						currentPage={page}
-						totalPages={pageCount}
-						onPageChange={setPage}
-					/>
-				)}
-			</div>
+			</PaginatedResourceLayout>
 			{popupData?.gacha && !isPopupLoading && (
 				<GachaPreviewPopup
 					gachaItem={popupData.gacha}

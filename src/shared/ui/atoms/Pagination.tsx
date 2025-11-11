@@ -67,7 +67,7 @@ const Pagination = ({
 	)
 
 	return (
-		<div className="join mx-auto my-4 justify-center">
+		<div className="join mx-auto">
 			{items.map((item) => {
 				if (typeof item === 'number') {
 					return (

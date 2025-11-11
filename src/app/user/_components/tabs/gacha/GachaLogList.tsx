@@ -1,75 +1,35 @@
 'use client'
 
 import { useMemo } from 'react'
-import useSWR from 'swr'
-import { getGachaByUserIdAction } from '@/domains/gacha/api/gachaActions'
 import { useSignedGachaImages } from '@/domains/gacha/hooks/useSignedGachaImages'
-import type { GachaData, GachaSort } from '@/domains/gacha/model/gachaTypes'
-import { useFeedback } from '@/shared/hooks/useFeedback'
+import type { GachaData } from '@/domains/gacha/model/gachaTypes'
 import { ImageWithFallback } from '@/shared/ui/atoms/ImageWithFallback'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
-import type { ApiError } from '@/types/response'
+import type { FeedbackMessageType } from '@/types/feedback'
 import GachaLogsSkeleton from './GachaLogsSkeleton'
 
 interface Props {
-	readonly userId: string
-	readonly currentPage: number
+	readonly gachaItems?: GachaData[]
 	readonly logsPerPage: number
-	readonly sort: GachaSort
+	readonly isLoading: boolean
+	readonly error?: FeedbackMessageType | null
 	readonly onGachaItemClick: (gachaSrc: string) => void
-	readonly onDataLoaded: (totalCount: number) => void
-}
-
-const fetchGachas = async ([userId, page, perPage, sort]: [
-	string,
-	number,
-	number,
-	GachaSort,
-]): Promise<{
-	gacha: GachaData[]
-	totalCount: number
-}> => {
-	const res = await getGachaByUserIdAction({ userId, page, perPage, sort })
-	if (res.ok) {
-		return res.data
-	}
-	throw res
 }
 
 const GachaLogList = ({
-	userId,
-	currentPage,
+	gachaItems,
 	logsPerPage,
-	sort,
+	isLoading,
+	error,
 	onGachaItemClick,
-	onDataLoaded,
 }: Props) => {
-	const errorFeedback = useFeedback()
-	const swrKey = [userId, currentPage, logsPerPage, sort]
-	const { data, isLoading } = useSWR(swrKey, fetchGachas, {
-		revalidateOnFocus: false,
-		revalidateOnReconnect: false,
-		revalidateOnMount: true,
-		revalidateIfStale: false,
-		shouldRetryOnError: false,
-		onSuccess: (fetchedData) => {
-			if (fetchedData) {
-				onDataLoaded(fetchedData.totalCount)
-			}
-		},
-		onError(err: ApiError) {
-			errorFeedback.showApiError(err)
-		},
-	})
+	const { getSignedSrc } = useSignedGachaImages(gachaItems)
 
-	const displayGachaData = data?.gacha
-	const { getSignedSrc } = useSignedGachaImages(displayGachaData)
-
-	const gachaItems = useMemo(() => {
-		if (!displayGachaData) {
+	const normalizedItems = useMemo(() => {
+		if (!gachaItems) {
 			return []
 		}
-		return displayGachaData.map((item) => {
+		return gachaItems.map((item) => {
 			const signedGachaSrc = getSignedSrc(item.gachaSrc, item.signedGachaSrc)
 			if (signedGachaSrc === item.signedGachaSrc) {
 				return item
@@ -79,21 +39,21 @@ const GachaLogList = ({
 				signedGachaSrc,
 			}
 		})
-	}, [displayGachaData, getSignedSrc])
+	}, [gachaItems, getSignedSrc])
 
-	if (isLoading && !displayGachaData) {
+	if (isLoading && (!normalizedItems || normalizedItems.length === 0)) {
 		return <GachaLogsSkeleton logsPerPage={logsPerPage} />
 	}
 
-	if (errorFeedback.feedback) {
+	if (error) {
 		return (
 			<div className="py-10 text-center">
-				<FeedbackMessage source={errorFeedback.feedback} />
+				<FeedbackMessage source={error} />
 			</div>
 		)
 	}
 
-	if (!gachaItems.length) {
+	if (!normalizedItems.length) {
 		return <div className="py-10 text-center">ガチャ履歴はありません。</div>
 	}
 
@@ -101,7 +61,7 @@ const GachaLogList = ({
 		<div
 			className={`grid ${logsPerPage % 3 === 0 ? 'grid-cols-3' : 'grid-cols-5'} gap-2`}
 		>
-			{gachaItems.map((gachaItem) => {
+			{normalizedItems.map((gachaItem) => {
 				const signedSrc = gachaItem.signedGachaSrc
 				if (!signedSrc) {
 					return (

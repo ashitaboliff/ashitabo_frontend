@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useCallback, useEffect, useId, useState } from 'react'
+import { useCallback, useId, useState } from 'react'
 import { type SubmitHandler, useForm } from 'react-hook-form'
 import * as zod from 'zod'
 import UserSelectPopup from '@/domains/band/ui/UserSelectPopup'
@@ -44,9 +44,8 @@ const BandAddForm = () => {
 	const {
 		register,
 		handleSubmit,
+		control,
 		formState: { errors },
-		setValue,
-		watch,
 	} = useForm<BandAddFormValues>({
 		resolver: zodResolver(bandAddFormSchema),
 		defaultValues: {
@@ -55,12 +54,6 @@ const BandAddForm = () => {
 			description: '',
 		},
 	})
-
-	const watchedParts = watch('part') ?? []
-
-	useEffect(() => {
-		register('part')
-	}, [register])
 
 	const handleUserSelect = useCallback((userIds: string[]) => {
 		setSelectedUsers(userIds)
@@ -94,8 +87,7 @@ const BandAddForm = () => {
 				name="part"
 				label="パート"
 				options={PartOptions}
-				setValue={setValue}
-				watchValue={watchedParts}
+				control={control}
 				errorMessage={errors.part?.message}
 			/>
 			<TextInputField

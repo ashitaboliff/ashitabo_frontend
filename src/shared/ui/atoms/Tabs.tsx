@@ -28,8 +28,8 @@ export const Tabs = ({
 	value,
 	onChange,
 	className = 'mt-2',
-	tabListClassName = 'flex justify-center space-x-4 border-b border-neutral-200',
-	contentClassName = 'p-4',
+	tabListClassName = 'flex justify-center tabs tabs-box',
+	contentClassName = 'pt-4',
 }: TabsProps) => {
 	const tabChildren = useMemo(
 		() =>
@@ -90,9 +90,9 @@ export const Tabs = ({
 						<button
 							type="button"
 							key={`${child.key ?? 'tab'}-${tabValue}`}
-							className={`px-4 py-2 text-lg ${
+							className={`tab px-4 py-2 text-lg ${
 								isActive
-									? 'border-b-2 text-accent'
+									? 'tab-active text-accent'
 									: 'text-base-content hover:text-accent'
 							}`}
 							onClick={() => handleTabClick(tabValue)}
