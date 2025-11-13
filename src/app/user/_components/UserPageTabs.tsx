@@ -25,13 +25,13 @@ import {
 } from '@/shared/ui/icons'
 import type { Session } from '@/types/session'
 
-const GachaMainPopup = dynamic(
-	() => import('@/domains/gacha/ui/GachaMainPopup'),
+const GachaController = dynamic(
+	() => import('@/domains/gacha/ui/GachaController'),
 	{
 		ssr: false,
 		loading: () => null,
 	},
-) as typeof import('@/domains/gacha/ui/GachaMainPopup')['default']
+) as typeof import('@/domains/gacha/ui/GachaController')['default']
 
 const RatioPopup = dynamic(() => import('@/domains/gacha/ui/RatioPopup'), {
 	ssr: false,
@@ -201,7 +201,7 @@ const UserPageTabs = ({
 					</Tab>
 				))}
 			</Tabs>
-			<GachaMainPopup
+			<GachaController
 				session={session}
 				gachaPlayCountToday={gachaPlayCountToday}
 				onGachaPlayedSuccessfully={() => {

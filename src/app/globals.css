@@ -116,10 +116,6 @@
 	--line-height-xxs: 1rem;
 	--font-size-xs-custom: 0.625rem; /* 10px (Tailwindのデフォルトxsをこの値で上書き) */
 	--line-height-xs-custom: 1rem;
-  /* sm以上のサイズはTailwindのデフォルト値と同じであれば、ここで上書き定義する必要はない */
-  /* もしtailwind.config.tsのsm以降の値がTailwindのデフォルトと異なる意図であれば、ここで定義する */
-  /* 例: --font-size-sm: 0.875rem; (これはTailwindのデフォルトと同じ) */
-  /* 例: --line-height-sm: 1.25rem; (これもTailwindのデフォルトと同じ) */
 };
 
 /* 既存のカスタムスタイル */
@@ -161,13 +157,6 @@
   font-size: var(--font-size-xs-custom);
   line-height: var(--line-height-xs-custom);
 };
-/* Tailwindのデフォルトユーティリティと異なるカスタムsm以降のサイズが必要な場合はここに追加 */
-/* 例:
-@utility text-sm-custom {
-  font-size: var(--font-size-sm-custom);
-  line-height: var(--line-height-sm-custom);
-}
-*/
 
 /* Gacha Animation Effects */
 .light-ray-effect {
@@ -198,6 +187,78 @@
 	pointer-events: none;
 }
 
+@keyframes gacha-yoyo-scale {
+	0%,
+	100% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.15);
+	}
+}
+
+.gacha-yoyo-scale {
+	animation: gacha-yoyo-scale 1.5s ease-in-out infinite;
+}
+
+.bg-rainbow-45 {
+	background: linear-gradient(
+		45deg,
+		#ff2d2d 0%,
+		#ff7a21 12%,
+		#ffd326 24%,
+		#c7f543 36%,
+		#56d85f 48%,
+		#2ad0c7 60%,
+		#2a8bff 72%,
+		#1f4bd8 84%,
+		#7b2eff 100%
+	);
+}
+
+@keyframes gacha-stripe-loop {
+	0% {
+		background-position: 0 0;
+	}
+	100% {
+		background-position: 160px 0;
+	}
+}
+
+.gacha-stripe-overlay {
+	background-image: linear-gradient(
+		45deg,
+		#008ffa 0%,
+		#ffffff 25%,
+		#008ffa 50%,
+		#ffffff 75%,
+		#008ffa 100%
+	);
+	animation: gacha-stripe-loop 1s linear infinite;
+}
+
+@keyframes gacha-stripe-shimmer {
+	0% {
+		background-position: 0 0;
+	}
+	100% {
+		background-position: 200px 0;
+	}
+}
+
+.gacha-pack-slice {
+	background: linear-gradient(
+		45deg,
+		#008ffa 0%,
+		#ffffff 25%,
+		#008ffa 50%,
+		#ffffff 75%,
+		#008ffa 100%
+	);
+	animation: gacha-stripe-shimmer 1.2s linear infinite;
+	box-shadow: 0 0 12px rgba(255, 255, 255, 0.7);
+}
+
 .particle-effect {
 	position: absolute;
 	border-radius: 50%;
@@ -218,87 +279,30 @@
 	box-shadow: 0 0 12px 3px currentColor;
 }
 
+.aspect-gacha {
+	aspect-ratio: 3 / 4;
+}
+.aspect-gacha-pack {
+	aspect-ratio: 10 / 19;
+}
+.paddingless {
+	padding: 0;
+}
 
-@layer components {
-	.btn.btn-outline.btn-base {
-		background-color: var(--color-bg-white);
-		color: var(--color-base-content);
-		border-color: var(--color-tetiary-light);
-	}
-	.btn.btn-outline.btn-base:hover {
-		border-color: var(--color-accent);
-		color: var(--color-accent);
-	}
-	input.btn.btn-tetiary {
-		background-color: var(--color-tetiary-light);
-		color: var(--color-bg-white);
-	}
-	input.btn.btn-tetiary:checked {
-		background-color: var(--color-tetiary-light);
-		color: var(--color-bg-white);
-		border-color: var(--color-tetiary-light);
-	}
-	input.btn.btn-tetiary:checked:hover {
-		background-color: var(--color-accent);
-		color: var(--color-bg-white);
-		border-color: var(--color-accent);
-	}
-	.btn.btn-tetiary.btn-outline {
-		color: var(--color-accent);
-		background-color: var(--color-bg-white);
-		border-color: var(--color-accent);
-	}
-	.btn.btn-tetiary.btn-outline:hover {
-		color: var(--color-tetiary-light);
-		background-color: var(--color-bg-white);
-		border-color: var(--color-tetiary-light);
-	}
-	.btn.btn-secondary-light {
-		background-color: var(--color-secondary-light);
-		color: var(--color-bg-white);
-		border-color: var(--color-secondary-light);
-		background-image: none;
-		box-shadow: none;
-	}
-	.btn.btn-secondary-light:hover {
-		background-color: var(--color-secondary);
-		color: var(--color-bg-white);
-		border-color: var(--color-secondary);
-		background-image: none;
-	}
-	.aspect-gacha {
-		aspect-ratio: 3 / 4;
-	}
-	.aspect-gacha-pack {
-		aspect-ratio: 1 / 2;
-	}
-	.btn.btn-offwhite {
-		background-color: color-mix(
-			in srgb,
-			var(--color-bg-white) 60%,
-			transparent
-		);
-		color: var(--color-base-content);
-		border: none;
-	}
-	.btn.btn-twitter {
-		background-color: #1da1f2; /* Twitter Blue */
-		color: var(--color-bg-white);
-		border: none;
-		background-image: none;
-	}
-	.btn.btn-instagram {
-		color: var(--color-bg-white);
-		border: none;
-		background: linear-gradient(
-			45deg,
-			#fed475 0%,
-			#e53d5d 50%,
-			#c23186 70%,
-			#9c38bb 100%
-		);
-	}
-	.paddingless {
-		padding: 0;
-	}
+.btn.btn-twitter {
+	background-color: #1da1f2; /* Twitter Blue */
+	color: var(--color-bg-white);
+	border: none;
+	background-image: none;
+}
+.btn.btn-instagram {
+	color: var(--color-bg-white);
+	border: none;
+	background: linear-gradient(
+		45deg,
+		#fed475 0%,
+		#e53d5d 50%,
+		#c23186 70%,
+		#9c38bb 100%
+	);
 }

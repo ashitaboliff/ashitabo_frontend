@@ -1,20 +1,79 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { CarouselPackDataItem } from '@/domains/gacha/model/gachaTypes'
 import { useDragSwipe } from '@/shared/lib/gesture'
 import { ImageWithFallback } from '@/shared/ui/atoms/ImageWithFallback'
+import Popup from '@/shared/ui/molecules/Popup'
 
-interface Props {
-	readonly onPackSelect: (version: string) => void
+export type PackSelectionPayload = {
+	version: string
+	rect: {
+		left: number
+		top: number
+		width: number
+		height: number
+	} | null
+}
+
+interface GachaSelectPopupProps {
+	readonly open: boolean
+	readonly onClose: () => void
 	readonly carouselPackData: CarouselPackDataItem[]
+	readonly gachaPlayCountToday: number
+	readonly maxPlayCount: number
+	readonly onPackSelect: (payload: PackSelectionPayload) => void
 }
 
 const SIDE_OFFSET = 100
 const IMAGE_WIDTH = 250
 const IMAGE_HEIGHT = 475
 
-const GachaPackCarousel = ({ onPackSelect, carouselPackData }: Props) => {
+const GachaSelectPopup = ({
+	open,
+	onClose,
+	carouselPackData,
+	gachaPlayCountToday,
+	maxPlayCount,
+	onPackSelect,
+}: GachaSelectPopupProps) => {
+	return (
+		<Popup
+			id="gacha-select-popup"
+			title="ガチャパックを選択"
+			open={open}
+			onClose={onClose}
+			maxWidth="xl"
+			isCloseButton={false}
+			className="h-[90vh] overflow-y-auto"
+		>
+			<div className="flex flex-col gap-y-4">
+				<GachaSelectCarousel
+					onPackSelect={onPackSelect}
+					carouselPackData={carouselPackData}
+				/>
+				<div
+					className={`mt-4 text-center text-sm ${gachaPlayCountToday >= maxPlayCount ? 'text-error' : 'text-base-content'}`}
+				>
+					今日のガチャプレイ回数: {gachaPlayCountToday} / {maxPlayCount}
+				</div>
+				<button className="btn btn-outline" onClick={onClose} type="button">
+					閉じる
+				</button>
+			</div>
+		</Popup>
+	)
+}
+
+interface CarouselProps {
+	onPackSelect: (payload: PackSelectionPayload) => void
+	carouselPackData: CarouselPackDataItem[]
+}
+
+const GachaSelectCarousel = ({
+	onPackSelect,
+	carouselPackData,
+}: CarouselProps) => {
 	const packs = useMemo(
 		() =>
 			carouselPackData.filter((pack): pack is CarouselPackDataItem =>
@@ -65,10 +124,23 @@ const GachaPackCarousel = ({ onPackSelect, carouselPackData }: Props) => {
 		disabled: packs.length <= 1,
 	})
 
+	const activeCardRef = useRef<HTMLButtonElement | null>(null)
+
 	const handlePackClick = useCallback(() => {
 		const selected = packs[currentIndex]
 		if (!selected) return
-		onPackSelect(selected.version)
+		const rect = activeCardRef.current?.getBoundingClientRect()
+		onPackSelect({
+			version: selected.version,
+			rect: rect
+				? {
+						left: rect.left,
+						top: rect.top,
+						width: rect.width,
+						height: rect.height,
+					}
+				: null,
+		})
 	}, [currentIndex, onPackSelect, packs])
 
 	if (!packs.length) {
@@ -114,6 +186,13 @@ const GachaPackCarousel = ({ onPackSelect, carouselPackData }: Props) => {
 					type="button"
 					onClick={handleClick}
 					className="relative flex flex-col items-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-base-content/50 focus-visible:outline-offset-4"
+					ref={(node) => {
+						if (isActive) {
+							activeCardRef.current = node
+						} else if (activeCardRef.current === node) {
+							activeCardRef.current = null
+						}
+					}}
 					aria-label={
 						isActive ? `${pack.version} を引く` : `${pack.version} を選択`
 					}
@@ -128,6 +207,7 @@ const GachaPackCarousel = ({ onPackSelect, carouselPackData }: Props) => {
 							preload={isActive}
 							sizes="(min-width: 768px) 250px, 75vw"
 							decoding="async"
+							fallback="/version1.webp"
 						/>
 					) : (
 						<div className="flex h-[400px] w-[250px] flex-col items-center justify-center rounded-lg bg-base-200">
@@ -138,8 +218,10 @@ const GachaPackCarousel = ({ onPackSelect, carouselPackData }: Props) => {
 						</div>
 					)}
 					{isActive && (
-						<div className="pack-text -translate-x-1/2 absolute top-4 left-1/2 w-[90%] bg-base-content/50 py-1 text-center font-bold text-2xl text-white">
-							このパックを引く
+						<div className="gacha-yoyo-scale -translate-x-1/2 pointer-events-none absolute bottom-3 left-1/2 flex w-[80%] justify-center rounded-full bg-rainbow-45 px-4 py-2 ring-2 ring-white/50">
+							<span className="text-center font-black text-lg text-white tracking-wide">
+								このパックを引く
+							</span>
 						</div>
 					)}
 				</button>
@@ -160,4 +242,4 @@ const GachaPackCarousel = ({ onPackSelect, carouselPackData }: Props) => {
 	)
 }
 
-export default GachaPackCarousel
+export default GachaSelectPopup

@@ -94,7 +94,7 @@ const MultiSelectField = <
 							>
 								{displaySelected}
 							</button>
-							<div className="dropdown-content menu relative z-[20] w-1/2 min-w-[210px] rounded-box bg-white p-2 shadow">
+							<div className="dropdown-content menu relative z-20 w-1/2 min-w-[210px] rounded-box bg-white p-2 shadow">
 								<ul className="scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 max-h-60 space-y-2 overflow-y-auto pb-4">
 									{Object.entries(options).map(([optionLabel, optionValue]) => (
 										<li key={`li-${String(optionValue)}`}>

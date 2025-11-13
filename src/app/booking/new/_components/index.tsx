@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { type SubmitHandler, useForm } from 'react-hook-form'
 import { useSWRConfig } from 'swr'
 import { createBookingAction } from '@/domains/booking/api/bookingActions'
@@ -14,7 +14,10 @@ import {
 } from '@/domains/booking/model/bookingSchema'
 import { mutateBookingCalendarsForDate } from '@/domains/booking/utils/calendarCache'
 import { useGachaPlayManager } from '@/domains/gacha/hooks/useGachaPlayManager'
-import GachaResult from '@/domains/gacha/ui/GachaResult'
+import { executeGachaPlay } from '@/domains/gacha/services/executeGachaPlay'
+import GachaResult, {
+	type GachaResultViewState,
+} from '@/domains/gacha/ui/GachaResult'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import PublicEnv from '@/shared/lib/env/public'
 import { Ads } from '@/shared/ui/ads'
@@ -49,6 +52,8 @@ interface CreatedBookingSummary {
 	name: string
 }
 
+const BOOKING_GACHA_VERSION = 'version3'
+
 const BookingCreate = ({
 	session,
 	initialDateParam,
@@ -62,6 +67,9 @@ const BookingCreate = ({
 	const [createdBooking, setCreatedBooking] =
 		useState<CreatedBookingSummary | null>(null)
 	const [showPassword, setShowPassword] = useState(false)
+	const [gachaResultState, setGachaResultState] =
+		useState<GachaResultViewState>({ status: 'idle' })
+	const gachaExecutionIdRef = useRef(0)
 
 	const defaultBookingDate = useMemo(
 		() => (initialDateParam ? new Date(initialDateParam) : new Date()),
@@ -106,6 +114,32 @@ const BookingCreate = ({
 	const { onGachaPlayedSuccessfully, gachaPlayCountToday } =
 		useGachaPlayManager({ userId: session.user.id })
 
+	const triggerGachaExecution = useCallback(() => {
+		const executionId = gachaExecutionIdRef.current + 1
+		gachaExecutionIdRef.current = executionId
+		setGachaResultState({ status: 'loading', message: 'ガチャ結果を生成中...' })
+		void executeGachaPlay({
+			version: BOOKING_GACHA_VERSION,
+			userId: session.user.id,
+			currentPlayCount: gachaPlayCountToday,
+		}).then((result) => {
+			if (gachaExecutionIdRef.current !== executionId) return
+			if (result.ok) {
+				setGachaResultState({
+					status: 'success',
+					rarity: result.rarity,
+					signedUrl: result.signedUrl,
+				})
+				onGachaPlayedSuccessfully()
+			} else {
+				setGachaResultState({
+					status: 'error',
+					message: result.message,
+				})
+			}
+		})
+	}, [gachaPlayCountToday, onGachaPlayedSuccessfully, session.user.id])
+
 	const shareUrl = useMemo(() => {
 		return `${PublicEnv.NEXT_PUBLIC_APP_URL}/booking/${createdBooking?.id}`
 	}, [createdBooking])
@@ -114,6 +148,7 @@ const BookingCreate = ({
 		messageFeedback.clearFeedback()
 		setCreatedBooking(null)
 		setCalendarPopupOpen(false)
+		setGachaResultState({ status: 'idle' })
 
 		const bookingDate = new Date(data.bookingDate)
 		const bookingTimeIndex =
@@ -154,6 +189,7 @@ const BookingCreate = ({
 					password: '',
 				})
 				setShowPassword(false)
+				triggerGachaExecution()
 				setPopupOpen(true)
 			} else {
 				messageFeedback.showApiError(res)
@@ -258,12 +294,7 @@ const BookingCreate = ({
 						</p>
 						<p className="text-center">バンド名: {createdBooking.registName}</p>
 						<p className="text-center">責任者: {createdBooking.name}</p>
-						<GachaResult
-							version="version3"
-							userId={session.user.id}
-							currentPlayCount={gachaPlayCountToday}
-							onGachaSuccess={() => onGachaPlayedSuccessfully()}
-						/>
+						<GachaResult state={gachaResultState} />
 						<div className="flex flex-col justify-center gap-2 pt-2 sm:flex-row">
 							<button
 								type="button"
