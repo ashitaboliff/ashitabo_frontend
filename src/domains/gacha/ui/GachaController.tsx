@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { MAX_GACHA_PLAYS_PER_DAY } from '@/domains/gacha/config/gachaConfig'
 import { FORCE_GACHA_PENDING } from '@/domains/gacha/config/gachaDebugConfig'
 import type { CarouselPackDataItem } from '@/domains/gacha/model/gachaTypes'
@@ -41,6 +42,7 @@ const GachaController = ({
 	closeOnResultReset = false,
 	maxPlayCountOverride,
 }: Props) => {
+	const router = useRouter()
 	const effectiveMaxPlayCount =
 		typeof maxPlayCountOverride === 'number'
 			? maxPlayCountOverride
@@ -79,6 +81,10 @@ const GachaController = ({
 	}, [open])
 
 	const handlePackSelected = ({ version, rect }: PackSelectionPayload) => {
+		if (!ignorePlayCountLimit && gachaPlayCountToday >= effectiveMaxPlayCount) {
+			router.push('/gacha')
+			return
+		}
 		suppressSelectClose.current = true
 		setSelectedVersion(version)
 		setSelectedRect(rect)
