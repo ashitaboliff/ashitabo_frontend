@@ -53,19 +53,16 @@ const shuffleArray = <T,>(input: readonly T[]): T[] => {
 const createRandomSlots = (): SlotDescriptor[] => {
 	const shuffled = shuffleArray(BASE_BLUEPRINTS)
 	return shuffled.map((slot, index) => {
-		const columnClass = 'flex flex-col items-center justify-center'
 		if (slot.kind === 'trigger') {
 			return {
 				id: `trigger-${index}-${randomId()}`,
 				kind: 'trigger',
-				columnClass,
 			}
 		}
 		return {
 			id: `${slot.placement}-${index}-${randomId()}`,
 			kind: 'ad',
 			placement: slot.placement,
-			columnClass,
 		}
 	})
 }
@@ -121,27 +118,25 @@ const GachaAdPage = ({ session, carouselPackData }: Props) => {
 				{slots.map((slot) => {
 					if (slot.kind === 'ad') {
 						return (
-							<div key={slot.id}>
-								<Ads
-									placement={slot.placement}
-									className="w-full"
-									enableClickDetection={true}
-								/>
-							</div>
+							<Ads
+								placement={slot.placement}
+								className="w-full"
+								enableClickDetection={true}
+								key={slot.id}
+							/>
 						)
 					}
 					return (
-						<div key={slot.id} className="relative mx-auto">
-							<button
-								type="button"
-								onClick={handleTriggerClick}
-								className="flex h-full flex-col text-base-content transition"
-							>
-								<span className="rounded px-2 py-1 font-slim text-base-content text-xxs ring transition group-hover:scale-105">
-									ガチャを引く
-								</span>
-							</button>
-						</div>
+						<button
+							key={slot.id}
+							type="button"
+							onClick={handleTriggerClick}
+							className="relative mx-auto flex h-full flex-col text-base-content transition"
+						>
+							<span className="rounded px-2 py-1 font-slim text-base-content text-xxs ring transition group-hover:scale-105">
+								ガチャを引く
+							</span>
+						</button>
 					)
 				})}
 			</div>
