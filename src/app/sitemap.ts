@@ -70,6 +70,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 		...bookingsMap,
 		...youtubeMap,
 		{
+			url: `${URL}/gacha`,
+			lastModified: new Date(),
+			priority: 0.7,
+		},
+		{
 			url: `${URL}/terms`,
 			lastModified: new Date(),
 			priority: 0.3,
