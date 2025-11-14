@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { nicomoji } from '@/shared/lib/fonts'
-import { Ads } from '@/shared/ui/ads'
 import {
 	FaRegUserCircle,
 	FaYoutube,
@@ -81,7 +80,6 @@ const Header = async () => {
 							</Link>
 						</li>
 					))}
-					<Ads placement="Menu" />
 				</ul>
 			</div>
 		</header>
