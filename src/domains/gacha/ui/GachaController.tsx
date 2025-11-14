@@ -187,7 +187,7 @@ const GachaController = ({
 				)
 			case 'result':
 				return (
-					<div className="flex w-full max-w-xl flex-col pt-64">
+					<div className="flex w-full max-w-xl flex-col pt-20">
 						<GachaResult state={gachaResultState} />
 						<div className="relative">
 							<div className="fixed absolute bottom-0 z-40 flex h-32 w-full justify-center bg-white py-4">
