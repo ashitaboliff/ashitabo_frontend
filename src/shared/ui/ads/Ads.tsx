@@ -18,25 +18,25 @@ const ADS_CONFIG = {
 		slot: '2297104274',
 		format: 'fluid',
 		layoutKey: '-fb+5w+4e-db+86',
-		wrapperClassName: 'my-4 flex justify-center',
+		wrapperClassName: 'my-4 w-full',
 	} satisfies AdsConfig,
 	Menu: {
 		slot: '1843902033',
 		format: 'fluid',
 		layoutKey: '-hl+a-w-1e+66',
-		wrapperClassName: 'flex justify-center',
+		wrapperClassName: 'w-full',
 	} satisfies AdsConfig,
 	MenuDisplay: {
 		slot: '1282872676',
 		format: 'auto',
-		wrapperClassName: 'flex justify-center my-2',
+		wrapperClassName: 'my-2 w-full',
 	} satisfies AdsConfig,
 	Video: {
 		slot: '2716207997',
 		format: 'fluid',
 		layoutKey: '-6u+ec+14-5h+a8',
 		wrapperClassName:
-			'flex w-full rounded-lg border p-3 shadow-sm transition-shadow hover:shadow-md sm:p-4',
+			'w-full rounded-lg border p-3 shadow-sm transition-shadow hover:shadow-md sm:p-4',
 	} satisfies AdsConfig,
 	GachaPage: {
 		slot: '1847416241',
