@@ -13,6 +13,7 @@ import {
 	bookingCreateSchema,
 } from '@/domains/booking/model/bookingSchema'
 import { mutateBookingCalendarsForDate } from '@/domains/booking/utils/calendarCache'
+import { LATEST_GACHA_VERSION } from '@/domains/gacha/config/gachaConfig'
 import { useGachaPlayManager } from '@/domains/gacha/hooks/useGachaPlayManager'
 import { executeGachaPlay } from '@/domains/gacha/services/executeGachaPlay'
 import GachaResult, {
@@ -51,8 +52,6 @@ interface CreatedBookingSummary {
 	registName: string
 	name: string
 }
-
-const BOOKING_GACHA_VERSION = 'version3'
 
 const BookingCreate = ({
 	session,
@@ -119,7 +118,7 @@ const BookingCreate = ({
 		gachaExecutionIdRef.current = executionId
 		setGachaResultState({ status: 'loading', message: 'ガチャ結果を生成中...' })
 		void executeGachaPlay({
-			version: BOOKING_GACHA_VERSION,
+			version: LATEST_GACHA_VERSION,
 			userId: session.user.id,
 			currentPlayCount: gachaPlayCountToday,
 		}).then((result) => {

@@ -1,6 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
 	type ReactNode,
@@ -156,8 +157,16 @@ const UserPageTabs = ({
 							<RatioPopup gkktt={gkktt} />
 						</div>
 						{gachaMessage && (
-							<div className="text-center text-error text-sm">
-								{gachaMessage}
+							<div className="flex w-full flex-col items-center gap-2 text-center">
+								<div className="text-error text-sm">{gachaMessage}</div>
+								{!canPlayGacha && (
+									<Link
+										className="btn btn-secondary w-full text-xs sm:w-auto sm:text-sm"
+										href="/gacha"
+									>
+										広告を見ることでガチャが引き放題
+									</Link>
+								)}
 							</div>
 						)}
 						<GachaLogs session={session} />

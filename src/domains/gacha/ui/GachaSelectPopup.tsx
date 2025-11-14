@@ -52,11 +52,18 @@ const GachaSelectPopup = ({
 					onPackSelect={onPackSelect}
 					carouselPackData={carouselPackData}
 				/>
-				<div
-					className={`mt-4 text-center text-sm ${gachaPlayCountToday >= maxPlayCount ? 'text-error' : 'text-base-content'}`}
-				>
-					今日のガチャプレイ回数: {gachaPlayCountToday} / {maxPlayCount}
-				</div>
+				{(() => {
+					const hasLimit = Number.isFinite(maxPlayCount)
+					const reachedLimit = hasLimit && gachaPlayCountToday >= maxPlayCount
+					const displayMax = hasLimit ? maxPlayCount : '無制限'
+					return (
+						<div
+							className={`mt-4 text-center text-sm ${reachedLimit ? 'text-error' : 'text-base-content'}`}
+						>
+							今日のガチャプレイ回数: {gachaPlayCountToday} / {displayMax}
+						</div>
+					)
+				})()}
 				<button className="btn btn-outline" onClick={onClose} type="button">
 					閉じる
 				</button>

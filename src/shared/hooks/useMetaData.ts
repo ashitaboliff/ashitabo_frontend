@@ -4,7 +4,7 @@ export const createMetaData = ({
 	title,
 	url: initialUrl,
 	image = '/meta/logo.png',
-	description = '信州大学工学部軽音サークルあしたぼの公式ホームページです',
+	description = '信州大学工学部軽音サークルあしたぼの公式ホームページです。 サークルの紹介やイベント情報、部員向けの各種サービスを提供しています。部員向けの各種サービスを利用するにはログインが必要です。',
 	keywords = [
 		'信州大学',
 		'工学部',

@@ -8,7 +8,6 @@ interface FullscreenOverlayProps {
 	readonly className?: string
 }
 
-
 const useBodyScrollLock = () => {
 	useEffect(() => {
 		if (typeof document === 'undefined') return

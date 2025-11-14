@@ -306,3 +306,48 @@
 		#9c38bb 100%
 	);
 }
+
+.creeping-overlay-ad {
+	--creeping-ad-height: 180px;
+	position: fixed;
+	left: 50%;
+	width: min(520px, calc(100vw - 1.5rem));
+	height: var(--creeping-ad-height);
+	transform: translateX(-50%);
+	z-index: 20;
+	pointer-events: all;
+}
+
+.creeping-overlay-ad--floating {
+	top: 0;
+	animation: creeping-overlay-drop 8s ease-in forwards;
+}
+
+.creeping-overlay-ad--locked {
+	bottom: 16px;
+	top: auto;
+	animation: none;
+}
+
+.creeping-overlay-ad__scrim {
+	position: fixed;
+	inset: 0;
+	background: transparent;
+	z-index: 15;
+	pointer-events: auto;
+	cursor: wait;
+}
+
+@keyframes creeping-overlay-drop {
+	0% {
+		top: -220px;
+		opacity: 0;
+	}
+	30% {
+		opacity: 0.2;
+	}
+	100% {
+		top: calc(100vh - var(--creeping-ad-height) - 24px);
+		opacity: 1;
+	}
+}

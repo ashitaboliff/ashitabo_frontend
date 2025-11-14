@@ -25,6 +25,9 @@ interface Props {
 	readonly open: boolean
 	readonly onClose: () => void
 	readonly carouselPackData: CarouselPackDataItem[]
+	readonly ignorePlayCountLimit?: boolean
+	readonly closeOnResultReset?: boolean
+	readonly maxPlayCountOverride?: number
 }
 
 const GachaController = ({
@@ -34,7 +37,14 @@ const GachaController = ({
 	open,
 	onClose,
 	carouselPackData,
+	ignorePlayCountLimit = false,
+	closeOnResultReset = false,
+	maxPlayCountOverride,
 }: Props) => {
+	const effectiveMaxPlayCount =
+		typeof maxPlayCountOverride === 'number'
+			? maxPlayCountOverride
+			: MAX_GACHA_PLAYS_PER_DAY
 	const [currentStep, setCurrentStep] = useState<GachaStep>('select')
 	const [selectedVersion, setSelectedVersion] = useState<string | null>(null)
 	const [selectedRect, setSelectedRect] =
@@ -92,6 +102,7 @@ const GachaController = ({
 				version: selectedVersion,
 				userId: session.user.id,
 				currentPlayCount: gachaPlayCountToday,
+				ignorePlayCountLimit,
 			}).then((result) => {
 				if (executionIdRef.current !== executionId) return
 				setIsGachaExecutionPending(false)
@@ -112,6 +123,7 @@ const GachaController = ({
 		},
 		[
 			gachaPlayCountToday,
+			ignorePlayCountLimit,
 			onGachaPlayedSuccessfully,
 			selectedRect,
 			selectedVersion,
@@ -130,6 +142,14 @@ const GachaController = ({
 		suppressSelectClose.current = false
 		setCurrentStep('select')
 	}, [])
+
+	const handleResultBackToSelect = useCallback(() => {
+		if (closeOnResultReset) {
+			onClose()
+			return
+		}
+		handleBackToSelect()
+	}, [closeOnResultReset, handleBackToSelect, onClose])
 
 	const handleClose = useCallback(() => {
 		onClose()
@@ -174,7 +194,7 @@ const GachaController = ({
 								<button
 									type="button"
 									className="btn btn-outline"
-									onClick={handleBackToSelect}
+									onClick={handleResultBackToSelect}
 								>
 									パック選択に戻る
 								</button>
@@ -215,7 +235,7 @@ const GachaController = ({
 				onClose={handleSelectPopupClose}
 				carouselPackData={carouselPackData}
 				gachaPlayCountToday={gachaPlayCountToday}
-				maxPlayCount={MAX_GACHA_PLAYS_PER_DAY}
+				maxPlayCount={effectiveMaxPlayCount}
 				onPackSelect={handlePackSelected}
 			/>
 

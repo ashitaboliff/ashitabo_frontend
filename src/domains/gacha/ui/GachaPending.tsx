@@ -154,11 +154,11 @@ const GachaPending = ({
 			</div>
 			<div className="relative">
 				<div className="fixed absolute bottom-0 z-40 flex h-32 w-full justify-center bg-white py-4" />
-					{showBlockingLoader && (
-						<div className="absolute inset-0 top-40 bottom-0 z-40 flex items-center justify-center bg-white/75">
-							<div className="loading loading-spinner loading-lg" />
-						</div>
-					)}
+				{showBlockingLoader && (
+					<div className="absolute inset-0 top-40 bottom-0 z-40 flex items-center justify-center bg-white/75">
+						<div className="loading loading-spinner loading-lg" />
+					</div>
+				)}
 			</div>
 		</>
 	)

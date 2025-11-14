@@ -1,13 +1,10 @@
 import UserPageLayout from '@/app/user/_components/UserPageLayout'
 import UserPageTabs from '@/app/user/_components/UserPageTabs'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
-import { gachaConfigs } from '@/domains/gacha/config/gachaConfig'
-import type { CarouselPackDataItem } from '@/domains/gacha/model/gachaTypes'
-import { ensureSignedResourceUrls } from '@/domains/gacha/services/signedGachaResourceCache'
+import { resolveCarouselPackData } from '@/domains/gacha/services/resolveCarouselPackData'
 import { getUserProfile } from '@/domains/user/api/userActions'
 import type { AccountRole, Profile } from '@/domains/user/model/userTypes'
 import { createMetaData } from '@/shared/hooks/useMetaData'
-import { logError } from '@/shared/utils/logger'
 
 export const metadata = createMetaData({
 	title: 'ユーザーページ',
@@ -41,37 +38,7 @@ const UserPageServer = async ({
 						const profileRes = await getUserProfile(session.user.id)
 						return profileRes.ok ? (profileRes.data ?? null) : null
 					})(),
-					(async (): Promise<CarouselPackDataItem[]> => {
-						const entries = Object.entries(gachaConfigs).filter(([, config]) =>
-							Boolean(config.packKey),
-						)
-						if (entries.length === 0) {
-							return []
-						}
-						const packKeys = entries.map(([, config]) => config.packKey)
-						try {
-							const signedUrls = await ensureSignedResourceUrls(packKeys)
-							return entries
-								.map(([version, config]) => ({
-									version,
-									r2Key: config.packKey,
-									signedPackImageUrl: signedUrls[config.packKey] ?? '',
-								}))
-								.sort((a, b) => a.version.localeCompare(b.version))
-						} catch (error) {
-							logError(
-								'Failed to resolve signed URLs for gacha pack images',
-								error,
-							)
-							return entries
-								.map(([version, config]) => ({
-									version,
-									r2Key: config.packKey,
-									signedPackImageUrl: '',
-								}))
-								.sort((a, b) => a.version.localeCompare(b.version))
-						}
-					})(),
+					resolveCarouselPackData(),
 				])
 
 				const userInfo = {
