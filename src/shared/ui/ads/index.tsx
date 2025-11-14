@@ -1,5 +1,6 @@
 export { default as AdSense } from './AdSense'
-export { default as AdSenseManager } from './AdSenseManager'
 export { AdSenseProvider, useAdSenseContext } from './AdSenseProvider'
 export { default as AdSenseScript } from './AdSenseScript'
+export { default as Ads } from './Ads'
+export { default as CreepingOverlayAd } from './CreepingOverlayAd'
 export { default as MockAdSense } from './MockAdSense'

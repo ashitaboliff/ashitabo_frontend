@@ -11,13 +11,26 @@ import {
 interface TabProps {
 	label: ReactNode
 	children: ReactNode
+	value?: string
 }
 
 interface TabsProps {
 	children: ReactNode
+	value?: string
+	onChange?: (value: string) => void
+	className?: string
+	tabListClassName?: string
+	contentClassName?: string
 }
 
-export const Tabs = ({ children }: TabsProps) => {
+export const Tabs = ({
+	children,
+	value,
+	onChange,
+	className = 'mt-2',
+	tabListClassName = 'flex justify-center tabs tabs-box',
+	contentClassName = 'pt-4',
+}: TabsProps) => {
 	const tabChildren = useMemo(
 		() =>
 			Children.toArray(children).filter(
@@ -27,46 +40,84 @@ export const Tabs = ({ children }: TabsProps) => {
 		[children],
 	)
 
-	const [activeIndex, setActiveIndex] = useState(0)
+	const tabValues = useMemo(() => {
+		return tabChildren.map(
+			(child, index) => child.props.value ?? `tab-${index}`,
+		)
+	}, [tabChildren])
+
+	const [internalValue, setInternalValue] = useState<string>(() => {
+		return value ?? tabValues[0] ?? 'tab-0'
+	})
+	const isControlled = value !== undefined
 
 	useEffect(() => {
-		if (activeIndex >= tabChildren.length) {
-			setActiveIndex(tabChildren.length > 0 ? tabChildren.length - 1 : 0)
+		if (!value) {
+			return
 		}
-	}, [activeIndex, tabChildren.length])
+		setInternalValue(value)
+	}, [value])
+
+	useEffect(() => {
+		setInternalValue((prev) => {
+			if (tabValues.includes(prev)) {
+				return prev
+			}
+			return tabValues[0] ?? prev
+		})
+	}, [tabValues])
 
 	if (tabChildren.length === 0) {
 		return null
 	}
 
-	const handleTabClick = (index: number) => {
-		setActiveIndex(index)
+	const activeValue = value ?? internalValue
+
+	const handleTabClick = (nextValue: string) => {
+		if (!isControlled) {
+			setInternalValue(nextValue)
+		}
+		onChange?.(nextValue)
 	}
 
-	const activeChild = tabChildren[activeIndex] ?? null
-
 	return (
-		<div className="mt-2">
-			<div className="flex justify-center space-x-4 border-neutral-200 border-b">
+		<div className={className}>
+			<div className={tabListClassName}>
 				{tabChildren.map((child, index) => {
-					const isActive = index === activeIndex
+					const tabValue = tabValues[index]
+					const isActive = tabValue === activeValue
 					return (
 						<button
 							type="button"
-							key={`${child.key ?? 'tab'}-${index}`}
-							className={`px-4 py-2 text-lg ${
+							key={`${child.key ?? 'tab'}-${tabValue}`}
+							className={`tab px-4 py-2 text-lg ${
 								isActive
-									? 'border-b-2 text-accent'
+									? 'tab-active text-accent'
 									: 'text-base-content hover:text-accent'
 							}`}
-							onClick={() => handleTabClick(index)}
+							onClick={() => handleTabClick(tabValue)}
 						>
 							{child.props.label}
 						</button>
 					)
 				})}
 			</div>
-			<div className="p-4">{activeChild}</div>
+			<div className={contentClassName}>
+				{tabChildren.map((child, index) => {
+					const tabValue = tabValues[index]
+					const isActive = tabValue === activeValue
+					return (
+						<div
+							key={`panel-${child.key ?? 'tab'}-${tabValue}`}
+							role="tabpanel"
+							aria-hidden={!isActive}
+							className={isActive ? 'block' : 'hidden'}
+						>
+							{child}
+						</div>
+					)
+				})}
+			</div>
 		</div>
 	)
 }

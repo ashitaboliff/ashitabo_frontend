@@ -1,13 +1,13 @@
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Inter } from 'next/font/google'
+import { headers } from 'next/headers'
 import Script from 'next/script'
 import PublicEnv from '@/shared/lib/env/public'
-import { nicomoji } from '@/shared/lib/fonts'
 import './globals.css'
 import type { ReactNode } from 'react'
 import { createMetaData } from '@/shared/hooks/useMetaData'
-import { AdSense, AdSenseProvider, AdSenseScript } from '@/shared/ui/ads'
+import { AdSenseProvider, AdSenseScript, Ads } from '@/shared/ui/ads'
 import Footer from '@/shared/ui/layout/Footer'
 import Header from '@/shared/ui/layout/Header'
 
@@ -23,9 +23,17 @@ export default async function RootLayout({
 }: Readonly<{
 	children: ReactNode
 }>) {
+	const headersList = await headers()
+	const proto = headersList.get('x-forwarded-proto') ?? 'https'
+	const host =
+		headersList.get('x-forwarded-host') ??
+		headersList.get('host') ??
+		'localhost'
+	const path = headersList.get('x-invoke-path') ?? '/'
+	const pathname = new URL(path, `${proto}://${host}`).pathname
 	return (
 		<html lang="ja">
-			<body className={inter.className}>
+			<body className={`overflow-x-hidden ${inter.className}`}>
 				<Script strategy="afterInteractive">
 					{`console.log('%c拙い知識で作ったやつなので、可読性めっちゃ低くて申し訳ないけど頑張ってね！！！ watabegg', 'color: #000000; font-size: 20px; padding: 10px; font-weight: bold;');
 console.log('%cRespect for 変態糞学生', 'color: #ff0000; font-size: 20px; padding: 5px; font-weight: bold; font-style: italic;');
@@ -33,11 +41,13 @@ console.log('%chttps://www.github.com/ashitaboliff/', 'color: #000000; font-size
 				</Script>
 				<Analytics />
 				<SpeedInsights />
-				<AdSenseScript />
+				<AdSenseScript adsId={PublicEnv.NEXT_PUBLIC_ADS_ID || ''} />
 				<AdSenseProvider clientId={PublicEnv.NEXT_PUBLIC_ADS_ID || ''}>
-					<Header className={nicomoji.className} />
-					{children}
-					<AdSense adSlot="fluid" />
+					<Header />
+					<main className="container mx-auto mt-24 h-full max-w-screen-lg px-2">
+						{children}
+					</main>
+					<Ads placement="Field" key={pathname} />
 					<Footer />
 				</AdSenseProvider>
 				<Script

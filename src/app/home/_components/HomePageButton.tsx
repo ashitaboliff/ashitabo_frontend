@@ -23,7 +23,7 @@ const HomePageButton = ({
 	text: string
 	patting?: string
 }) => {
-	const maxCharsPerLine = 6 // 1行に収まる文字数
+	const maxCharsPerLine = 6
 	const lines = text.match(new RegExp(`.{1,${maxCharsPerLine}}`, 'g')) || [text]
 	const lineSegments = lines.map((line, index) => ({
 		content: line,
@@ -33,7 +33,10 @@ const HomePageButton = ({
 		colorList.find((c) => c.name === color)?.color ?? colorList[0].color
 
 	return (
-		<Link href={link} className={`cursor-pointer ${patting} z-20`}>
+		<Link
+			href={link}
+			className={`pointer-events-auto cursor-pointer ${patting} z-20`}
+		>
 			<svg
 				width="110"
 				height="110"

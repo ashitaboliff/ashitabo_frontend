@@ -5,10 +5,11 @@ import { useState } from 'react'
 import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
 import type { Booking } from '@/domains/booking/model/bookingTypes'
 import BookingDetailBox from '@/domains/booking/ui/BookingDetailBox'
+import BookingDetailNotFound from '@/domains/booking/ui/BookingDetailNotFound'
+import { Ads } from '@/shared/ui/ads'
 import ShareButton from '@/shared/ui/atoms/ShareButton'
 import AddCalendarPopup from '@/shared/ui/molecules/AddCalendarPopup'
 import { formatDateSlashWithWeekday } from '@/shared/utils/dateFormat'
-import BookingDetailNotFound from '../../../../domains/booking/ui/BookingDetailNotFound'
 
 interface Props {
 	readonly bookingDetail: Booking
@@ -31,6 +32,7 @@ const BookingDetail = ({ bookingDetail }: Props) => {
 				registName={bookingDetail.registName}
 				name={bookingDetail.name}
 			/>
+			<Ads placement="MenuDisplay" />
 			<div className="flex w-full max-w-md flex-col items-center justify-center gap-2 sm:flex-row">
 				<button
 					type="button"

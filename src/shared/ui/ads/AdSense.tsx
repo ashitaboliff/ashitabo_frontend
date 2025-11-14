@@ -18,6 +18,8 @@ interface AdSenseProps {
 	adFormat?: AdFormat
 	/** 広告レイアウト */
 	adLayout?: AdLayout
+	/** 広告レイアウトキー */
+	adLayoutKey?: string
 	/** カスタムスタイル */
 	adStyle?: CSSProperties
 	/** 配置名（イベント識別用） */
@@ -77,6 +79,7 @@ const RealAdSense = ({
 	adSlot,
 	adFormat = 'auto',
 	adLayout,
+	adLayoutKey,
 	adStyle,
 	placement,
 	enableClickDetection = false,
@@ -99,6 +102,7 @@ const RealAdSense = ({
 			data-ad-slot={adSlot}
 			data-ad-format={adFormat}
 			data-ad-layout={adLayout}
+			data-ad-layout-key={adLayoutKey ?? undefined}
 		/>
 	)
 }
@@ -108,6 +112,7 @@ const AdSense = ({
 	adSlot,
 	adFormat = 'auto',
 	adLayout,
+	adLayoutKey,
 	adStyle,
 	placement,
 	enableClickDetection = false,
@@ -121,6 +126,8 @@ const AdSense = ({
 			<MockAdSense
 				adSlot={adSlot}
 				adFormat={adFormat}
+				adLayout={adLayout}
+				adLayoutKey={adLayoutKey}
 				adStyle={adStyle}
 				placement={placement}
 			/>
@@ -133,6 +140,7 @@ const AdSense = ({
 			adSlot={adSlot}
 			adFormat={adFormat}
 			adLayout={adLayout}
+			adLayoutKey={adLayoutKey}
 			adStyle={adStyle}
 			placement={placement}
 			enableClickDetection={enableClickDetection}

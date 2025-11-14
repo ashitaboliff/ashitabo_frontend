@@ -95,64 +95,31 @@ function MyPageAlt() {
 - `enableClickDetection` (オプション): クリック検知を有効化（デフォルト: `false`）
 - `clickThreshold` (オプション): クリック判定の閾値（ミリ秒、デフォルト: `3000`）
 
-### 2. 広告マネージャー（AdSenseManager）
+### 2. プリセット広告（Ads）
 
-広告配置を一元管理するコンポーネントです。設定ファイルで広告スロットを管理し、配置名を指定するだけで広告を表示できます。
+共通の広告配置を `Ads.tsx` にまとめています。ページ側では配置名を指定するだけで広告を表示できます。
 
 ```tsx
-import { AdSenseManager } from '@/shared/ui/ads'
-import type { AdConfigMap } from '@/shared/lib/ads'
+import { Ads } from '@/shared/ui/ads'
 
-// 広告配置の設定
-const adConfig: AdConfigMap = {
-  articleTop: { 
-    slot: "1111111111", 
-    format: "auto" 
-  },
-  sidebar: { 
-    slot: "2222222222", 
-    format: "rectangle" 
-  },
-  inFeed: { 
-    slot: "3333333333", 
-    format: "fluid", 
-    layout: "in-article" 
-  },
-}
-
-// AdSenseProviderを使用している場合（推奨）
-function MyPage() {
+function BookingLayout() {
   return (
     <div>
-      <AdSenseManager
-        placement="articleTop"
-        adConfig={adConfig}
-      />
-    </div>
-  )
-}
-
-// clientIdを直接指定する場合
-function MyPageAlt() {
-  return (
-    <div>
-      <AdSenseManager
-        clientId={process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID!}
-        placement="articleTop"
-        adConfig={adConfig}
-      />
+      <Ads placement="Field" />
+      {/* ... */}
     </div>
   )
 }
 ```
 
-#### プロパティ
+#### 既定の配置
 
-- `clientId` (オプション): AdSenseクライアントID - 省略時はAdSenseProviderから取得
-- `placement` (必須): 配置名（`adConfig`で定義したキー）
-- `adConfig` (必須): 広告配置の設定マップ
-- `enableClickDetection` (オプション): クリック検知を有効化（デフォルト: `false`）
-- `clickThreshold` (オプション): クリック判定の閾値（ミリ秒、デフォルト: `3000`）
+| placement | adSlot     | format | layoutKey        | wrapperClass                       |
+|-----------|------------|--------|------------------|------------------------------------|
+| `Field`   | 2297104274 | fluid  | `-fb+5w+4e-db+86` | `my-4 flex justify-center`         |
+| `Menu`    | 1843902033 | fluid  | `-hl+a-w-1e+66`   | `flex justify-center`              |
+
+配置ごとの設定は `Ads.tsx` の `ADS_CONFIG` を編集すれば拡張できます。`className` / `adStyle` / `enableClickDetection` / `clickThreshold` は `Ads` コンポーネントの props で上書きが可能です。
 
 ## イベント検知
 
@@ -201,45 +168,29 @@ useEffect(() => {
 ```tsx
 'use client'
 
-import { AdSenseManager } from '@/shared/ui/ads'
-import type { AdConfigMap } from '@/shared/lib/ads'
-
-const adConfig: AdConfigMap = {
-  articleTop: { slot: "1111111111", format: "auto" },
-  articleMiddle: { slot: "2222222222", format: "fluid", layout: "in-article" },
-  articleBottom: { slot: "3333333333", format: "auto" },
-}
+import { Ads } from '@/shared/ui/ads'
 
 export default function ArticlePage() {
   return (
     <article>
       <h1>記事タイトル</h1>
-      
-      {/* 記事上部の広告 - AdSenseProviderを使用しているためclientIdは不要 */}
-      <AdSenseManager
-        placement="articleTop"
-        adConfig={adConfig}
-      />
-      
+
+      <Ads placement="Field" />
+
       <div>記事コンテンツ...</div>
-      
-      {/* 記事中央の広告 */}
-      <AdSenseManager
-        placement="articleMiddle"
-        adConfig={adConfig}
-      />
-      
+
+      {/* 必要に応じてAds.tsxに新しい配置を追加できます */}
+      {/* <Ads placement="ArticleMiddle" /> */}
+
       <div>記事コンテンツ続き...</div>
-      
-      {/* 記事下部の広告 */}
-      <AdSenseManager
-        placement="articleBottom"
-        adConfig={adConfig}
-      />
+
+      <Ads placement="Field" />
     </article>
   )
 }
 ```
+
+任意の配置を追加したい場合は `Ads.tsx` の `ADS_CONFIG` に項目を追記し、`placement` 名を新設してください。
 
 ## Googleポリシー遵守のポイント
 

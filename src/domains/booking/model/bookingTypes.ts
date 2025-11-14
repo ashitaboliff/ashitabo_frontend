@@ -22,15 +22,3 @@ export type DeniedBooking = {
 }
 
 export type BookingResponse = Record<string, Record<number, Booking | null>>
-
-export interface BookingLog {
-	id: string
-	userId: string
-	createdAt: Date
-	updatedAt: Date
-	bookingDate: string
-	bookingTime: number
-	registName: string
-	name: string
-	isDeleted: boolean
-}

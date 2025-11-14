@@ -57,7 +57,7 @@ const VideoSearchForm = ({
 					<RiQuestionLine size={25} />
 				</button>
 				<button
-					className={`btn btn-outline w-64 ${isSearching ? 'btn-accent' : ''}`}
+					className={`btn btn-outline w-60 ${isSearching ? 'btn-accent' : ''}`}
 					onClick={() => setIsPopupOpen(true)}
 					type="button"
 				>

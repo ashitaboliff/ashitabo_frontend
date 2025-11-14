@@ -13,13 +13,11 @@ import type { DeniedBooking } from '@/domains/booking/model/bookingTypes'
 import { mutateAllBookingCalendars } from '@/domains/booking/utils/calendarCache'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { useQueryState } from '@/shared/hooks/useQueryState'
-import Pagination from '@/shared/ui/atoms/Pagination'
-import RadioSortGroup from '@/shared/ui/atoms/RadioSortGroup'
-import SelectField from '@/shared/ui/atoms/SelectField'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import FlashMessage, {
 	type NoticeType,
 } from '@/shared/ui/molecules/FlashMessage'
+import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayout'
 import { logError } from '@/shared/utils/logger'
 import type { ApiError } from '@/types/response'
 import DeniedBookingDeleteDialog from './DeniedBookingDeleteDialog'
@@ -156,54 +154,35 @@ const DeniedBookingPage = ({
 				</button>
 				<FeedbackMessage source={initialError} defaultVariant="error" />
 				<FeedbackMessage source={globalFeedback.feedback} />
-				<div className="flex w-full flex-col gap-y-3">
-					<div className="flex flex-wrap items-center justify-end gap-2">
-						<p className="whitespace-nowrap text-sm">表示件数:</p>
-						<SelectField
-							value={query.perPage}
-							onChange={(event) =>
-								updateQuery({
-									perPage: Number(event.target.value),
-									page: defaultQuery.page,
-								})
-							}
-							options={PER_PAGE_OPTIONS}
-							name="deniedBookingsPerPage"
-							disabled={isPending}
-						/>
-					</div>
-					<div className="flex flex-row gap-x-2">
-						<RadioSortGroup
-							name="deniedbooking_sort_options"
-							options={SORT_OPTIONS}
-							currentSort={query.sort}
-							onSortChange={(sort) => updateQuery({ sort })}
-						/>
-					</div>
-					<div className="w-full overflow-x-auto">
-						<table className="table-zebra table-sm table w-full">
-							<thead>
-								<tr>
-									<th></th>
-									<th>日付</th>
-									<th>時間</th>
-									<th>禁止理由</th>
-								</tr>
-							</thead>
-							<tbody>
-								<DeniedBookingList
-									deniedBookings={deniedBookings}
-									onDeniedBookingItemClick={handleSelectBooking}
-								/>
-							</tbody>
-						</table>
-					</div>
-				</div>
-				<Pagination
-					currentPage={query.page}
-					totalPages={pageCount}
-					onPageChange={(page) => updateQuery({ page })}
-				/>
+				<PaginatedResourceLayout
+					perPage={{
+						label: '表示件数:',
+						name: 'deniedBookingsPerPage',
+						options: PER_PAGE_OPTIONS,
+						value: query.perPage,
+						onChange: (value) =>
+							updateQuery({ perPage: value, page: defaultQuery.page }),
+					}}
+					sort={{
+						name: 'deniedbooking_sort_options',
+						options: SORT_OPTIONS,
+						value: query.sort,
+						onChange: (sort) => updateQuery({ sort }),
+					}}
+					pagination={{
+						currentPage: query.page,
+						totalPages: pageCount,
+						totalCount,
+						onPageChange: (page) => updateQuery({ page }),
+					}}
+				>
+					<DeniedBookingList
+						deniedBookings={deniedBookings}
+						onDeniedBookingItemClick={handleSelectBooking}
+						isLoading={isPending}
+						error={initialError}
+					/>
+				</PaginatedResourceLayout>
 				<button
 					type="button"
 					className="btn btn-outline"

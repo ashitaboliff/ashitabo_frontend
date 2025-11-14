@@ -6,8 +6,7 @@ import HomePageButton from '@/app/home/_components/HomePageButton'
 
 const HomeButton = async () => {
 	return (
-		<div className="grid grid-cols-1 gap-4 pt-2 md:grid-cols-2 xl:origin-top xl:scale-130">
-			{/* Row 1 */}
+		<div className="pointer-events-none grid grid-cols-1 gap-4 pt-2 md:grid-cols-2 xl:origin-top xl:scale-130">
 			<div className="relative flex h-36 w-auto flex-row justify-center xl:justify-end">
 				<div className="-z-10 absolute place-items-end">
 					<svg
@@ -25,8 +24,7 @@ const HomeButton = async () => {
 						<rect x="357" y="0" width="13" height="71" fill={lightBlue} />
 					</svg>
 				</div>
-				{/* Buttons */}
-				<div className="absolute flex flex-row gap-5">
+				<div className="pointer-events-auto absolute flex flex-row gap-5">
 					<HomePageButton
 						color="lightred"
 						text="活動紹介"
@@ -48,7 +46,6 @@ const HomeButton = async () => {
 				</div>
 			</div>
 
-			{/* Row 2 */}
 			<div className="relative flex h-36 w-auto flex-row justify-center xl:justify-start">
 				<div className="-z-10 absolute place-items-end">
 					<svg
@@ -66,8 +63,7 @@ const HomeButton = async () => {
 						<rect x="260" y="49" width="13" height="80" fill={lightyellow} />
 					</svg>
 				</div>
-				{/* Buttons */}
-				<div className="absolute flex flex-row gap-5">
+				<div className="pointer-events-auto absolute flex flex-row gap-5">
 					<HomePageButton
 						color="lightyellow"
 						text="コマ表予約"

@@ -15,16 +15,16 @@ const ProfileDisplay = ({ session, profile }: Props) => {
 	const image = session.user.image ?? '/default-icon.png'
 
 	return (
-		<div className="mb-4 flex flex-col items-center justify-center gap-4 rounded-lg bg-base-100 p-6 shadow-md md:flex-row md:gap-10">
+		<div className="mb-4 flex flex-row items-center justify-center gap-10 gap-4 rounded-lg p-4 shadow-md">
 			<Image
 				src={image}
 				alt="ユーザーアイコン"
 				width={150}
 				height={150}
-				className="h-24 w-24 rounded-full object-cover md:h-36 md:w-36"
+				className="h-32 w-32 rounded-full object-cover md:h-36 md:w-36"
 				priority
 			/>
-			<div className="flex flex-col items-center justify-center md:items-start">
+			<div className="flex flex-col items-center justify-center space-y-2 md:items-start">
 				<div className="font-bold text-2xl md:text-4xl">{displayName}</div>
 				<div className="text-sm md:text-base">{RoleMap[role]}</div>
 				<InstIcon part={parts} size={30} />

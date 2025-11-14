@@ -24,14 +24,12 @@ const SigninSetting = () => {
 	const {
 		register,
 		handleSubmit,
-		setValue,
+		control,
 		watch,
 		formState: { errors, isSubmitting },
 	} = form
 
 	const selectedRole = watch('role')
-	const selectedParts = watch('part') ?? []
-
 	const isStudent = selectedRole === 'STUDENT'
 
 	const handleSignOut = async () => {
@@ -94,11 +92,9 @@ const SigninSetting = () => {
 
 				<MultiSelectField
 					name="part"
-					register={register('part')}
+					control={control}
 					options={PartOptions}
 					label="使用楽器(複数選択可)"
-					setValue={setValue}
-					watchValue={selectedParts}
 					infoDropdown={
 						<>
 							使用楽器を選択してください、複数選択可能です。
