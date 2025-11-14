@@ -11,10 +11,7 @@ import { createAdminUserQueryOptions } from '@/domains/admin/query/adminUserQuer
 import type { AccountRole, UserDetail } from '@/domains/user/model/userTypes'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { useQueryState } from '@/shared/hooks/useQueryState'
-import Pagination from '@/shared/ui/atoms/Pagination'
-import RadioSortGroup from '@/shared/ui/atoms/RadioSortGroup'
-import SelectField from '@/shared/ui/atoms/SelectField'
-import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
+import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayout'
 import { logError } from '@/shared/utils/logger'
 import type { ApiError } from '@/types/response'
 import UserDeleteConfirmPopup from './UserDeleteConfirmPopup'
@@ -50,7 +47,6 @@ const AdminUserPage = ({
 	initialError,
 }: Props) => {
 	const router = useRouter()
-	const globalFeedback = useFeedback()
 	const actionFeedback = useFeedback()
 	const [selectedUser, setSelectedUser] = useState<UserDetail | null>(null)
 	const [isDetailOpen, setIsDetailOpen] = useState(false)
@@ -136,51 +132,34 @@ const AdminUserPage = ({
 					<br />
 					また、三役権限の追加もむやみに行わないでください。大いなる責任が伴います。お前らを信用しています。
 				</p>
-				<FeedbackMessage source={initialError ?? globalFeedback.feedback} />
-				<div className="flex w-full flex-col justify-center gap-y-2 overflow-x-auto">
-					<div className="ml-auto flex w-full max-w-xs flex-row items-center space-x-2">
-						<p className="whitespace-nowrap text-sm">表示件数:</p>
-						<SelectField
-							value={query.perPage}
-							onChange={(event) =>
-								updateQuery({ perPage: Number(event.target.value), page: 1 })
-							}
-							options={PER_PAGE_OPTIONS}
-							name="usersPerPage"
-							disabled={isPending}
-						/>
-					</div>
-					<div className="flex flex-row gap-x-2">
-						<RadioSortGroup
-							name="user_sort_options"
-							options={SORT_OPTIONS}
-							currentSort={query.sort}
-							onSortChange={(sort) => updateQuery({ sort })}
-						/>
-					</div>
-					<table className="table-zebra table-sm table w-full">
-						<thead>
-							<tr>
-								<th>LINE登録名</th>
-								<th>本名</th>
-								<th>学籍番号</th>
-								<th>学籍状況</th>
-								<th>役割</th>
-							</tr>
-						</thead>
-						<tbody>
-							<UserManageList
-								users={users}
-								onUserItemClick={handleSelectUser}
-							/>
-						</tbody>
-					</table>
-				</div>
-				<Pagination
-					currentPage={query.page}
-					totalPages={pageCount}
-					onPageChange={(page) => updateQuery({ page })}
-				/>
+				<PaginatedResourceLayout
+					perPage={{
+						label: '表示件数:',
+						name: 'usersPerPage',
+						options: PER_PAGE_OPTIONS,
+						value: query.perPage,
+						onChange: (value) => updateQuery({ perPage: value, page: 1 }),
+					}}
+					sort={{
+						name: 'user_sort_options',
+						options: SORT_OPTIONS,
+						value: query.sort,
+						onChange: (sort) => updateQuery({ sort }),
+					}}
+					pagination={{
+						currentPage: query.page,
+						totalPages: pageCount,
+						totalCount,
+						onPageChange: (page) => updateQuery({ page }),
+					}}
+				>
+					<UserManageList
+						users={users}
+						onUserItemClick={handleSelectUser}
+						isLoading={isPending}
+						error={initialError}
+					/>
+				</PaginatedResourceLayout>
 				<button
 					type="button"
 					className="btn btn-outline"

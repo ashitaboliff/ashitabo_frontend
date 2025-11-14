@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { type SubmitHandler, useForm } from 'react-hook-form'
 import { useSWRConfig } from 'swr'
 import { createBookingAction } from '@/domains/booking/api/bookingActions'
@@ -13,9 +13,15 @@ import {
 	bookingCreateSchema,
 } from '@/domains/booking/model/bookingSchema'
 import { mutateBookingCalendarsForDate } from '@/domains/booking/utils/calendarCache'
+import { LATEST_GACHA_VERSION } from '@/domains/gacha/config/gachaConfig'
 import { useGachaPlayManager } from '@/domains/gacha/hooks/useGachaPlayManager'
-import GachaResult from '@/domains/gacha/ui/GachaResult'
+import { executeGachaPlay } from '@/domains/gacha/services/executeGachaPlay'
+import GachaResult, {
+	type GachaResultViewState,
+} from '@/domains/gacha/ui/GachaResult'
 import { useFeedback } from '@/shared/hooks/useFeedback'
+import PublicEnv from '@/shared/lib/env/public'
+import { Ads } from '@/shared/ui/ads'
 import ShareButton from '@/shared/ui/atoms/ShareButton'
 import TextInputField from '@/shared/ui/atoms/TextInputField'
 import AddCalendarPopup from '@/shared/ui/molecules/AddCalendarPopup'
@@ -60,6 +66,9 @@ const BookingCreate = ({
 	const [createdBooking, setCreatedBooking] =
 		useState<CreatedBookingSummary | null>(null)
 	const [showPassword, setShowPassword] = useState(false)
+	const [gachaResultState, setGachaResultState] =
+		useState<GachaResultViewState>({ status: 'idle' })
+	const gachaExecutionIdRef = useRef(0)
 
 	const defaultBookingDate = useMemo(
 		() => (initialDateParam ? new Date(initialDateParam) : new Date()),
@@ -104,17 +113,41 @@ const BookingCreate = ({
 	const { onGachaPlayedSuccessfully, gachaPlayCountToday } =
 		useGachaPlayManager({ userId: session.user.id })
 
+	const triggerGachaExecution = useCallback(() => {
+		const executionId = gachaExecutionIdRef.current + 1
+		gachaExecutionIdRef.current = executionId
+		setGachaResultState({ status: 'loading', message: 'ガチャ結果を生成中...' })
+		void executeGachaPlay({
+			version: LATEST_GACHA_VERSION,
+			userId: session.user.id,
+			currentPlayCount: gachaPlayCountToday,
+		}).then((result) => {
+			if (gachaExecutionIdRef.current !== executionId) return
+			if (result.ok) {
+				setGachaResultState({
+					status: 'success',
+					rarity: result.rarity,
+					signedUrl: result.signedUrl,
+				})
+				onGachaPlayedSuccessfully()
+			} else {
+				setGachaResultState({
+					status: 'error',
+					message: result.message,
+				})
+			}
+		})
+	}, [gachaPlayCountToday, onGachaPlayedSuccessfully, session.user.id])
+
 	const shareUrl = useMemo(() => {
-		if (typeof window === 'undefined' || !createdBooking) {
-			return ''
-		}
-		return `${window.location.origin}/booking/${createdBooking.id}`
+		return `${PublicEnv.NEXT_PUBLIC_APP_URL}/booking/${createdBooking?.id}`
 	}, [createdBooking])
 
 	const onSubmit: SubmitHandler<BookingCreateFormValues> = async (data) => {
 		messageFeedback.clearFeedback()
 		setCreatedBooking(null)
 		setCalendarPopupOpen(false)
+		setGachaResultState({ status: 'idle' })
 
 		const bookingDate = new Date(data.bookingDate)
 		const bookingTimeIndex =
@@ -155,6 +188,7 @@ const BookingCreate = ({
 					password: '',
 				})
 				setShowPassword(false)
+				triggerGachaExecution()
 				setPopupOpen(true)
 			} else {
 				messageFeedback.showApiError(res)
@@ -216,6 +250,7 @@ const BookingCreate = ({
 						handleMouseDownPassword={(e) => e.preventDefault()}
 						errorMessage={errors.password?.message}
 					/>
+					<Ads placement="MenuDisplay" />
 					<div className="flex justify-center space-x-4">
 						<button
 							type="submit"
@@ -258,12 +293,7 @@ const BookingCreate = ({
 						</p>
 						<p className="text-center">バンド名: {createdBooking.registName}</p>
 						<p className="text-center">責任者: {createdBooking.name}</p>
-						<GachaResult
-							version="version3"
-							userId={session.user.id}
-							currentPlayCount={gachaPlayCountToday}
-							onGachaSuccess={() => onGachaPlayedSuccessfully()}
-						/>
+						<GachaResult state={gachaResultState} />
 						<div className="flex flex-col justify-center gap-2 pt-2 sm:flex-row">
 							<button
 								type="button"

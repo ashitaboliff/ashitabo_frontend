@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { type SubmitHandler, useForm } from 'react-hook-form'
 import * as zod from 'zod'
 import { type Part, PartOptions } from '@/domains/user/model/userTypes'
@@ -42,8 +42,7 @@ const MemberRecruitmentForm = () => {
 
 	const {
 		register,
-		setValue,
-		watch,
+		control,
 		handleSubmit,
 		formState: { errors },
 	} = useForm<MemberRecruitmentFormValues>({
@@ -54,12 +53,6 @@ const MemberRecruitmentForm = () => {
 			description: '',
 		},
 	})
-
-	const part = watch('part')
-
-	useEffect(() => {
-		register('part')
-	}, [register])
 
 	const onSubmit: SubmitHandler<MemberRecruitmentFormValues> = async (
 		_data,
@@ -99,8 +92,7 @@ const MemberRecruitmentForm = () => {
 					label="募集パート"
 					labelId="part-select"
 					options={PartOptions}
-					watchValue={part as Part[]}
-					setValue={setValue}
+					control={control}
 					errorMessage={errors.part?.message}
 				/>
 				<TextareaInputField

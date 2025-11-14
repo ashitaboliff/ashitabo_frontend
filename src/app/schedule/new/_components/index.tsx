@@ -89,10 +89,6 @@ const ScheduleCreatePage = ({ session, initialUsers }: Props) => {
 		defaultValues: scheduleFormDefaults,
 	})
 
-	useEffect(() => {
-		register('mention')
-	}, [register])
-
 	const isMentionChecked = watch('isMentionChecked') ?? false
 	const mentionSelection = watch('mention') ?? []
 	const startDate = watch('startDate')
@@ -201,8 +197,7 @@ const ScheduleCreatePage = ({ session, initialUsers }: Props) => {
 							name="mention"
 							label="メンション"
 							options={mentionOptions}
-							setValue={setValue}
-							watchValue={mentionSelection}
+							control={control}
 							errorMessage={errors.mention?.message}
 							className="bg-white"
 						/>

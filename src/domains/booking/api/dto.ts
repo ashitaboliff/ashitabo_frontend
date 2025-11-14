@@ -1,6 +1,5 @@
 import type {
 	Booking,
-	BookingLog,
 	BookingResponse,
 } from '@/domains/booking/model/bookingTypes'
 
@@ -65,7 +64,3 @@ export const mapRawBookingList = (
 	}
 	return input.map(mapRawBooking)
 }
-
-export const mapRawBookingLogs = (
-	input: RawBookingData[] | null | undefined,
-): BookingLog[] => mapRawBookingList(input)

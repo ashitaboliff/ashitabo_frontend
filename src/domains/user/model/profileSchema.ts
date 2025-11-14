@@ -54,20 +54,20 @@ export const profileSchema = zod
 		if (data.role === 'STUDENT') {
 			if (!data.studentId) {
 				ctx.addIssue({
-					code: zod.ZodIssueCode.custom,
+					code: 'custom',
 					message: '学籍番号を入力してください',
 					path: ['studentId'],
 				})
 			}
 			if (!data.expected) {
 				ctx.addIssue({
-					code: zod.ZodIssueCode.custom,
+					code: 'custom',
 					message: '卒業予定年度を選択してください',
 					path: ['expected'],
 				})
 			} else if (!expectedYearValues.includes(data.expected)) {
 				ctx.addIssue({
-					code: zod.ZodIssueCode.custom,
+					code: 'custom',
 					message: '卒業予定年度を選択してください',
 					path: ['expected'],
 				})

@@ -7,6 +7,7 @@ export type AdFormat =
 	| 'vertical'
 	| 'horizontal'
 	| 'fluid'
+	| 'autorelaxed'
 
 /**
  * Google AdSenseの広告レイアウト

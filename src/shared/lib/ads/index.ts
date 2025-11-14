@@ -7,6 +7,7 @@ export {
 	dispatchAdPossibleClickEvent,
 } from './events'
 export { useAdClickDetection, useAdInitialization } from './hooks'
+export { buildRandomAdPositions, buildSeedKey } from './random'
 export type {
 	AdConfig,
 	AdConfigMap,

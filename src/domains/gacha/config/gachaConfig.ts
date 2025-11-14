@@ -60,3 +60,27 @@ export const gachaConfigs: { [version: string]: GachaVersionConfig } = {
 		packKey: 'pack/version3.webp',
 	},
 }
+
+const VERSION_PREFIX = 'version'
+
+const toVersionNumber = (key: string): number | null => {
+	if (!key.startsWith(VERSION_PREFIX)) {
+		return null
+	}
+	const suffix = key.slice(VERSION_PREFIX.length)
+	const parsed = Number.parseInt(suffix, 10)
+	return Number.isFinite(parsed) ? parsed : null
+}
+
+const resolveLatestGachaVersion = (): string => {
+	const keys = Object.keys(gachaConfigs)
+	if (keys.length === 0) {
+		throw new Error('gachaConfigs is empty')
+	}
+	const sorted = keys
+		.map((key) => ({ key, versionNumber: toVersionNumber(key) ?? 0 }))
+		.sort((a, b) => b.versionNumber - a.versionNumber)
+	return sorted[0]?.key ?? keys[0]
+}
+
+export const LATEST_GACHA_VERSION = resolveLatestGachaVersion()

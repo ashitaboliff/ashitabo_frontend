@@ -22,13 +22,12 @@ const ProfileEdit = ({ profile }: Props) => {
 	const {
 		register,
 		handleSubmit,
-		setValue,
+		control,
 		watch,
 		formState: { errors, isSubmitting },
 	} = form
 
 	const selectedRole = watch('role')
-	const selectedParts = watch('part') ?? []
 	const isStudent = selectedRole === 'STUDENT'
 
 	return (
@@ -78,10 +77,9 @@ const ProfileEdit = ({ profile }: Props) => {
 
 				<MultiSelectField
 					name="part"
+					control={control}
 					options={PartOptions}
 					label="使用楽器(複数選択可)"
-					setValue={setValue}
-					watchValue={selectedParts}
 					infoDropdown={
 						<>
 							使用楽器を選択してください、複数選択可能です。

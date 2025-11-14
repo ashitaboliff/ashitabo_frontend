@@ -5,6 +5,12 @@
   },
   "tailwindCSS.experimental.configFile": "src/app/globals.css",
   "tailwindcss-intellisense.trace.server": "messages",
+  "tailwindCSS.files.include": [
+    "src/**/*.{tsx,jsx,js,mdx,html}"
+  ],
+  "tailwindCSS.files.exclude": [
+    "**/*.ts"
+  ],
   "editor.quickSuggestions": {
     "strings": "on"
   }
